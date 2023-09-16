@@ -6,7 +6,7 @@ import { Button } from "@material-tailwind/react";
 export default function Home() {
   const router = useRouter();
   return (
-    <div className="flex min-h-screen flex-col items-center justify-between py-2">
+    <main className="flex min-h-screen flex-col items-center justify-between py-2">
       <div className='w-full'>
         <div className='flex flex-col w-1/2 ml-10 mt-8 font-bold'>
           <h1 className='text-9xl text-[#424242]'>DONATE</h1>
@@ -31,6 +31,6 @@ export default function Home() {
         </div>
       </div>
 
-    </div>
+    </main>
   )
 }

@@ -8,9 +8,9 @@ import {
 
 export function RegF1() {
     return (
-        <div className="h-full w-full flex justify-center my-10">
+        // <div className="h-full w-full flex justify-center my-10">
   
-            <Card className='mt-6' color="transparent" shadow={false}>
+            <Card className='mt-6 flex justify-center items-center' color="transparent" shadow={false}>
                 <Typography variant="h4" className="mt-2" color="blue-gray">
                     Enter your details for logging in
                 </Typography>
@@ -49,6 +49,6 @@ export function RegF1() {
   
             </Card>
   
-        </div>
+        // </div>
     );
   }

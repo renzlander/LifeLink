@@ -3,14 +3,15 @@ import {
     Card,
     Input,
     Select,
+    Option,
     Typography,
   } from "@material-tailwind/react";
 
 export function RegF2() {
     return (
-        <div className="h-full flex justify-center my-10">
+        // <div className="h-full flex justify-center my-10">
   
-            <Card className='mt-6' color="transparent" shadow={false}>
+            <Card className='mt-6 flex justify-center items-center' color="transparent" shadow={false}>
                 <Typography variant="h4" className="mt-2" color="blue-gray">
                     Enter your personal details
                 </Typography>
@@ -18,9 +19,10 @@ export function RegF2() {
                     Some details will not be displayed in your profile.
                 </Typography>
   
-                <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96">
-                    <div className="mb-4 flex gap-6">
+                <form className="mt-8 mb-2 max-w-screen-lg sm:w-full">
+                    <div className="mb-4 flex gap-6 lg:flex-row sm:flex-col">
                       <Input size="lg" label="First Name" />
+                      <Input size="lg" label="Middle Name" />
                       <Input size="lg" label="Last Name" />
                     </div>
                     <div className="mb-4 flex grow gap-6">
@@ -57,6 +59,6 @@ export function RegF2() {
   
             </Card>
   
-        </div>
+        // </div>
     );
   }

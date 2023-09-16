@@ -29,7 +29,7 @@ export function RegisterStepper() {
   const router = useRouter();
 
   const logIn = () => {
-    router.push('/u_dashboard');
+    router.push('/login');
   };
 
   const handleNext = () => {
@@ -51,47 +51,26 @@ export function RegisterStepper() {
   };
 
   return (
-    <div className="w-full bg-gray-100 px-24 py-8">
+    <div className="md:w-1/2 lg:w-7/12 bg-gray-100 rounded-xl p-8">
       <Stepper
+      className="relative"
         activeStep={activeStep}
         isLastStep={(value) => setIsLastStep(value)}
         isFirstStep={(value) => setIsFirstStep(value)}
       >
         <Step>
           <UserCircleIcon className="h-5 w-5" />
-          <div className="absolute -bottom-8 w-max text-center">
-            <Typography
-              variant="h6"
-              color={activeStep === 0 ? "blue-gray" : "gray"}
-            >
-              Login Details
-            </Typography>
-          </div>
         </Step>
         <Step>
           <DocumentIcon className="h-5 w-5" />
-          <div className="absolute -bottom-8 w-max text-center">
-            <Typography
-              variant="h6"
-              color={activeStep === 1 ? "blue-gray" : "gray"}
-            >
-              Personal Details
-            </Typography>
-          </div>
         </Step>
         <Step>
           <CheckIcon className="h-5 w-5" />
-          <div className="absolute -bottom-8 w-max text-center">
-            <Typography
-              variant="h6"
-              color={activeStep === 2 ? "blue-gray" : "gray"}
-            >
-              Done
-            </Typography>
-          </div>
         </Step>
       </Stepper>
-      {renderContent()}
+      <div className="flex justify-center items-center">
+        {renderContent()}
+      </div>
       <div className="mt-8 flex justify-between">
         <Button onClick={handlePrev} disabled={isFirstStep}>
           Previous
