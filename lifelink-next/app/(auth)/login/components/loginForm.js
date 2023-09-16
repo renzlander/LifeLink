@@ -30,6 +30,7 @@ export function LoginForm() {
   
         if (response.status === 200) {
           console.log(response);
+
           router.push("/u_dashboard");
         } else {
           console.log(response);
