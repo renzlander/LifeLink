@@ -17,9 +17,10 @@ export function RegF1() {
   
                 <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96">
                     <div className="mb-4 flex flex-col gap-6">
-                      <Input size="lg" label="Email" />
-                      <Input type="password" size="lg" label="Password" />
-                      <Input type="password" size="lg" label="Confirm Password" />
+                      <Input size="lg" label="Email" required />
+                      <Input size="lg" label="Phone Number" required />
+                      <Input type="password" size="lg" label="Password" required />
+                      <Input type="password" size="lg" label="Confirm Password" required />
                     </div>
                     <Checkbox
                       label={

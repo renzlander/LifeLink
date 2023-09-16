@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between py-2">
       <div className='w-full'>
-        <div className='flex flex-col w-1/2 ml-10 mt-8 font-bold'>
+        <div className='flex flex-col w-1/2 2xl:ml-10 mx-auto mt-8 font-bold'>
           <h1 className='text-9xl text-[#424242]'>DONATE</h1>
           <h1 className='text-9xl text-[#d1071b]'>Blood</h1>
           <h1 className='text-9xl text-[#424242]'>Save 

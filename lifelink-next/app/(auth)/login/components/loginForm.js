@@ -30,8 +30,11 @@ export function LoginForm() {
   
         if (response.status === 200) {
           console.log(response);
-
-          router.push("/u_dashboard");
+          if (response.data.user.isAdmin === 0) {
+            router.push("/u_dashboard");
+          } else {
+            router.push("/a_dashboard");
+          }
         } else {
           console.log(response);
         }
