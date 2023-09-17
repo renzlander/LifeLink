@@ -6,8 +6,20 @@ import {
     Typography,
     Button,
   } from "@material-tailwind/react";
-  
+import React from "react";
+
   export function BloodListCard({ bloodType, availability, legend }) {
+    
+    let colorClass = ""; 
+
+    if (legend === "Empty") {
+        colorClass = "text-red-600"; 
+    } else if (legend === "Low") {
+        colorClass = "text-yellow-600"; 
+    } else if (legend === "Critically low") {
+        colorClass = "text-orange-600"; 
+    }
+
     return (
       <Card className="mt-6 w-60 h-full">
         <div className="flex mb-5">
@@ -23,7 +35,7 @@ import {
           </CardBody>
         </div>
         <CardFooter className="border-t flex justify-center items-center">
-          <Typography variant="p" color="blue-gray" className="">
+          <Typography variant="p" color="blue-gray" className={`${colorClass}`}>
             {legend}
           </Typography>
         </CardFooter>
