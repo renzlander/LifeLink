@@ -1,7 +1,4 @@
-'use client'
-import React from "react";
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import React, { useState } from "react";
 import {
   Collapse,
   Button,
@@ -9,15 +6,14 @@ import {
   Typography,
   CardBody,
 } from "@material-tailwind/react";
-
-export default function Home() {
-  const router = useRouter();
-  const [open, setOpen] = React.useState(false);
+ 
+export default function CollapseDefault() {
+  const [open, setOpen] = useState(false);
  
   const toggleOpen = () => setOpen((cur) => !cur);
-
+ 
   return (
-    <div className="flex min-h-screen flex-col py-2 ml-72">
+    <>
       <Button onClick={toggleOpen}>Open Collapse</Button>
       <Collapse open={open}>
         <Card className="my-4 mx-auto w-8/12">
@@ -29,6 +25,6 @@ export default function Home() {
           </CardBody>
         </Card>
       </Collapse>
-    </div>
-  )
+    </>
+  );
 }

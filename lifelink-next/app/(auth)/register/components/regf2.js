@@ -3,19 +3,26 @@ import {
   Input,
   Select,
   Option,
+  Tooltip,
   Typography,
 } from "@material-tailwind/react";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { laravelBaseUrl } from "@/app/variables";
+import { Button } from "@mui/material";
 
 export function RegF2() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [middleName, setMiddleName] = useState("");
-  const [address, setAddress] = useState("");
+  const [first_name, setFirstName] = useState("");
+  const [last_name, setLastName] = useState("");
+  const [middle_name, setMiddleName] = useState("");
+  const [sex, setSex] = useState("");
+  const [blood_type, setBlood] = useState("");
   const [street, setStreet] = useState("");
-  const [subdivision, setSubdivision] = useState("");
+  const [postalcode, setPostalCode] = useState("");
+  const bloodTypes = ["AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
+
+  const dob = '2002-02-08';
+  const occupation = 'jabolero';
 
   const [regionList, setRegionList] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState({
@@ -77,6 +84,32 @@ export function RegF2() {
     }
   }, [selectedMunicipality]);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    try {
+      const response = await axios.post(`${laravelBaseUrl}/api/auth/register-step2`, {
+        user_id: 3,
+        first_name,
+        middle_name,
+        last_name,
+        sex,
+        dob,
+        occupation,
+        blood_type,
+        street,
+        region: selectedRegion?.regionName,
+        province: selectedProvince?.provinceName,
+        municipality: selectedMunicipality?.municipalityName,
+        barangay: selectedBarangay?.barangayName,
+        postalcode,
+      });
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
     return (
       <Card className='mt-6 flex justify-center items-center' color="transparent" shadow={false}>
           <Typography variant="h4" className="mt-2" color="blue-gray">
@@ -86,30 +119,74 @@ export function RegF2() {
               Some details will not be displayed in your profile.
           </Typography>
 
-          <form className="mt-8 mb-2 max-w-screen-lg sm:w-full">
+          <form 
+            onSubmit={handleSubmit}
+            className="mt-8 mb-2 max-w-screen-lg sm:w-full"
+          >
+          <input type="hidden" value={dob} name="dob"/>
+          <input type="hidden" value={occupation} name="occupation"/>
               <div className="mb-4 flex gap-6 lg:flex-row sm:flex-col">
-                <Input size="lg" label="First Name" required />
-                <Input size="lg" label="Middle Name" required />
-                <Input size="lg" label="Last Name" required />
+                <Input 
+                  size="lg"
+                  label="First Name"
+                  required
+                  value={first_name}
+                  onChange={(e) => {
+                    const newValue = e.target.value;
+                    if (!/^[A-Za-z\s]*$/.test(newValue)) {
+                      return;
+                    }
+                    setFirstName(newValue);
+                  }}
+                />
+                <Input 
+                  size="lg"
+                  label="Middle Name"
+                  value={middle_name}
+                  onChange={(e) => {
+                    const newValue = e.target.value;
+                    if (!/^[A-Za-z\s]*$/.test(newValue)) {
+                      return;
+                    }
+                    setMiddleName(newValue);
+                  }}
+                />
+                <Input 
+                  size="lg"
+                  label="Last Name"
+                  required
+                  value={last_name}
+                  onChange={(e) => {
+                    const newValue = e.target.value;
+                    if (!/^[A-Za-z\s]*$/.test(newValue)) {
+                      return;
+                    }
+                    setLastName(newValue);
+                  }}
+                />
               </div>
               <div className="mb-4 flex grow gap-6">
-                <Select label="Sex" required>
-                  <Option>Male</Option>
-                  <Option>Female</Option>
+                <Select 
+                  label="Sex" 
+                  required 
+                  value={sex} 
+                  onChange={(e) => setSex(e?.target?.value ?? "")}
+                >
+                  <Option value="1">Male</Option>
+                  <Option value="2">Female</Option>
                 </Select>
-                <Select label="Blood Type" required>
-                  <Option>AB+</Option>
-                  <Option>AB-</Option>
-                  <Option>A+</Option>
-                  <Option>A-</Option>
-                  <Option>B+</Option>
-                  <Option>B-</Option>
-                  <Option>O+</Option>
-                  <Option>O-</Option>
+                <Select 
+                  label="Blood Type" 
+                  required
+                  value={blood_type}
+                  onChange={(e) => setBlood(e?.target?.value ?? "")}
+                >
+                  {bloodTypes.map((type) => (
+                    <Option key={type}>{type}</Option>
+                  ))}
                 </Select>
               </div>
-              <div className="mb-4 w-full flex flex-wrap gap-6">
-                <Input size="lg" label="Street" required />
+              <div className="mb-4 flex grow gap-6">
                 <Select 
                   label="Region" 
                   required
@@ -151,6 +228,8 @@ export function RegF2() {
                     </Option>
                   ))}
                 </Select>
+              </div>
+              <div className="mb-4 flex grow gap-6">
                 <Select 
                   label="Municipality" 
                   required
@@ -171,10 +250,57 @@ export function RegF2() {
                     </Option>
                   ))}
                 </Select>
-                <Select label="Barangay" required>
-                  <Option>Parada</Option>
+                <Select 
+                  label="Barangay" 
+                  required
+                  name={selectedBarangay?.barangayName} 
+                  data={barangayList}
+                >
+                  {barangayList
+                    ?.sort((a, b) => a.brgyDesc.localeCompare(b.brgyDesc))
+                    .map((barangay) => (
+                    <Option
+                      onClick={() => {
+                        setSelectedBarangay({
+                          barangayName: barangay?.brgyDesc,
+                        });
+                      }}
+                      key={`brngy${barangay.id}`}
+                    >
+                      {barangay?.brgyDesc}
+                    </Option>
+                  ))}
                 </Select>
               </div>
+              <div className="mb-4 flex grow gap-6">
+                <Input 
+                  size="lg"
+                  label="Street"
+                  required
+                  value={street}
+                  onChange={(e) => {
+                    const newValue = e.target.value;
+                    if (!/^[A-Za-z0-9\s,.]*$/.test(newValue)) {
+                      return;
+                    }
+                    setStreet(newValue);
+                  }}
+                />
+                <Input 
+                  size="lg"
+                  label="Postal Code"
+                  required
+                  value={postalcode}
+                  onChange={(e) => {
+                    const newValue = e.target.value;
+                    if (!/^[0-9]*$/.test(newValue)) {
+                      return;
+                    }
+                    setPostalCode(newValue);
+                  }}
+                />
+              </div>
+              <Button type="submit">Submit</Button>
           </form>
 
       </Card>
