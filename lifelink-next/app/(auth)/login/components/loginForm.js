@@ -30,8 +30,13 @@ export function LoginForm() {
         if (response.status === 200) {
           console.log(response);
           if (response.data.user.isAdmin === 0) {
+            document.cookie = `token=${response.data.token}; expires=${new Date(new Date().getTime() + 86400 * 1000).toUTCString()}; path=/`;
+            // const cookies = document.cookie.split('; ');
+            // const tokenFromCookie = cookies.find(cookie => cookie.startsWith('token=')).split('=')[1];
+            // console.log(tokenFromCookie);
             router.push("/u_dashboard");
           } else {
+            localStorage.setItem("token", response.data.token);
             router.push("/a_dashboard");
           }
         } else {
