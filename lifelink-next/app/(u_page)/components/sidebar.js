@@ -15,8 +15,32 @@ import {
     InboxIcon,
     PowerIcon,
   } from "@heroicons/react/24/solid";
-   
+  import axios from "axios";
+  import { laravelBaseUrl } from "@/app/variables";
+  import { useRouter } from 'next/navigation';
+
   export function UserSidebar() {
+
+    const handleLogout = async () => {
+      const token = getCookie("token");
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+      try {
+        const response = await axios.post(`${laravelBaseUrl}/api/logout`, null, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+        router.push("/login");
+        console.log(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     return (
       <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl bg-red-900 shadow-blue-gray-900/5">
         <div className="mb-2 p-4">
@@ -55,7 +79,7 @@ import {
             </ListItemPrefix>
             Profile
           </ListItem>
-          <ListItem>
+          <ListItem onClick={handleLogout}>
             <ListItemPrefix>
               <PowerIcon className="h-5 w-5" />
             </ListItemPrefix>
@@ -64,4 +88,10 @@ import {
         </List>
       </Card>
     );
+  }
+
+  function getCookie(name) {
+    const cookies = document.cookie.split("; ");
+    const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));
+    return cookie ? cookie.split("=")[1] : null;
   }

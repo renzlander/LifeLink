@@ -84,12 +84,25 @@ export function RegF2() {
     }
   }, [selectedMunicipality]);
 
+  const handleSexChange = (selectedSex) => {
+    setSex(selectedSex);
+  };
+
+  const handleBloodChange = (selectedBlood) => {
+    setBlood(selectedBlood);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    console.log('sex',sex);
     try {
+      const user_id = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('user_id='))
+        .split('=')[1];
+  
       const response = await axios.post(`${laravelBaseUrl}/api/auth/register-step2`, {
-        user_id: 3,
+        user_id,
         first_name,
         middle_name,
         last_name,
@@ -104,6 +117,11 @@ export function RegF2() {
         barangay: selectedBarangay?.barangayName,
         postalcode,
       });
+
+      if (response.data.status === 'success') {
+        document.cookie = 'user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      }
+
       console.log(response);
     } catch (error) {
       console.log(error);
@@ -165,27 +183,22 @@ export function RegF2() {
                   }}
                 />
               </div>
+                
               <div className="mb-4 flex grow gap-6">
-                <Select 
-                  label="Sex" 
-                  required 
-                  value={sex} 
-                  onChange={(e) => setSex(e?.target?.value ?? "")}
-                >
-                  <Option value="1">Male</Option>
-                  <Option value="2">Female</Option>
-                </Select>
-                <Select 
-                  label="Blood Type" 
-                  required
-                  value={blood_type}
-                  onChange={(e) => setBlood(e?.target?.value ?? "")}
-                >
-                  {bloodTypes.map((type) => (
-                    <Option key={type}>{type}</Option>
-                  ))}
-                </Select>
+              <Select onChange={handleSexChange} label="Sex" value={sex}>
+                <Option value="Male">Male</Option>
+                <Option value="Female">Female</Option>
+              </Select>
+                
+               <Select onChange={handleBloodChange} label="Blood Type" value={blood_type}>
+                {bloodTypes.map((blood) => (
+                  <Option key={blood} value={blood}>
+                    {blood}
+                  </Option>
+                ))}
+              </Select>
               </div>
+              
               <div className="mb-4 flex grow gap-6">
                 <Select 
                   label="Region" 
@@ -288,7 +301,7 @@ export function RegF2() {
                 />
                 <Input 
                   size="lg"
-                  label="Postal Code"
+                  label="Zip Code"
                   required
                   value={postalcode}
                   onChange={(e) => {

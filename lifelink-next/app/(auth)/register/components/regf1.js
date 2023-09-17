@@ -1,10 +1,5 @@
 import React, { useState } from "react";
-import {
-  Card,
-  Input,
-  Checkbox,
-  Typography,
-} from "@material-tailwind/react";
+import { Card, Input, Checkbox, Typography } from "@material-tailwind/react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 
@@ -16,18 +11,21 @@ export function RegF1() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
-      const response = await axios.post(`${laravelBaseUrl}/api/auth/register-step1`, {
-        email,
-        mobile,
-        password,
-        password_confirmation,
-      });
-      
-      // Handle the response from the API
-      console.log(response);
-      
+      const response = await axios.post(
+        `${laravelBaseUrl}/api/auth/register-step1`,
+        {
+          email,
+          mobile,
+          password,
+          password_confirmation,
+        }
+      );
+      if (response.data.user_id) {
+        document.cookie = `user_id=${response.data.user_id}; secure; SameSite=Strict`;
+      }
+
       // Redirect to another page or perform any other actions
     } catch (error) {
       // Handle the error
@@ -36,7 +34,7 @@ export function RegF1() {
   };
 
   return (
-    <Card className='mt-6 flex justify-center items-center' color="transparent" shadow={false}>
+    <Card className="mt-6 flex justify-center items-center" color="transparent" shadow={false}>
       <Typography variant="h4" className="mt-2" color="blue-gray">
         Enter your details for logging in
       </Typography>
@@ -55,7 +53,7 @@ export function RegF1() {
               color="gray"
               className="flex items-center font-normal"
             >
-              I agree the
+              I agree to the
               <a
                 href="#"
                 className="font-medium transition-colors text-red-600 hover:text-red-800"
@@ -68,11 +66,13 @@ export function RegF1() {
         />
         <Typography color="gray" className="mt-4 text-center font-normal">
           Already have an account?{" "}
-          <a href='/login' className="font-medium text-gray-900">
+          <a href="/login" className="font-medium text-gray-900">
             Sign In
           </a>
         </Typography>
-        <button type="submit">Submit</button>
+        <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-md mt-4">
+          Submit
+        </button>
       </form>
     </Card>
   );
