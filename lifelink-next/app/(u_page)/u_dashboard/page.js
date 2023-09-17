@@ -17,6 +17,10 @@ export default function Home() {
     const fetchData = async () => {
       try {
         const token = getCookie("token");
+         if (!token) {
+          router.push("/login"); 
+          return;
+        }
         const response = await axios.get(`${laravelBaseUrl}/api/get-available-blood`, {
           headers: {
             Authorization: `Bearer ${token}`,
