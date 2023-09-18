@@ -354,7 +354,7 @@ export function RegF2() {
                 />
               </div>
               <div className="flex justify-center">
-                <Button type="submit">Submit</Button>
+                <Button type="submit">NEXT</Button>
               </div>
           </form>
 

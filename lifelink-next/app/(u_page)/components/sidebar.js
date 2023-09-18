@@ -24,7 +24,7 @@ import {
     const handleLogout = async () => {
       const token = getCookie("token");
       if (!token) {
-        router.push("/login");
+        router.push("./login");
         return;
       }
       try {
@@ -34,7 +34,7 @@ import {
           },
         });
         document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
-        router.push("/login");
+        router.push("./login");
         console.log(response.data);
       } catch (error) {
         console.log(error);
