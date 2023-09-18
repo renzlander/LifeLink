@@ -1,9 +1,15 @@
-import React, { useState } from "react";
-import { Card, Input, Checkbox, Typography } from "@material-tailwind/react";
-import axios from "axios";
+import { Card, Input, Button, Typography, Collapse } from "@material-tailwind/react";
+import PasswordChecklist from "react-password-checklist"
+import React, { useState, useEffect } from "react";
 import { laravelBaseUrl } from "@/app/variables";
+import axios from "axios";
 
-export function RegF1() {
+export function RegF1({ onNextStep }) {
+
+  const [open, setOpen] = React.useState(false);
+ 
+  const toggleOpen = () => setOpen((cur) => !cur);
+
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
@@ -25,13 +31,17 @@ export function RegF1() {
       if (response.data.user_id) {
         document.cookie = `user_id=${response.data.user_id}; secure; SameSite=Strict`;
       }
-
-      // Redirect to another page or perform any other actions
+      if (response.status === 200) {
+        console.log(response);
+        onNextStep();
+      }
     } catch (error) {
-      // Handle the error
       console.log(error);
     }
   };
+
+  const isPasswordMatching = password === password_confirmation;
+  const confirmPasswordStyle = password_confirmation === "" ? "normal" : (isPasswordMatching ? 'success' : 'error');
 
   return (
     <Card className="mt-6 flex justify-center items-center" color="transparent" shadow={false}>
@@ -41,38 +51,61 @@ export function RegF1() {
 
       <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96" onSubmit={handleSubmit}>
         <div className="mb-4 flex flex-col gap-6">
-          <Input size="lg" label="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <Input size="lg" label="Phone Number" value={mobile} onChange={(e) => setMobile(e.target.value)} required />
-          <Input type="password" size="lg" label="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          <Input type="password" size="lg" label="Confirm Password" value={password_confirmation} onChange={(e) => setConfirmPassword(e.target.value)} required />
+          <Input 
+            size="lg" 
+            label="Email" 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            required 
+          />
+          <Input 
+            size="lg" 
+            label="Phone Number" 
+            value={mobile} 
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              const sanitizedValue = inputValue.replace(/[^0-9]/g, '').slice(0, 11);
+              setMobile(sanitizedValue);
+            }} 
+            required 
+          />
+          <Input 
+            type="password" 
+            size="lg" 
+            label="Password" 
+            value={password} 
+            onClick={toggleOpen}
+            onChange={(e) => setPassword(e.target.value)} 
+            required 
+          />
+          <Collapse open={open}>
+            <PasswordChecklist
+              rules={["minLength","specialChar","number","capital"]}
+              minLength={8}
+              value={password}
+            />
+          </Collapse>
+          <Input 
+            type="password" 
+            size="lg" 
+            label="Confirm Password" 
+            value={password_confirmation} 
+            onChange={(e) => setConfirmPassword(e.target.value)} 
+            required 
+            {...(confirmPasswordStyle === "normal" ? {} : (confirmPasswordStyle === "success" ? { success: true } : { error: true }))}
+          />
         </div>
-        <Checkbox
-          label={
-            <Typography
-              variant="small"
-              color="gray"
-              className="flex items-center font-normal"
-            >
-              I agree to the
-              <a
-                href="#"
-                className="font-medium transition-colors text-red-600 hover:text-red-800"
-              >
-                &nbsp;Terms and Conditions
-              </a>
-            </Typography>
-          }
-          containerProps={{ className: "-ml-2.5" }}
-        />
         <Typography color="gray" className="mt-4 text-center font-normal">
           Already have an account?{" "}
           <a href="/login" className="font-medium text-gray-900">
             Sign In
           </a>
         </Typography>
-        <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-md mt-4">
-          Submit
-        </button>
+        <div className="flex justify-center mt-6">
+          <Button type="submit">
+            NEXT STEP
+          </Button>
+        </div>
       </form>
     </Card>
   );

@@ -1,38 +1,16 @@
-import { 
-    Stepper,
-    Step,
-    Button,
-    Typography 
-} from "@material-tailwind/react";
-import {
-  DocumentIcon,
-  UserCircleIcon,
-  CheckIcon,
-} from "@heroicons/react/24/outline";
+import { DocumentIcon, UserCircleIcon, CheckIcon } from "@heroicons/react/24/outline";
+import { Stepper, Step, Button, Typography } from "@material-tailwind/react";
+import React, { useState } from "react";
 import { RegF1 } from "./regf1";
 import { RegF2 } from "./regf2";
 import { RegF3 } from "./regf3";
-import React, { useState } from "react";
-import { useRouter } from 'next/navigation';
-
-const stepsContent = [
-    <RegF1/>,
-    <RegF2/>,
-    <RegF3/>,
-];
 
 export function RegisterStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [isLastStep, setIsLastStep] = useState(false);
   const [isFirstStep, setIsFirstStep] = useState(true);
 
-  const router = useRouter();
-
-  const logIn = () => {
-    router.push('/login');
-  };
-
-  const handleNext = () => {
+  const handleNextStep = () => {
     if (!isLastStep) {
       setActiveStep((cur) => cur + 1);
       setIsFirstStep(false);
@@ -46,14 +24,15 @@ export function RegisterStepper() {
     }
   };
 
-  const renderContent = () => {
-    return stepsContent[activeStep];
-  };
+  const stepsContent = [
+    <RegF1 onNextStep={handleNextStep} />,
+    <RegF2 onNextStep={handleNextStep} />,
+    <RegF3 />,
+  ];
 
   return (
     <div className="md:w-1/2 lg:w-7/12 bg-gray-100 rounded-xl p-8">
       <Stepper
-      className="relative"
         activeStep={activeStep}
         isLastStep={(value) => setIsLastStep(value)}
         isFirstStep={(value) => setIsFirstStep(value)}
@@ -69,7 +48,7 @@ export function RegisterStepper() {
         </Step>
       </Stepper>
       <div className="flex justify-center items-center">
-        {renderContent()}
+      {stepsContent[activeStep]}
       </div>
       <div className="mt-8 flex justify-between">
         <Button onClick={handlePrev} disabled={isFirstStep}>
@@ -78,7 +57,7 @@ export function RegisterStepper() {
         {isLastStep ? (
           <Button onClick={logIn}>Finish</Button>
         ) : (
-          <Button onClick={handleNext}>Next</Button>
+          <Button onClick={handleNextStep}>Next</Button>
         )}
       </div>
     </div>

@@ -1,15 +1,15 @@
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   Input,
   Select,
   Option,
-  Tooltip,
+  Checkbox,
+  Button,
   Typography,
 } from "@material-tailwind/react";
 import axios from "axios";
-import React, { useState, useEffect } from "react";
 import { laravelBaseUrl } from "@/app/variables";
-import { Button } from "@mui/material";
 
 export function RegF2() {
   const [first_name, setFirstName] = useState("");
@@ -19,10 +19,10 @@ export function RegF2() {
   const [blood_type, setBlood] = useState("");
   const [street, setStreet] = useState("");
   const [postalcode, setPostalCode] = useState("");
-  const bloodTypes = ["AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
-
+  const [occupation, setOccupation] = useState("");
+  // const [dob, setDob] = useState("");
   const dob = '2002-02-08';
-  const occupation = 'jabolero';
+  const bloodTypes = ["AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
 
   const [regionList, setRegionList] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState({
@@ -121,7 +121,6 @@ export function RegF2() {
       if (response.data.status === 'success') {
         document.cookie = 'user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
       }
-
       console.log(response);
     } catch (error) {
       console.log(error);
@@ -142,7 +141,6 @@ export function RegF2() {
             className="mt-8 mb-2 max-w-screen-lg sm:w-full"
           >
           <input type="hidden" value={dob} name="dob"/>
-          <input type="hidden" value={occupation} name="occupation"/>
               <div className="mb-4 flex gap-6 lg:flex-row sm:flex-col">
                 <Input 
                   size="lg"
@@ -183,7 +181,29 @@ export function RegF2() {
                   }}
                 />
               </div>
-                
+              <div className="mb-4 flex grow gap-6">
+                <Input 
+                  size="lg"
+                  label="Occupation"
+                  required
+                  value={occupation}
+                  onChange={(e) => {
+                    const newValue = e.target.value;
+                    if (!/^[A-Za-z0-9\s,.]*$/.test(newValue)) {
+                      return;
+                    }
+                    setOccupation(newValue);
+                  }}
+                />
+                <Input 
+                  type='date'
+                  size="lg"
+                  label="Birthdate" 
+                  required 
+                  value={dob}
+                  onChange={(e) => setDob(e.target.value)} 
+                />
+              </div>
               <div className="mb-4 flex grow gap-6">
               <Select onChange={handleSexChange} label="Sex" value={sex}>
                 <Option value="Male">Male</Option>
@@ -313,7 +333,29 @@ export function RegF2() {
                   }}
                 />
               </div>
-              <Button type="submit">Submit</Button>
+              <div className="mb-4 flex justify-center grow gap-6">
+                <Checkbox
+                  label={
+                    <Typography
+                      variant="small"
+                      color="gray"
+                      className="flex items-center font-normal"
+                    >
+                      I agree to the
+                      <a
+                        href="#"
+                        className="font-medium transition-colors text-red-600 hover:text-red-800"
+                      >
+                        &nbsp;Terms and Conditions
+                      </a>
+                    </Typography>
+                  }
+                  containerProps={{ className: "-ml-2.5" }}
+                />
+              </div>
+              <div className="flex justify-center">
+                <Button type="submit">Submit</Button>
+              </div>
           </form>
 
       </Card>
