@@ -35,8 +35,11 @@ import React from "react";
           </CardBody>
         </div>
         <CardFooter className="border-t flex justify-center items-center">
-          <Typography variant="p" color="blue-gray" className={`${colorClass}`}>
-            {legend}
+          <Typography variant="h6" color="blue-gray" className={`${colorClass}`}>
+            Amount: {" "}
+          </Typography>
+          <Typography variant="h5" color="blue-gray" className='text-red-500'>
+            10
           </Typography>
         </CardFooter>
       </Card>

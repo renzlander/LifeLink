@@ -1,15 +1,10 @@
-import { Card, Input, Button, Typography, Collapse } from "@material-tailwind/react";
+import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import PasswordChecklist from "react-password-checklist"
 import React, { useState, useEffect } from "react";
 import { laravelBaseUrl } from "@/app/variables";
 import axios from "axios";
 
 export function RegF1({ onNextStep }) {
-
-  const [open, setOpen] = React.useState(false);
- 
-  const toggleOpen = () => setOpen((cur) => !cur);
-
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
@@ -73,18 +68,17 @@ export function RegF1({ onNextStep }) {
             type="password" 
             size="lg" 
             label="Password" 
-            value={password} 
-            onClick={toggleOpen}
-            onChange={(e) => setPassword(e.target.value)} 
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }} 
             required 
           />
-          <Collapse open={open}>
-            <PasswordChecklist
-              rules={["minLength","specialChar","number","capital"]}
-              minLength={8}
-              value={password}
-            />
-          </Collapse>
+          <PasswordChecklist
+            rules={["minLength","specialChar","number","capital"]}
+            minLength={8}
+            value={password}
+          />
           <Input 
             type="password" 
             size="lg" 
