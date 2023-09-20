@@ -17,12 +17,11 @@ import {
   Tooltip,
   Input,
 } from "@material-tailwind/react";
-import { AddBloodBag } from "./popup";
+import { AddBloodBagPopup } from "./popup"; // Import the AddBloodBagPopup component
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { useRouter } from "next/navigation";
-
 
 const TABLE_HEAD = [
   { label: "Donor Number", key: "donor_no" },
@@ -51,6 +50,8 @@ export function UsersTable() {
   const [totalPages, setTotalPages] = useState(1);
   const [sortColumn, setSortColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
+  const [searchQuery, setSearchQuery] = useState("");
+
   const router = useRouter();
 
   const fetchData = async (page) => {
@@ -109,11 +110,26 @@ export function UsersTable() {
       setSortOrder("asc");
     }
   };
+  
+
+  const sortedUserDetails = userDetails.sort((a, b) => {
+    const columnA = sortColumn === 'name' ? `${a.first_name} ${a.last_name}` : a[sortColumn];
+    const columnB = sortColumn === 'name' ? `${b.first_name} ${b.last_name}` : b[sortColumn];
+  
+    if (sortOrder === "asc") {
+      if (columnA < columnB) return -1;
+      if (columnA > columnB) return 1;
+    } else {
+      if (columnA < columnB) return 1;
+      if (columnA > columnB) return -1;
+    }
+  
+    return 0;
+  });
 
   if (loading) {
     return <p>Loading...</p>;
   }
-
 
   return (
     <Card className="h-full w-full mt-4">
@@ -125,70 +141,79 @@ export function UsersTable() {
       <CardBody className="overflow-x-auto px-0">
         <div className="mb-4 mr-4 flex justify-between items-center">
           <div className="flex w-full shrink-0 gap-2 md:w-max">
-            <div className="w-full md:w-72">
-              <Input
-                label="Search"
-                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-              />
-            </div>
+          <div className="w-full md:w-72">
+            <Input
+              label="Search"
+              icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
             <Button className="flex items-center gap-3" size="sm">
               <ArrowDownTrayIcon strokeWidth={2} className="h-4 w-4" /> Download
             </Button>
           </div>
         </div>
         <table className="w-full min-w-max table-auto text-left">
-        <thead>
-          <tr>
-            {TABLE_HEAD.map((head) => (
-              <th
-                key={head.key}
-                className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
-              >
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-normal leading-none opacity-70"
+          <thead>
+            <tr>
+              {TABLE_HEAD.map((head) => (
+                <th
+                  key={head.key}
+                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
+                  onClick={() => handleSort(head.key)} 
                 >
-                  {head.label}
-                </Typography>
-              </th>
-            ))}
-          </tr>
-        </thead>
+                  <div className="flex items-center">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal leading-none opacity-70"
+                    >
+                      {head.label}
+                    </Typography>
+                    {sortColumn === head.key && (
+                      <span className="ml-2">
+                        {sortOrder === "asc" ? "▲" : "▼"}
+                      </span>
+                    )}
+                  </div>
+                </th>
+              ))}
+            </tr>
+          </thead>
           <tbody>
-        {userDetails.map((user, index) => (
-          <tr key={user.donorNumber}>
-            <td className={classes}>
-              <div className="flex items-center gap-3">
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-bold"
-                >
-                  {user.donor_no}
-                </Typography>
-              </div>
-            </td>
-            <td className={classes}>
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="font-normal"
-                onClick={() => handleSort("name")}
-              >
-                {`${user.first_name} ${user.last_name}`}
-              </Typography>
-            </td>
-            <td className={classes}>
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="font-normal"
-                onClick={() => handleSort("blood_type")}
-              >
-                {user.blood_type}
-              </Typography>
-            </td>
+            {
+            userDetails.map((user, index) => (
+              <tr key={user.donor_no}>
+                <td className={classes}>
+                  <div className="flex items-center gap-3">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-bold"
+                    >
+                      {user.donor_no}
+                    </Typography>
+                  </div>
+                </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {`${user.first_name} ${user.last_name}`}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {user.blood_type}
+                  </Typography>
+                </td>
                 <td className={classes}>
                   <Typography
                     variant="small"
@@ -213,7 +238,7 @@ export function UsersTable() {
                     color="blue-gray"
                     className="font-normal capitalize"
                   >
-                  {formatDate(user.dob)}
+                    {formatDate(user.dob)}
                   </Typography>
                 </td>
                 <td className={classes}>
@@ -227,10 +252,14 @@ export function UsersTable() {
                       <TrashIcon className="h-4 w-4 text-red-500" />
                     </IconButton>
                   </Tooltip>
-                  <AddBloodBag />
                 </td>
+                <td className={classes}>
+                  <AddBloodBagPopup user_id={user.user_id} />
+                </td>
+                
               </tr>
-            ))}
+            ))
+            }
           </tbody>
         </table>
       </CardBody>
@@ -266,10 +295,11 @@ export function UsersTable() {
       </CardFooter>
     </Card>
   );
-  
 }
+
 function getCookie(name) {
   const cookies = document.cookie.split("; ");
   const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));
   return cookie ? cookie.split("=")[1] : null;
 }
+
