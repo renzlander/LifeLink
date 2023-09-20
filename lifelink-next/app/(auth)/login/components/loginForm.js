@@ -1,3 +1,4 @@
+'use client'
 import {
   Card,
   Input,
@@ -33,7 +34,7 @@ export function LoginForm() {
           document.cookie = `token=${response.data.token}; expires=${new Date(new Date().getTime() + 86400 * 1000).toUTCString()}; path=/`;
           router.push("/u_dashboard");
         } else {
-          localStorage.setItem("token", response.data.token);
+          document.cookie = `token=${response.data.token}; expires=${new Date(new Date().getTime() + 86400 * 1000).toUTCString()}; path=/`;
           router.push("/a_dashboard");
         }
       } else {
