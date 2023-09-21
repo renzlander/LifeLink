@@ -31,6 +31,7 @@ const TABLE_HEAD = [
   { label: "Mobile", key: "mobile" },
   { label: "Birthday", key: "dob" },
   { label: "", key: "" }, 
+  { label: "", key: "a" }, 
 ];
 const classes = "p-4";
 
@@ -61,26 +62,43 @@ export function UsersTable() {
         router.push("/login");
         return;
       }
-      const response = await axios.get(
-        `${laravelBaseUrl}/api/get-user-details?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
+
+      let response;
+
+
+      if (searchQuery) {
+        response = await axios.post(
+          `${laravelBaseUrl}/api/search-user?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
+          {
+            searchInput: searchQuery, 
           },
-        }
-      );
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      } else {
+        response = await axios.get(
+          `${laravelBaseUrl}/api/get-user-details?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
 
       if (response.data.status === "success") {
         setUserDetails(response.data.data.data);
         setTotalPages(response.data.data.last_page);
         setCurrentPage(response.data.data.current_page);
         setLoading(false);
+      
       } else {
         console.error("Error fetching data:", response.data.message);
         setLoading(false);
       }
-
-      console.log(response);
     } catch (error) {
       console.error("Error fetching data:", error);
       setLoading(false);
@@ -110,6 +128,42 @@ export function UsersTable() {
       setSortOrder("asc");
     }
   };
+
+  const exportUserDetailsAsPDF = async () => {
+    try {
+      const token = getCookie("token");
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+  
+      // Send a request to the PDF export endpoint
+      const response = await axios.get(
+        `${laravelBaseUrl}/api/export-pdf-user-details`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          responseType: "blob", // Set the response type to blob for binary data
+        }
+      );
+  
+      // Create a Blob object from the response data
+      const pdfBlob = new Blob([response.data], { type: "application/pdf" });
+  
+      // Create a URL for the Blob object
+      const pdfUrl = window.URL.createObjectURL(pdfBlob);
+  
+      // Open the PDF in a new window or tab
+      window.open(pdfUrl);
+  
+      // Clean up by revoking the URL when it's no longer needed
+      window.URL.revokeObjectURL(pdfUrl);
+    } catch (error) {
+      console.error("Error exporting PDF:", error);
+    }
+  };
+  
   
 
   const sortedUserDetails = userDetails.sort((a, b) => {
@@ -142,16 +196,24 @@ export function UsersTable() {
         <div className="mb-4 mr-4 flex justify-between items-center">
           <div className="flex w-full shrink-0 gap-2 md:w-max">
           <div className="w-full md:w-72">
-            <Input
-              label="Search"
-              icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+          <Input
+            label="Search"
+            icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+            value={searchQuery}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              setSearchQuery(inputValue);
+              fetchData(inputValue); 
+            }}
+          />
           </div>
-            <Button className="flex items-center gap-3" size="sm">
-              <ArrowDownTrayIcon strokeWidth={2} className="h-4 w-4" /> Download
-            </Button>
+          <Button
+            className="flex items-center gap-3"
+            size="sm"
+            onClick={exportUserDetailsAsPDF}
+          >
+            Export as PDF
+          </Button>
           </div>
         </div>
         <table className="w-full min-w-max table-auto text-left">
