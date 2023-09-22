@@ -1,4 +1,4 @@
-import { styled, useTheme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
 
@@ -68,3 +68,17 @@ export const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 
     }),
   }),
 );
+
+// Theme
+import { createTheme } from '@mui/material/styles';
+
+export const Theme = createTheme({
+  palette: {
+    primary: {
+      main: '#d50000',
+    },
+    secondary: {
+      main: '#d50000',
+    },
+  },
+});

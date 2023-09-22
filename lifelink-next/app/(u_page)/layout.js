@@ -6,9 +6,9 @@ import { UserSidebar } from './components/sidebar';
 export default function UserLayout({ children }) {
   return (
     <main className='bg-gray-200 p-4'>
-        <aside className='lg:fixed md:absoluite'>
+        {/* <aside className='lg:fixed md:absoluite'> */}
             <UserSidebar />
-        </aside>
+        {/* </aside> */}
         {children}
     </main>
   )

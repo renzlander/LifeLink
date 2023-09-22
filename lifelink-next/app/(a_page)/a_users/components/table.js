@@ -139,16 +139,16 @@ export function UsersTable() {
         </Typography>
       </CardHeader>
       <CardBody className="overflow-x-auto px-0">
-        <div className="mb-4 mr-4 flex justify-between items-center">
-          <div className="flex w-full shrink-0 gap-2 md:w-max">
-          <div className="w-full md:w-72">
-            <Input
-              label="Search"
-              icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
+        <div className="mb-4 mx-4 flex justify-between items-center">
+          <div className="flex w-full shrink-0 gap-2 justify-end">
+            <div className="w-full md:w-72">
+              <Input
+                label="Search"
+                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
             <Button className="flex items-center gap-3" size="sm">
               <ArrowDownTrayIcon strokeWidth={2} className="h-4 w-4" /> Download
             </Button>
