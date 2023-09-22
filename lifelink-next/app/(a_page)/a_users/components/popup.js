@@ -6,9 +6,18 @@ import {
   DialogBody,
   DialogFooter,
   Input,
+  Tooltip,
+  IconButton,
+  Select,
+  Option,
 } from "@material-tailwind/react";
+import {
+  TrashIcon,
+  PencilIcon,
+} from "@heroicons/react/24/solid";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
+import { Typography } from "@mui/material";
 
 export function AddBloodBagPopup({ user_id, handleOpen }) {
   const [open, setOpen] = useState(false);
@@ -106,6 +115,83 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
     </>
   );
 }
+
+export function EditPopUp() {
+  const [open, setOpen] = useState(false);
+  const bloodTypes = ['AB+', 'AB-', 'A+', 'A-', 'B+', 'B-', 'O+', 'O-'];
+
+  return (
+    <>
+      <Tooltip content="Edit User">
+        <IconButton variant="text" onClick={() => setOpen(true)}>
+          <PencilIcon className="h-4 w-4" />
+        </IconButton>
+      </Tooltip>
+      <Dialog open={open} handler={() => setOpen(false)}>
+        <DialogHeader>Delete User</DialogHeader>
+        <DialogBody divider className="flex flex-col gap-6">
+          <Input type="text" label="Donor Number" />
+          <Input type="text" label="Name" />
+          <Select label="Blood Type">
+            {bloodTypes.map(type => (
+              <Option key={type}>{type}</Option>
+            ))}
+          </Select>
+          <Input type="text" label="E-mail" />
+          <Input type="text" label="Mobile" />
+          <Input type="date" label="Date of Birth" />
+        </DialogBody>
+        <DialogFooter>
+          <Button
+            variant="gradient"
+            onClick={() => setOpen(false)}
+            className="mr-1"
+          >
+            <span>Cancel</span>
+          </Button>
+          <Button variant="gradient" color="red">
+            <span>Done</span>
+          </Button>
+        </DialogFooter>
+      </Dialog>
+    </>
+  );
+}
+
+export function DeletePopUp() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Tooltip content="Delete User">
+        <IconButton variant="text" onClick={() => setOpen(true)}>
+          <TrashIcon className="h-4 w-4 text-red-500" />
+        </IconButton>
+      </Tooltip>
+      <Dialog open={open} handler={() => setOpen(false)}>
+        <DialogHeader>Delete User</DialogHeader>
+        <DialogBody divider className="flex flex-col gap-6">
+          <Typography>
+            Are you sure you want to delete this user?
+          </Typography>
+        </DialogBody>
+        <DialogFooter>
+          <Button
+            variant="gradient"
+            onClick={() => setOpen(false)}
+            className="mr-1"
+          >
+            <span>Cancel</span>
+          </Button>
+          <Button variant="gradient" color="red">
+            <span>Delete</span>
+          </Button>
+        </DialogFooter>
+      </Dialog>
+    </>
+  );
+}
+
 function getCookie(name) {
   const cookies = document.cookie.split("; ");
   const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));

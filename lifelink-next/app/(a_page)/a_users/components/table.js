@@ -1,9 +1,4 @@
 import {
-  PencilIcon,
-  TrashIcon,
-} from "@heroicons/react/24/solid";
-import {
-  ArrowDownTrayIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import {
@@ -14,10 +9,9 @@ import {
   CardBody,
   CardFooter,
   IconButton,
-  Tooltip,
   Input,
 } from "@material-tailwind/react";
-import { AddBloodBagPopup } from "./popup"; // Import the AddBloodBagPopup component
+import { AddBloodBagPopup, DeletePopUp, EditPopUp } from "./popup";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
@@ -193,43 +187,27 @@ export function UsersTable() {
         </Typography>
       </CardHeader>
       <CardBody className="overflow-x-auto px-0">
-<<<<<<< HEAD
-        <div className="mb-4 mx-4 flex justify-between items-center">
-          <div className="flex w-full shrink-0 gap-2 justify-end">
+        <div className="mb-4 ml-4 mr-4 flex justify-end items-center">
+          <div className="flex w-full shrink-0 gap-2 md:w-max">
             <div className="w-full md:w-72">
               <Input
                 label="Search"
                 icon={<MagnifyingGlassIcon className="h-5 w-5" />}
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  const inputValue = e.target.value;
+                  setSearchQuery(inputValue);
+                  fetchData(inputValue); 
+                }}
               />
             </div>
-            <Button className="flex items-center gap-3" size="sm">
-              <ArrowDownTrayIcon strokeWidth={2} className="h-4 w-4" /> Download
+            <Button
+              className="flex items-center gap-3"
+              size="sm"
+              onClick={exportUserDetailsAsPDF}
+            >
+              Export as PDF
             </Button>
-=======
-        <div className="mb-4 mr-4 flex justify-between items-center">
-          <div className="flex w-full shrink-0 gap-2 md:w-max">
-          <div className="w-full md:w-72">
-          <Input
-            label="Search"
-            icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-            value={searchQuery}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              setSearchQuery(inputValue);
-              fetchData(inputValue); 
-            }}
-          />
-          </div>
-          <Button
-            className="flex items-center gap-3"
-            size="sm"
-            onClick={exportUserDetailsAsPDF}
-          >
-            Export as PDF
-          </Button>
->>>>>>> origin/r-antonio
           </div>
         </div>
         <table className="w-full min-w-max table-auto text-left">
@@ -260,9 +238,8 @@ export function UsersTable() {
             </tr>
           </thead>
           <tbody>
-            {
-            userDetails.map((user, index) => (
-              <tr key={user.donor_no}>
+            {userDetails.map((user, index) => (
+              <tr key={user.donor_no} className="border-b">
                 <td className={classes}>
                   <div className="flex items-center gap-3">
                     <Typography
@@ -320,24 +297,14 @@ export function UsersTable() {
                   </Typography>
                 </td>
                 <td className={classes}>
-                  <Tooltip content="Edit User">
-                    <IconButton variant="text">
-                      <PencilIcon className="h-4 w-4" />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip content="Delete User">
-                    <IconButton variant="text">
-                      <TrashIcon className="h-4 w-4 text-red-500" />
-                    </IconButton>
-                  </Tooltip>
+                  <EditPopUp />
+                  <DeletePopUp />
                 </td>
                 <td className={classes}>
                   <AddBloodBagPopup user_id={user.user_id} />
                 </td>
-                
               </tr>
-            ))
-            }
+            ))}
           </tbody>
         </table>
       </CardBody>
