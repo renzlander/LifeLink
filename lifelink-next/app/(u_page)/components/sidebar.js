@@ -1,3 +1,4 @@
+"use client";
 import {
     Card,
     Typography,
@@ -20,7 +21,7 @@ import {
   import { useRouter } from 'next/navigation';
 
   export function UserSidebar() {
-
+    const router = useRouter();
     const handleLogout = async () => {
       const token = getCookie("token");
       if (!token) {

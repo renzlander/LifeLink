@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Dialog,
@@ -13,11 +13,12 @@ import {
 } from "@material-tailwind/react";
 import {
   TrashIcon,
-  PencilIcon,
+  PencilIcon, 
 } from "@heroicons/react/24/solid";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { Typography } from "@mui/material";
+import { EyeIcon } from "@heroicons/react/24/outline";
 
 export function AddBloodBagPopup({ user_id, handleOpen }) {
   const [open, setOpen] = useState(false);
@@ -116,10 +117,134 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
   );
 }
 
-export function EditPopUp() {
+export function EditPopUp({ user, onUpdate }) {
   const [open, setOpen] = useState(false);
+  const [editedUser, setEditedUser] = useState({ ...user });
   const bloodTypes = ['AB+', 'AB-', 'A+', 'A-', 'B+', 'B-', 'O+', 'O-'];
+  const [errorMessage, setErrorMessage] = useState('');
 
+  const [regionList, setRegionList] = useState([]);
+  const [selectedRegion, setSelectedRegion] = useState('');
+  const [provinceList, setProvinceList] = useState([]);
+  const [selectedProvince, setSelectedProvince] = useState('');
+  const [municipalityList, setMunicipalityList] = useState([]);
+  const [selectedMunicipality, setSelectedMunicipality] = useState('');
+  const [barangayList, setBarangayList] = useState([]);
+  const [selectedBarangay, setSelectedBarangay] = useState('');
+
+  useEffect(() => {
+    // Fetch region data
+    axios.get(`${laravelBaseUrl}/api/address/get-regions`)
+      .then((response) => {
+        setRegionList(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching regions:', error);
+      });
+  }, []);
+
+  useEffect(() => {
+    setSelectedRegion(user.region || '');
+    setSelectedProvince(user.province || '');
+    setSelectedMunicipality(user.municipality || '');
+    setSelectedBarangay(user.barangay || '');
+  }, [user]);
+
+  useEffect(() => {
+    // Fetch province data based on the selected region
+    if (selectedRegion) {
+      const apiUrl = `${laravelBaseUrl}/api/address/get-provinces?regCode=${selectedRegion}`;
+      
+      axios.post(apiUrl)
+        .then((response) => {
+          setProvinceList(response.data);
+        })
+        .catch((error) => {
+          console.error('Error fetching provinces:', error);
+        });
+    }
+  }, [selectedRegion]);
+
+  useEffect(() => {
+    // Fetch municipality data based on the selected province
+    if (selectedProvince) {
+      axios.post(`${laravelBaseUrl}/api/address/get-municipalities?provCode=${selectedProvince}`)
+        .then((response) => {
+          setMunicipalityList(response.data);
+        })
+        .catch((error) => {
+          console.error('Error fetching municipalities:', error);
+        });
+    }
+  }, [selectedProvince]);
+
+  useEffect(() => {
+    // Fetch barangay data based on the selected municipality
+    if (selectedMunicipality) {
+      axios.post(`${laravelBaseUrl}/api/address/get-barangays?citymunCode=${selectedMunicipality}`)
+        .then((response) => {
+          setBarangayList(response.data);
+        })
+        .catch((error) => {
+          console.error('Error fetching barangays:', error);
+        });
+    }
+  }, [selectedMunicipality]);
+
+  useEffect(() => {
+    // Initialize the selected values with user data when the component mounts
+    setSelectedRegion(editedUser.region);
+    setSelectedProvince(editedUser.province);
+    setSelectedMunicipality(editedUser.municipality);
+    setSelectedBarangay(editedUser.barangay);
+  }, [editedUser]);
+
+  const handleEditUser = async () => {
+    try {
+      // Prepare data for the PUT request
+      const data = {
+        ...editedUser,
+        user_id: user.user_id, 
+        region: selectedRegion,
+        province: selectedProvince,
+        municipality: selectedMunicipality,
+        barangay: selectedBarangay,
+      };
+  
+      const token = getCookie("token");
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+      // Send PUT request to update-user API
+      const response = await axios.put(`${laravelBaseUrl}/api/edit-profile`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.status === 'success') {
+        // User data updated successfully
+        window.location.reload();
+        console.log('User data updated successfully');
+
+        // Notify the parent component about the update
+        onUpdate({ ...editedUser, ...data }); // Merge the edited data with the response data
+
+        // Close the dialog
+        setOpen(false);
+      } else {
+        console.error('Error updating user data:', response.data.message);
+        // Display an error message to the user
+        // You can set up a state variable to manage error messages and display them in your UI
+      }
+    } catch (error) {
+      console.error('Error updating user data:', error);
+      // Display an error message to the user
+      // You can set up a state variable to manage error messages and display them in your UI
+    }
+  };
+  
   return (
     <>
       <Tooltip content="Edit User">
@@ -128,63 +253,204 @@ export function EditPopUp() {
         </IconButton>
       </Tooltip>
       <Dialog open={open} handler={() => setOpen(false)}>
-        <DialogHeader>Delete User</DialogHeader>
+        <DialogHeader>Edit User</DialogHeader>
         <DialogBody divider className="flex flex-col gap-6">
-          <Input type="text" label="Donor Number" />
-          <Input type="text" label="Name" />
-          <Select label="Blood Type">
-            {bloodTypes.map(type => (
-              <Option key={type}>{type}</Option>
-            ))}
-          </Select>
-          <Input type="text" label="E-mail" />
-          <Input type="text" label="Mobile" />
-          <Input type="date" label="Date of Birth" />
-        </DialogBody>
-        <DialogFooter>
-          <Button
-            variant="gradient"
-            onClick={() => setOpen(false)}
-            className="mr-1"
+          <Input
+            type="text"
+            label="First Name"
+            value={editedUser.first_name}
+            onChange={(e) => setEditedUser({ ...editedUser, first_name: e.target.value })}
+          />
+          <Input
+            type="text"
+            label="Middle Name"
+            value={editedUser.middle_name}
+            onChange={(e) => setEditedUser({ ...editedUser, middle_name: e.target.value })}
+          />
+          <Input
+            type="text"
+            label="Last Name"
+            value={editedUser.last_name}
+            onChange={(e) => setEditedUser({ ...editedUser, last_name: e.target.value })}
+          />
+          <Input
+            type="text"
+            label="Email"
+            value={editedUser.email}
+            onChange={(e) => setEditedUser({ ...editedUser, email: e.target.value })}
+          />
+          <Input
+            type="text"
+            label="Mobile"
+            value={editedUser.mobile}
+            onChange={(e) => setEditedUser({ ...editedUser, mobile: e.target.value })}
+          />
+          <Select
+            label="Sex"
+            value={editedUser.sex} // Assuming `editedUser.sex` contains the user's sex
+            onChange={(value) => setEditedUser({ ...editedUser, sex: value })}
           >
-            <span>Cancel</span>
-          </Button>
-          <Button variant="gradient" color="red">
-            <span>Done</span>
-          </Button>
-        </DialogFooter>
-      </Dialog>
-    </>
-  );
-}
+            <Option value="Male">Male</Option>
+            <Option value="Female">Female</Option>
+          </Select>
+          <Input
+            type="date"
+            label="Date of Birth"
+            value={editedUser.dob}
+            onChange={(e) => setEditedUser({ ...editedUser, dob: e.target.value })}
+          />
+          <Select
+            label="Blood Type"
+            value={editedUser.blood_type}
+            onChange={(value) => setEditedUser({ ...editedUser, blood_type: value })}
+            >
+              {bloodTypes.map(type => (
+                <Option key={type} value={type}>
+                  {type}
+                </Option>
+              ))}
+            </Select>
+            <Input
+              type="text"
+              label="Street"
+              value={editedUser.street}
+              onChange={(e) => setEditedUser({ ...editedUser, street: e.target.value })}
+            />
+            <Select
+              label="Region"
+              value={selectedRegion}
+              onChange={(value) => setSelectedRegion(value)}
+            >
+              {regionList.map((region) => (
+                <Option
+                  key={region.regCode}
+                  value={region.regCode}
+                >
+                  {region.regDesc}
+                </Option>
+              ))}
+            </Select>
+            <Select
+              label="Province"
+              value={selectedProvince}
+              onChange={(value) => setSelectedProvince(value)}
+            >
+              {provinceList.map((province) => (
+                <Option
+                  key={province.provCode}
+                  value={province.provCode}
+                >
+                  {province.provDesc}
+                </Option>
+              ))}
+            </Select>
+            <Select
+              label="Municipality"
+              value={selectedMunicipality}
+              onChange={(value) => setSelectedMunicipality(value)}
+            >
+              {municipalityList.map((municipality) => (
+                <Option
+                  key={municipality.citymunCode}
+                  value={municipality.citymunCode}
+                >
+                  {municipality.citymunDesc}
+                </Option>
+              ))}
+            </Select>
+            <Select
+              label="Barangay"
+              value={selectedBarangay}
+              onChange={(value) => setSelectedBarangay(value)}
+            >
+              {barangayList.map((barangay) => (
+                <Option
+                  key={barangay.brgyCode}
+                  value={barangay.brgyCode}
+                >
+                  {barangay.brgyDesc}
+                </Option>
+              ))}
+            </Select>
+          </DialogBody>
+          <DialogFooter>
+            <Button
+              variant="gradient"
+              onClick={() => setOpen(false)}
+              className="mr-1"
+            >
+              <span>Cancel</span>
+            </Button>
+            <Button variant="gradient" color="red" onClick={handleEditUser}>
+              <span>Done</span>
+            </Button>
+          </DialogFooter>
+        </Dialog>
+      </>
+    );
+  }
+  
 
-export function DeletePopUp() {
+export function ViewPopUp({user}) {
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <Tooltip content="Delete User">
+      <Tooltip content="View User">
         <IconButton variant="text" onClick={() => setOpen(true)}>
-          <TrashIcon className="h-4 w-4 text-red-500" />
+          <EyeIcon className="h-4 w-4" />
         </IconButton>
       </Tooltip>
       <Dialog open={open} handler={() => setOpen(false)}>
-        <DialogHeader>Delete User</DialogHeader>
-        <DialogBody divider className="flex flex-col gap-6">
+        <DialogHeader>View User</DialogHeader>
+        <DialogBody divider className="flex flex-col gap-4">
           <Typography>
-            Are you sure you want to delete this user?
+            <strong>First Name:</strong> {user.first_name}
           </Typography>
+          <Typography>
+            <strong>Last Name:</strong> {user.last_name}
+          </Typography>
+          <Typography>
+            <strong>Number of Donation:</strong> {user.donate_qty}
+          </Typography>
+          <Typography>
+            <strong>Badge:</strong> {user.badge}
+          </Typography>
+          <Typography>
+            <strong>Email:</strong> {user.email}
+          </Typography>
+          <Typography>
+            <strong>Mobile:</strong> {user.mobile}
+          </Typography>
+          <Typography>
+            <strong>Sex:</strong> {user.sex}
+          </Typography>
+          <Typography>
+            <strong>Date of Birth:</strong> {user.dob}
+          </Typography>
+          <Typography>
+            <strong>Blood Type:</strong> {user.blood_type}
+          </Typography>
+          <Typography>
+            <strong>Street:</strong> {user.street}
+          </Typography>
+          <Typography>
+            <strong>Region:</strong> {user.region}
+          </Typography>
+          <Typography>
+            <strong>Province:</strong> {user.province}
+          </Typography>
+          <Typography>
+            <strong>Municipality:</strong> {user.municipality}
+          </Typography>
+          <Typography>
+            <strong>Barangay:</strong> {user.barangay}
+          </Typography>
+          {/* Add other user details as needed */}
         </DialogBody>
         <DialogFooter>
-          <Button
-            variant="gradient"
-            onClick={() => setOpen(false)}
-            className="mr-1"
-          >
-            <span>Cancel</span>
-          </Button>
-          <Button variant="gradient" color="red">
-            <span>Delete</span>
+          <Button variant="gradient" onClick={() => setOpen(false)}>
+            <span>Close</span>
           </Button>
         </DialogFooter>
       </Dialog>

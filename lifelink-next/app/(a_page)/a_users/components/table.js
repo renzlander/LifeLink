@@ -10,8 +10,9 @@ import {
   CardFooter,
   IconButton,
   Input,
+  Spinner ,
 } from "@material-tailwind/react";
-import { AddBloodBagPopup, DeletePopUp, EditPopUp } from "./popup";
+import { AddBloodBagPopup, ViewPopUp, EditPopUp } from "./popup";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
@@ -175,8 +176,15 @@ export function UsersTable() {
     return 0;
   });
 
+  const handleUpdateUser = (updatedUserData) => {
+    // Implement your update logic here, e.g., make an API call to update the user data
+    // You can use the updatedUserData parameter to access the updated user data
+    console.log('Updated user data:', updatedUserData);
+  };
+  
+
   if (loading) {
-    return <p>Loading...</p>;
+    return <p ><Spinner color="red" className="h-16 w-16"/>Loading...</p>;
   }
 
   return (
@@ -282,7 +290,7 @@ export function UsersTable() {
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="font-normal opacity-70"
+                    className="font-normal"
                   >
                     {user.mobile}
                   </Typography>
@@ -297,8 +305,8 @@ export function UsersTable() {
                   </Typography>
                 </td>
                 <td className={classes}>
-                  <EditPopUp />
-                  <DeletePopUp />
+                  <ViewPopUp user={user}/>
+                  <EditPopUp user={user} onUpdate={handleUpdateUser} />
                 </td>
                 <td className={classes}>
                   <AddBloodBagPopup user_id={user.user_id} />

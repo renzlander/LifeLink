@@ -50,7 +50,7 @@ export function RegisterStepper() {
       <div className="flex justify-center items-center">
       {stepsContent[activeStep]}
       </div>
-      <div className="mt-8 flex justify-between">
+      {/* <div className="mt-8 flex justify-between">
         <Button onClick={handlePrev} disabled={isFirstStep}>
           Previous
         </Button>
@@ -59,7 +59,7 @@ export function RegisterStepper() {
         ) : (
           <Button onClick={handleNextStep}>Next</Button>
         )}
-      </div>
+      </div> */}
     </div>
   );
 }

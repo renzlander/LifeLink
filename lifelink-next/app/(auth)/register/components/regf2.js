@@ -11,7 +11,7 @@ import {
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 
-export function RegF2() {
+export function RegF2({onNextStep}) {
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
   const [middle_name, setMiddleName] = useState("");
@@ -20,8 +20,10 @@ export function RegF2() {
   const [street, setStreet] = useState("");
   const [postalcode, setPostalCode] = useState("");
   const [occupation, setOccupation] = useState("");
-  // const [dob, setDob] = useState("");
-  const dob = '2002-02-08';
+  const [dob, setDob] = useState("");
+  const [isChecked, setIsChecked] = useState(false);
+  const [errorMessage, setErrorMessage] = useState({ dob: []});
+
   const bloodTypes = ["AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
 
   const [regionList, setRegionList] = useState([]);
@@ -120,12 +122,35 @@ export function RegF2() {
 
       if (response.data.status === 'success') {
         document.cookie = 'user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        onNextStep();
+
       }
       console.log(response);
     } catch (error) {
-      console.log(error);
+      if (error.response && error.response.data && error.response.data.errors) {
+        const { errors } = error.response.data;
+        const dobErrors = errors.dob || [];
+        setErrorMessage({ dob: dobErrors });
+      } else {
+        setErrorMessage({ dob: [error.message] });
+      }
     }
   };
+
+  const isFormValid =
+  first_name !== "" &&
+  last_name !== "" &&
+  occupation !== "" &&
+  street !== "" &&
+  postalcode !== "" &&
+  sex !== "" &&
+  blood_type !== "" &&
+  selectedRegion.regionName !== "Region" &&
+  selectedProvince.provinceName !== "Province" &&
+  selectedMunicipality.municipalityName !== "Municipality" &&
+  selectedBarangay.barangayName !== "Barangay" &&
+  dob !== "";
+
 
     return (
       <Card className='mt-6 flex justify-center items-center' color="transparent" shadow={false}>
@@ -195,6 +220,7 @@ export function RegF2() {
                     setOccupation(newValue);
                   }}
                 />
+              <div className={`relative ${errorMessage.dob.length > 0 ? "mb-1" : ""}`}>
                 <Input 
                   type='date'
                   size="lg"
@@ -202,15 +228,22 @@ export function RegF2() {
                   required 
                   value={dob}
                   onChange={(e) => setDob(e.target.value)} 
+                  className={`w-full ${errorMessage.dob.length > 0 ? "border-red-500" : ""}`}
                 />
+                {errorMessage.dob.length > 0 && (
+                  <div className="error-message text-red-600 text-sm">
+                    {errorMessage.dob[0]}
+                  </div>
+                )}
+                </div>
               </div>
               <div className="mb-4 flex grow gap-6">
-              <Select onChange={handleSexChange} label="Sex" value={sex}>
+              <Select onChange={handleSexChange} label="Sex" value={sex} required>
                 <Option value="Male">Male</Option>
                 <Option value="Female">Female</Option>
               </Select>
                 
-               <Select onChange={handleBloodChange} label="Blood Type" value={blood_type}>
+               <Select onChange={handleBloodChange} label="Blood Type" value={blood_type} required>
                 {bloodTypes.map((blood) => (
                   <Option key={blood} value={blood}>
                     {blood}
@@ -334,27 +367,21 @@ export function RegF2() {
                 />
               </div>
               <div className="mb-4 flex justify-center grow gap-6">
-                <Checkbox
-                  label={
-                    <Typography
-                      variant="small"
-                      color="gray"
-                      className="flex items-center font-normal"
-                    >
-                      I agree to the
-                      <a
-                        href="#"
-                        className="font-medium transition-colors text-red-600 hover:text-red-800"
-                      >
-                        &nbsp;Terms and Conditions
-                      </a>
-                    </Typography>
-                  }
-                  containerProps={{ className: "-ml-2.5" }}
-                />
+              <Checkbox
+                label={
+                  <Typography variant="body2" color="textSecondary">
+                    I agree to the{" "}
+                    <a href="#" className="font-medium text-red-600 hover:text-red-800">
+                      Terms and Conditions
+                    </a>
+                  </Typography>
+                }
+                checked={isChecked}
+                onChange={(event) => setIsChecked(event.target.checked)}
+              />
               </div>
               <div className="flex justify-center">
-                <Button type="submit">NEXT</Button>
+                <Button type="submit" variant="contained" className='w-full' disabled={!isChecked || !isFormValid} >NEXT</Button>
               </div>
           </form>
 
