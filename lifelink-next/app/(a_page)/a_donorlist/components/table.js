@@ -184,11 +184,11 @@ export function DonorTable(){
     return 0;
   });
 
-  const handleUpdateDonor = (updatedDonorData) => {
-    // Implement your update logic here, e.g., make an API call to update the user data
-    // You can use the updatedUserData parameter to access the updated user data
-    console.log('Updated user data:', updatedUserData);
-  };
+  // const handleUpdateDonor = (updatedDonorData) => {
+  //   // Implement your update logic here, e.g., make an API call to update the user data
+  //   // You can use the updatedUserData parameter to access the updated user data
+  //   console.log('Updated user data:', updatedUserData);
+  // };
 
   if (loading) {
     return <p ><Spinner color="red" className="h-16 w-16"/>Loading...</p>;
