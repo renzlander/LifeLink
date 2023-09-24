@@ -9,6 +9,7 @@ import {
   Typography,
   CardBody,
 } from "@material-tailwind/react";
+import CollapseDefault from "./components/collapse";
 
 export default function Home() {
   const router = useRouter();
@@ -18,17 +19,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col py-2 ml-72">
-      <Button onClick={toggleOpen}>Open Collapse</Button>
-      <Collapse open={open}>
-        <Card className="my-4 mx-auto w-8/12">
-          <CardBody>
-            <Typography>
-              Use our Tailwind CSS collapse for your website. You can use if for
-              accordion, collapsible items and much more.
-            </Typography>
-          </CardBody>
-        </Card>
-      </Collapse>
+      <CollapseDefault />
     </div>
   )
 }

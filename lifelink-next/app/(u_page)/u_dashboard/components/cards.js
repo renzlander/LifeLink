@@ -21,10 +21,10 @@ import React from "react";
     }
 
     return (
-      <Card className="mt-6 w-60 h-full">
-        <div className="flex mb-5">
+      <Card className="mt-6 w-72 h-full">
+        <div className="flex mb-2">
           <CardHeader color="red" className="relative flex justify-center items-center h-20 w-20">
-            <Typography variant="h2" color="white" className="mb-2">
+            <Typography variant="h4" color="white" className="mb-2">
               {bloodType}
             </Typography>
           </CardHeader>
@@ -34,7 +34,7 @@ import React from "react";
             </Typography>
           </CardBody>
         </div>
-        <CardFooter className="border-t flex justify-center items-center">
+        <CardFooter className="border-t-2 flex justify-center items-center">
           <Typography variant="p" color="blue-gray" className={`${colorClass}`}>
             {legend}
           </Typography>

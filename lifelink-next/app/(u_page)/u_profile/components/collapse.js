@@ -13,7 +13,7 @@ export default function CollapseDefault() {
   const toggleOpen = () => setOpen((cur) => !cur);
  
   return (
-    <>
+    <div>
       <Button onClick={toggleOpen}>Open Collapse</Button>
       <Collapse open={open}>
         <Card className="my-4 mx-auto w-8/12">
@@ -25,6 +25,6 @@ export default function CollapseDefault() {
           </CardBody>
         </Card>
       </Collapse>
-    </>
+    </div>
   );
 }

@@ -9,16 +9,18 @@ import {
     Chip,
   } from "@material-tailwind/react";
   import {
-    PresentationChartBarIcon,
-    ShoppingBagIcon,
-    UserCircleIcon,
-    Cog6ToothIcon,
-    InboxIcon,
-    PowerIcon,
+    HomeIcon,
+    ClockIcon,
+    GlobeAltIcon,
+    TruckIcon,
+    UserIcon,
+    ArrowLeftOnRectangleIcon,
   } from "@heroicons/react/24/solid";
   import axios from "axios";
+  import Image from "next/image";
   import { laravelBaseUrl } from "@/app/variables";
   import { useRouter } from 'next/navigation';
+  import Link from "next/link";
 
   export function UserSidebar() {
     const router = useRouter();
@@ -42,50 +44,35 @@ import {
       }
     };
 
+    const menuItems = [
+      { icon: HomeIcon, text: "Dashboard", link: './u_dashboard' },
+      { icon: ClockIcon, text: "History", link: './u_history' },
+      { icon: GlobeAltIcon, text: "Network", link: './u_network' },
+      { icon: TruckIcon, text: "Journey", link: './u_journey' },
+      { icon: UserIcon, text: "Profile", link: './u_profile' },
+      { icon: ArrowLeftOnRectangleIcon, text: "Log Out", link: '#', onClick: handleLogout },
+    ];
+
     return (
-      <Card className="fixed h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl bg-red-900 shadow-blue-gray-900/5">
-        <div className="mb-2 p-4">
+      <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl bg-red-900 shadow-blue-gray-900/5">
+        <div className="flex flex-col justify-center items-center mb-2 p-4 border-b border-gray-200">
+          <Link href='./u_profile'>
+            <Image src="/patient_icon.png" width={80} height={80} className="mb-4" />
+          </Link>
+          <Typography className="text-gray-100 font-bold text-lg">Ryan Jay Antonio</Typography>
+          <Typography className="text-gray-100 font-light text-sm">XXXXXXXXX</Typography>
         </div>
         <List className="text-white">
-          <ListItem>
-            <ListItemPrefix>
-              <PresentationChartBarIcon className="h-5 w-5" />
-            </ListItemPrefix>
-            Dashboard
-          </ListItem>
-          <ListItem>
-            <ListItemPrefix>
-              <ShoppingBagIcon className="h-5 w-5" />
-            </ListItemPrefix>
-            History
-          </ListItem>
-          <ListItem>
-            <ListItemPrefix>
-              <InboxIcon className="h-5 w-5" />
-            </ListItemPrefix>
-            Network
-            <ListItemSuffix>
-              <Chip value="14" size="sm" color="white" className="rounded-full" />
-            </ListItemSuffix>
-          </ListItem>
-          <ListItem>
-            <ListItemPrefix>
-              <UserCircleIcon className="h-5 w-5" />
-            </ListItemPrefix>
-            Journey
-          </ListItem>
-          <ListItem>
-            <ListItemPrefix>
-              <Cog6ToothIcon className="h-5 w-5" />
-            </ListItemPrefix>
-            Profile
-          </ListItem>
-          <ListItem onClick={handleLogout}>
-            <ListItemPrefix>
-              <PowerIcon className="h-5 w-5" />
-            </ListItemPrefix>
-            Log Out
-          </ListItem>
+          {menuItems.map((item, index) => (
+            <Link href={item.link} key={index}>
+              <ListItem onClick={item.onClick}>
+                <ListItemPrefix>
+                  {<item.icon className="h-5 w-5" />}
+                </ListItemPrefix>
+                {item.text}
+              </ListItem>
+            </Link>
+          ))}
         </List>
       </Card>
     );
