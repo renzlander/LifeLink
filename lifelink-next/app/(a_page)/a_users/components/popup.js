@@ -32,6 +32,7 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
   const [part1, setPart1] = useState("");
   const [part2, setPart2] = useState("");
   const [part3, setPart3] = useState("");
+  const srNumber = `${part1}${part2}${part3}`;
 
   const handleAddBloodBag = async () => {
     try {
@@ -44,7 +45,7 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
       // Prepare data for the POST request
       const data = {
         user_id,
-        serial_no: serialNumber,
+        serial_no: srNumber,
         venue: venue,
         date_donated: dateDonated,
         bled_by: bledBy,
@@ -61,7 +62,18 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
           },
         }
       ).catch((error) => {
-        setGeneralErrorMessage(error.response.data.message);
+        console.error("Unknown error occurred:", error);
+        if (error.response && error.response.data && error.response.data.errors) {
+          const { errors } = error.response.data;
+          const serialNumberError = errors.serial_no || [];
+          const dateError = errors.date_donated || [];
+          const bledByError = errors.bled_by || [];
+          const venueError = errors.venue || [];
+          setErrorMessage({ serial_no: serialNumberError, date_donated: dateError, bled_by: bledByError, venue: venueError });
+        } else {
+          setGeneralErrorMessage(error.response.data.message);
+          setErrorMessage({ serial_no: [], date_donated: [], bled_by: [], venue: [] });
+        }
       });
     
       if (response.data.status === "success") {
@@ -81,7 +93,6 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
     }
   };
 
-  const srNumber = `${part1} - ${part2} - ${part3}`;
 
   return (
     <>
@@ -99,54 +110,57 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
         )}
 
         <DialogBody divider className="flex flex-col gap-6">
-          <div className={`relative ${errorMessage.serial_no.length > 0 ? "mb-1" : ""} flex gap-3 items-center`}>
-            <Input
-              label="XXXX"
-              maxLength={4}
-              value={part1}
-              onChange={(e) => {
-                const newValue = e.target.value;
-                if (!/^[0-9]*$/.test(newValue)) {
-                  return;
-                }
-                setPart1(newValue);
-              }}
-              containerProps={{ className: "min-w-[75px]" }}
-            />
-            <Typography>-</Typography>
-            <Input
-              label="XXXXXX"
-              maxLength={6}
-              value={part2}
-              onChange={(e) => {
-                const newValue = e.target.value;
-                if (!/^[0-9]*$/.test(newValue)) {
-                  return;
-                }
-                setPart2(newValue);
-              }}
-              containerProps={{ className: "min-w-[100px]" }}
-            />
-            <Typography>-</Typography>
-            <Input
-              label="X"
-              maxLength={1}
-              value={part3}
-              onChange={(e) => {
-                const newValue = e.target.value;
-                if (!/^[0-9]*$/.test(newValue)) {
-                  return;
-                }
-                setPart3(newValue);
-              }}
-              containerProps={{ className: "min-w-[25px]" }}
-            />
+          <div>
+            <div className={`relative flex gap-3 items-center`}>
+              <Input
+                label="XXXX"
+                maxLength={4}
+                value={part1}
+                onChange={(e) => {
+                  const newValue = e.target.value;
+                  if (!/^[0-9]*$/.test(newValue)) {
+                    return;
+                  }
+                  setPart1(newValue);
+                }}
+                containerProps={{ className: "min-w-[75px]" }}
+              />
+              <Typography>-</Typography>
+              <Input
+                label="XXXXXX"
+                maxLength={6}
+                value={part2}
+                onChange={(e) => {
+                  const newValue = e.target.value;
+                  if (!/^[0-9]*$/.test(newValue)) {
+                    return;
+                  }
+                  setPart2(newValue);
+                }}
+                containerProps={{ className: "min-w-[100px]" }}
+              />
+              <Typography>-</Typography>
+              <Input
+                label="X"
+                maxLength={1}
+                value={part3}
+                onChange={(e) => {
+                  const newValue = e.target.value;
+                  if (!/^[0-9]*$/.test(newValue)) {
+                    return;
+                  }
+                  setPart3(newValue);
+                }}
+                containerProps={{ className: "min-w-[25px]" }}
+              />
+            </div>
             {errorMessage.serial_no.length > 0 && (
-              <div className="error-message text-red-600 text-sm">
+              <div className="error-message text-red-600 text-sm mt-1">
                 {errorMessage.serial_no[0]}
               </div>
             )}
           </div>
+
           <div className={`relative ${errorMessage.bled_by.length > 0 ? "mb-1" : ""}`}>
             <Input
               label="Bled by"
