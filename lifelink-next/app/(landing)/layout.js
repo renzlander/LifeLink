@@ -4,11 +4,11 @@ import { NavbarIndex } from './components/navbar';
 
 export default function RootLayout({ children }) {
   return (
-      <body className='bg_lifelink'>
-        <nav className='px-2 w-full'>
+    <body className='bg_lifelink'>
+      <nav className='px-2'>
         <NavbarIndex />
-        </nav>
-        {children}
-      </body>
+      </nav>
+      {children}
+    </body>
   )
 }

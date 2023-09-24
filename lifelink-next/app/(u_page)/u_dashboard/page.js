@@ -58,7 +58,7 @@ export default function Home() {
 
 
   return (
-    <div className="flex min-h-screen flex-col py-2">
+    <div className="flex min-h-screen max-w-full flex-col py-2">
       <div className='flex flex-col gap-y-3 w-full'>
         <div className='flex gap-3'>
           {bloodListCards.slice(0, 4)}

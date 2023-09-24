@@ -75,7 +75,7 @@ export function NavbarIndex() {
   );
  
   return (
-    <Navbar className="my-2 mx-auto w-full py-2 px-4 lg:px-8 lg:py-4">
+    <Navbar className="my-2 mx-auto min-w-full py-2 px-4 lg:px-8 lg:py-4">
       <div className="container mx-auto flex items-center justify-between text-blue-gray-900">
         <Image src="/logo_lifelink.png" alt="Logo" width={100} height={50}/>
         <div className="hidden lg:block">{navList}</div>
