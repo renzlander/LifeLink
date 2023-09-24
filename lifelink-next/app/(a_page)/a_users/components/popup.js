@@ -404,49 +404,75 @@ export function ViewPopUp({user}) {
       <Dialog open={open} handler={() => setOpen(false)}>
         <DialogHeader>View User</DialogHeader>
         <DialogBody divider className="flex flex-col gap-4">
-          <Typography>
-            <strong>First Name:</strong> {user.first_name}
+          <Typography className="font-bold">
+            NAME:
           </Typography>
-          <Typography>
-            <strong>Last Name:</strong> {user.last_name}
+          <div className="flex gap-10">
+            <Typography>
+              <strong>First Name:</strong> {user.first_name}
+            </Typography>
+            <Typography>
+              <strong>Last Name:</strong> {user.last_name}
+            </Typography>
+          </div>
+          <Typography className="font-bold">
+            DONOR INFO:
           </Typography>
-          <Typography>
-            <strong>Number of Donation:</strong> {user.donate_qty}
+          <div className="flex gap-10">
+            <Typography>
+              <strong>Number of Donation:</strong> {user.donate_qty}
+            </Typography>
+            <Typography>
+              <strong>Badge:</strong> {user.badge}
+            </Typography>
+          </div>
+          <Typography className="font-bold">
+            CONTACT INFO:
           </Typography>
-          <Typography>
-            <strong>Badge:</strong> {user.badge}
+          <div className="flex gap-10">
+            <Typography>
+              <strong>Email:</strong> {user.email}
+            </Typography>
+            <Typography>
+              <strong>Mobile:</strong> {user.mobile}
+            </Typography>
+          </div>
+          <Typography className="font-bold">
+            OTHER INFO:
           </Typography>
-          <Typography>
-            <strong>Email:</strong> {user.email}
+          <div className="flex gap-10">
+            <Typography>
+              <strong>Sex:</strong> {user.sex}
+            </Typography>
+            <Typography>
+              <strong>Date of Birth:</strong> {user.dob}
+            </Typography>
+            <Typography>
+              <strong>Blood Type:</strong> {user.blood_type}
+            </Typography>
+          </div>
+          <Typography className="font-bold">
+            ADDRESS:
           </Typography>
-          <Typography>
-            <strong>Mobile:</strong> {user.mobile}
-          </Typography>
-          <Typography>
-            <strong>Sex:</strong> {user.sex}
-          </Typography>
-          <Typography>
-            <strong>Date of Birth:</strong> {user.dob}
-          </Typography>
-          <Typography>
-            <strong>Blood Type:</strong> {user.blood_type}
-          </Typography>
-          <Typography>
-            <strong>Street:</strong> {user.street}
-          </Typography>
-          <Typography>
-            <strong>Region:</strong> {user.region}
-          </Typography>
-          <Typography>
-            <strong>Province:</strong> {user.province}
-          </Typography>
-          <Typography>
-            <strong>Municipality:</strong> {user.municipality}
-          </Typography>
-          <Typography>
-            <strong>Barangay:</strong> {user.barangay}
-          </Typography>
-          {/* Add other user details as needed */}
+          <div className="flex gap-10">
+            <Typography>
+              <strong>Street:</strong> {user.street}
+            </Typography>
+            <Typography>
+              <strong>Barangay:</strong> {user.barangay}
+            </Typography>
+            <Typography>
+              <strong>Municipality:</strong> {user.municipality}
+            </Typography>
+          </div>
+          <div className="flex gap-10">
+            <Typography>
+              <strong>Region:</strong> {user.region}
+            </Typography>
+            <Typography>
+              <strong>Province:</strong> {user.province}
+            </Typography>
+          </div>
         </DialogBody>
         <DialogFooter>
           <Button variant="gradient" onClick={() => setOpen(false)}>
