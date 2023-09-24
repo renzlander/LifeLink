@@ -26,6 +26,8 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
   const [bledBy, setBledBy] = useState("");
   const [venue, setVenue] = useState("");
   const [dateDonated, setDateDonated] = useState("");
+  const [errorMessage, setErrorMessage] = useState({ serial_no: [], date_donated: [], bled_by: [],  venue: [] });
+  const [generalErrorMessage, setGeneralErrorMessage] = useState("");
 
   const handleAddBloodBag = async () => {
     try {
@@ -34,7 +36,7 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
         router.push("/login");
         return;
       }
-
+  
       // Prepare data for the POST request
       const data = {
         user_id,
@@ -43,6 +45,7 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
         date_donated: dateDonated,
         bled_by: bledBy,
       };
+      console.log("Before Axios POST request");
 
       // Send POST request to add-bloodbag API
       const response = await axios.post(
@@ -53,21 +56,27 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
             Authorization: `Bearer ${token}`,
           },
         }
-      );
-
+      ).catch((error) => {
+        setGeneralErrorMessage(error.response.data.message);
+      });
+    
       if (response.data.status === "success") {
         // Blood bag added successfully, you can handle this accordingly
         console.log("Blood bag added successfully");
-      } else {
-        console.error("Error adding blood bag:", response.data.message);
+      }  else if (response.data.status === "error") {
+        if (response.data.message) {
+          setGeneralErrorMessage(response.data.message);
+        } else {
+          console.error("Unknown error occurred:", response.data);
+        }
       }
-
       // Close the dialog
       setOpen(false);
     } catch (error) {
-      console.error("Error adding blood bag:", error);
+      console.error("Unknown error occurred:", error);
     }
   };
+  
 
   return (
     <>
@@ -76,28 +85,64 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
       </Button>
       <Dialog open={open} handler={() => setOpen(false)}>
         <DialogHeader>Add Blood Bag</DialogHeader>
+        {generalErrorMessage && (
+          <div className="mt-4 text-center bg-red-100 p-2 rounded-lg">
+            <Typography color="red" className="text-sm font-semibold">
+              {generalErrorMessage}
+            </Typography>
+          </div>
+        )}
+
         <DialogBody divider className="flex flex-col gap-6">
-          <Input
-            label="Serial Number"
-            value={serialNumber}
-            onChange={(e) => setSerialNumber(e.target.value)}
-          />
-          <Input
-            label="Bled by"
-            value={bledBy}
-            onChange={(e) => setBledBy(e.target.value)}
-          />
-          <Input
-            label="Venue"
-            value={venue}
-            onChange={(e) => setVenue(e.target.value)}
-          />
-          <Input
-            type="date"
-            label="Date"
-            value={dateDonated}
-            onChange={(e) => setDateDonated(e.target.value)}
-          />
+          <div className={`relative ${errorMessage.serial_no.length > 0 ? "mb-1" : ""}`}>
+            <Input
+              label="Serial Number"
+              value={serialNumber}
+              onChange={(e) => setSerialNumber(e.target.value)}
+            />
+            {errorMessage.serial_no.length > 0 && (
+              <div className="error-message text-red-600 text-sm">
+                {errorMessage.serial_no[0]}
+              </div>
+            )}
+        </div>
+          <div className={`relative ${errorMessage.bled_by.length > 0 ? "mb-1" : ""}`}>
+            <Input
+              label="Bled by"
+              value={bledBy}
+              onChange={(e) => setBledBy(e.target.value)}
+            />
+            {errorMessage.bled_by.length > 0 && (
+              <div className="error-message text-red-600 text-sm">
+                {errorMessage.bled_by[0]}
+              </div>
+            )}
+        </div>
+          <div className={`relative ${errorMessage.venue.length > 0 ? "mb-1" : ""}`}>
+            <Input
+              label="Venue"
+              value={venue}
+              onChange={(e) => setVenue(e.target.value)}
+            />
+            {errorMessage.venue.length > 0 && (
+              <div className="error-message text-red-600 text-sm">
+                {errorMessage.venue[0]}
+              </div>
+            )}
+        </div>
+          <div className={`relative ${errorMessage.date_donated.length > 0 ? "mb-1" : ""}`}>
+            <Input
+              type="date"
+              label="Date"
+              value={dateDonated}
+              onChange={(e) => setDateDonated(e.target.value)}
+            />
+            {errorMessage.date_donated.length > 0 && (
+              <div className="error-message text-red-600 text-sm">
+                {errorMessage.date_donated[0]}
+              </div>
+            )}
+        </div>
         </DialogBody>
         <DialogFooter>
           <Button
