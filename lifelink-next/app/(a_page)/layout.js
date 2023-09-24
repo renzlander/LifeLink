@@ -27,7 +27,8 @@ import {
   DocumentPlusIcon,
   ClipboardDocumentIcon,
 } from "@heroicons/react/24/outline";
-import { DrawerHeader, AppBar, Drawer, Theme } from './components/constants';
+import { DrawerHeader, AppBar, Drawer, } from './components/constants';
+import UserPopover from './components/popover';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -59,21 +60,22 @@ export default function AdminLayout({ children }) {
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open} sx={{ backgroundColor: '#dc2626' }}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{
-              marginRight: 5,
-              ...(open && { display: 'none' }),
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-          </Typography>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{
+                marginRight: 5,
+                ...(open && { display: 'none' }),
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+          </div>
+          <UserPopover />
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>

@@ -247,7 +247,7 @@ export function UsersTable() {
           </thead>
           <tbody>
             {userDetails.map((user, index) => (
-              <tr key={user.donor_no} className="border-b">
+              <tr key={user.donor_no}>
                 <td className={classes}>
                   <div className="flex items-center gap-3">
                     <Typography

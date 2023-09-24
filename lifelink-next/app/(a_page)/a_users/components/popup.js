@@ -29,6 +29,10 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
   const [errorMessage, setErrorMessage] = useState({ serial_no: [], date_donated: [], bled_by: [],  venue: [] });
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
 
+  const [part1, setPart1] = useState("");
+  const [part2, setPart2] = useState("");
+  const [part3, setPart3] = useState("");
+
   const handleAddBloodBag = async () => {
     try {
       const token = getCookie("token");
@@ -76,7 +80,8 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
       console.error("Unknown error occurred:", error);
     }
   };
-  
+
+  const srNumber = `${part1} - ${part2} - ${part3}`;
 
   return (
     <>
@@ -94,18 +99,54 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
         )}
 
         <DialogBody divider className="flex flex-col gap-6">
-          <div className={`relative ${errorMessage.serial_no.length > 0 ? "mb-1" : ""}`}>
+          <div className={`relative ${errorMessage.serial_no.length > 0 ? "mb-1" : ""} flex gap-3 items-center`}>
             <Input
-              label="Serial Number"
-              value={serialNumber}
-              onChange={(e) => setSerialNumber(e.target.value)}
+              label="XXXX"
+              maxLength={4}
+              value={part1}
+              onChange={(e) => {
+                const newValue = e.target.value;
+                if (!/^[0-9]*$/.test(newValue)) {
+                  return;
+                }
+                setPart1(newValue);
+              }}
+              containerProps={{ className: "min-w-[75px]" }}
+            />
+            <Typography>-</Typography>
+            <Input
+              label="XXXXXX"
+              maxLength={6}
+              value={part2}
+              onChange={(e) => {
+                const newValue = e.target.value;
+                if (!/^[0-9]*$/.test(newValue)) {
+                  return;
+                }
+                setPart2(newValue);
+              }}
+              containerProps={{ className: "min-w-[100px]" }}
+            />
+            <Typography>-</Typography>
+            <Input
+              label="X"
+              maxLength={1}
+              value={part3}
+              onChange={(e) => {
+                const newValue = e.target.value;
+                if (!/^[0-9]*$/.test(newValue)) {
+                  return;
+                }
+                setPart3(newValue);
+              }}
+              containerProps={{ className: "min-w-[25px]" }}
             />
             {errorMessage.serial_no.length > 0 && (
               <div className="error-message text-red-600 text-sm">
                 {errorMessage.serial_no[0]}
               </div>
             )}
-        </div>
+          </div>
           <div className={`relative ${errorMessage.bled_by.length > 0 ? "mb-1" : ""}`}>
             <Input
               label="Bled by"
@@ -117,7 +158,7 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
                 {errorMessage.bled_by[0]}
               </div>
             )}
-        </div>
+          </div>
           <div className={`relative ${errorMessage.venue.length > 0 ? "mb-1" : ""}`}>
             <Input
               label="Venue"
@@ -129,7 +170,7 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
                 {errorMessage.venue[0]}
               </div>
             )}
-        </div>
+          </div>
           <div className={`relative ${errorMessage.date_donated.length > 0 ? "mb-1" : ""}`}>
             <Input
               type="date"
@@ -142,7 +183,7 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
                 {errorMessage.date_donated[0]}
               </div>
             )}
-        </div>
+          </div>
         </DialogBody>
         <DialogFooter>
           <Button
@@ -300,54 +341,65 @@ export function EditPopUp({ user, onUpdate }) {
       <Dialog open={open} handler={() => setOpen(false)}>
         <DialogHeader>Edit User</DialogHeader>
         <DialogBody divider className="flex flex-col gap-6">
-          <Input
-            type="text"
-            label="First Name"
-            value={editedUser.first_name}
-            onChange={(e) => setEditedUser({ ...editedUser, first_name: e.target.value })}
-          />
-          <Input
-            type="text"
-            label="Middle Name"
-            value={editedUser.middle_name}
-            onChange={(e) => setEditedUser({ ...editedUser, middle_name: e.target.value })}
-          />
-          <Input
-            type="text"
-            label="Last Name"
-            value={editedUser.last_name}
-            onChange={(e) => setEditedUser({ ...editedUser, last_name: e.target.value })}
-          />
-          <Input
-            type="text"
-            label="Email"
-            value={editedUser.email}
-            onChange={(e) => setEditedUser({ ...editedUser, email: e.target.value })}
-          />
-          <Input
-            type="text"
-            label="Mobile"
-            value={editedUser.mobile}
-            onChange={(e) => setEditedUser({ ...editedUser, mobile: e.target.value })}
-          />
-          <Select
-            label="Sex"
-            value={editedUser.sex} // Assuming `editedUser.sex` contains the user's sex
-            onChange={(value) => setEditedUser({ ...editedUser, sex: value })}
-          >
-            <Option value="Male">Male</Option>
-            <Option value="Female">Female</Option>
-          </Select>
-          <Input
-            type="date"
-            label="Date of Birth"
-            value={editedUser.dob}
-            onChange={(e) => setEditedUser({ ...editedUser, dob: e.target.value })}
-          />
-          <Select
-            label="Blood Type"
-            value={editedUser.blood_type}
-            onChange={(value) => setEditedUser({ ...editedUser, blood_type: value })}
+          <div className="flex items-center gap-2">
+            <Input
+              type="text"
+              label="First Name"
+              value={editedUser.first_name}
+              onChange={(e) => setEditedUser({ ...editedUser, first_name: e.target.value })}
+              containerProps={{ className: "min-w-[50px]" }}
+            />
+            <Input
+              type="text"
+              label="Middle Name"
+              value={editedUser.middle_name}
+              onChange={(e) => setEditedUser({ ...editedUser, middle_name: e.target.value })}
+              containerProps={{ className: "min-w-[50px]" }}
+            />
+            <Input
+              type="text"
+              label="Last Name"
+              value={editedUser.last_name}
+              onChange={(e) => setEditedUser({ ...editedUser, last_name: e.target.value })}
+              containerProps={{ className: "min-w-[50px]" }}
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <Input
+              type="text"
+              label="Email"
+              value={editedUser.email}
+              onChange={(e) => setEditedUser({ ...editedUser, email: e.target.value })}
+            />
+            <Input
+              type="text"
+              label="Mobile"
+              value={editedUser.mobile}
+              onChange={(e) => setEditedUser({ ...editedUser, mobile: e.target.value })}
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <Select
+              label="Sex"
+              value={editedUser.sex} // Assuming `editedUser.sex` contains the user's sex
+              onChange={(value) => setEditedUser({ ...editedUser, sex: value })}
+              containerProps={{ className: "min-w-[50px]" }}
+            >
+              <Option value="Male">Male</Option>
+              <Option value="Female">Female</Option>
+            </Select>
+            <Input
+              type="date"
+              label="Date of Birth"
+              value={editedUser.dob}
+              onChange={(e) => setEditedUser({ ...editedUser, dob: e.target.value })}
+              containerProps={{ className: "min-w-[50px]" }}
+            />
+            <Select
+              label="Blood Type"
+              value={editedUser.blood_type}
+              onChange={(value) => setEditedUser({ ...editedUser, blood_type: value })}
+              containerProps={{ className: "min-w-[50px]" }}
             >
               {bloodTypes.map(type => (
                 <Option key={type} value={type}>
@@ -355,12 +407,14 @@ export function EditPopUp({ user, onUpdate }) {
                 </Option>
               ))}
             </Select>
-            <Input
-              type="text"
-              label="Street"
-              value={editedUser.street}
-              onChange={(e) => setEditedUser({ ...editedUser, street: e.target.value })}
-            />
+          </div>
+          <Input
+            type="text"
+            label="Street"
+            value={editedUser.street}
+            onChange={(e) => setEditedUser({ ...editedUser, street: e.target.value })}
+          />
+          <div className="flex items-center gap-2">
             <Select
               label="Region"
               value={selectedRegion}
@@ -389,6 +443,8 @@ export function EditPopUp({ user, onUpdate }) {
                 </Option>
               ))}
             </Select>
+          </div>
+          <div className="flex items-center gap-2">
             <Select
               label="Municipality"
               value={selectedMunicipality}
@@ -417,6 +473,7 @@ export function EditPopUp({ user, onUpdate }) {
                 </Option>
               ))}
             </Select>
+          </div>
           </DialogBody>
           <DialogFooter>
             <Button
@@ -449,21 +506,30 @@ export function ViewPopUp({user}) {
       <Dialog open={open} handler={() => setOpen(false)}>
         <DialogHeader>View User</DialogHeader>
         <DialogBody divider className="flex flex-col gap-4">
-          <Typography className="font-bold">
-            NAME:
+          <Typography className="font-bold text-xs -mb-3 bg-red-400 rounded-md text-white px-2 py-1">
+            NAME
           </Typography>
-          <div className="flex gap-10">
+          <div className="flex gap-10 text-gray-900">
             <Typography>
-              <strong>First Name:</strong> {user.first_name}
+              <strong>First Name:</strong>
+              <br/>
+              {user.first_name}
             </Typography>
             <Typography>
-              <strong>Last Name:</strong> {user.last_name}
+              <strong>Middle Name:</strong> 
+              <br/>
+              {user.middle_name ? user.middle_name : "N/A"}
+            </Typography>
+            <Typography>
+              <strong>Last Name:</strong> 
+              <br/>
+              {user.last_name}
             </Typography>
           </div>
-          <Typography className="font-bold">
-            DONOR INFO:
+          <Typography className="font-bold text-xs -mb-3 bg-red-400 rounded-md text-white px-2 py-1">
+            Donor Info
           </Typography>
-          <div className="flex gap-10">
+          <div className="flex gap-12 text-gray-900">
             <Typography>
               <strong>Number of Donation:</strong> {user.donate_qty}
             </Typography>
@@ -471,10 +537,10 @@ export function ViewPopUp({user}) {
               <strong>Badge:</strong> {user.badge}
             </Typography>
           </div>
-          <Typography className="font-bold">
-            CONTACT INFO:
+          <Typography className="font-bold text-xs -mb-3 bg-red-400 rounded-md text-white px-2 py-1">
+            CONTACT INFO
           </Typography>
-          <div className="flex gap-10">
+          <div className="flex gap-10 text-gray-900">
             <Typography>
               <strong>Email:</strong> {user.email}
             </Typography>
@@ -482,10 +548,10 @@ export function ViewPopUp({user}) {
               <strong>Mobile:</strong> {user.mobile}
             </Typography>
           </div>
-          <Typography className="font-bold">
-            OTHER INFO:
+          <Typography className="font-bold text-xs -mb-3 bg-red-400 rounded-md text-white px-2 py-1">
+            PERSONAL INFO
           </Typography>
-          <div className="flex gap-10">
+          <div className="flex gap-10 text-gray-900">
             <Typography>
               <strong>Sex:</strong> {user.sex}
             </Typography>
@@ -496,28 +562,12 @@ export function ViewPopUp({user}) {
               <strong>Blood Type:</strong> {user.blood_type}
             </Typography>
           </div>
-          <Typography className="font-bold">
-            ADDRESS:
+          <Typography className="font-bold text-xs -mb-3 bg-red-400 rounded-md text-white px-2 py-1">
+            ADDRESS
           </Typography>
-          <div className="flex gap-10">
-            <Typography>
-              <strong>Street:</strong> {user.street}
-            </Typography>
-            <Typography>
-              <strong>Barangay:</strong> {user.barangay}
-            </Typography>
-            <Typography>
-              <strong>Municipality:</strong> {user.municipality}
-            </Typography>
-          </div>
-          <div className="flex gap-10">
-            <Typography>
-              <strong>Region:</strong> {user.region}
-            </Typography>
-            <Typography>
-              <strong>Province:</strong> {user.province}
-            </Typography>
-          </div>
+          <Typography className="text-lg text-gray-900 font-medium">
+            {user.street}, {user.barangay}, {user.municipality}, {user.province}, {user.region}
+          </Typography>
         </DialogBody>
         <DialogFooter>
           <Button variant="gradient" onClick={() => setOpen(false)}>
