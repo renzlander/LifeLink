@@ -19,6 +19,7 @@ import {
   Input,
   Spinner,
 } from "@material-tailwind/react";
+import { MoveToDeferral, ViewPopUp } from "./popup";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
@@ -330,30 +331,10 @@ export function DonorTable(){
                   </Typography>
                 </td>
                 <td className={classes}>
-                  <Tooltip content="Edit">
-                    <IconButton variant="text">
-                      <PencilIcon className="h-4 w-4" />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip content="View">
-                    <IconButton variant="text">
-                      <EyeIcon className="h-4 w-4" />
-                    </IconButton>
-                  </Tooltip>
-                </td>
-                {/* <td className={classes}>
                   <ViewPopUp user={user}/>
-                  <EditPopUp user={user} onUpdate={handleUpdateDonor} />
-                </td> */}
+                </td>
                 <td className={classes}>
-                  {/* <AddBloodBagPopup user_id={user.user_id} /> */}
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal capitalize"
-                  >
-                    Move to Deferral Button
-                  </Typography>
+                  <MoveToDeferral user_id={user.user_id} />
                 </td>
               </tr>
             ))}
