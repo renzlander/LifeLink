@@ -22,7 +22,7 @@ import { useState, useEffect } from "react";
 
 export default function UserPopover() {
   const router = useRouter();
-  const [userData, setUserData] = useState(null); // Define userData state
+  const [userData, setUserData] = useState(null); 
 
   useEffect(() => {
     const fetchUserInfo = async () => {

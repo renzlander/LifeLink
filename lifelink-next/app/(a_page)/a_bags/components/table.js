@@ -165,8 +165,8 @@ export function BagsTable() {
   };
 
   const sortedBloodBagDetails = userDetails.sort((a, b) => {
-    const columnA = sortColumn === 'name' ? `${a.first_name} ${a.last_name}` : a[sortColumn];
-    const columnB = sortColumn === 'name' ? `${b.first_name} ${b.last_name}` : b[sortColumn];
+  const columnA = sortColumn === 'name' ? `${a.first_name} ${a.last_name}` : a[sortColumn];
+  const columnB = sortColumn === 'name' ? `${b.first_name} ${b.last_name}` : b[sortColumn];
   
     if (sortOrder === "asc") {
       if (columnA < columnB) return -1;
