@@ -177,6 +177,7 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
               label="Date"
               value={dateDonated}
               onChange={(e) => setDateDonated(e.target.value)}
+              max={new Date().toISOString().split('T')[0]}
             />
             {errorMessage.date_donated.length > 0 && (
               <div className="error-message text-red-600 text-sm">
