@@ -88,6 +88,7 @@ import {
           <Link href='./u_profile'>
             <Image src="/patient_icon.png" width={80} height={80} className="mb-4" />
           </Link>
+            <Image src="/next.svg" width={50} height={50} className="mb-4" />
           <Typography className="text-gray-100 font-bold text-2xl">{userData ? `${userData.first_name} ${userData.last_name}` : "Loading..."}</Typography>
           <Typography className="text-gray-100 font-light text-sm">Donor no: {userData ? userData.donor_no : "Loading..."}</Typography>
         </div>
