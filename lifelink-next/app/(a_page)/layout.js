@@ -102,7 +102,7 @@ export default function AdminLayout({ children }) {
         </List>
         <Divider />
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1 }}>
+      <Box component="main" sx={{ flexGrow: 1, backgroundColor: '#e5e7eb' }}>
         <DrawerHeader />
         {children}
       </Box>
