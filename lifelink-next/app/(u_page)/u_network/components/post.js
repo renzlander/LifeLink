@@ -1,12 +1,24 @@
+import { useState } from "react";
 import {
     Card,
     CardHeader,
     CardBody,
+    Checkbox,
     Typography,
+    List,
+    ListItem,
+    ListItemPrefix,
     Avatar,
+    Chip,
   } from "@material-tailwind/react";
    
   export function PostCard() {
+    const chipColor = [
+      {color: "green", value: "Approved", text: "Approved"},
+      {color: "red", value: "Pending", text: "Pending"},
+      {color: "gray", value: "Disapproved", text: "Disapproved"},
+    ];
+
     return (
       <Card shadow={false} className="p-4 w-full shadow-md">
         <CardHeader
@@ -27,7 +39,16 @@ import {
                 </Typography>
                 <Typography color="blue-gray">April 08, 2023 - 10:23 PM</Typography>
             </div>
-            <Typography color="blue-gray">No. of Donations : 2</Typography>
+            <div className="flex flex-col">
+                <Chip 
+                  variant="ghost" 
+                  color={chipColor[0].color} 
+                  value={chipColor[0].text}
+                >
+                  {chipColor[0].text}
+                </Chip>
+              <Typography color="blue-gray">No. of Donations : 2</Typography>
+            </div>
         </div>
         </CardHeader>
         <CardBody className="mb-6 p-0">
@@ -40,3 +61,44 @@ import {
       </Card>
     );
   }
+
+export function FilterCheckBox() {
+  const filters = ["Approved", "Pending", "Disapproved"];
+  const [checkedStatus, setCheckedStatus] = useState(filters.map(() => true));
+
+  return (
+    <Card className="w-full max-w-md">
+      <Typography variant="h5" color="blue-gray" className="ml-4 mt-4">Filters</Typography>
+      <List className="flex-row">
+        {filters.map((filters, index) => (
+          <ListItem className="p-0" key={filters}>
+            <label
+              htmlFor={`horizontal-list-${filters.toLowerCase()}`}
+              className="flex w-full cursor-pointer items-center px-3 py-2"
+            >
+              <ListItemPrefix className="mr-3">
+                <Checkbox
+                  id={`horizontal-list-${filters.toLowerCase()}`}
+                  ripple={false}
+                  className="hover:before:opacity-0"
+                  containerProps={{
+                    className: "p-0",
+                  }}
+                  checked={checkedStatus[index]}
+                  onChange={(event) => {
+                    const updatedCheckedStatus = [...checkedStatus];
+                    updatedCheckedStatus[index] = event.target.checked;
+                    setCheckedStatus(updatedCheckedStatus);
+                  }}
+                />
+              </ListItemPrefix>
+              <Typography color="blue-gray" className="font-medium">
+                {filters}
+              </Typography>
+            </label>
+          </ListItem>
+        ))}
+      </List>
+    </Card>
+  );
+}

@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import {
+    Card,
+    Checkbox,
     Button,
     IconButton,
     SpeedDial,
@@ -9,10 +11,12 @@ import {
     DialogBody,
     DialogFooter,
     Textarea,
+    List,
+    ListItem,
+    ListItemPrefix,
+    Typography,
   } from "@material-tailwind/react";
-  import {
-    PlusIcon,
-  } from "@heroicons/react/24/outline";
+  import { PlusIcon } from "@heroicons/react/24/outline";
    
   export function CreatePost() {
     const [open, setOpen] = React.useState(false);
@@ -33,8 +37,9 @@ import {
             </div>
             <Dialog open={open} handler={handleOpen}>
                 <DialogHeader>Create Post</DialogHeader>
-                <DialogBody divider>
-                    <Textarea label="Message" />
+                <DialogBody className="flex flex-col" divider>
+                    <Textarea label="Write Something" />
+                    <ContactCheckbox />
                 </DialogBody>
                 <DialogFooter>
                     <Button
@@ -51,5 +56,40 @@ import {
                 </DialogFooter>
             </Dialog>
         </div>
+    );
+  }
+
+  
+ export function ContactCheckbox() {
+    const contactMode = ["Phone", "Telephone", "E-mail"];
+  
+    return (
+      <Card className="w-full max-w-md">
+        <Typography variant="h5" color="blue-gray" className="ml-4 mt-4">Mode of Contact</Typography>
+        <List className="flex-row">
+          {contactMode.map((contactMode) => (
+            <ListItem className="p-0" key={contactMode}>
+              <label
+                htmlFor={`horizontal-list-${contactMode.toLowerCase()}`}
+                className="flex w-full cursor-pointer items-center px-3 py-2"
+              >
+                <ListItemPrefix className="mr-3">
+                  <Checkbox
+                    id={`horizontal-list-${contactMode.toLowerCase()}`}
+                    ripple={false}
+                    className="hover:before:opacity-0"
+                    containerProps={{
+                      className: "p-0",
+                    }}
+                  />
+                </ListItemPrefix>
+                <Typography color="blue-gray" className="font-medium">
+                  {contactMode}
+                </Typography>
+              </label>
+            </ListItem>
+          ))}
+        </List>
+      </Card>
     );
   }
