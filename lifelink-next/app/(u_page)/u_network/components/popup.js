@@ -61,7 +61,7 @@ import {
 
   
  export function ContactCheckbox() {
-    const contactMode = ["Phone", "Telephone", "E-mail"];
+    const contactMode = ["Phone", "E-mail"];
   
     return (
       <Card className="w-full max-w-md">

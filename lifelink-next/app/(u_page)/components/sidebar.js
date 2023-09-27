@@ -21,8 +21,6 @@ import {
   import { useState, useEffect } from "react"; 
   import { laravelBaseUrl } from "@/app/variables";
 
-
-
   export function UserSidebar() {
     const [userData, setUserData] = useState(null); 
     const router = useRouter();
@@ -71,7 +69,7 @@ import {
               Authorization: `Bearer ${token}`,
             },
           });
-  
+          
           setUserData(response.data.data);
   
         } catch (error) {
