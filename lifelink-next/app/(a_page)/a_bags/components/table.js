@@ -18,7 +18,7 @@ import {
   Input,
   Spinner,
 } from "@material-tailwind/react";
-import { MoveToDeferral, EditPopUp } from "./popup";
+import { RemoveBlood, EditPopUp, MoveToStock } from "./popup";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
@@ -37,6 +37,7 @@ const TABLE_HEAD = [
   { label: "", key: "" }, 
   { label: ""}, 
   { label: ""}, 
+  { label: ""},
 ]; 
 
 const classes = "p-4";
@@ -94,7 +95,7 @@ export function BagsTable() {
             },
           }
         );
-        console.log(response);
+        console.log(response.data);
       }
 
       if (response.data.status === "success") {
@@ -336,7 +337,10 @@ export function BagsTable() {
                   <EditPopUp user={user}/>
                 </td>
                 <td className={classes}>
-                  <MoveToDeferral user_id={user.user_id} />
+                  <RemoveBlood serial_no={user.serial_no} countdown_message={user.countdown_message}/>
+                </td>
+                <td className={classes}>
+                  <MoveToStock serial_no={user.serial_no} />
                 </td>
               </tr>
             ))}

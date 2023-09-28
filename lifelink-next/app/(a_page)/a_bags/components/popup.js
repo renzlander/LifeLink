@@ -29,21 +29,12 @@ function formatDate(dateString) {
   return formattedDate;
 }
 
-export function MoveToDeferral({ user_id, handleOpen }) {
+export function RemoveBlood({ serial_no, handleOpen, countdown_message }) {
   const [open, setOpen] = useState(false);
-  const [serialNumber, setSerialNumber] = useState("");
-  const [bledBy, setBledBy] = useState("");
-  const [venue, setVenue] = useState("");
-  const [dateDonated, setDateDonated] = useState("");
-  const [errorMessage, setErrorMessage] = useState({ serial_no: [], date_donated: [], bled_by: [],  venue: [] });
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
-
-  const [part1, setPart1] = useState("");
-  const [part2, setPart2] = useState("");
-  const [part3, setPart3] = useState("");
-  const srNumber = `${part1}${part2}${part3}`;
-
-  const handleAddBloodBag = async () => {
+  const [timeLeft, setTimeLeft] = useState(""); 
+    
+  const handleRemoveBloodBag = async () => {
     try {
       const token = getCookie("token");
       if (!token) {
@@ -51,65 +42,51 @@ export function MoveToDeferral({ user_id, handleOpen }) {
         return;
       }
   
-      // Prepare data for the POST request
-      const data = {
-        user_id,
-        serial_no: srNumber,
-        venue: venue,
-        date_donated: dateDonated,
-        bled_by: bledBy,
-      };
-      console.log("Before Axios POST request");
-
-      // Send POST request to add-bloodbag API
-      const response = await axios.post(
-        `${laravelBaseUrl}/api/add-bloodbag`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      ).catch((error) => {
-        console.error("Unknown error occurred:", error);
-        if (error.response && error.response.data && error.response.data.errors) {
-          const { errors } = error.response.data;
-          const serialNumberError = errors.serial_no || [];
-          const dateError = errors.date_donated || [];
-          const bledByError = errors.bled_by || [];
-          const venueError = errors.venue || [];
-          setErrorMessage({ serial_no: serialNumberError, date_donated: dateError, bled_by: bledByError, venue: venueError });
-        } else {
-          setGeneralErrorMessage(error.response.data.message);
-          setErrorMessage({ serial_no: [], date_donated: [], bled_by: [], venue: [] });
-        }
+      // Construct the URL with serial_no as a query parameter
+      const apiUrl = `${laravelBaseUrl}/api/remove-bloodbag?serial_no=${serial_no}`;
+  
+      // Send DELETE request to the constructed URL
+      const response = await axios.delete(apiUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-    
-      if (response.data.status === "success") {
-        // Blood bag added successfully, you can handle this accordingly
-        console.log("Blood bag added successfully");
-      }  else if (response.data.status === "error") {
-        if (response.data.message) {
-          setGeneralErrorMessage(response.data.message);
-        } else {
-          console.error("Unknown error occurred:", response.data);
-        }
+
+  
+      if (response.data.status === 'success') {
+        window.location.reload();
+        console.log('Removed blood bag successfully');
+  
+        setOpen(false);
+      } else {
+        console.error('Error removing blood bag:', response.data.message);
+        // Display an error message to the user
+        // You can set up a state variable to manage error messages and display them in your UI
       }
-      // Close the dialog
-      setOpen(false);
     } catch (error) {
-      console.error("Unknown error occurred:", error);
+      console.error('Error removing blood bag:', error);
+      // Display an error message to the user
+      // You can set up a state variable to manage error messages and display them in your UI
     }
   };
-
+  
+  
 
   return (
     <>
-      <Button size="sm" onClick={() => setOpen(true)} variant="gradient" color="red">
-        remove
+      <Button size="sm" onClick={() => setOpen(true)} className="bg-red-600">
+        Remove
       </Button>
-      <Dialog open={open} handler={() => setOpen(false)}>
-        <DialogHeader>Move to Deferral</DialogHeader>
+      <Dialog open={open} handler={() => setOpen(false)} >
+        <DialogHeader>Remove Blood Bag</DialogHeader>
+        <DialogBody divider className="flex flex-col gap-4 items-center">
+          <Typography className="font-bold text-xl text-red-600 text-center">
+            Are you sure you want to remove this blood bag?
+          </Typography>
+            <Typography className="text-sm text-red-cross font-semibold text-center">
+              {countdown_message}
+            </Typography>
+        </DialogBody>
         {generalErrorMessage && (
           <div className="mt-4 text-center bg-red-100 p-2 rounded-lg">
             <Typography color="red" className="text-sm font-semibold">
@@ -117,24 +94,18 @@ export function MoveToDeferral({ user_id, handleOpen }) {
             </Typography>
           </div>
         )}
-
-        <DialogBody divider className="flex flex-col gap-6">
-          <Typography className="font-bold text-4xl -mb-3 rounded-md text-black px-2 py-1">
-            Are you sure you want to remove this blood bag to collected?
-          </Typography>
-        </DialogBody>
-        <DialogFooter>
+        <DialogFooter className="flex justify-center mt-4">
             <Button
-              variant="gradient"
+              variant="red-cross"
               onClick={() => setOpen(false)}
-              className="mr-1"
+              className="mr-2"
             >
-              <span>No</span>
+              No
             </Button>
-            <Button variant="gradient" color="red" >
-              <span>Yes</span>
-            </Button>
-          </DialogFooter>
+          <Button variant="red-cross" color="red" onClick={handleRemoveBloodBag}>
+            Yes
+          </Button>
+        </DialogFooter>
       </Dialog>
     </>
   );
@@ -147,6 +118,9 @@ export function EditPopUp({user}) {
   const [errorMessage, setErrorMessage] = useState({ serial_no: [], date_donated: [], bled_by: [],  venue: [] });
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
   const [open, setOpen] = useState(false);
+  const [bledBy, setBledBy] = useState("");
+  const [venue, setVenue] = useState("");
+  const [dateDonated, setDateDonated] = useState("");
   const [part1, setPart1] = useState("");
   const [part2, setPart2] = useState("");
   const [part3, setPart3] = useState("");
@@ -286,6 +260,44 @@ export function EditPopUp({user}) {
               </div>
             )}
           </div>
+          <div className={`relative ${errorMessage.bled_by.length > 0 ? "mb-1" : ""}`}>
+            <Input
+              label="Bled by"
+              value={user.bled_by}
+              onChange={(e) => setBledBy(e.target.value)}
+            />
+            {errorMessage.bled_by.length > 0 && (
+              <div className="error-message text-red-600 text-sm">
+                {errorMessage.bled_by[0]}
+              </div>
+            )}
+          </div>
+          <div className={`relative ${errorMessage.venue.length > 0 ? "mb-1" : ""}`}>
+            <Input
+              label="Venue"
+              value={user.venue}
+              onChange={(e) => setVenue(e.target.value)}
+            />
+            {errorMessage.venue.length > 0 && (
+              <div className="error-message text-red-600 text-sm">
+                {errorMessage.venue[0]}
+              </div>
+            )}
+          </div>
+          <div className={`relative ${errorMessage.date_donated.length > 0 ? "mb-1" : ""}`}>
+            <Input
+              type="date"
+              label="Date"
+              value={user.date_donated}
+              onChange={(e) => setDateDonated(e.target.value)}
+              max={new Date().toISOString().split('T')[0]}
+            />
+            {errorMessage.date_donated.length > 0 && (
+              <div className="error-message text-red-600 text-sm">
+                {errorMessage.date_donated[0]}
+              </div>
+            )}
+          </div>
 
         </DialogBody>
         <DialogFooter>
@@ -298,6 +310,86 @@ export function EditPopUp({user}) {
           </Button>
           <Button variant="gradient" color="red" onClick={handleEditSerialNumber}>
             <span>Done</span>
+          </Button>
+        </DialogFooter>
+      </Dialog>
+    </>
+  );
+}
+
+
+export function MoveToStock({ serial_no, handleOpen }){
+  const [open, setOpen] = useState(false);
+  const [generalErrorMessage, setGeneralErrorMessage] = useState("");
+
+  const handleMovetoStock = async () => {
+    try {
+      const token = getCookie("token");
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+
+      const response = await axios.post(
+        `${laravelBaseUrl}/api/add-to-inventory`,
+        {
+          serial_no,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      ).catch((error) => {
+        console.error("Unknown error occurred:", error);
+      });
+    
+      if (response.data.status === "success") {
+        // Blood bag added successfully, you can handle this accordingly
+        console.log("Blood bag added successfully");
+      }  else if (response.data.status === "error") {
+        if (response.data.message) {
+          setGeneralErrorMessage(response.data.message);
+        } else {
+          console.error("Unknown error occurred:", response.data);
+        }
+      }
+      // Close the dialog
+      setOpen(false);
+    } catch (error) {
+      console.error("Unknown error occurred:", error);
+    }
+  }
+
+  return (
+    <>
+      <Button size="sm" onClick={() => setOpen(true)} className="bg-red-600">
+        Move to stock
+      </Button>
+      <Dialog open={open} handler={() => setOpen(false)} >
+        <DialogHeader>Move Blood Bag to Inventory</DialogHeader>
+        <DialogBody divider className="flex flex-col gap-4 items-center">
+          <Typography className="font-bold text-xl text-red-600 text-center">
+            Are you sure you want to move this blood bag to inventory?
+          </Typography>
+        </DialogBody>
+        {generalErrorMessage && (
+          <div className="mt-4 text-center bg-red-100 p-2 rounded-lg">
+            <Typography color="red" className="text-sm font-semibold">
+              {generalErrorMessage}
+            </Typography>
+          </div>
+        )}
+        <DialogFooter className="flex justify-center mt-4">
+            <Button
+              variant="red-cross"
+              onClick={() => setOpen(false)}
+              className="mr-2"
+            >
+              No
+            </Button>
+          <Button variant="red-cross" color="red" onClick={handleMovetoStock}>
+            Yes
           </Button>
         </DialogFooter>
       </Dialog>
