@@ -191,7 +191,12 @@ export function DonorTable(){
   // };
 
   if (loading) {
-    return <p ><Spinner color="red" className="h-16 w-16"/>Loading...</p>;
+    return (
+      <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
+        <Spinner color="red" className="h-16 w-16" />
+        <p className="mb-[180px] text-gray-600">Loading...</p>
+      </div>
+    );
   }
 
 

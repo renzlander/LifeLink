@@ -2,7 +2,6 @@
 import {
   Card,
   Input,
-  Checkbox,
   Button,
   Typography,
 } from "@material-tailwind/react";
@@ -12,7 +11,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { nextBaseUrl } from "@/app/variables";
 import { laravelBaseUrl } from "@/app/variables";
- 
+import { ToastContainer, toast  } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 export function LoginForm() {
   
   const router = useRouter();
@@ -32,16 +33,22 @@ export function LoginForm() {
       if (response.status === 200) {
         if (response.data.user.isAdmin === 0) {
           document.cookie = `token=${response.data.token}; expires=${new Date(new Date().getTime() + 86400 * 1000).toUTCString()}; path=/`;
+          toast.success("Login successful!");
           router.push("/u_dashboard");
+
         } else {
           document.cookie = `token=${response.data.token}; expires=${new Date(new Date().getTime() + 86400 * 1000).toUTCString()}; path=/`;
+          toast.success("Login successful!");
           router.push("/a_dashboard");
+
         }
       } else {
         setErrorMessage(response.data.response.data.msg);
+        toast.error(response.data.response.data.msg);
       }
     } catch (error) {
       setErrorMessage(error.response.data.msg);
+      toast.error(error.response.data.msg);
     }
   };
 
@@ -74,7 +81,6 @@ export function LoginForm() {
           </Typography>
         </div>
       )}
-
 
       <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96" onSubmit={handleLogin}>
         <div className="mb-4 flex flex-col gap-6">

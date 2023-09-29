@@ -23,6 +23,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { useRouter } from "next/navigation";
+import { ToastContainer, toast  } from 'react-toastify';
 
 
 const TABLE_HEAD = [
@@ -186,7 +187,12 @@ export function BagsTable() {
   };
 
   if (loading) {
-    return <p ><Spinner color="red" className="h-16 w-16"/>Loading...</p>;
+    return (
+      <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
+        <Spinner color="red" className="h-16 w-16" />
+        <p className="mb-[180px] text-gray-600">Loading...</p>
+      </div>
+    );
   }
 
   return (
@@ -196,6 +202,18 @@ export function BagsTable() {
           Collected Blood Bags
         </Typography>
       </CardHeader>
+      <ToastContainer
+        position="bottom-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <CardBody className="overflow-x-auto px-0">
         <div className="mb-4 ml-4 mr-4 flex justify-end items-center">
           <div className="flex w-full shrink-0 gap-2 md:w-max">
@@ -334,10 +352,10 @@ export function BagsTable() {
                   </Typography>
                 </td>
                 <td className={classes}>
-                  <EditPopUp user={user}/>
+                  <EditPopUp user={user} countdown={user.countdown}/>
                 </td>
                 <td className={classes}>
-                  <RemoveBlood serial_no={user.serial_no} countdown_message={user.countdown_message}/>
+                  <RemoveBlood serial_no={user.serial_no} countdown={user.countdown}/>
                 </td>
                 <td className={classes}>
                   <MoveToStock serial_no={user.serial_no} />

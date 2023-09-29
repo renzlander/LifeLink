@@ -17,6 +17,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { useRouter } from "next/navigation";
+import { ToastContainer, toast  } from 'react-toastify';
+
 
 const TABLE_HEAD = [
   { label: "Donor Number", key: "donor_no" },
@@ -177,14 +179,17 @@ export function UsersTable() {
   });
 
   const handleUpdateUser = (updatedUserData) => {
-    // Implement your update logic here, e.g., make an API call to update the user data
-    // You can use the updatedUserData parameter to access the updated user data
     console.log('Updated user data:', updatedUserData);
   };
   
 
   if (loading) {
-    return <p ><Spinner color="red" className="h-16 w-16"/>Loading...</p>;
+    return (
+      <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
+        <Spinner color="red" className="h-16 w-16" />
+        <p className="mb-[180px] text-gray-600">Loading...</p>
+      </div>
+    );
   }
 
   return (
@@ -194,6 +199,18 @@ export function UsersTable() {
           Users List
         </Typography>
       </CardHeader>
+      <ToastContainer
+        position="bottom-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <CardBody className="overflow-x-auto px-0">
         <div className="mb-4 ml-4 mr-4 flex justify-end items-center">
           <div className="flex w-full shrink-0 gap-2 md:w-max">

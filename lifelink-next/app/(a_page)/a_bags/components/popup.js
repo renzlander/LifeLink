@@ -19,6 +19,9 @@ import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { Typography } from "@mui/material";
 import { EyeIcon } from "@heroicons/react/24/outline";
+import { ToastContainer, toast  } from 'react-toastify';
+import { useRouter } from "next/navigation";
+
 
 function formatDate(dateString) {
   const options = { year: "numeric", month: "long", day: "numeric" };
@@ -29,10 +32,11 @@ function formatDate(dateString) {
   return formattedDate;
 }
 
-export function RemoveBlood({ serial_no, handleOpen, countdown_message }) {
+export function RemoveBlood({ serial_no, handleOpen, countdown }) {
   const [open, setOpen] = useState(false);
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
   const [timeLeft, setTimeLeft] = useState(""); 
+  const router = useRouter();
     
   const handleRemoveBloodBag = async () => {
     try {
@@ -54,19 +58,17 @@ export function RemoveBlood({ serial_no, handleOpen, countdown_message }) {
 
   
       if (response.data.status === 'success') {
-        window.location.reload();
+        //window.location.reload();
+        router.push("/a_bags");
+        toast.success('Removed blood bag successfully');
         console.log('Removed blood bag successfully');
   
         setOpen(false);
       } else {
         console.error('Error removing blood bag:', response.data.message);
-        // Display an error message to the user
-        // You can set up a state variable to manage error messages and display them in your UI
       }
     } catch (error) {
-      console.error('Error removing blood bag:', error);
-      // Display an error message to the user
-      // You can set up a state variable to manage error messages and display them in your UI
+      console.error('Error removing blood bag:', error); 
     }
   };
   
@@ -83,8 +85,8 @@ export function RemoveBlood({ serial_no, handleOpen, countdown_message }) {
           <Typography className="font-bold text-xl text-red-600 text-center">
             Are you sure you want to remove this blood bag?
           </Typography>
-            <Typography className="text-sm text-red-cross font-semibold text-center">
-              {countdown_message}
+            <Typography className="text-sm text-red-600 font-bold text-center">
+              This blood bag can be remove in {countdown} days
             </Typography>
         </DialogBody>
         {generalErrorMessage && (
@@ -114,7 +116,7 @@ export function RemoveBlood({ serial_no, handleOpen, countdown_message }) {
 
   
 
-export function EditPopUp({user}) {
+export function EditPopUp({user, countdown}) {
   const [errorMessage, setErrorMessage] = useState({ serial_no: [], date_donated: [], bled_by: [],  venue: [] });
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
   const [open, setOpen] = useState(false);
@@ -207,7 +209,10 @@ export function EditPopUp({user}) {
         </IconButton>
       </Tooltip>
       <Dialog open={open} handler={() => setOpen(false)}>
-        <DialogHeader className="flex justify-between"><div>Edit Serial Number</div><div>Serial Number:  <span className="text-red-600">{firstPart}-{secondPart}-{thirdPart}</span></div></DialogHeader>
+        <DialogHeader className="flex justify-between"><div>Edit Blood Bag</div><div>Serial Number:  <span className="text-red-600">{firstPart}-{secondPart}-{thirdPart}</span></div></DialogHeader>
+        <Typography className="text-sm text-red-600 font-bold text-center">
+              This blood bag can be edit in {countdown} days
+            </Typography>
         <DialogBody divider className="flex flex-col gap-4">
         <div>
             <div className={`relative flex gap-3 items-center`}>

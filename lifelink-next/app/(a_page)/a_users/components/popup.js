@@ -19,8 +19,14 @@ import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { Typography } from "@mui/material";
 import { EyeIcon } from "@heroicons/react/24/outline";
+import { ToastContainer, toast  } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useRouter } from "next/navigation";
+
 
 export function AddBloodBagPopup({ user_id, handleOpen }) {
+  const router = useRouter();
+
   const [open, setOpen] = useState(false);
   const [serialNumber, setSerialNumber] = useState("");
   const [bledBy, setBledBy] = useState("");
@@ -72,23 +78,27 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
           setErrorMessage({ serial_no: serialNumberError, date_donated: dateError, bled_by: bledByError, venue: venueError });
         } else {
           setGeneralErrorMessage(error.response.data.message);
+          toast.error('Opps! Something went wrong.');
           setErrorMessage({ serial_no: [], date_donated: [], bled_by: [], venue: [] });
         }
       });
     
       if (response.data.status === "success") {
-        // Blood bag added successfully, you can handle this accordingly
+        toast.success('Blood bag added successfully');
         console.log("Blood bag added successfully");
       }  else if (response.data.status === "error") {
         if (response.data.message) {
           setGeneralErrorMessage(response.data.message);
+          toast.error('Opps! Something went wrong.');
         } else {
           console.error("Unknown error occurred:", response.data);
         }
       }
       // Close the dialog
       setOpen(false);
+      
     } catch (error) {
+      toast.error(error)
       console.error("Unknown error occurred:", error);
     }
   };
@@ -108,7 +118,18 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
             </Typography>
           </div>
         )}
-
+        <ToastContainer
+        position="bottom-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
         <DialogBody divider className="flex flex-col gap-6">
           <div>
             <div className={`relative flex gap-3 items-center`}>
@@ -326,7 +347,8 @@ export function EditPopUp({ user, onUpdate }) {
 
       if (response.data.status === 'success') {
         // User data updated successfully
-        window.location.reload();
+        router.push("/a_users")
+        toast.success('User data updated successfully');
         console.log('User data updated successfully');
 
         // Notify the parent component about the update
@@ -336,11 +358,11 @@ export function EditPopUp({ user, onUpdate }) {
         setOpen(false);
       } else {
         console.error('Error updating user data:', response.data.message);
-        // Display an error message to the user
-        // You can set up a state variable to manage error messages and display them in your UI
+        toast.error(response.data.errors);
       }
     } catch (error) {
       console.error('Error updating user data:', error);
+      toast.error(error);
       // Display an error message to the user
       // You can set up a state variable to manage error messages and display them in your UI
     }
@@ -353,6 +375,18 @@ export function EditPopUp({ user, onUpdate }) {
           <PencilIcon className="h-4 w-4" />
         </IconButton>
       </Tooltip>
+      <ToastContainer
+        position="bottom-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <Dialog open={open} handler={() => setOpen(false)}>
         <DialogHeader>Edit User</DialogHeader>
         <DialogBody divider className="flex flex-col gap-6">
