@@ -6,7 +6,7 @@ import { ToastContainer, toast  } from 'react-toastify';
 
 export default function LoginPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between py-10">
+    <main className="flex min-h-screen flex-col items-center justify-center">
       <LoginForm />
       <ToastContainer
         position="bottom-left"
