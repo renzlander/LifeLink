@@ -48,13 +48,13 @@ export function BloodBagTable({ bloodJourney }) {
     const { collected, tested, stored } = journey;
 
     if (collected === 1 && tested === 1 && stored === 1) {
-      return "stored";
+      return "Stored";
     } else if (collected === 1 && tested === 1) {
-      return "tested";
+      return "Laboratory";
     } else if (collected === 1) {
-      return "collected";
+      return "Collected";
     } else {
-      return "unknown";
+      return "Unknown";
     }
   }
 
@@ -63,20 +63,17 @@ export function BloodBagTable({ bloodJourney }) {
     const status = getStatusText(journey);
 
     let activeStepsArray = [];
-    if (status === "collected") {
+    if (status === "Collected") {
       activeStepsArray = [0];
-    } else if (status === "tested") {
+    } else if (status === "Laboratory") {
       activeStepsArray = [0, 1];
-    } else if (status === "stored") {
+    } else if (status === "Stored") {
       activeStepsArray = [0, 1, 2];
     }
 
     setActiveSteps(activeStepsArray);
-    setSelectedRowIndex(index); // Set the selected row index
+    setSelectedRowIndex(index); 
 
-    // Navigate to a specific page or perform an action on row click
-    // For example, you can navigate to a details page with the journey's ID
-    // router.push(`/journey-details/${journey.id}`);
   }
 
   return (
