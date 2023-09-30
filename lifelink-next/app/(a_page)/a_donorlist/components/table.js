@@ -34,8 +34,8 @@ const TABLE_HEAD = [
   { label: "Birthday", key: "dob" },
   { label: "Donate Quantity", key: "donate_qty" },
   { label: "Badge", key: "badge" },
-  { label: "", key: "" }, 
-  { label: "", key: "a" }, 
+  { label: ""}, 
+  { label: ""}, 
 ]; 
 
 const classes = "p-4";
@@ -94,7 +94,7 @@ export function DonorTable(){
           }
         );
       }
-
+      console.log(searchQuery);
       if (response.data.status === "success") {
         setUserDetails(response.data.data.data);
         setTotalPages(response.data.data.last_page);
@@ -113,7 +113,7 @@ export function DonorTable(){
 
   useEffect(() => {
     fetchData(currentPage);
-  }, [router, sortColumn, sortOrder]);
+  }, [router, sortColumn, sortOrder,searchQuery]);
 
   const handlePageChange = (newPage) => {
     if (newPage < 1 || newPage > totalPages) {
@@ -141,8 +141,7 @@ export function DonorTable(){
         router.push("/login");
         return;
       }
-  
-      // Send a request to the PDF export endpoint
+
       const response = await axios.get(
         `${laravelBaseUrl}/api/export-pdf-donor-list`,
         {
@@ -153,16 +152,9 @@ export function DonorTable(){
         }
       );
   
-      // Create a Blob object from the response data
       const pdfBlob = new Blob([response.data], { type: "application/pdf" });
-  
-      // Create a URL for the Blob object
       const pdfUrl = window.URL.createObjectURL(pdfBlob);
-  
-      // Open the PDF in a new window or tab
       window.open(pdfUrl);
-  
-      // Clean up by revoking the URL when it's no longer needed
       window.URL.revokeObjectURL(pdfUrl);
     } catch (error) {
       console.error("Error exporting PDF:", error);
@@ -185,8 +177,6 @@ export function DonorTable(){
   });
 
   // const handleUpdateDonor = (updatedDonorData) => {
-  //   // Implement your update logic here, e.g., make an API call to update the user data
-  //   // You can use the updatedUserData parameter to access the updated user data
   //   console.log('Updated user data:', updatedUserData);
   // };
 

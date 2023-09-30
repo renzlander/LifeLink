@@ -76,7 +76,7 @@ export function BagsTable() {
 
 
       if (searchQuery) {
-        response = await axios.post(
+        response = await  axios.post(
           `${laravelBaseUrl}/api/search-collected-bloodbag?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
           {
             searchInput: searchQuery, 
@@ -98,6 +98,7 @@ export function BagsTable() {
         );
         console.log(response.data);
       }
+      console.log("API Request URL:", `${laravelBaseUrl}/api/search-collected-bloodbag?page=${page}&sort=${sortColumn}&order=${sortOrder}`);
 
       if (response.data.status === "success") {
         setUserDetails(response.data.data.data);
@@ -117,7 +118,7 @@ export function BagsTable() {
 
   useEffect(() => {
     fetchData(currentPage);
-  }, [router, sortColumn, sortOrder]);
+  }, [router, sortColumn, sortOrder, searchQuery]);
 
   const handlePageChange = (newPage) => {
     if (newPage < 1 || newPage > totalPages) {
@@ -330,7 +331,7 @@ export function BagsTable() {
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {user.bled_by}
+                    {user.venue}
                   </Typography>
                 </td>
                 <td className={classes}>
@@ -339,7 +340,7 @@ export function BagsTable() {
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {user.venue}
+                    {user.bled_by}
                   </Typography>
                 </td>
                 <td className={classes}>

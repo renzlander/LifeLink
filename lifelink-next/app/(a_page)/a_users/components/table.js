@@ -10,15 +10,14 @@ import {
   CardFooter,
   IconButton,
   Input,
-  Spinner ,
+  Spinner,
 } from "@material-tailwind/react";
 import { AddBloodBagPopup, ViewPopUp, EditPopUp } from "./popup";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { useRouter } from "next/navigation";
-import { ToastContainer, toast  } from 'react-toastify';
-
+import { ToastContainer, toast } from "react-toastify";
 
 const TABLE_HEAD = [
   { label: "Donor Number", key: "donor_no" },
@@ -27,8 +26,8 @@ const TABLE_HEAD = [
   { label: "Email Address", key: "email" },
   { label: "Mobile", key: "mobile" },
   { label: "Birthday", key: "dob" },
-  { label: "", key: "" }, 
-  { label: "", key: "a" }, 
+  { label: "", key: "tools" },
+  { label: "", key: "actions" },
 ];
 const classes = "p-4";
 
@@ -59,15 +58,14 @@ export function UsersTable() {
         router.push("/login");
         return;
       }
-
+  
       let response;
-
-
+  
       if (searchQuery) {
         response = await axios.post(
           `${laravelBaseUrl}/api/search-user?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
           {
-            searchInput: searchQuery, 
+            searchInput: searchQuery,
           },
           {
             headers: {
@@ -85,13 +83,14 @@ export function UsersTable() {
           }
         );
       }
+  
+      console.log("Response:", response);
 
-      if (response.data.status === "success") {
+      if (response && response.data && response.data.status === "success") {
         setUserDetails(response.data.data.data);
         setTotalPages(response.data.data.last_page);
         setCurrentPage(response.data.data.current_page);
         setLoading(false);
-      
       } else {
         console.error("Error fetching data:", response.data.message);
         setLoading(false);
@@ -101,11 +100,11 @@ export function UsersTable() {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     fetchData(currentPage);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router, sortColumn, sortOrder]);
+  }, [router, sortColumn, sortOrder, searchQuery]);
 
   const handlePageChange = (newPage) => {
     if (newPage < 1 || newPage > totalPages) {
@@ -133,7 +132,7 @@ export function UsersTable() {
         router.push("/login");
         return;
       }
-  
+
       // Send a request to the PDF export endpoint
       const response = await axios.get(
         `${laravelBaseUrl}/api/export-pdf-user-details`,
@@ -144,29 +143,29 @@ export function UsersTable() {
           responseType: "blob", // Set the response type to blob for binary data
         }
       );
-  
+
       // Create a Blob object from the response data
       const pdfBlob = new Blob([response.data], { type: "application/pdf" });
-  
+
       // Create a URL for the Blob object
       const pdfUrl = window.URL.createObjectURL(pdfBlob);
-  
+
       // Open the PDF in a new window or tab
       window.open(pdfUrl);
-  
+
       // Clean up by revoking the URL when it's no longer needed
       window.URL.revokeObjectURL(pdfUrl);
     } catch (error) {
       console.error("Error exporting PDF:", error);
     }
   };
-  
-  
 
   const sortedUserDetails = userDetails.sort((a, b) => {
-    const columnA = sortColumn === 'name' ? `${a.first_name} ${a.last_name}` : a[sortColumn];
-    const columnB = sortColumn === 'name' ? `${b.first_name} ${b.last_name}` : b[sortColumn];
-  
+    const columnA =
+      sortColumn === "name" ? `${a.first_name} ${a.last_name}` : a[sortColumn];
+    const columnB =
+      sortColumn === "name" ? `${b.first_name} ${b.last_name}` : b[sortColumn];
+
     if (sortOrder === "asc") {
       if (columnA < columnB) return -1;
       if (columnA > columnB) return 1;
@@ -174,14 +173,13 @@ export function UsersTable() {
       if (columnA < columnB) return 1;
       if (columnA > columnB) return -1;
     }
-  
+
     return 0;
   });
 
   const handleUpdateUser = (updatedUserData) => {
-    console.log('Updated user data:', updatedUserData);
+    console.log("Updated user data:", updatedUserData);
   };
-  
 
   if (loading) {
     return (
@@ -222,7 +220,7 @@ export function UsersTable() {
                 onChange={(e) => {
                   const inputValue = e.target.value;
                   setSearchQuery(inputValue);
-                  fetchData(inputValue); 
+                  fetchData(inputValue);
                 }}
               />
             </div>
@@ -242,7 +240,7 @@ export function UsersTable() {
                 <th
                   key={head.key}
                   className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
-                  onClick={() => handleSort(head.key)} 
+                  onClick={() => handleSort(head.key)}
                 >
                   <div className="flex items-center">
                     <Typography
@@ -266,15 +264,13 @@ export function UsersTable() {
             {userDetails.map((user, index) => (
               <tr key={user.donor_no}>
                 <td className={classes}>
-                  <div className="flex items-center gap-3">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-bold"
-                    >
-                      {user.donor_no}
-                    </Typography>
-                  </div>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {user.donor_no}
+                  </Typography>
                 </td>
                 <td className={classes}>
                   <Typography
@@ -322,7 +318,7 @@ export function UsersTable() {
                   </Typography>
                 </td>
                 <td className={classes}>
-                  <ViewPopUp user={user}/>
+                  <ViewPopUp user={user} />
                   <EditPopUp user={user} onUpdate={handleUpdateUser} />
                 </td>
                 <td className={classes}>

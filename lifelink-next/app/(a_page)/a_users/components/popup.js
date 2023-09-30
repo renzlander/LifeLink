@@ -29,8 +29,8 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
 
   const [open, setOpen] = useState(false);
   const [serialNumber, setSerialNumber] = useState("");
-  const [bledBy, setBledBy] = useState("");
-  const [venue, setVenue] = useState("");
+  const [bledBy, setBledBy] = useState("Ryan Jay");
+  const [venue, setVenue] = useState("Malinta Valenzuela");
   const [dateDonated, setDateDonated] = useState("");
   const [errorMessage, setErrorMessage] = useState({ serial_no: [], date_donated: [], bled_by: [],  venue: [] });
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
