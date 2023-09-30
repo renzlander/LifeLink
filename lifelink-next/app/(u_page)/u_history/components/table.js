@@ -28,7 +28,7 @@ const TABLE_HEAD = [
   { label: "Serial Number", key: "serial_no" },
   { label: "Date", key: "date_donated" },
   { label: "Bled By", key: "bled_by" },
-  { label: "Status", key: "status" },
+  { label: "Venue", key: "venue" },
 
 ]; 
  
@@ -275,7 +275,7 @@ export function HistoryTable() {
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {user.status}
+                    {user.venue}
                   </Typography>
                 </td>
               </tr>
