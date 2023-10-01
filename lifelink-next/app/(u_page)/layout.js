@@ -3,6 +3,7 @@ import '../globals.css';
 import React from "react";
 import { UserSidebar } from './components/sidebar';
 import { UserNavbar} from './components/navbar';
+import { ToastContainer, toast } from "react-toastify";
 
 export default function UserLayout({ children }) {
   return (
@@ -16,6 +17,18 @@ export default function UserLayout({ children }) {
           <UserNavbar />
           <div className='overflow-x-auto'>
             {children}
+            <ToastContainer
+              position="bottom-left"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="dark"
+            />
           </div>
         </div>
       </div>

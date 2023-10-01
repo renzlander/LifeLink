@@ -15,6 +15,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import { ToastContainer, toast } from "react-toastify";
 
 import {
   Squares2X2Icon,
@@ -59,6 +60,18 @@ export default function AdminLayout({ children }) {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
+      <ToastContainer
+              position="bottom-left"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="dark"
+            />
       <AppBar position="fixed" open={open} sx={{ backgroundColor: '#dc2626' }}>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <div>
