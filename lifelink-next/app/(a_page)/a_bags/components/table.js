@@ -23,7 +23,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { useRouter } from "next/navigation";
-import { ToastContainer, toast  } from 'react-toastify';
 
 
 const TABLE_HEAD = [
@@ -71,15 +70,14 @@ export function BagsTable() {
         router.push("/login");
         return;
       }
-
+  
       let response;
-
-
+  
       if (searchQuery) {
-        response = await  axios.post(
+        response = await axios.post(
           `${laravelBaseUrl}/api/search-collected-bloodbag?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
           {
-            searchInput: searchQuery, 
+            searchInput: searchQuery,
           },
           {
             headers: {
@@ -96,16 +94,13 @@ export function BagsTable() {
             },
           }
         );
-        console.log(response.data);
       }
-      console.log("API Request URL:", `${laravelBaseUrl}/api/search-collected-bloodbag?page=${page}&sort=${sortColumn}&order=${sortOrder}`);
-
+  
       if (response.data.status === "success") {
         setUserDetails(response.data.data.data);
         setTotalPages(response.data.data.last_page);
         setCurrentPage(response.data.data.current_page);
         setLoading(false);
-      
       } else {
         console.error("Error fetching data:", response.data.message);
         setLoading(false);
@@ -181,11 +176,6 @@ export function BagsTable() {
   
     return 0;
   });
-  const handleUpdateBloodBag = (updatedDonorData) => {
-    // Implement your update logic here, e.g., make an API call to update the user data
-    // You can use the updatedUserData parameter to access the updated user data
-    console.log('Updated user data:', updatedUserData);
-  };
 
   if (loading) {
     return (
@@ -203,18 +193,6 @@ export function BagsTable() {
           Collected Blood Bags
         </Typography>
       </CardHeader>
-      <ToastContainer
-        position="bottom-left"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
       <CardBody className="overflow-x-auto px-0">
         <div className="mb-4 ml-4 mr-4 flex justify-end items-center">
           <div className="flex w-full shrink-0 gap-2 md:w-max">
@@ -353,13 +331,22 @@ export function BagsTable() {
                   </Typography>
                 </td>
                 <td className={classes}>
-                  <EditPopUp user={user} countdown={user.countdown}/>
+                <EditPopUp
+                  user={user}
+                  countdown={user.countdown}
+                  refreshData={fetchData}
+                />
                 </td>
                 <td className={classes}>
-                  <RemoveBlood serial_no={user.serial_no} countdown={user.countdown}/>
+                  <RemoveBlood 
+                    serial_no={user.serial_no} 
+                    countdown={user.countdown} 
+                    refreshData={fetchData}/>
                 </td>
                 <td className={classes}>
-                  <MoveToStock serial_no={user.serial_no} />
+                  <MoveToStock 
+                    serial_no={user.serial_no} 
+                    refreshData={fetchData}/>
                 </td>
               </tr>
             ))}

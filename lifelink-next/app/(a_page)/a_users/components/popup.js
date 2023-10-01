@@ -118,18 +118,6 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
             </Typography>
           </div>
         )}
-        <ToastContainer
-        position="bottom-left"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
         <DialogBody divider className="flex flex-col gap-6">
           <div>
             <div className={`relative flex gap-3 items-center`}>
@@ -239,7 +227,7 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
   );
 }
 
-export function EditPopUp({ user, onUpdate }) {
+export function EditPopUp({ user, onUpdate, refreshData }) {
   const [open, setOpen] = useState(false);
   const [editedUser, setEditedUser] = useState({ ...user });
   const bloodTypes = ['AB+', 'AB-', 'A+', 'A-', 'B+', 'B-', 'O+', 'O-'];
@@ -323,7 +311,7 @@ export function EditPopUp({ user, onUpdate }) {
         return;
       }
       // Send PUT request to update-user API
-      const response = await axios.put(`${laravelBaseUrl}/api/edit-profile`, data, {
+      const response = await axios.put(`${laravelBaseUrl}/api/edit-user-details`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -331,6 +319,7 @@ export function EditPopUp({ user, onUpdate }) {
 
       if (response.data.status === 'success') {
         // User data updated successfully
+        refreshData();
         toast.success('User data updated successfully');
         // Notify the parent component about the update
         onUpdate({ ...editedUser, ...data }); // Merge the edited data with the response data
@@ -368,18 +357,6 @@ export function EditPopUp({ user, onUpdate }) {
           <PencilIcon className="h-4 w-4" />
         </IconButton>
       </Tooltip>
-      <ToastContainer
-        position="bottom-left"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
       <Dialog open={open} handler={() => setOpen(false)}>
         <DialogHeader>Edit User</DialogHeader>
         <DialogBody divider className="flex flex-col gap-6">

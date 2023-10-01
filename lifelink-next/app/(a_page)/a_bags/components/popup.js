@@ -19,8 +19,8 @@ import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { Typography } from "@mui/material";
 import { EyeIcon } from "@heroicons/react/24/outline";
-import { ToastContainer, toast  } from 'react-toastify';
 import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
 
 
 function formatDate(dateString) {
@@ -32,7 +32,7 @@ function formatDate(dateString) {
   return formattedDate;
 }
 
-export function RemoveBlood({ serial_no, handleOpen, countdown }) {
+export function RemoveBlood({ serial_no, handleOpen, countdown,refreshData }) {
   const [open, setOpen] = useState(false);
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
   const [timeLeft, setTimeLeft] = useState(""); 
@@ -58,11 +58,9 @@ export function RemoveBlood({ serial_no, handleOpen, countdown }) {
 
   
       if (response.data.status === 'success') {
-        //window.location.reload();
-        router.push("/a_bags");
+        refreshData();
         toast.success('Removed blood bag successfully');
         console.log('Removed blood bag successfully');
-  
         setOpen(false);
       } else {
         console.error('Error removing blood bag:', response.data.message);
@@ -116,22 +114,22 @@ export function RemoveBlood({ serial_no, handleOpen, countdown }) {
 
   
 
-export function EditPopUp({user, countdown}) {
+export function EditPopUp({user, countdown,refreshData}) {
   const [errorMessage, setErrorMessage] = useState({ serial_no: [], date_donated: [], bled_by: [],  venue: [] });
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
   const [open, setOpen] = useState(false);
-  const [bledBy, setBledBy] = useState("");
-  const [venue, setVenue] = useState("");
-  const [dateDonated, setDateDonated] = useState("");
+  const [bledBy, setBledBy] = useState(user.bled_by);
+  const [venue, setVenue] = useState(user.venue);
+  const [dateDonated, setDateDonated] = useState(user.date_donated);
   const [part1, setPart1] = useState("");
   const [part2, setPart2] = useState("");
   const [part3, setPart3] = useState("");
   const srNumber = `${part1}${part2}${part3}`;
 
-
+  console.log('user:', user);
   const serialNo = user.serial_no;
   const serialFormat = serialNo.match(/^(\d{4})(\d{6})(\d{1})$/);
-
+  console.log('serialFormat:', serialFormat[1]);
   let firstPart = "";
   let secondPart = "";
   let thirdPart = "";
@@ -142,6 +140,17 @@ export function EditPopUp({user, countdown}) {
     thirdPart = serialFormat[3];
   }
 
+  useEffect(() => {
+    if (user.serial_no) {
+      const serialFormat = user.serial_no.match(/^(\d{4})(\d{6})(\d{1})$/);
+      if (serialFormat) {
+        setPart1(serialFormat[1]);
+        setPart2(serialFormat[2]);
+        setPart3(serialFormat[3]);
+      }
+    }
+  }, [user.serial_no]);
+  
   const handleEditSerialNumber = async () => {
     try {
       const token = getCookie("token");
@@ -150,19 +159,17 @@ export function EditPopUp({user, countdown}) {
         return;
       }
   
-      // Prepare data for the POST request
       const data = {
-        user_id,
+        blood_bags_id: user.blood_bags_id,
         serial_no: srNumber,
         venue: venue,
         date_donated: dateDonated,
         bled_by: bledBy,
       };
       console.log("Before Axios POST request");
-
-      // Send POST request to add-bloodbag API
-      const response = await axios.post(
-        `${laravelBaseUrl}/api/add-bloodbag`,
+  
+      const response = await axios.put(
+        `${laravelBaseUrl}/api/edit-bloodbag`,
         data,
         {
           headers: {
@@ -170,25 +177,37 @@ export function EditPopUp({user, countdown}) {
           },
         }
       ).catch((error) => {
-        console.error("Unknown error occurred:", error);
+        toast.error('Opps! Something went wrong');
         if (error.response && error.response.data && error.response.data.errors) {
           const { errors } = error.response.data;
           const serialNumberError = errors.serial_no || [];
           const dateError = errors.date_donated || [];
           const bledByError = errors.bled_by || [];
           const venueError = errors.venue || [];
-          setErrorMessage({ serial_no: serialNumberError, date_donated: dateError, bled_by: bledByError, venue: venueError });
+          setErrorMessage({
+            serial_no: serialNumberError,
+            date_donated: dateError,
+            bled_by: bledByError,
+            venue: venueError,
+          });
         } else {
           setGeneralErrorMessage(error.response.data.message);
-          setErrorMessage({ serial_no: [], date_donated: [], bled_by: [], venue: [] });
+          setErrorMessage({
+            serial_no: [],
+            date_donated: [],
+            bled_by: [],
+            venue: [],
+          });
         }
       });
-    
+  
       if (response.data.status === "success") {
-        // Blood bag added successfully, you can handle this accordingly
-        console.log("Blood bag added successfully");
-      }  else if (response.data.status === "error") {
+        toast.success("Blood bag updated successfully");
+        setOpen(false);
+        refreshData();
+      } else if (response.data.status === "error") {
         if (response.data.message) {
+          toast.error(response.data.message);
           setGeneralErrorMessage(response.data.message);
         } else {
           console.error("Unknown error occurred:", response.data);
@@ -197,6 +216,7 @@ export function EditPopUp({user, countdown}) {
       // Close the dialog
       setOpen(false);
     } catch (error) {
+     
       console.error("Unknown error occurred:", error);
     }
   };
@@ -209,32 +229,32 @@ export function EditPopUp({user, countdown}) {
         </IconButton>
       </Tooltip>
       <Dialog open={open} handler={() => setOpen(false)}>
-        <DialogHeader className="flex justify-between"><div>Edit Blood Bag</div><div>Serial Number:  <span className="text-red-600">{firstPart}-{secondPart}-{thirdPart}</span></div></DialogHeader>
+        <DialogHeader className="flex justify-between"><div>Edit Blood Bag</div><div>Serial Number:  <span className="text-red-600">{part1}-{part2}-{part3}</span></div></DialogHeader>
         <Typography className="text-sm text-red-600 font-bold text-center">
-              This blood bag can be edit in {countdown} days
-            </Typography>
+          This blood bag can be edited in {countdown} days
+        </Typography>
         <DialogBody divider className="flex flex-col gap-4">
-        <div>
+          <div>
             <div className={`relative flex gap-3 items-center`}>
-            <Input
-              label="XXXX"
-              maxLength={4}
-              value={firstPart}
-              onChange={(e) => {
-                const newValue = e.target.value;
-                if (!/^[0-9]*$/.test(newValue)) {
-                  return;
-                }
-                setPart1(newValue);
-              }}
-              containerProps={{ className: "min-w-[75px]" }}
-            />
+              <Input
+                label="XXXX"
+                maxLength={4}
+                value={part1}
+                onChange={(e) => {
+                  const newValue = e.target.value;
+                  if (!/^[0-9]*$/.test(newValue)) {
+                    return;
+                  }
+                  setPart1(newValue);
+                }}
+                containerProps={{ className: "min-w-[75px]" }}
+              />
 
               <Typography>-</Typography>
               <Input
                 label="XXXXXX"
                 maxLength={6}
-                value={secondPart}
+                value={part2}
                 onChange={(e) => {
                   const newValue = e.target.value;
                   if (!/^[0-9]*$/.test(newValue)) {
@@ -248,7 +268,7 @@ export function EditPopUp({user, countdown}) {
               <Input
                 label="X"
                 maxLength={1}
-                value={thirdPart}
+                value={part3}
                 onChange={(e) => {
                   const newValue = e.target.value;
                   if (!/^[0-9]*$/.test(newValue)) {
@@ -259,51 +279,50 @@ export function EditPopUp({user, countdown}) {
                 containerProps={{ className: "min-w-[25px]" }}
               />
             </div>
-            {errorMessage.serial_no.length > 0 && (
+            {errorMessage.serial_no && (
               <div className="error-message text-red-600 text-sm mt-1">
-                {errorMessage.serial_no[0]}
+                {errorMessage.serial_no}
               </div>
             )}
           </div>
-          <div className={`relative ${errorMessage.bled_by.length > 0 ? "mb-1" : ""}`}>
+          <div className={`relative ${errorMessage.bled_by ? "mb-1" : ""}`}>
             <Input
               label="Bled by"
-              value={user.bled_by}
+              value={bledBy}
               onChange={(e) => setBledBy(e.target.value)}
             />
-            {errorMessage.bled_by.length > 0 && (
+            {errorMessage.bled_by && (
               <div className="error-message text-red-600 text-sm">
-                {errorMessage.bled_by[0]}
+                {errorMessage.bled_by}
               </div>
             )}
           </div>
-          <div className={`relative ${errorMessage.venue.length > 0 ? "mb-1" : ""}`}>
+          <div className={`relative ${errorMessage.venue ? "mb-1" : ""}`}>
             <Input
               label="Venue"
-              value={user.venue}
+              value={venue}
               onChange={(e) => setVenue(e.target.value)}
             />
-            {errorMessage.venue.length > 0 && (
+            {errorMessage.venue && (
               <div className="error-message text-red-600 text-sm">
-                {errorMessage.venue[0]}
+                {errorMessage.venue}
               </div>
             )}
           </div>
-          <div className={`relative ${errorMessage.date_donated.length > 0 ? "mb-1" : ""}`}>
+          <div className={`relative ${errorMessage.date_donated ? "mb-1" : ""}`}>
             <Input
               type="date"
               label="Date"
-              value={user.date_donated}
+              value={dateDonated}
               onChange={(e) => setDateDonated(e.target.value)}
               max={new Date().toISOString().split('T')[0]}
             />
-            {errorMessage.date_donated.length > 0 && (
+            {errorMessage.date_donated && (
               <div className="error-message text-red-600 text-sm">
-                {errorMessage.date_donated[0]}
+                {errorMessage.date_donated}
               </div>
             )}
           </div>
-
         </DialogBody>
         <DialogFooter>
           <Button
@@ -313,7 +332,11 @@ export function EditPopUp({user, countdown}) {
           >
             <span>Cancel</span>
           </Button>
-          <Button variant="gradient" color="red" onClick={handleEditSerialNumber}>
+          <Button
+            variant="gradient"
+            color="red"
+            onClick={handleEditSerialNumber}
+          >
             <span>Done</span>
           </Button>
         </DialogFooter>
@@ -323,7 +346,7 @@ export function EditPopUp({user, countdown}) {
 }
 
 
-export function MoveToStock({ serial_no, handleOpen }){
+export function MoveToStock({ serial_no, handleOpen, refreshData}){
   const [open, setOpen] = useState(false);
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
 
@@ -350,8 +373,9 @@ export function MoveToStock({ serial_no, handleOpen }){
       });
     
       if (response.data.status === "success") {
-        // Blood bag added successfully, you can handle this accordingly
+        refreshData();
         console.log("Blood bag added successfully");
+        toast.success("Blood bag added to inventory successfully");
       }  else if (response.data.status === "error") {
         if (response.data.message) {
           setGeneralErrorMessage(response.data.message);

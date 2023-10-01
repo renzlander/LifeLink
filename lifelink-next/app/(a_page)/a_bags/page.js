@@ -5,6 +5,7 @@ import { Button,Spinner } from "@material-tailwind/react";
 import { BagsTable } from './components/table';
 
 
+
 export default function Home() {
   const router = useRouter();
   return (

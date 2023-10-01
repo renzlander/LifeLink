@@ -197,18 +197,6 @@ export function UsersTable() {
           Users List
         </Typography>
       </CardHeader>
-      <ToastContainer
-        position="bottom-left"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
       <CardBody className="overflow-x-auto px-0">
         <div className="mb-4 ml-4 mr-4 flex justify-end items-center">
           <div className="flex w-full shrink-0 gap-2 md:w-max">
@@ -319,7 +307,7 @@ export function UsersTable() {
                 </td>
                 <td className={classes}>
                   <ViewPopUp user={user} />
-                  <EditPopUp user={user} onUpdate={handleUpdateUser} />
+                  <EditPopUp user={user} onUpdate={handleUpdateUser} refreshData={fetchData}/>
                 </td>
                 <td className={classes}>
                   <AddBloodBagPopup user_id={user.user_id} />
