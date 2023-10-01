@@ -34,7 +34,7 @@ const TABLE_HEAD = [
   { label: "Expiration Date", key: "expiration_date" },
   { label: "Venue", key: "venue" },
   { label: "Bled By", key: "bled_by" },
-  { label: "", key: "" }, 
+  { label: ""}, 
   { label: ""}, 
   { label: ""}, 
   { label: ""},
@@ -246,7 +246,7 @@ export function BagsTable() {
           </thead>
           <tbody>
             {userDetails.map((user, index) => (
-              <tr key={user.donor_no} className="border-b">
+              <tr className="border-b">
                 <td className={classes}>
                   <div className="flex items-center gap-3">
                     <Typography

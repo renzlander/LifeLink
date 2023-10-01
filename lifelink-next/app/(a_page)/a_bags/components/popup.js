@@ -231,8 +231,10 @@ export function EditPopUp({user, countdown,refreshData}) {
       <Dialog open={open} handler={() => setOpen(false)}>
         <DialogHeader className="flex justify-between"><div>Edit Blood Bag</div><div>Serial Number:  <span className="text-red-600">{part1}-{part2}-{part3}</span></div></DialogHeader>
         <Typography className="text-sm text-red-600 font-bold text-center">
-          This blood bag can be edited in {countdown} days
-        </Typography>
+        {countdown === 0
+          ? "Editing is not available now"
+          : `This blood bag can be edited in ${countdown} days`}
+      </Typography>
         <DialogBody divider className="flex flex-col gap-4">
           <div>
             <div className={`relative flex gap-3 items-center`}>
@@ -240,6 +242,7 @@ export function EditPopUp({user, countdown,refreshData}) {
                 label="XXXX"
                 maxLength={4}
                 value={part1}
+                disabled={countdown === 0}
                 onChange={(e) => {
                   const newValue = e.target.value;
                   if (!/^[0-9]*$/.test(newValue)) {
@@ -255,6 +258,7 @@ export function EditPopUp({user, countdown,refreshData}) {
                 label="XXXXXX"
                 maxLength={6}
                 value={part2}
+                disabled={countdown === 0}
                 onChange={(e) => {
                   const newValue = e.target.value;
                   if (!/^[0-9]*$/.test(newValue)) {
@@ -269,6 +273,7 @@ export function EditPopUp({user, countdown,refreshData}) {
                 label="X"
                 maxLength={1}
                 value={part3}
+                disabled={countdown === 0}
                 onChange={(e) => {
                   const newValue = e.target.value;
                   if (!/^[0-9]*$/.test(newValue)) {
@@ -289,6 +294,7 @@ export function EditPopUp({user, countdown,refreshData}) {
             <Input
               label="Bled by"
               value={bledBy}
+              disabled={countdown === 0}
               onChange={(e) => setBledBy(e.target.value)}
             />
             {errorMessage.bled_by && (
@@ -301,6 +307,7 @@ export function EditPopUp({user, countdown,refreshData}) {
             <Input
               label="Venue"
               value={venue}
+              disabled={countdown === 0}
               onChange={(e) => setVenue(e.target.value)}
             />
             {errorMessage.venue && (
@@ -314,6 +321,7 @@ export function EditPopUp({user, countdown,refreshData}) {
               type="date"
               label="Date"
               value={dateDonated}
+              disabled={countdown === 0}
               onChange={(e) => setDateDonated(e.target.value)}
               max={new Date().toISOString().split('T')[0]}
             />
@@ -336,6 +344,7 @@ export function EditPopUp({user, countdown,refreshData}) {
             variant="gradient"
             color="red"
             onClick={handleEditSerialNumber}
+            disabled={countdown === 0}
           >
             <span>Done</span>
           </Button>
