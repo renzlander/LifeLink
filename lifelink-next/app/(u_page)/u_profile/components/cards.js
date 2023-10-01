@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import Image from 'next/image';
 import {
   Card,
@@ -19,7 +19,18 @@ import {
     BriefcaseIcon,
  } from "@heroicons/react/24/outline";
 
-export default function CardProfile() {
+
+ function formatDate(dateString) {
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  const formattedDate = new Date(dateString).toLocaleDateString(
+    undefined,
+    options
+  );
+  return formattedDate;
+}
+
+export default function CardProfile({userDetails}) {
+ 
   return (
     <Card className="w-full mt-10">
         <CardHeader 
@@ -50,10 +61,10 @@ export default function CardProfile() {
         </CardHeader>
         <CardBody className="text-center flex flex-col items-center">
             <Typography variant="h4" color="blue-gray" className="mb-2">
-                Renz Lander De Ocampo
+              {userDetails.first_name} {userDetails.last_name}
             </Typography>
             <Typography color="blue-gray" className="font-medium" textGradient>
-                @renz
+                {userDetails.email}
             </Typography>
         </CardBody>
     </Card>
@@ -61,7 +72,7 @@ export default function CardProfile() {
 }
 
 
-export function CardInfo() {
+export function CardInfo({userDetails}) {
     return (
       <Card className="w-1/3 h-full">
           <CardBody className="flex flex-col justify-start">
@@ -74,7 +85,7 @@ export function CardInfo() {
                   Blood Type:
               </Typography>
               <Typography color="blue-gray" className="font-medium ml-3 text-red-900">
-                A+
+                {userDetails.blood_type}
               </Typography>
             </div>
             <div className="flex items-center">
@@ -83,7 +94,7 @@ export function CardInfo() {
                   E-mail:
               </Typography>
               <Typography color="blue-gray" className="font-medium ml-3 text-red-900">
-                renzlander@gmail.com
+                {userDetails.email}
               </Typography>
             </div>
             <div className="flex items-center">
@@ -92,7 +103,7 @@ export function CardInfo() {
                   Phone Number:
               </Typography>
               <Typography color="blue-gray" className="font-medium ml-3 text-red-900">
-                A+
+                {userDetails.mobile}
               </Typography>
             </div>
             <div className="flex items-center">
@@ -101,7 +112,7 @@ export function CardInfo() {
                 Birthday:
               </Typography>
               <Typography color="blue-gray" className="font-medium ml-3 text-red-900">
-                February 02, 2002
+                {formatDate(userDetails.dob)}
               </Typography>
             </div>
             <div className="flex items-center">
@@ -110,7 +121,7 @@ export function CardInfo() {
                   Sex:
               </Typography>
               <Typography color="blue-gray" className="font-medium ml-3 text-red-900">
-                Everyday
+                {userDetails.sex}
               </Typography>
             </div>
             <div className="flex items-center">
@@ -118,9 +129,9 @@ export function CardInfo() {
               <Typography variant="h6" color="blue-gray" className="uppercase ml-2">
                   Address:
               </Typography>
-              <Tooltip content="331 Tandang Manang Street" placement="right-end">
+              <Tooltip placement="right-end">
                 <Typography color="blue-gray" className="font-medium ml-3 text-red-900 truncate ...">
-                    331 Tandang Manang Street
+                  {userDetails.street}, {userDetails.barangay} {userDetails.municipality}, {userDetails.province}
                 </Typography>
               </Tooltip>
             </div>
@@ -130,7 +141,7 @@ export function CardInfo() {
                   Occupation:
               </Typography>
               <Typography color="blue-gray" className="font-medium ml-3 text-red-900">
-                Intern
+                {userDetails.occupation}
               </Typography>
             </div>
           </CardBody>
@@ -147,3 +158,4 @@ export function CardDisplays() {
         </Card>
     );
 }
+
