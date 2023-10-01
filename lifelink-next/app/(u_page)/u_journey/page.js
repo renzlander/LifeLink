@@ -4,14 +4,14 @@ import { useRouter } from 'next/navigation';
 import { Typography } from "@material-tailwind/react";
 import { JourneyStepper } from './components/stepper';
 import { BloodBagTable } from './components/table';
-import axios from "axios"; // Import Axios
+import axios from "axios"; 
 import { laravelBaseUrl } from "@/app/variables";
-import { useEffect, useState } from "react"; // Import useEffect and useState
+import { useEffect, useState } from "react"; 
 
 export default function Home() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true); // Initialize loading state
-  const [bloodJourney, setBloodJourney] = useState([]); // Initialize with an empty array
+  const [loading, setLoading] = useState(true); 
+  const [bloodJourney, setBloodJourney] = useState([]); 
 
   const fetchData = async (page) => {
     try {

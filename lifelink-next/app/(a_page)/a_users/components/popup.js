@@ -243,7 +243,7 @@ export function EditPopUp({ user, onUpdate }) {
   const [open, setOpen] = useState(false);
   const [editedUser, setEditedUser] = useState({ ...user });
   const bloodTypes = ['AB+', 'AB-', 'A+', 'A-', 'B+', 'B-', 'O+', 'O-'];
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState({ email: [], mobile: [], first_name: [], last_name: [], sex: [], blood_type: [], dob: []});
 
   const [regionList, setRegionList] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState('');
@@ -254,64 +254,47 @@ export function EditPopUp({ user, onUpdate }) {
   const [barangayList, setBarangayList] = useState([]);
   const [selectedBarangay, setSelectedBarangay] = useState('');
 
+  const router = useRouter();
+
   useEffect(() => {
-    // Fetch region data
     axios.get(`${laravelBaseUrl}/api/address/get-regions`)
-      .then((response) => {
-        setRegionList(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching regions:', error);
+      .then((data) => {
+        setRegionList(data.data);
       });
   }, []);
-
+  
   useEffect(() => {
-    setSelectedRegion(user.region || '');
-    setSelectedProvince(user.province || '');
-    setSelectedMunicipality(user.municipality || '');
-    setSelectedBarangay(user.barangay || '');
-  }, [user]);
-
-  useEffect(() => {
-    // Fetch province data based on the selected region
-    if (selectedRegion) {
-      const apiUrl = `${laravelBaseUrl}/api/address/get-provinces?regCode=${selectedRegion}`;
-      
-      axios.post(apiUrl)
-        .then((response) => {
-          setProvinceList(response.data);
-        })
-        .catch((error) => {
-          console.error('Error fetching provinces:', error);
-        });
+    if (selectedRegion?.regCode) {
+     
+        axios.post(`${laravelBaseUrl}/api/address/get-provinces?regCode=${selectedRegion?.regCode}`,)
+          .then((data) => {
+            console.log(data.data);
+            setProvinceList(data.data);
+          });
+  
     }
   }, [selectedRegion]);
 
   useEffect(() => {
-    // Fetch municipality data based on the selected province
-    if (selectedProvince) {
-      axios.post(`${laravelBaseUrl}/api/address/get-municipalities?provCode=${selectedProvince}`)
-        .then((response) => {
-          setMunicipalityList(response.data);
-        })
-        .catch((error) => {
-          console.error('Error fetching municipalities:', error);
+    if (selectedProvince?.provCode) {
+      axios.post(`${laravelBaseUrl}/api/address/get-municipalities?provCode=${selectedProvince?.provCode}`)
+        .then((data) => {
+          console.log(data.data);
+          setMunicipalityList(data.data);
         });
     }
   }, [selectedProvince]);
 
   useEffect(() => {
-    // Fetch barangay data based on the selected municipality
-    if (selectedMunicipality) {
-      axios.post(`${laravelBaseUrl}/api/address/get-barangays?citymunCode=${selectedMunicipality}`)
-        .then((response) => {
-          setBarangayList(response.data);
-        })
-        .catch((error) => {
-          console.error('Error fetching barangays:', error);
+    if (selectedMunicipality?.citymunCode) {
+      axios.post(`${laravelBaseUrl}/api/address/get-barangays?citymunCode=${selectedMunicipality?.citymunCode}`)
+        .then((data) => {
+          console.log(data.data);
+          setBarangayList(data.data);
         });
     }
   }, [selectedMunicipality]);
+
 
   useEffect(() => {
     // Initialize the selected values with user data when the component mounts
@@ -320,6 +303,7 @@ export function EditPopUp({ user, onUpdate }) {
     setSelectedMunicipality(editedUser.municipality);
     setSelectedBarangay(editedUser.barangay);
   }, [editedUser]);
+  
 
   const handleEditUser = async () => {
     try {
@@ -347,24 +331,33 @@ export function EditPopUp({ user, onUpdate }) {
 
       if (response.data.status === 'success') {
         // User data updated successfully
-        router.push("/a_users")
         toast.success('User data updated successfully');
-        console.log('User data updated successfully');
-
         // Notify the parent component about the update
         onUpdate({ ...editedUser, ...data }); // Merge the edited data with the response data
 
         // Close the dialog
         setOpen(false);
+        router.refresh();
       } else {
         console.error('Error updating user data:', response.data.message);
-        toast.error(response.data.errors);
+        toast.error('Error updating user details');
       }
     } catch (error) {
+      if (error.response && error.response.data && error.response.data.errors) {
+        const { errors } = error.response.data;
+        const emailErrors = errors.email || [];
+        const mobileErrors = errors.mobile || [];
+        const first_nameErrors = errors.first_name || [];
+        const last_nameErrors = errors.last_name || [];
+        const sexErrors = errors.sex || [];
+        const blood_typeErrors = errors.blood_type || [];
+        const dobErrors = errors.dob || [];
+        setErrorMessage({ email: emailErrors, mobile: mobileErrors, first_name: first_nameErrors, last_name: last_nameErrors, sex: sexErrors, blood_type: blood_typeErrors, dob: dobErrors });
+      } else {
+        setErrorMessage({ email: [error.message], mobile: [error.message] });
+      }
       console.error('Error updating user data:', error);
       toast.error(error);
-      // Display an error message to the user
-      // You can set up a state variable to manage error messages and display them in your UI
     }
   };
   
@@ -398,6 +391,11 @@ export function EditPopUp({ user, onUpdate }) {
               onChange={(e) => setEditedUser({ ...editedUser, first_name: e.target.value })}
               containerProps={{ className: "min-w-[50px]" }}
             />
+            {errorMessage.first_name.length > 0 && (
+              <div className="error-message text-red-600 text-sm">
+                {errorMessage.first_name[0]}
+              </div>
+            )}
             <Input
               type="text"
               label="Middle Name"
@@ -412,6 +410,11 @@ export function EditPopUp({ user, onUpdate }) {
               onChange={(e) => setEditedUser({ ...editedUser, last_name: e.target.value })}
               containerProps={{ className: "min-w-[50px]" }}
             />
+            {errorMessage.last_name.length > 0 && (
+              <div className="error-message text-red-600 text-sm">
+                {errorMessage.last_name[0]}
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <Input
@@ -420,23 +423,38 @@ export function EditPopUp({ user, onUpdate }) {
               value={editedUser.email}
               onChange={(e) => setEditedUser({ ...editedUser, email: e.target.value })}
             />
+            {errorMessage.email.length > 0 && (
+                <div className="error-message text-red-600 text-sm">
+                  {errorMessage.email[0]}
+                </div>
+              )}
             <Input
               type="text"
               label="Mobile"
               value={editedUser.mobile}
               onChange={(e) => setEditedUser({ ...editedUser, mobile: e.target.value })}
             />
+            {errorMessage.mobile.length > 0 && (
+              <div className="error-message text-red-600 text-sm">
+                {errorMessage.mobile[0]}
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <Select
               label="Sex"
-              value={editedUser.sex} // Assuming `editedUser.sex` contains the user's sex
+              value={editedUser.sex} 
               onChange={(value) => setEditedUser({ ...editedUser, sex: value })}
               containerProps={{ className: "min-w-[50px]" }}
             >
               <Option value="Male">Male</Option>
               <Option value="Female">Female</Option>
             </Select>
+            {errorMessage.sex.length > 0 && (
+              <div className="error-message text-red-600 text-sm">
+                {errorMessage.sex[0]}
+              </div>
+            )}
             <Input
               type="date"
               label="Date of Birth"
@@ -444,6 +462,11 @@ export function EditPopUp({ user, onUpdate }) {
               onChange={(e) => setEditedUser({ ...editedUser, dob: e.target.value })}
               containerProps={{ className: "min-w-[50px]" }}
             />
+            {errorMessage.dob.length > 0 && (
+              <div className="error-message text-red-600 text-sm">
+                {errorMessage.dob[0]}
+              </div>
+            )}
             <Select
               label="Blood Type"
               value={editedUser.blood_type}
@@ -456,6 +479,11 @@ export function EditPopUp({ user, onUpdate }) {
                 </Option>
               ))}
             </Select>
+            {errorMessage.blood_type.length > 0 && (
+              <div className="error-message text-red-600 text-sm">
+                {errorMessage.blood_type[0]}
+              </div>
+            )}
           </div>
           <Input
             type="text"
@@ -472,7 +500,7 @@ export function EditPopUp({ user, onUpdate }) {
               {regionList.map((region) => (
                 <Option
                   key={region.regCode}
-                  value={region.regCode}
+                  value={user.region}
                 >
                   {region.regDesc}
                 </Option>
