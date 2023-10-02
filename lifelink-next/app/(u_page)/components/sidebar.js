@@ -4,6 +4,7 @@ import {
     Typography,
     List,
     Button,
+    IconButton,
   } from "@material-tailwind/react";
   import {
     HomeIcon,
@@ -13,6 +14,7 @@ import {
     UserIcon,
     ArrowLeftOnRectangleIcon,
     ChevronRightIcon,
+    Bars3Icon,
   } from "@heroicons/react/24/solid";
   import axios from "axios";
   import Image from "next/image";
@@ -82,12 +84,13 @@ import {
 
     return (
       <Card  className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5 bg-gradient-to-r from-red-900 to-red-700">
+        <IconButton variant="text"><Bars3Icon className="h-5 w-5 text-white" /></IconButton >
         <div className="flex flex-col justify-center items-center mb-2 p-4 border-b border-gray-200">
           <Link href='./u_profile'>
             <Image src="/patient_icon.png" width={80} height={80} className="mb-4" />
           </Link>
-            <Image src="/next.svg" width={50} height={50} className="mb-4" />
-          <Typography className="text-gray-100 font-bold text-2xl">{userData ? `${userData.first_name} ${userData.last_name}` : "Loading..."}</Typography>
+          <Typography className="text-gray-100 font-bold text-2xl">{userData ? `${userData.first_name}` : "Loading..."}</Typography>
+          <Typography className="text-gray-100 font-bold text-2xl">{userData ? `${userData.last_name}` : "Loading..."}</Typography>
           <Typography className="text-gray-100 font-light text-sm">Donor no: {userData ? userData.donor_no : "Loading..."}</Typography>
         </div>
         <List>

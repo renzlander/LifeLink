@@ -9,11 +9,11 @@ export default function UserLayout({ children }) {
   return (
     <main className='bg-gray-300 p-4'>
       <div className='flex'>
-        <div className='fixed z-50'>
+        <div className='fixed z-50 hidden lg:block'>
           <UserSidebar />
         </div>
         
-        <div className='flex flex-col w-full ml-72'>
+        <div className='flex flex-col w-full lg:ml-72'>
           <UserNavbar />
           <div className='overflow-x-auto'>
             {children}
