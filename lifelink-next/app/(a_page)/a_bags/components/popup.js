@@ -125,7 +125,6 @@ export function EditPopUp({user, countdown,refreshData}) {
   const [part2, setPart2] = useState("");
   const [part3, setPart3] = useState("");
   const srNumber = `${part1}${part2}${part3}`;
-
   console.log('user:', user);
   const serialNo = user.serial_no;
   const serialFormat = serialNo.match(/^(\d{4})(\d{6})(\d{1})$/);
@@ -232,8 +231,8 @@ export function EditPopUp({user, countdown,refreshData}) {
         <DialogHeader className="flex justify-between"><div>Edit Blood Bag</div><div>Serial Number:  <span className="text-red-600">{part1}-{part2}-{part3}</span></div></DialogHeader>
         <Typography className="text-sm text-red-600 font-bold text-center">
         {countdown === 0
-          ? "Editing is not available now"
-          : `This blood bag can be edited in ${countdown} days`}
+          ? "Editing is not available at the moment."
+          : `This blood bag can be edited in ${countdown} days.`}
       </Typography>
         <DialogBody divider className="flex flex-col gap-4">
           <div>

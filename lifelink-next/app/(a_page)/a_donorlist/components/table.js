@@ -250,7 +250,7 @@ export function DonorTable(){
           </thead>
           <tbody>
             {userDetails.map((user, index) => (
-              <tr key={user.donor_no} className="border-b">
+              <tr className="border-b">
                 <td className={classes}>
                   <div className="flex items-center gap-3">
                     <Typography
@@ -329,7 +329,7 @@ export function DonorTable(){
                   <ViewPopUp user={user}/>
                 </td>
                 <td className={classes}>
-                  <MoveToDeferral user_id={user.user_id} />
+                  <MoveToDeferral user_id={user.user_id} refreshData={fetchData}/>
                 </td>
               </tr>
             ))}

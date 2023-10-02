@@ -73,12 +73,12 @@ const TABLE_ROWS = [
   },
 ];
  
-export function DeferralTable() {
+export function TemporaryDeferralTable() {
   return (
     <Card className="h-full w-full mt-4">
         <CardHeader color="red" className="relative h-16 flex items-center">
           <Typography variant="h4" color="white" className="ml-4">
-            Deferral List
+            Temporary Deferral
           </Typography>
         </CardHeader>
       <CardBody className="overflow-scroll px-0">

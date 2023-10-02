@@ -19,6 +19,7 @@ import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { Typography } from "@mui/material";
 import { EyeIcon } from "@heroicons/react/24/outline";
+import { toast } from "react-toastify";
 
 function formatDate(dateString) {
   const options = { year: "numeric", month: "long", day: "numeric" };
@@ -29,21 +30,41 @@ function formatDate(dateString) {
   return formattedDate;
 }
 
-export function MoveToDeferral({ user_id, handleOpen }) {
+export function MoveToDeferral({ user_id, handleOpen, refreshData }) {
   const [open, setOpen] = useState(false);
-  const [serialNumber, setSerialNumber] = useState("");
-  const [bledBy, setBledBy] = useState("");
-  const [venue, setVenue] = useState("");
-  const [dateDonated, setDateDonated] = useState("");
-  const [errorMessage, setErrorMessage] = useState({ serial_no: [], date_donated: [], bled_by: [],  venue: [] });
+  const [otherReason, setOtherReason] = useState('');
+  const [category, setCategory] = useState('');
+  const [remarks, setRemarks] = useState('');
+  const [duration, setDuration] = useState(1);
+  const [errorMessage, setErrorMessage] = useState({ category: [], specific_reason: [], remarks: [], duration: [] });
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
 
-  const [part1, setPart1] = useState("");
-  const [part2, setPart2] = useState("");
-  const [part3, setPart3] = useState("");
-  const srNumber = `${part1}${part2}${part3}`;
+  const handleIncrement = () => {
+    setDuration(duration + 1);
+  };
 
-  const handleAddBloodBag = async () => {
+  const handleDecrement = () => {
+    if (duration > 0) {
+      setDuration(duration - 1);
+    }
+  };
+
+  const handleChange = (e) => {
+    const newValue = parseInt(e.target.duration, 10);
+    if (!isNaN(newValue)) {
+      setDuration(newValue);
+    }
+  };
+
+
+  const handleCategoryChange = (value) => {
+    setCategory(value);
+  };
+  const handleRemarksChange = (value) => {
+    setRemarks(value);
+  };
+
+  const handleMoveToDeferral = async () => {
     try {
       const token = getCookie("token");
       if (!token) {
@@ -54,53 +75,62 @@ export function MoveToDeferral({ user_id, handleOpen }) {
       // Prepare data for the POST request
       const data = {
         user_id,
-        serial_no: srNumber,
-        venue: venue,
-        date_donated: dateDonated,
-        bled_by: bledBy,
+        category: category,
+        specific_reason: otherReason,
+        remarks: remarks,
+        duration: duration,
       };
-      console.log("Before Axios POST request");
-
-      // Send POST request to add-bloodbag API
-      const response = await axios.post(
-        `${laravelBaseUrl}/api/add-bloodbag`,
-        data,
-        {
+  
+      const response = await axios
+        .post(`${laravelBaseUrl}/api/move-to-defferal`, data, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
+        })
+        .catch((error) => {
+          console.error("Unknown error occurred:", error);
+          toast.error("Oops! Something went wrong");
+          if (error.response && error.response.data && error.response.data.errors) {
+            const { errors } = error.response.data;
+            const categoryError = errors.category || [];
+            const otherReasonError = errors.specific_reason || [];
+            const remarksError = errors.remarks || [];
+            const durationError = errors.duration || [];
+            setErrorMessage({
+              category: categoryError,
+              specific_reason: otherReasonError,
+              remarks: remarksError,
+              duration: durationError,
+            });
+          } else {
+            setGeneralErrorMessage(error.response.data.message);
+            setErrorMessage({
+              category: [],
+              specific_reason: [],
+              remarks: [],
+              duration: [],
+            });
+          }
+        });
+  
+  
+        if (response.data.status === "success") {
+          
+        } else if (response.data.status === "error") {
+          if (response.data.message) {
+            setGeneralErrorMessage(response.data.message);
+          } else {
+            console.error("Unknown error occurred:", response.data);
+          }
         }
-      ).catch((error) => {
-        console.error("Unknown error occurred:", error);
-        if (error.response && error.response.data && error.response.data.errors) {
-          const { errors } = error.response.data;
-          const serialNumberError = errors.serial_no || [];
-          const dateError = errors.date_donated || [];
-          const bledByError = errors.bled_by || [];
-          const venueError = errors.venue || [];
-          setErrorMessage({ serial_no: serialNumberError, date_donated: dateError, bled_by: bledByError, venue: venueError });
-        } else {
-          setGeneralErrorMessage(error.response.data.message);
-          setErrorMessage({ serial_no: [], date_donated: [], bled_by: [], venue: [] });
-        }
-      });
-    
-      if (response.data.status === "success") {
-        // Blood bag added successfully, you can handle this accordingly
-        console.log("Blood bag added successfully");
-      }  else if (response.data.status === "error") {
-        if (response.data.message) {
-          setGeneralErrorMessage(response.data.message);
-        } else {
-          console.error("Unknown error occurred:", response.data);
-        }
-      }
-      // Close the dialog
-      setOpen(false);
+        setOpen(false);
+        refreshData();
+        toast.success("Successfully moved to deferral");
     } catch (error) {
       console.error("Unknown error occurred:", error);
     }
   };
+  
 
 
   return (
@@ -117,12 +147,96 @@ export function MoveToDeferral({ user_id, handleOpen }) {
             </Typography>
           </div>
         )}
+  <DialogBody divider className="flex flex-col gap-6">
+    <Typography className="font-bold text-4xl -mb-3 rounded-md text-black px-2 py-1">
+      <div className={`relative ${errorMessage.category.length > 0 ? "mb-4" : ""}`}>
+        <Select
+          label="Category"
+          value={category}
+          onChange={(value) => handleCategoryChange(value)}
+        >
+          <Option value=""></Option>
+          <Option value="1">History and P.E</Option>
+          <Option value="2">Abnormal Hemoglobin</Option>
+          <Option value="3">Other Reason/s</Option>
+        </Select>
+        {errorMessage.category.length > 0 && (
+          <div className="error-message text-red-600 text-sm mt-1">
+            {errorMessage.category[0]}
+          </div>
+        )}
+      </div>
 
-        <DialogBody divider className="flex flex-col gap-6">
-          <Typography className="font-bold text-4xl -mb-3 rounded-md text-black px-2 py-1">
-            Move to Deferral Form HERE!!! 
-          </Typography>
-        </DialogBody>
+      {category === '3' && (
+        <div className={`relative mb-8`}>
+          <Input
+            label="Other Reason/s"
+            value={otherReason}
+            onChange={(e) => setOtherReason(e.target.value)}
+          />
+          {errorMessage.specific_reason.length > 0 && (
+            <div className="error-message text-red-600 text-sm absolute mt-2">
+              {errorMessage.specific_reason[0]}
+            </div>
+          )}
+        </div>
+      )}
+      <div className={`relative mb-8`}>
+        <Select
+          label="Remarks"
+          value={remarks}
+          onChange={(value) => handleRemarksChange(value)}
+        >
+          <Option value=""></Option>
+          <Option value="1">Temporary Deferral</Option>
+          <Option value="2">Permanent Deferral</Option>
+        </Select>
+        {errorMessage.remarks.length > 0 && (
+          <div className="error-message text-red-600 text-sm absolute mt-2">
+            {errorMessage.remarks[0]}
+          </div>
+        )}
+      </div>
+      {remarks === '1' && (
+        <div className="flex items-center justify-center mb-4 text-black">
+          <button
+            onClick={handleDecrement}
+            className="bg-gray-200 text-gray-600 px-4 py-1 rounded-l text-2xl"
+          >
+            -
+          </button>
+          <input
+            type="number"
+                    
+            value={duration}
+            onChange={handleChange}
+            onKeyDown={(e) => {
+              // Allow only numeric characters and backspace
+              const validChars = /^[0-9\b]+$/;
+              if (!validChars.test(e.key)) {
+                e.preventDefault();
+              }
+            }}
+            className="bg-gray-100 text-center w-32 h-10 rounded-none border-l border-r border-gray-200 text-xl mb-2" 
+          />
+          <button
+            onClick={handleIncrement}
+            className="bg-gray-200 text-gray-600 px-3 py-1 rounded-r text-2xl"
+          >
+            +
+          </button>
+          <span className="ml-2 text-gray-600 text-2xl">Days</span>
+          {errorMessage.duration.length > 0 && (
+          <div className="error-message text-red-600 text-sm absolute mt-2">
+            {errorMessage.duration[0]}
+          </div>
+        )}
+        </div>
+      )}
+    </Typography>
+  </DialogBody>
+
+
         <DialogFooter>
           <Button
             variant="text"
@@ -132,8 +246,8 @@ export function MoveToDeferral({ user_id, handleOpen }) {
           >
             <span>Cancel</span>
           </Button>
-          <Button variant="gradient" color="red" onClick={handleAddBloodBag}>
-            <span>Add</span>
+          <Button variant="gradient" color="red" onClick={handleMoveToDeferral}>
+            <span>Move</span>
           </Button>
         </DialogFooter>
       </Dialog>

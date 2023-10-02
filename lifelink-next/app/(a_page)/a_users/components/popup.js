@@ -67,6 +67,7 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
             Authorization: `Bearer ${token}`,
           },
         }
+        
       ).catch((error) => {
         console.error("Unknown error occurred:", error);
         if (error.response && error.response.data && error.response.data.errors) {
