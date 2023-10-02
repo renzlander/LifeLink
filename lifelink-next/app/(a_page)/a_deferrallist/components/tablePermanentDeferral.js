@@ -16,82 +16,208 @@ import {
   IconButton,
   Tooltip,
   Input,
+  Spinner,
 } from "@material-tailwind/react";
- 
-const TABLE_HEAD = ["Transaction", "Amount", "Date", "Status", "Account", ""];
- 
-const TABLE_ROWS = [
-  {
-    img: "/img/logos/logo-spotify.svg",
-    name: "Spotify",
-    amount: "$2,500",
-    date: "Wed 3:00pm",
-    status: "paid",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-amazon.svg",
-    name: "Amazon",
-    amount: "$5,000",
-    date: "Wed 1:00pm",
-    status: "paid",
-    account: "master-card",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-pinterest.svg",
-    name: "Pinterest",
-    amount: "$3,400",
-    date: "Mon 7:40pm",
-    status: "pending",
-    account: "master-card",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-google.svg",
-    name: "Google",
-    amount: "$1,000",
-    date: "Wed 5:00pm",
-    status: "paid",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { laravelBaseUrl } from "@/app/variables";
+import { useRouter } from "next/navigation";
+
+const TABLE_HEAD = [
+  { label: "Donor Number", key: "donor_no" },
+  { label: "Name", key: "name" },
+  { label: "Blood Type", key: "blood_type" },
+  { label: "Email Address", key: "email" },
+  { label: "Mobile", key: "mobile" },
+  { label: "Birthday", key: "dob" },
+  { label: "", key: "tools" },
+  { label: "", key: "actions" },
 ];
+
+const classes = "p-4";
  
+function formatDate(dateString) {
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  const formattedDate = new Date(dateString).toLocaleDateString(
+    undefined,
+    options
+  );
+  return formattedDate;
+}
+
 export function PermanentDeferralTable() {
+  const [userDetails, setUserDetails] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [sortColumn, setSortColumn] = useState(null);
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const router = useRouter();
+
+  const fetchData = async (page) => {
+    try {
+      const token = getCookie("token");
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+  
+      let response;
+  
+      if (searchQuery) {
+        response = await axios.post(
+          `${laravelBaseUrl}/api/search-user?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
+          {
+            searchInput: searchQuery,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      } else {
+        response = await axios.get(
+          `${laravelBaseUrl}/api/get-permanent-defferal?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
+  
+      console.log("Response:", response);
+
+      if (response && response.data && response.data.status === "success") {
+        setUserDetails(response.data.data.data);
+        setTotalPages(response.data.data.last_page);
+        setCurrentPage(response.data.data.current_page);
+        setLoading(false);
+      } else {
+        console.error("Error fetching data:", response.data.message);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(currentPage);
+  }, [router, sortColumn, sortOrder, searchQuery]);
+
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > totalPages) {
+      return;
+    }
+
+    setCurrentPage(newPage);
+    fetchData(newPage);
+  };
+
+  const handleSort = (columnKey) => {
+    // If the same column is clicked, toggle the sort order
+    if (sortColumn === columnKey) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortColumn(columnKey);
+      setSortOrder("asc");
+    }
+  };
+
+  const exportUserDetailsAsPDF = async () => {
+    try {
+      const token = getCookie("token");
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+
+      // Send a request to the PDF export endpoint
+      const response = await axios.get(
+        `${laravelBaseUrl}/api/export-pdf-user-details`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          responseType: "blob", // Set the response type to blob for binary data
+        }
+      );
+
+      // Create a Blob object from the response data
+      const pdfBlob = new Blob([response.data], { type: "application/pdf" });
+
+      // Create a URL for the Blob object
+      const pdfUrl = window.URL.createObjectURL(pdfBlob);
+
+      // Open the PDF in a new window or tab
+      window.open(pdfUrl);
+
+      // Clean up by revoking the URL when it's no longer needed
+      window.URL.revokeObjectURL(pdfUrl);
+    } catch (error) {
+      console.error("Error exporting PDF:", error);
+    }
+  };
+
+  const sortedUserDetails = userDetails.sort((a, b) => {
+    const columnA =
+      sortColumn === "name" ? `${a.first_name} ${a.last_name}` : a[sortColumn];
+    const columnB =
+      sortColumn === "name" ? `${b.first_name} ${b.last_name}` : b[sortColumn];
+
+    if (sortOrder === "asc") {
+      if (columnA < columnB) return -1;
+      if (columnA > columnB) return 1;
+    } else {
+      if (columnA < columnB) return 1;
+      if (columnA > columnB) return -1;
+    }
+
+    return 0;
+  });
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
+        <Spinner color="red" className="h-16 w-16" />
+        <p className="mb-[180px] text-gray-600">Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <Card className="h-full w-full mt-4">
-        <CardHeader color="red" className="relative h-16 flex items-center">
-          <Typography variant="h4" color="white" className="ml-4">
-            Permanent Deferral
-          </Typography>
-        </CardHeader>
-      <CardBody className="overflow-scroll px-0">
-        <div className="mb-4 mr-4 flex justify-end gap-8 md:flex-row md:items-center">
+      <CardHeader color="red" className="relative h-16 flex items-center">
+        <Typography variant="h4" color="white" className="ml-4">
+          Temporary Defferal
+        </Typography>
+      </CardHeader>
+      <CardBody className="overflow-x-auto px-0">
+        <div className="mb-4 ml-4 mr-4 flex justify-end items-center">
           <div className="flex w-full shrink-0 gap-2 md:w-max">
             <div className="w-full md:w-72">
               <Input
                 label="Search"
                 icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+                value={searchQuery}
+                onChange={(e) => {
+                  const inputValue = e.target.value;
+                  setSearchQuery(inputValue);
+                  fetchData(inputValue);
+                }}
               />
             </div>
-            <Button className="flex items-center gap-3" size="sm">
-              <ArrowDownTrayIcon strokeWidth={2} className="h-4 w-4" /> Download
+            <Button
+              className="flex items-center gap-3"
+              size="sm"
+              onClick={exportUserDetailsAsPDF}
+            >
+              Export as PDF
             </Button>
           </div>
         </div>
@@ -100,176 +226,127 @@ export function PermanentDeferralTable() {
             <tr>
               {TABLE_HEAD.map((head) => (
                 <th
-                  key={head}
-                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
+                  key={head.key}
+                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
+                  onClick={() => handleSort(head.key)}
                 >
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal leading-none opacity-70"
-                  >
-                    {head}
-                  </Typography>
+                  <div className="flex items-center">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal leading-none opacity-70"
+                    >
+                      {head.label}
+                    </Typography>
+                    {sortColumn === head.key && (
+                      <span className="ml-2">
+                        {sortOrder === "asc" ? "▲" : "▼"}
+                      </span>
+                    )}
+                  </div>
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {TABLE_ROWS.map(
-              (
-                {
-                  img,
-                  name,
-                  amount,
-                  date,
-                  status,
-                  account,
-                  accountNumber,
-                  expiry,
-                },
-                index,
-              ) => {
-                const isLast = index === TABLE_ROWS.length - 1;
-                const classes = isLast
-                  ? "p-4"
-                  : "p-4 border-b border-blue-gray-50";
- 
-                return (
-                  <tr key={name}>
-                    <td className={classes}>
-                      <div className="flex items-center gap-3">
-                        <Avatar
-                          src={img}
-                          alt={name}
-                          size="md"
-                          className="border border-blue-gray-50 bg-blue-gray-50/50 object-contain p-1"
-                        />
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-bold"
-                        >
-                          {name}
-                        </Typography>
-                      </div>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {amount}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {date}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <div className="w-max">
-                        <Chip
-                          size="sm"
-                          variant="ghost"
-                          value={status}
-                          color={
-                            status === "paid"
-                              ? "green"
-                              : status === "pending"
-                              ? "amber"
-                              : "red"
-                          }
-                        />
-                      </div>
-                    </td>
-                    <td className={classes}>
-                      <div className="flex items-center gap-3">
-                        <div className="h-9 w-12 rounded-md border border-blue-gray-50 p-1">
-                          <Avatar
-                            src={
-                              account === "visa"
-                                ? "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/logos/visa.png"
-                                : "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/logos/mastercard.png"
-                            }
-                            size="sm"
-                            alt={account}
-                            variant="square"
-                            className="h-full w-full object-contain p-1"
-                          />
-                        </div>
-                        <div className="flex flex-col">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal capitalize"
-                          >
-                            {account.split("-").join(" ")} {accountNumber}
-                          </Typography>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal opacity-70"
-                          >
-                            {expiry}
-                          </Typography>
-                        </div>
-                      </div>
-                    </td>
-                    <td className={classes}>
-                      <Tooltip content="Edit User">
-                        <IconButton variant="text">
-                          <PencilIcon className="h-4 w-4" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip content="Edit User">
-                        <IconButton variant="text">
-                          <TrashIcon className="h-4 w-4 text-red-500" />
-                        </IconButton>
-                      </Tooltip>
-                    </td>
-                  </tr>
-                );
-              },
-            )}
+            {userDetails.map((user, index) => (
+              <tr key={user.donor_no}>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {user.donor_no}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {`${user.first_name} ${user.last_name}`}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {user.blood_type}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {user.email}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {user.mobile}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal capitalize"
+                  >
+                    {formatDate(user.dob)}
+                  </Typography>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </CardBody>
       <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Button variant="outlined" size="sm">
+        <Button
+          variant="outlined"
+          size="sm"
+          disabled={currentPage === 1}
+          onClick={() => handlePageChange(currentPage - 1)}
+        >
           Previous
         </Button>
         <div className="flex items-center gap-2">
-          <IconButton variant="outlined" size="sm">
-            1
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            2
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            3
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            ...
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            8
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            9
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            10
-          </IconButton>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <IconButton
+              key={index}
+              variant={currentPage === index + 1 ? "outlined" : "text"}
+              size="sm"
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </IconButton>
+          ))}
         </div>
-        <Button variant="outlined" size="sm">
+        <Button
+          variant="outlined"
+          size="sm"
+          disabled={currentPage === totalPages}
+          onClick={() => handlePageChange(currentPage + 1)}
+        >
           Next
         </Button>
       </CardFooter>
     </Card>
   );
 }
+
+function getCookie(name) {
+  const cookies = document.cookie.split("; ");
+  const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));
+  return cookie ? cookie.split("=")[1] : null;
+}
+
