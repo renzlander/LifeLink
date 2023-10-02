@@ -255,8 +255,7 @@ export function UsersTable() {
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="font-normal"
-                  >
+                    className="font-bold"                  >
                     {user.donor_no}
                   </Typography>
                 </td>
@@ -310,7 +309,11 @@ export function UsersTable() {
                   <EditPopUp user={user} onUpdate={handleUpdateUser} refreshData={fetchData}/>
                 </td>
                 <td className={classes}>
-                  <AddBloodBagPopup user_id={user.user_id} />
+                  {user.remarks !== 0 ? (
+                    <span className="font-bold text-red-700 p-2 rounded-md bg-[#212121]">----DEFERRED----</span>
+                  ) : (
+                    <AddBloodBagPopup user_id={user.user_id} />
+                  )}
                 </td>
               </tr>
             ))}

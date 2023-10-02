@@ -255,7 +255,7 @@ export function HistoryTable() {
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="text-red-600 font-bold"
+                    className="font-normal"
                   >
                     {formatDate(user.date)}
                   </Typography>

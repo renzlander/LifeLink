@@ -109,7 +109,7 @@ export function BloodBagTable({ bloodJourney }) {
               {bloodJourney.map((journey, index) => (
                 <tr
                   key={journey.serial_number}
-                  onClick={() => handleRowClick(journey, index)} // Add click event handler
+                  onClick={() => handleRowClick(journey, index)} 
                   className={`cursor-pointer ${
                     selectedRowIndex === index ? 'bg-gray-800 text-white' : 'hover:bg-gray-300 transition-colors'
                   }`}

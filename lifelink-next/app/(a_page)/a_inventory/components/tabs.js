@@ -11,12 +11,22 @@ import {
   export function InventoryTabs() {
     const data = [
       {
-        label: "Current",
+        label: "Stock",
         value: "curr",
         panel: <CurrentTable />,
       },
       {
         label: "Expired",
+        value: "exp",
+        panel: ""
+      },
+      {
+        label: "Temporary Deferred Blood Bags",
+        value: "exp",
+        panel: "",
+      },
+      {
+        label: "Permanent Deferred Blood Bags",
         value: "exp",
         panel: <ExpiredTable />,
       },
