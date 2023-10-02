@@ -29,16 +29,16 @@ import React from "react";
             </Typography>
           </CardHeader>
           <CardBody>
-            <Typography variant="h5" color="blue-gray" className="mb-2">
+            <Typography variant="h5" className="mb-2">
               {availability}
             </Typography>
           </CardBody>
         </div>
         <CardFooter className="border-t flex justify-center items-center">
-          <Typography variant="h6" color="blue-gray" className={`${colorClass}`}>
+          <Typography variant="h6" className={`${colorClass}`}>
             Amount: {" "}
           </Typography>
-          <Typography variant="h5" color="blue-gray" className='text-red-500'>
+          <Typography variant="h5" className='text-red-500'>
             10
           </Typography>
         </CardFooter>

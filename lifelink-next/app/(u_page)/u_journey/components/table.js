@@ -77,76 +77,78 @@ export function BloodBagTable({ bloodJourney }) {
   }
 
   return (
-    <Card className="h-full w-full mt-4">
+    <div>
       <JourneyStepper activeSteps={activeSteps} />
-      <CardHeader color="red" className="relative h-16 flex items-center">
-        <Typography variant="h4" color="white" className="ml-4">
-          My Blood Bags
-        </Typography>
-      </CardHeader>
-      <CardBody className="overflow-scroll px-0">
-        <table className="w-full min-w-max table-auto text-left">
-          <thead>
-            <tr>
-              {TABLE_HEAD.map((head) => (
-                <th
-                  key={head.key}
-                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 sticky top-0"
-                >
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal leading-none opacity-70"
+      <Card className="h-full w-full mt-10">
+        <CardHeader color="red" className="relative h-16 flex items-center">
+          <Typography variant="h4" color="white" className="ml-4">
+            My Blood Bags
+          </Typography>
+        </CardHeader>
+        <CardBody className="overflow-scroll px-0">
+          <table className="w-full min-w-max table-auto text-left">
+            <thead>
+              <tr>
+                {TABLE_HEAD.map((head) => (
+                  <th
+                    key={head.key}
+                    className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 sticky top-0"
                   >
-                    {head.label}
-                  </Typography>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {bloodJourney.map((journey, index) => (
-              <tr
-                key={journey.serial_number}
-                onClick={() => handleRowClick(journey, index)} // Add click event handler
-                className={`cursor-pointer ${
-                  selectedRowIndex === index ? 'bg-gray-800 text-white' : 'hover:bg-gray-300 transition-colors'
-                }`}
-              >
-                <td className="p-4">
-                  <div className="flex items-center gap-3">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal leading-none opacity-70"
+                    >
+                      {head.label}
+                    </Typography>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {bloodJourney.map((journey, index) => (
+                <tr
+                  key={journey.serial_number}
+                  onClick={() => handleRowClick(journey, index)} // Add click event handler
+                  className={`cursor-pointer ${
+                    selectedRowIndex === index ? 'bg-gray-800 text-white' : 'hover:bg-gray-300 transition-colors'
+                  }`}
+                >
+                  <td className="p-4">
+                    <div className="flex items-center gap-3">
+                      <Typography
+                        variant="small"
+                        color={selectedRowIndex === index ? 'white' : 'blue-gray'}
+                        className="font-bold"
+                      >
+                        {journey.serial_number}
+                      </Typography>
+                    </div>
+                  </td>
+                  <td className="p-4">
                     <Typography
                       variant="small"
                       color={selectedRowIndex === index ? 'white' : 'blue-gray'}
-                      className="font-bold"
+                      className="font-normal"
                     >
-                      {journey.serial_number}
+                      {formatDate(journey.date)}
                     </Typography>
-                  </div>
-                </td>
-                <td className="p-4">
-                  <Typography
-                    variant="small"
-                    color={selectedRowIndex === index ? 'white' : 'blue-gray'}
-                    className="font-normal"
-                  >
-                    {formatDate(journey.date)}
-                  </Typography>
-                </td>
-                <td className="p-4">
-                  <Typography
-                    variant="small"
-                    color={selectedRowIndex === index ? 'white' : 'blue-gray'}
-                    className="font-normal"
-                  >
-                    {getStatusText(journey)}
-                  </Typography>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </CardBody>
-    </Card>
+                  </td>
+                  <td className="p-4">
+                    <Typography
+                      variant="small"
+                      color={selectedRowIndex === index ? 'white' : 'blue-gray'}
+                      className="font-normal"
+                    >
+                      {getStatusText(journey)}
+                    </Typography>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </CardBody>
+      </Card>
+    </div>
   );
 }

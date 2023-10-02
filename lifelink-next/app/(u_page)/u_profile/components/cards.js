@@ -29,7 +29,7 @@ import {
   return formattedDate;
 }
 
-export default function CardProfile({userDetails}) {
+export default function CardProfile(userDetails) {
  
   return (
     <Card className="w-full mt-10">
