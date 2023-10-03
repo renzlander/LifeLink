@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <div className="bg-gray-300 flex min-h-screen flex-col justify-between p-4">
       <div className='flex flex-col gap-y-3'>
-        <div className='flex gap-3'>
+        <div className='flex shrink gap-3'>
           {bloodCards.slice(0, 4)}
         </div>
         <div className='flex gap-3'>

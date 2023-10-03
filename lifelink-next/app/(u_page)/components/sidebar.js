@@ -5,6 +5,7 @@ import {
     List,
     Button,
     IconButton,
+    Tooltip,
   } from "@material-tailwind/react";
   import {
     HomeIcon,
@@ -85,20 +86,25 @@ import {
     return (
       <Card  className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5 bg-gradient-to-r from-red-900 to-red-700">
         <IconButton variant="text"><Bars3Icon className="h-5 w-5 text-white" /></IconButton >
-        <div className="flex flex-col justify-center items-center mb-2 p-4 border-b border-gray-200">
+        <div className="flex justify-center items-center mb-2 p-4 border-b border-gray-200">
           <Link href='./u_profile'>
-            <Image src="/patient_icon.png" width={80} height={80} className="mb-4" />
+            <Image src="/patient_icon.png" width={60} height={60} className="mb-4" />
           </Link>
-          <Typography className="text-gray-100 font-bold text-2xl">{userData ? `${userData.first_name}` : "Loading..."}</Typography>
-          <Typography className="text-gray-100 font-bold text-2xl">{userData ? `${userData.last_name}` : "Loading..."}</Typography>
-          <Typography className="text-gray-100 font-light text-sm">Donor no: {userData ? userData.donor_no : "Loading..."}</Typography>
+          <div className="flex flex-col ml-3 truncate">
+            <Tooltip placement="right-end" content={`${userData ? userData.first_name : ""} ${userData ? userData.last_name : ""}`}>
+              <Typography className="text-gray-100 font-medium text-md truncate overflow-hidden max-w-[8rem]">
+                {userData ? `${userData.first_name} ${userData.last_name}` : "Loading..."}
+              </Typography> 
+            </Tooltip>
+            <Typography className="text-gray-100 font-light text-sm">Donor no: {userData ? userData.donor_no : "Loading..."}</Typography>
+          </div>
         </div>
         <List>
           {menuItems.map((item, index) => (
             <Link href={item.link} key={index} passHref>
               <Button
                 variant={'.' + pathName === item.link ? 'gradient': 'text'}
-                color={'.' + pathName === item.link ? 'red' : ''}
+                color={'.' + pathName === item.link ? 'red' : undefined}
                 className='text-white flex items-center justify-between w-full hover:bg-gray-100 hover:bg-opacity-30'
                 onClick={item.onClick}
               >

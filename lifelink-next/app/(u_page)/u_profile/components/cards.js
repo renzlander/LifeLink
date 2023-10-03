@@ -29,7 +29,7 @@ import {
   return formattedDate;
 }
 
-export default function CardProfile(userDetails) {
+export default function CardProfile({userDetails}) {
  
   return (
     <Card className="w-full mt-10">
@@ -129,8 +129,8 @@ export function CardInfo({userDetails}) {
               <Typography variant="h6" color="blue-gray" className="uppercase ml-2">
                   Address:
               </Typography>
-              <Tooltip placement="right-end">
-                <Typography color="blue-gray" className="font-medium ml-3 text-red-900 truncate ...">
+              <Tooltip content={`${userDetails.street}, ${userDetails.barangay} ${userDetails.municipality}, ${userDetails.province}`} placement="right-end">
+                <Typography color="blue-gray" className="font-medium ml-3 text-red-900 truncate">
                   {userDetails.street}, {userDetails.barangay} {userDetails.municipality}, {userDetails.province}
                 </Typography>
               </Tooltip>
