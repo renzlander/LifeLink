@@ -16,35 +16,23 @@ import {
   TabsHeader,
   Tooltip,
 } from "@material-tailwind/react";
-import { TabStock } from "./tabStock";
-import { TabExp } from "./tabExpired";
-import { TabTemp } from "./tabTdbb";
-import { TabPerma } from "./tabPdbb";
+import { TemporaryTable } from "./tabTemp";
+// import { TabPerma } from "./tabPdbb";
 
 const TABS = [
   {
-    label: "Stock",
-    value: "stock",
-    tableRender: <TabStock />,
+    label: "TEMPORARY DEFERRED",
+    value: "tdef",
+    tableRender: <TemporaryTable />,
   },
   {
-    label: "Expired",
-    value: "exp",
-    tableRender: <TabExp />,
-  },
-  {
-    label: "TDBB",
-    value: "tdbb",
-    tableRender: <TabTemp />,
-  },
-  {
-    label: "PDBB",
-    value: "pdbb",
-    tableRender: <TabPerma />,
+    label: "PERMANENT DEFERRED",
+    value: "pdef",
+    tableRender: <TemporaryTable />,
   },
 ];
 
-export function InventoryTable() {
+export function DeferralTable() {
   const [activeTab, setActiveTab] = useState(TABS[0].value);
 
   const handleTabChange = (tabValue) => {
@@ -55,37 +43,23 @@ export function InventoryTable() {
     <Card className="h-full w-full">
       <CardHeader color="red" className="relative h-16 flex items-center">
         <Typography variant="h4" color="white" className="ml-4">
-          Inventory
+          Deferral List
         </Typography>
       </CardHeader>
       <CardHeader floated={false} shadow={false} className="rounded-none mt-6">
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-          <Tabs value={activeTab} className="w-full md:w-max">
+        <Tabs value={activeTab} className="w-full md:w-max">
             <TabsHeader>
-              {TABS.map(({ label, value }) => {
-                let tooltipText = "";
-                
-                if (value === 'stock') {
-                  tooltipText = 'Stock';
-                } else if (value === 'exp') {
-                  tooltipText = 'Expired';
-                }else if (value === 'tdbb') {
-                  tooltipText = 'Temporary Deferred Blood Bag Description';
-                }else if (value === 'pdbb') {
-                  tooltipText = 'Permanent Deferred Blood Bag Description';
-                }
-
-                return (
-                  <Tooltip key={value} content={tooltipText}>
-                    <Tab 
-                      value={value}
-                      onClick={() => handleTabChange(value)}
-                    >
-                      &nbsp;&nbsp;{label}&nbsp;&nbsp;
-                    </Tab >
-                  </Tooltip>
-                );
-              })}
+              {TABS.map(({ label, value }) => (
+                <Tab 
+                  key={value}
+                  value={value}
+                  onClick={() => handleTabChange(value)}
+                  className=" text-normq7"
+                >
+                  &nbsp;&nbsp;{label}&nbsp;&nbsp;
+                </Tab >
+              ))}
             </TabsHeader>
           </Tabs>
           <div className="flex items-center gap-3">
@@ -104,6 +78,19 @@ export function InventoryTable() {
       <CardBody className="overflow-scroll px-0">
         {TABS.find((tab) => tab.value === activeTab)?.tableRender}
       </CardBody>
+      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+        <Typography variant="small" color="blue-gray" className="font-normal">
+          Page 1 of 10
+        </Typography>
+        <div className="flex gap-2">
+          <Button variant="outlined" size="sm">
+            Previous
+          </Button>
+          <Button variant="outlined" size="sm">
+            Next
+          </Button>
+        </div>
+      </CardFooter>
     </Card>
   );
 }
