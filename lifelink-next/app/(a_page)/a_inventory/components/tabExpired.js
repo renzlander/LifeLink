@@ -184,7 +184,7 @@ export function TabExp() {
         }
 
         return (
-            <Card className="h-full w-full mt-4">
+            <Card className="h-full w-full">
               <CardBody className="overflow-x-auto px-0">
                 <table className="w-full min-w-max table-auto text-left">
                   <thead>

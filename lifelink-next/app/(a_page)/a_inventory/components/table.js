@@ -15,6 +15,8 @@ import {
   Tab,
   TabsHeader,
   Tooltip,
+  Select,
+  Option,
 } from "@material-tailwind/react";
 import { TabStock } from "./tabStock";
 import { TabExp } from "./tabExpired";
@@ -46,9 +48,16 @@ const TABS = [
 
 export function InventoryTable() {
   const [activeTab, setActiveTab] = useState(TABS[0].value);
+  const [blood_type, setBlood] = useState("");
+
+  const bloodTypes = ["AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
 
   const handleTabChange = (tabValue) => {
     setActiveTab(tabValue);
+  };
+
+  const handleBloodChange = (selectedBlood) => {
+    setBlood(selectedBlood);
   };
 
   return (
@@ -70,9 +79,9 @@ export function InventoryTable() {
                 } else if (value === 'exp') {
                   tooltipText = 'Expired';
                 }else if (value === 'tdbb') {
-                  tooltipText = 'Temporary Deferred Blood Bag Description';
+                  tooltipText = 'Temporary Deferred Blood Bag';
                 }else if (value === 'pdbb') {
-                  tooltipText = 'Permanent Deferred Blood Bag Description';
+                  tooltipText = 'Permanent Deferred Blood Bag';
                 }
 
                 return (
@@ -98,6 +107,22 @@ export function InventoryTable() {
             <Button className="flex items-center gap-3">
               <DocumentArrowDownIcon className="h-4 w-4" /> Export to PDF
             </Button>
+          </div>
+        </div>
+        <div className="mt-6 flex items-center justify-between">
+          <div>
+            <Select onChange={handleBloodChange} label="Blood Type" value={blood_type}>
+            {bloodTypes.map((blood) => (
+              <Option key={blood} value={blood}>
+                {blood}
+              </Option>
+            ))}
+          </Select>
+          </div>
+          <div className="flex items-center gap-4">
+            <Input type="date" label="Start Date" className=""/>
+            <Typography> to </Typography>
+            <Input type="date" label="End Date" className=""/>
           </div>
         </div>
       </CardHeader>

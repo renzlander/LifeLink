@@ -17,18 +17,18 @@ import {
   Tooltip,
 } from "@material-tailwind/react";
 import { TemporaryTable } from "./tabTemp";
-// import { TabPerma } from "./tabPdbb";
+import { PermanentTable } from "./tabPerma";
 
 const TABS = [
   {
-    label: "TEMPORARY DEFERRED",
+    label: "TEMPORARY",
     value: "tdef",
     tableRender: <TemporaryTable />,
   },
   {
-    label: "PERMANENT DEFERRED",
+    label: "PERMANENT",
     value: "pdef",
-    tableRender: <TemporaryTable />,
+    tableRender: <PermanentTable />,
   },
 ];
 
@@ -55,7 +55,6 @@ export function DeferralTable() {
                   key={value}
                   value={value}
                   onClick={() => handleTabChange(value)}
-                  className=" text-normq7"
                 >
                   &nbsp;&nbsp;{label}&nbsp;&nbsp;
                 </Tab >
