@@ -148,6 +148,7 @@ export function TabExp() {
             setUserDetails(response.data.data.data);
             setTotalPages(response.data.data.last_page);
             setCurrentPage(response.data.data.current_page);
+            setBloodQty(response.data.total_count);
             setLoading(false);
           } else {
             console.error("Error fetching data:", response.data.message);

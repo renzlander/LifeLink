@@ -154,9 +154,7 @@ export function TabStock() {
             }
           );
         }
-    
-        console.log("API Response:", response); // Log the API response
-    
+        
         if (response.data.status === "success") {
           setUserDetails(response.data.data.data);
           setTotalPages(response.data.data.last_page);
