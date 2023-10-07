@@ -128,7 +128,7 @@ export function EditPopUp({user, countdown,refreshData}) {
   console.log('user:', user);
   const serialNo = user.serial_no;
   const serialFormat = serialNo.match(/^(\d{4})(\d{6})(\d{1})$/);
-  console.log('serialFormat:', serialFormat[1]);
+  
   let firstPart = "";
   let secondPart = "";
   let thirdPart = "";
