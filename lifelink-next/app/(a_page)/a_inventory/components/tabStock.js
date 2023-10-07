@@ -82,7 +82,7 @@ export function TabStock() {
         }
     
         const response = await axios.post(
-          `${laravelBaseUrl}/api/filter-blood-type-stocks`,
+          `${laravelBaseUrl}/api/filter-stocks`,
           {},
           {
             headers: {
@@ -154,9 +154,7 @@ export function TabStock() {
             }
           );
         }
-    
-        console.log("API Response:", response); // Log the API response
-    
+        
         if (response.data.status === "success") {
           setUserDetails(response.data.data.data);
           setTotalPages(response.data.data.last_page);
@@ -172,8 +170,6 @@ export function TabStock() {
         setLoading(false);
       }
     };
-    
-    
     
 
     useEffect(() => {
