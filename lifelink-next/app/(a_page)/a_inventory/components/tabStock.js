@@ -298,32 +298,32 @@ export function TabStock() {
                   ))}
                 </Select>
                 </div>
-                <div className="flex items-center gap-4">
-                  <Input
-                    type="date"
-                    label="Start Date"
-                    value={startDate}
-                    onChange={(e) => {
-                      setStartDate(e.target.value);
-                      fetchDateFilteredData(e.target.value, endDate); // Call fetchDateFilteredData directly
-                    }}
-                    className=""
-                  />
-                  <Typography> to </Typography>
-                  <Input
-                    type="date"
-                    label="End Date"
-                    value={endDate}
-                    onChange={(e) => {
-                      setEndDate(e.target.value);
-                      fetchDateFilteredData(startDate, e.target.value); // Call fetchDateFilteredData directly
-                    }}
-                    className=""
-                  />
+                <div>
+                  <Typography variant="subtitle1" className="mb-2 flex justify-center font-bold text-red-800">Expiration Date Filter</Typography>
+                  <div className="flex items-center gap-4">
+                    <Input
+                      type="date"
+                      label="Start Date"
+                      value={startDate}
+                      onChange={(e) => {
+                        setStartDate(e.target.value);
+                        fetchDateFilteredData(e.target.value, endDate); 
+                      }}
+                      className=""
+                    />
+                    <Typography> to </Typography>
+                    <Input
+                      type="date"
+                      label="End Date"
+                      value={endDate}
+                      onChange={(e) => {
+                        setEndDate(e.target.value);
+                        fetchDateFilteredData(startDate, e.target.value); 
+                      }}
+                      className=""
+                    />
+                  </div>
                 </div>
-
-
-
 
               </div>
                 <table className="w-full min-w-max table-auto text-left">

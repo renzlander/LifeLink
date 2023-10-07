@@ -3,7 +3,7 @@ import 'leaflet/dist/leaflet.css';
 
 
 export function PRCMap() {
-  const centerCoordinates = [14.699192430994167, 120.977542646122]; // Center coordinates for the map
+  const centerCoordinates = [14.697660063431062, 120.97523931561797]; 
   const malintaGeoJson = {
     
       "type": "FeatureCollection",
