@@ -20,6 +20,8 @@ import {
   IconButton,
   Tooltip,
   Spinner,
+  Select,
+  Option,
 } from "@material-tailwind/react";
 import { laravelBaseUrl } from "@/app/variables";
 
@@ -54,8 +56,58 @@ export function TabExp() {
     const [sortColumn, setSortColumn] = useState(null);
     const [sortOrder, setSortOrder] = useState("asc");
     const [searchQuery, setSearchQuery] = useState("");
+    const [blood_type, setBlood] = useState("All");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [bloodQty, setBloodQty] = useState();
 
+    const bloodTypes = ["All","AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
     const router = useRouter();
+
+    const handleBloodChange = (selectedBlood) => {
+      setBlood(selectedBlood);
+      fetchBloodTypeFilteredData(selectedBlood, startDate, endDate); 
+    };
+
+    const fetchBloodTypeFilteredData = async (selectedBlood, startDate, endDate) => {
+      try {
+        const token = getCookie("token");
+        if (!token) {
+          router.push("/login");
+          return;
+        }
+    
+        const response = await axios.post(
+          `${laravelBaseUrl}/api/filter-expired`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              blood_type: selectedBlood, // Use the selected blood type
+              startDate: startDate,
+              endDate: endDate,
+            },
+          }
+        );
+
+
+        if (response.data.status === "success") {
+          setUserDetails(response.data.data.data);
+          setBloodQty(response.data.total_count);
+          setTotalPages(response.data.data.last_page);
+          setCurrentPage(response.data.total_count);
+          setLoading(false);
+        } else {
+          console.error("Error fetching data:", response.data.message);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      }
+    };
 
     const fetchData = async (page) => {
         try {
@@ -186,6 +238,46 @@ export function TabExp() {
         return (
             <Card className="h-full w-full">
               <CardBody className="overflow-x-auto px-0">
+                <div className="flex items-center justify-between px-4 mb-4">
+                  <div>
+                  <Typography variant="subtitle1" className="mb-2 flex justify-center font-bold text-red-800">QTY:{bloodQty}</Typography>
+                  <Select onChange={handleBloodChange} label="Blood Type" value={blood_type}> 
+                    {bloodTypes.map((blood) => (
+                      <Option key={blood} value={blood}>
+                        {blood}
+                      </Option>
+                    ))}
+                  </Select>
+                  </div>
+                  <div>
+                    <Typography variant="subtitle1" className="mb-2 flex justify-center font-bold text-red-800">Expiration Date Filter</Typography>
+                    <div className="flex items-center gap-4">
+                      <Input
+                        type="date"
+                        label="Start Date"
+                        value={startDate}
+                        onChange={(e) => {
+                          const newStartDate = e.target.value;
+                          setStartDate(newStartDate);
+                          fetchBloodTypeFilteredData(blood_type, newStartDate, endDate); 
+                        }}
+                        className=""
+                      />
+                      <Typography> to </Typography>
+                      <Input
+                        type="date"
+                        label="End Date"
+                        value={endDate}
+                        onChange={(e) => {
+                          const newEndDate = e.target.value;
+                          setEndDate(newEndDate);
+                          fetchBloodTypeFilteredData(blood_type, startDate, newEndDate); 
+                        }}
+                        className=""
+                      />
+                    </div>
+                  </div>
+                </div>
                 <table className="w-full min-w-max table-auto text-left">
                   <thead>
                     <tr>
