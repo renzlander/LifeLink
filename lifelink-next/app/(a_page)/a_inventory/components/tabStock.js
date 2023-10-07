@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { RemoveBlood, EditPopUp, MoveToStock } from "./popup";
+import { Revert, Dispense } from "./popup";
 import axios from "axios";
 import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
 import { MagnifyingGlassIcon, DocumentArrowDownIcon } from "@heroicons/react/24/outline";
@@ -294,12 +294,11 @@ export function TabStock() {
                         </div>
                         </td>
                         <td className={classes}>
-                            <RemoveBlood 
+                            <Revert 
                                 serial_no={user.serial_no} 
-                                countdown={user.countdown} 
                                 refreshData={fetchData}/>
                             
-                            <MoveToStock 
+                            <Dispense 
                                 serial_no={user.serial_no} 
                                 refreshData={fetchData}/>
                         </td>

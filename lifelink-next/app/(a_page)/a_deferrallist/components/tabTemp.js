@@ -31,6 +31,8 @@ const TABLE_HEAD = [
     { label: "Mobile", key: "mobile" },
     { label: "Birthday", key: "dob" },
     { label: "Duration (Days)", key: "deferred_duration" },
+    { label: "Remarks", key: "remarks" },
+    { label: "Other Reason", key: "reason" },
     { label: "End Date of Deferral", key: "end_date" },
     { label: "", key: "tools" },
     { label: "", key: "actions" },
@@ -283,6 +285,24 @@ const TABLE_HEAD = [
                     className="font-normal"
                     >
                     {user.deferred_duration} 
+                    </Typography>
+                </td>
+                <td className={classes}>
+                    <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                    >
+                    {user.category_desc} 
+                    </Typography>
+                </td>
+                <td className={classes}>
+                    <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                    >
+                    {user.specific_reason} 
                     </Typography>
                 </td>
                 <td className={classes}>

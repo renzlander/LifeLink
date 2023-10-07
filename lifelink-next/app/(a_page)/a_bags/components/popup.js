@@ -102,7 +102,7 @@ export function RemoveBlood({ serial_no, handleOpen, countdown,refreshData }) {
             >
               No
             </Button>
-          <Button variant="red-cross" color="red" onClick={handleRemoveBloodBag}>
+          <Button variant="red-cross" color="red" onClick={handleRemoveBloodBag} disabled={countdown === 0}>
             Yes
           </Button>
         </DialogFooter>

@@ -321,6 +321,15 @@ export function TemporaryDeferralTable() {
                     color="blue-gray"
                     className="font-normal"
                   >
+                    {user.category_desc} 
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
                     {formatDate(user.end_date)}
                   </Typography>
                 </td>

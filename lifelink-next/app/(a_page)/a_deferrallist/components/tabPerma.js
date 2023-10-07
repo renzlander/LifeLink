@@ -30,6 +30,8 @@ const TABLE_HEAD = [
     { label: "Email Address", key: "email" },
     { label: "Mobile", key: "mobile" },
     { label: "Birthday", key: "dob" },
+    { label: "Remarks", key: "remarks" },
+    { label: "Other Reason", key: "reason" },
     { label: "", key: "tools" },
     { label: "", key: "actions" },
   ];
@@ -272,6 +274,24 @@ export function PermanentTable() {
                   >
                     {formatDate(user.dob)}
                   </Typography>
+                </td>
+                <td className={classes}>
+                    <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                    >
+                    {user.category_desc} 
+                    </Typography>
+                </td>
+                <td className={classes}>
+                    <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                    >
+                    {user.specific_reason} 
+                    </Typography>
                 </td>
               </tr>
             ))}

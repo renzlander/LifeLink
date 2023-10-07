@@ -32,12 +32,11 @@ function formatDate(dateString) {
   return formattedDate;
 }
 
-export function RemoveBlood({ serial_no, handleOpen, countdown,refreshData }) {
+export function Revert({ serial_no, refreshData }) {
   const [open, setOpen] = useState(false);
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
-  const [timeLeft, setTimeLeft] = useState(""); 
   const router = useRouter();
-    
+
   const handleRemoveBloodBag = async () => {
     try {
       const token = getCookie("token");
@@ -45,28 +44,29 @@ export function RemoveBlood({ serial_no, handleOpen, countdown,refreshData }) {
         router.push("/login");
         return;
       }
-  
+
       // Construct the URL with serial_no as a query parameter
-      const apiUrl = `${laravelBaseUrl}/api/remove-bloodbag?serial_no=${serial_no}`;
-  
-      // Send DELETE request to the constructed URL
-      const response = await axios.delete(apiUrl, {
+      const apiUrl = `${laravelBaseUrl}/api/move-back-to-collected?serial_no=${serial_no}`;
+
+      // Send a POST request to the constructed URL
+      const response = await axios.post(apiUrl, {}, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-  
       if (response.data.status === 'success') {
         refreshData();
-        toast.success('Removed blood bag successfully');
-        console.log('Removed blood bag successfully');
+        toast.success('Return blood bag to collected successfully');
         setOpen(false);
       } else {
-        console.error('Error removing blood bag:', response.data.message);
+        // Handle error case when the API returns an error status
+        setGeneralErrorMessage(response.data.message);
       }
     } catch (error) {
+      // Handle any other errors, such as network issues or exceptions
       console.error('Error removing blood bag:', error); 
+      setGeneralErrorMessage('An error occurred while removing the blood bag.');
     }
   };
   
@@ -83,9 +83,7 @@ export function RemoveBlood({ serial_no, handleOpen, countdown,refreshData }) {
           <Typography className="font-bold text-xl text-red-600 text-center">
             Are you sure you want to return it to collected?
           </Typography>
-            <Typography className="text-sm text-red-600 font-bold text-center">
-              This blood bag can be return in {countdown} days
-            </Typography>
+           
         </DialogBody>
         {generalErrorMessage && (
           <div className="mt-4 text-center bg-red-100 p-2 rounded-lg">
@@ -112,7 +110,7 @@ export function RemoveBlood({ serial_no, handleOpen, countdown,refreshData }) {
 }
 
 
-export function MoveToStock({ serial_no, handleOpen, refreshData}){
+export function Dispense({ serial_no, handleOpen, refreshData}){
   const [open, setOpen] = useState(false);
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
 
