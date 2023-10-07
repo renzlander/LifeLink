@@ -58,9 +58,10 @@ export function TabStock() {
     const [sortColumn, setSortColumn] = useState(null);
     const [sortOrder, setSortOrder] = useState("asc");
     const [searchQuery, setSearchQuery] = useState("");
-    const [blood_type, setBlood] = useState("");
+    const [blood_type, setBlood] = useState("All");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
+    const [bloodQty, setBloodQty] = useState();
 
     const bloodTypes = ["All","AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
     const router = useRouter();
@@ -68,14 +69,11 @@ export function TabStock() {
     const handleBloodChange = (selectedBlood) => {
       // console.log("Selected Blood Type:", selectedBlood);
       setBlood(selectedBlood);
-      fetchBloodTypeFilteredData(selectedBlood);
+      fetchBloodTypeFilteredData(selectedBlood, startDate, endDate); 
     };
     
-    // const handleDateFilter = () => {
-    //   fetchDateFilteredData(startDate, endDate);
-    // };
 
-    const fetchBloodTypeFilteredData = async (selectedBlood) => {
+    const fetchBloodTypeFilteredData = async (selectedBlood, startDate, endDate) => {
       try {
         const token = getCookie("token");
         if (!token) {
@@ -92,14 +90,18 @@ export function TabStock() {
             },
             params: {
               blood_type: selectedBlood, // Use the selected blood type
+              startDate: startDate,
+              endDate: endDate,
             },
           }
         );
-    
+
+
         if (response.data.status === "success") {
           setUserDetails(response.data.data.data);
+          setBloodQty(response.data.total_count);
           setTotalPages(response.data.data.last_page);
-          setCurrentPage(response.data.data.current_page);
+          setCurrentPage(response.data.total_count);
           setLoading(false);
         } else {
           console.error("Error fetching data:", response.data.message);
@@ -111,42 +113,6 @@ export function TabStock() {
       }
     };
     
-    const fetchDateFilteredData = async (startDate, endDate) => {
-      try {
-        const token = getCookie("token");
-        if (!token) {
-          router.push("/login");
-          return;
-        }
-    
-        const response = await axios.post(
-          `${laravelBaseUrl}/api/filter-exp-date-stocks`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            params: {
-              startDate: startDate,
-              endDate: endDate
-            },
-          }
-        );
-    
-        if (response.data.status === "success") {
-          setUserDetails(response.data.data.data);
-          setTotalPages(response.data.data.last_page);
-          setCurrentPage(response.data.data.current_page);
-          setLoading(false);
-        } else {
-          console.error("Error fetching data:", response.data.message);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      }
-    }
 
     const fetchData = async (page  = "") => {
       try {
@@ -195,6 +161,7 @@ export function TabStock() {
           setUserDetails(response.data.data.data);
           setTotalPages(response.data.data.last_page);
           setCurrentPage(response.data.data.current_page);
+          setBloodQty(response.data.total_count);
           setLoading(false);
         } else {
           console.error("Error fetching data:", response.data.message);
@@ -290,7 +257,8 @@ export function TabStock() {
               <CardBody className="px-0">
               <div className="flex items-center justify-between px-4 mb-4">
                 <div>
-                <Select onChange={handleBloodChange} label="Blood Type" value={blood_type}>
+                <Typography variant="subtitle1" className="mb-2 flex justify-center font-bold text-red-800">QTY:{bloodQty}</Typography>
+                <Select onChange={handleBloodChange} label="Blood Type" value={blood_type}> 
                   {bloodTypes.map((blood) => (
                     <Option key={blood} value={blood}>
                       {blood}
@@ -306,8 +274,9 @@ export function TabStock() {
                       label="Start Date"
                       value={startDate}
                       onChange={(e) => {
-                        setStartDate(e.target.value);
-                        fetchDateFilteredData(e.target.value, endDate); 
+                        const newStartDate = e.target.value;
+                        setStartDate(newStartDate);
+                        fetchBloodTypeFilteredData(blood_type, newStartDate, endDate); 
                       }}
                       className=""
                     />
@@ -317,8 +286,9 @@ export function TabStock() {
                       label="End Date"
                       value={endDate}
                       onChange={(e) => {
-                        setEndDate(e.target.value);
-                        fetchDateFilteredData(startDate, e.target.value); 
+                        const newEndDate = e.target.value;
+                        setEndDate(newEndDate);
+                        fetchBloodTypeFilteredData(blood_type, startDate, newEndDate); 
                       }}
                       className=""
                     />
