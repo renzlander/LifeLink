@@ -59,146 +59,238 @@ export function TabStock() {
     const [sortOrder, setSortOrder] = useState("asc");
     const [searchQuery, setSearchQuery] = useState("");
     const [blood_type, setBlood] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
 
-    const bloodTypes = ["AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
+    const bloodTypes = ["All","AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
     const router = useRouter();
 
     const handleBloodChange = (selectedBlood) => {
+      // console.log("Selected Blood Type:", selectedBlood);
       setBlood(selectedBlood);
+      fetchBloodTypeFilteredData(selectedBlood);
     };
-
-    const fetchData = async (page) => {
-        try {
-          const token = getCookie("token");
-          if (!token) {
-            router.push("/login");
-            return;
-          }
-      
-          let response;
-      
-          if (searchQuery) {
-            response = await axios.post(
-              `${laravelBaseUrl}/api/search-collected-bloodbag?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
-              {
-                searchInput: searchQuery,
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
-          } else {
-            response = await axios.get(
-              `${laravelBaseUrl}/api/get-stocks?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
-          }
-      
-         
-          if (response.data.status === "success") {
-             console.log(response);
-            setUserDetails(response.data.data.data);
-            setTotalPages(response.data.data.last_page);
-            setCurrentPage(response.data.data.current_page);
-            setLoading(false);
-          } else {
-            console.error("Error fetching data:", response.data.message);
-            setLoading(false);
-          }
-        } catch (error) {
-          console.error("Error fetching data:", error);
-          setLoading(false);
-        }
-      };
-
-      useEffect(() => {
-        fetchData(currentPage);
-      }, [router, sortColumn, sortOrder, searchQuery]);
     
-      const handlePageChange = (newPage) => {
-        if (newPage < 1 || newPage > totalPages) {
+    // const handleDateFilter = () => {
+    //   fetchDateFilteredData(startDate, endDate);
+    // };
+
+    const fetchBloodTypeFilteredData = async (selectedBlood) => {
+      try {
+        const token = getCookie("token");
+        if (!token) {
+          router.push("/login");
           return;
         }
     
-        setCurrentPage(newPage);
-        fetchData(newPage);
-      };
-
-      const handleSort = (columnKey) => {
-        // If the same column is clicked, toggle the sort order
-        if (sortColumn === columnKey) {
-          setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-        } else {
-          setSortColumn(columnKey);
-          setSortOrder("asc");
-        }
-      };
-
-
-      const exportBloodBagsAsPDF = async () => {
-        try {
-          const token = getCookie("token");
-          if (!token) {
-            router.push("/login");
-            return;
+        const response = await axios.post(
+          `${laravelBaseUrl}/api/filter-blood-type-stocks`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              blood_type: selectedBlood, // Use the selected blood type
+            },
           }
-      
-          // Send a request to the PDF export endpoint
-          const response = await axios.get(
-            `${laravelBaseUrl}/api/export-pdf-collected-bloodbags`,
+        );
+    
+        if (response.data.status === "success") {
+          setUserDetails(response.data.data.data);
+          setTotalPages(response.data.data.last_page);
+          setCurrentPage(response.data.data.current_page);
+          setLoading(false);
+        } else {
+          console.error("Error fetching data:", response.data.message);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      }
+    };
+    
+    const fetchDateFilteredData = async (startDate, endDate) => {
+      try {
+        const token = getCookie("token");
+        if (!token) {
+          router.push("/login");
+          return;
+        }
+    
+        const response = await axios.post(
+          `${laravelBaseUrl}/api/filter-exp-date-stocks`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              startDate: startDate,
+              endDate: endDate
+            },
+          }
+        );
+    
+        if (response.data.status === "success") {
+          setUserDetails(response.data.data.data);
+          setTotalPages(response.data.data.last_page);
+          setCurrentPage(response.data.data.current_page);
+          setLoading(false);
+        } else {
+          console.error("Error fetching data:", response.data.message);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      }
+    }
+
+    const fetchData = async (page  = "") => {
+      try {
+        const token = getCookie("token");
+        if (!token) {
+          router.push("/login");
+          return;
+        }
+    
+        let response;
+    
+        const params = {
+          page: page,
+          sort: sortColumn,
+          order: sortOrder,
+        };
+    
+        if (searchQuery) {
+          response = await axios.post(
+            `${laravelBaseUrl}/api/search-collected-bloodbag`,
+            {
+              searchInput: searchQuery,
+              ...params,
+            },
             {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
-              responseType: "blob", 
             }
           );
-      
-          const pdfBlob = new Blob([response.data], { type: "application/pdf" });
-          const pdfUrl = window.URL.createObjectURL(pdfBlob);
-          window.open(pdfUrl);
-          window.URL.revokeObjectURL(pdfUrl);
-        } catch (error) {
-          console.error("Error exporting PDF:", error);
-        }
-      };
-
-      const sortedBloodBagDetails = userDetails.sort((a, b) => {
-        const columnA = sortColumn === 'name' ? `${a.first_name} ${a.last_name}` : a[sortColumn];
-        const columnB = sortColumn === 'name' ? `${b.first_name} ${b.last_name}` : b[sortColumn];
-        
-          if (sortOrder === "asc") {
-            if (columnA < columnB) return -1;
-            if (columnA > columnB) return 1;
-          } else {
-            if (columnA < columnB) return 1;
-            if (columnA > columnB) return -1;
-          }
-        
-          return 0;
-        });
-      
-        if (loading) {
-          return (
-            <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
-              <Spinner color="red" className="h-16 w-16" />
-              <p className="mb-[180px] text-gray-600">Loading...</p>
-            </div>
+        } else {
+          response = await axios.get(
+            `${laravelBaseUrl}/api/get-stocks`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              params: params,
+            }
           );
         }
+    
+        console.log("API Response:", response); // Log the API response
+    
+        if (response.data.status === "success") {
+          setUserDetails(response.data.data.data);
+          setTotalPages(response.data.data.last_page);
+          setCurrentPage(response.data.data.current_page);
+          setLoading(false);
+        } else {
+          console.error("Error fetching data:", response.data.message);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      }
+    };
+    
+    
+    
+
+    useEffect(() => {
+      fetchData(currentPage);
+    }, [router, sortColumn, sortOrder, searchQuery]);
+    
+    const handlePageChange = (newPage) => {
+      if (newPage < 1 || newPage > totalPages) {
+        return;
+      }
+  
+      setCurrentPage(newPage);
+      fetchData(newPage);
+    };
+
+    const handleSort = (columnKey) => {
+      // If the same column is clicked, toggle the sort order
+      if (sortColumn === columnKey) {
+        setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+      } else {
+        setSortColumn(columnKey);
+        setSortOrder("asc");
+      }
+    };
+
+
+    const exportBloodBagsAsPDF = async () => {
+      try {
+        const token = getCookie("token");
+        if (!token) {
+          router.push("/login");
+          return;
+        }
+    
+        // Send a request to the PDF export endpoint
+        const response = await axios.get(
+          `${laravelBaseUrl}/api/export-pdf-collected-bloodbags`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            responseType: "blob", 
+          }
+        );
+    
+        const pdfBlob = new Blob([response.data], { type: "application/pdf" });
+        const pdfUrl = window.URL.createObjectURL(pdfBlob);
+        window.open(pdfUrl);
+        window.URL.revokeObjectURL(pdfUrl);
+      } catch (error) {
+        console.error("Error exporting PDF:", error);
+      }
+    };
+
+    const sortedBloodBagDetails = userDetails.sort((a, b) => {
+      const columnA = sortColumn === 'name' ? `${a.first_name} ${a.last_name}` : a[sortColumn];
+      const columnB = sortColumn === 'name' ? `${b.first_name} ${b.last_name}` : b[sortColumn];
+      
+        if (sortOrder === "asc") {
+          if (columnA < columnB) return -1;
+          if (columnA > columnB) return 1;
+        } else {
+          if (columnA < columnB) return 1;
+          if (columnA > columnB) return -1;
+        }
+      
+        return 0;
+      });
+    
+      if (loading) {
+        return (
+          <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
+            <Spinner color="red" className="h-16 w-16" />
+            <p className="mb-[180px] text-gray-600">Loading...</p>
+          </div>
+        );
+      }
 
         return (
             <Card className="h-full w-full">
               <CardBody className="px-0">
               <div className="flex items-center justify-between px-4 mb-4">
                 <div>
-                  <Select onChange={handleBloodChange} label="Blood Type" value={blood_type}>
+                <Select onChange={handleBloodChange} label="Blood Type" value={blood_type}>
                   {bloodTypes.map((blood) => (
                     <Option key={blood} value={blood}>
                       {blood}
@@ -207,10 +299,32 @@ export function TabStock() {
                 </Select>
                 </div>
                 <div className="flex items-center gap-4">
-                  <Input type="date" label="Start Date" className=""/>
+                  <Input
+                    type="date"
+                    label="Start Date"
+                    value={startDate}
+                    onChange={(e) => {
+                      setStartDate(e.target.value);
+                      fetchDateFilteredData(e.target.value, endDate); // Call fetchDateFilteredData directly
+                    }}
+                    className=""
+                  />
                   <Typography> to </Typography>
-                  <Input type="date" label="End Date" className=""/>
+                  <Input
+                    type="date"
+                    label="End Date"
+                    value={endDate}
+                    onChange={(e) => {
+                      setEndDate(e.target.value);
+                      fetchDateFilteredData(startDate, e.target.value); // Call fetchDateFilteredData directly
+                    }}
+                    className=""
+                  />
                 </div>
+
+
+
+
               </div>
                 <table className="w-full min-w-max table-auto text-left">
                   <thead>
