@@ -20,6 +20,8 @@ import {
   IconButton,
   Tooltip,
   Spinner,
+  Select,
+  Option,
 } from "@material-tailwind/react";
 import { laravelBaseUrl } from "@/app/variables";
 
@@ -56,8 +58,14 @@ export function TabStock() {
     const [sortColumn, setSortColumn] = useState(null);
     const [sortOrder, setSortOrder] = useState("asc");
     const [searchQuery, setSearchQuery] = useState("");
+    const [blood_type, setBlood] = useState("");
 
+    const bloodTypes = ["AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
     const router = useRouter();
+
+    const handleBloodChange = (selectedBlood) => {
+      setBlood(selectedBlood);
+    };
 
     const fetchData = async (page) => {
         try {
@@ -187,7 +195,23 @@ export function TabStock() {
 
         return (
             <Card className="h-full w-full">
-              <CardBody className="overflow-x-auto px-0">
+              <CardBody className="px-0">
+              <div className="flex items-center justify-between px-4 mb-4">
+                <div>
+                  <Select onChange={handleBloodChange} label="Blood Type" value={blood_type}>
+                  {bloodTypes.map((blood) => (
+                    <Option key={blood} value={blood}>
+                      {blood}
+                    </Option>
+                  ))}
+                </Select>
+                </div>
+                <div className="flex items-center gap-4">
+                  <Input type="date" label="Start Date" className=""/>
+                  <Typography> to </Typography>
+                  <Input type="date" label="End Date" className=""/>
+                </div>
+              </div>
                 <table className="w-full min-w-max table-auto text-left">
                   <thead>
                     <tr>
