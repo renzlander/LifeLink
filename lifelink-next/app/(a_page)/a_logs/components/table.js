@@ -3,6 +3,7 @@ import {
   ArrowDownTrayIcon,
   MagnifyingGlassIcon,
   TrashIcon,
+  DocumentArrowDownIcon,
 } from "@heroicons/react/24/outline";
 import {
   Card,
@@ -16,6 +17,8 @@ import {
   IconButton,
   Tooltip,
   Input,
+  Select,
+  Option,
 } from "@material-tailwind/react";
  
 const TABLE_HEAD = [
@@ -56,7 +59,8 @@ function formatTime(dateTimeString) {
 
  
 export function LogsTable({ activityLogs }) {
-  console.log('aaaaa',activityLogs);
+  const modules = ["All Module","Collected Blood Bags", "Inventory", "User List", "Donor List"];
+
   return (
     <Card className="h-full w-full mt-4">
       <CardHeader color="red" className="relative h-16 flex items-center">
@@ -65,6 +69,38 @@ export function LogsTable({ activityLogs }) {
         </Typography>
       </CardHeader>
       <CardBody className="overflow-scroll px-0">
+      <div className="flex items-center justify-between px-4 mb-4">
+                <div>
+                <Select  label="Select Module" >
+                  {modules.map((module) => (
+                    <Option key={module} value={module}>
+                      {module}
+                    </Option>
+                  ))}
+                </Select>
+                </div>
+                <div>
+                  <Typography variant="subtitle1" className="mb-2 flex justify-center font-bold text-red-800">Date Filter</Typography>
+                  <div className="flex items-center gap-4">
+                    <Input
+                      type="date"
+                      label="Start Date"
+                      className=""
+                    />
+                    <Typography> to </Typography>
+                    <Input
+                      type="date"
+                      label="End Date"
+                      className=""
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Button className="flex items-center gap-3">
+                    <DocumentArrowDownIcon className="h-4 w-4" /> Export to PDF
+                  </Button>
+                </div>
+              </div>
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
