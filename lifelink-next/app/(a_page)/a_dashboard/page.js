@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from "@material-tailwind/react";
-import { BloodListCard } from './components/cards';
+import { BloodListCard, TableCard } from './components/cards';
 
 export default function Home() {
   const router = useRouter();
@@ -16,6 +16,9 @@ export default function Home() {
         </div>
         <div className='flex gap-3'>
           {bloodCards.slice(4, 8)}
+        </div>
+        <div>
+          <TableCard />
         </div>
       </div>
     </div>
