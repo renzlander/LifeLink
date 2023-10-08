@@ -27,7 +27,13 @@ const TABLE_HEAD = [
   { label: "Module", key: "module" },
   { label: "Action", key: "action" },
   { label: "Status", key: "status" },
+  { label: "Region", key: "ip_address" },
   { label: "IP Address", key: "ip_address" },
+  { label: "Region", key: "region" },
+  { label: "City", key: "city" },
+  { label: "Postal", key: "postal" },
+  { label: "Latitude", key: "latitude" },
+  { label: "Longitude", key: "longitude" },
   { label: "Date", key: "created_at" },
   { label: "Time", key: "created_at" },
 ];
@@ -59,7 +65,7 @@ function formatTime(dateTimeString) {
 
  
 export function LogsTable({ activityLogs }) {
-  const modules = ["All Module","Collected Blood Bags", "Inventory", "User List", "Donor List"];
+  const modules = ["All Module","Collected Blood Bags", "Inventory", "User List", "Donor List", "Deferral List", "Dispensed Blood", "Donor Post", "MBD Report"];
 
   return (
     <Card className="h-full w-full mt-4">
@@ -179,6 +185,46 @@ export function LogsTable({ activityLogs }) {
                       variant="small"
                       className="font-normal"
                     >
+                      {logs.region}
+                    </Typography>
+                  </td>
+                  <td className="p-4">
+                    <Typography
+                      variant="small"
+                      className="font-normal"
+                    >
+                      {logs.city}
+                    </Typography>
+                  </td>
+                  <td className="p-4">
+                    <Typography
+                      variant="small"
+                      className="font-normal"
+                    >
+                      {logs.postal}
+                    </Typography>
+                  </td>
+                  <td className="p-4">
+                    <Typography
+                      variant="small"
+                      className="font-normal"
+                    >
+                      {logs.latitude}
+                    </Typography>
+                  </td>
+                  <td className="p-4">
+                    <Typography
+                      variant="small"
+                      className="font-normal"
+                    >
+                      {logs.longitude}
+                    </Typography>
+                  </td>
+                  <td className="p-4">
+                    <Typography
+                      variant="small"
+                      className="font-normal"
+                    >
                       {formatDate(logs.created_at)}
                     </Typography>
                   </td>
@@ -194,7 +240,7 @@ export function LogsTable({ activityLogs }) {
               ))
             ) : (
               <tr>
-                <td colSpan={8} className="p-4 text-center">
+                <td colSpan={14} className="p-4 text-center">
                   No activity logs available.
                 </td>
               </tr>

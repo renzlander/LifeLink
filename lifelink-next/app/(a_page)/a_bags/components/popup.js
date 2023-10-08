@@ -36,8 +36,9 @@ export function RemoveBlood({ serial_no, handleOpen, countdown,refreshData }) {
   const [open, setOpen] = useState(false);
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
   const [timeLeft, setTimeLeft] = useState(""); 
+
   const router = useRouter();
-    
+  
   const handleRemoveBloodBag = async () => {
     try {
       const token = getCookie("token");
@@ -74,7 +75,7 @@ export function RemoveBlood({ serial_no, handleOpen, countdown,refreshData }) {
 
   return (
     <>
-      <Button size="sm" onClick={() => setOpen(true)} className="bg-red-600">
+      <Button size="sm" onClick={() => setOpen(true)} className="bg-red-600" disabled={countdown === 0}> 
         Remove
       </Button>
       <Dialog open={open} handler={() => setOpen(false)} >
@@ -223,7 +224,7 @@ export function EditPopUp({user, countdown,refreshData}) {
   return (
     <>
       <Tooltip content="Edit Serial Number">
-        <IconButton variant="text" onClick={() => setOpen(true)}>
+        <IconButton variant="text" onClick={() => setOpen(true)} disabled={countdown === 0}>
           <PencilIcon className="h-4 w-4" />
         </IconButton>
       </Tooltip>
