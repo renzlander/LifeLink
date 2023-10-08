@@ -17,6 +17,8 @@ import {
   Tooltip,
   Input,
   Spinner,
+  Select,
+  Option,
 } from "@material-tailwind/react";
 import { RemoveBlood, EditPopUp, MoveToStock } from "./popup";
 import React, { useEffect, useState } from "react";
@@ -60,8 +62,82 @@ export function BagsTable() {
   const [sortColumn, setSortColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
   const [searchQuery, setSearchQuery] = useState("");
+  const [blood_type, setBlood] = useState("All");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [bloodQty, setBloodQty] = useState();
+  const [bledBy, setBledBy] = useState("All");
+  const [venue, setVenue] = useState("All");
+
 
   const router = useRouter();
+  const bledBys = ["All","Ryan Jay","Renz","Ray","James"];
+  const bloodTypes = ["All","AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
+  const venues = ["All","Malinta Valenzuela", "Balubaran Valenzuela"];
+
+
+  const handleBloodChange = (selectedBlood) => {
+    setBlood(selectedBlood);
+    fetchBloodTypeFilteredData(selectedBlood, startDate, endDate, bledBy, venue); // Pass bledBy and venue here
+  };
+
+  const handleBledByChange = (selectedBledBy) => {
+    setBledBy(selectedBledBy);
+    fetchBloodTypeFilteredData(blood_type, startDate, endDate, selectedBledBy, venue);
+  };
+
+  const handleVenueChange = (selectedVenue) => {
+    setVenue(selectedVenue);
+    fetchBloodTypeFilteredData(blood_type, startDate, endDate, bledBy, venue);
+  };
+  
+
+  const fetchBloodTypeFilteredData = async (selectedBlood, startDate, endDate, bledBy, venue) => {
+    console.log("selectedBlood:", selectedBlood);
+    console.log("bledBy:", bledBy);
+    console.log("venue:", venue);
+
+    try {
+      const token = getCookie("token");
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+  
+      const response = await axios.post(
+        `${laravelBaseUrl}/api/filter-collected-bloodbags`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params: {
+            blood_type: selectedBlood, 
+            startDate: startDate,
+            endDate: endDate,
+            bledBy: bledBy,
+            venue: venue,
+          },
+        }
+      );
+
+
+      if (response.data.status === "success") {
+        setUserDetails(response.data.data.data);
+        setBloodQty(response.data.total_count);
+        setTotalPages(response.data.data.last_page);
+        setCurrentPage(response.data.total_count);
+        setLoading(false);
+      } else {
+        console.error("Error fetching data:", response.data.message);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false);
+    }
+  };
+
 
   const fetchData = async (page) => {
     try {
@@ -100,6 +176,7 @@ export function BagsTable() {
         setUserDetails(response.data.data.data);
         setTotalPages(response.data.data.last_page);
         setCurrentPage(response.data.data.current_page);
+        setBloodQty(response.data.total_count);
         setLoading(false);
       } else {
         console.error("Error fetching data:", response.data.message);
@@ -194,7 +271,33 @@ export function BagsTable() {
         </Typography>
       </CardHeader>
       <CardBody className="overflow-x-auto px-0">
-        <div className="mb-4 ml-4 mr-4 flex justify-end items-center">
+        <div className="flex items-center justify-between px-4 mb-4">
+          <div className="flex flex-row gap-6">
+              <div>
+                  <Select onChange={handleBloodChange} label="Blood Type" value={blood_type}>
+                      {bloodTypes.map((blood) => (
+                          <Option key={blood} value={blood}>
+                              {blood}
+                          </Option>
+                      ))}
+                  </Select>
+              </div>
+              <Select label="Venue" onChange={handleVenueChange} value={venue}>
+                {venues.map((ven) => (
+                  <Option key={ven} value={ven}>
+                    {ven}
+                  </Option>
+                ))}
+              </Select>
+              <Select label="Bled By" onChange={handleBledByChange} value={bledBy}>
+                {bledBys.map((bledby) => (
+                  <Option key={bledby} value={bledby}>
+                    {bledby}
+                  </Option>
+                ))}
+              </Select>
+          </div>
+          <div className="mb-4 ml-4 mr-4 flex justify-end items-center">
           <div className="flex w-full shrink-0 gap-2 md:w-max">
             <div className="w-full md:w-72">
               <Input
@@ -216,6 +319,7 @@ export function BagsTable() {
               Export as PDF
             </Button>
           </div>
+        </div>
         </div>
         <table className="w-full min-w-max table-auto text-left">
           <thead>
