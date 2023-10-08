@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Disposed} from "./popup";
+import { Disposed, MultipleDisposed} from "./popup";
 import axios from "axios";
 import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
 import { MagnifyingGlassIcon, DocumentArrowDownIcon } from "@heroicons/react/24/outline";
@@ -24,6 +24,7 @@ import {
   Option,
 } from "@material-tailwind/react";
 import { laravelBaseUrl } from "@/app/variables";
+
 
 const TABLE_HEAD = [
     { label: "Donor Number", key: "donor_no" },
@@ -60,7 +61,8 @@ export function TabExp() {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [bloodQty, setBloodQty] = useState();
-
+    const [selectedRows, setSelectedRows] = useState([]);
+   
     const bloodTypes = ["All","AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
     const router = useRouter();
 
@@ -227,6 +229,17 @@ export function TabExp() {
           return 0;
         });
       
+        const handleRowSelect = (rowId) => {
+          // Check if the rowId is already in the selectedRows array
+          if (selectedRows.includes(rowId)) {
+            // If it's already selected, remove it from the array
+            setSelectedRows(selectedRows.filter((id) => id !== rowId));
+          } else {
+            // If it's not selected, add it to the array
+            setSelectedRows([...selectedRows, rowId]);
+          }
+        };
+
         if (loading) {
           return (
             <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
@@ -235,179 +248,184 @@ export function TabExp() {
             </div>
           );
         }
+        
+        const selectedRowClass = "bg-red-100";
+        const handleRowSelection = (blood_bags_id) => {
+          if (selectedRows.includes(blood_bags_id)) {
+            setSelectedRows(selectedRows.filter((id) => id !== blood_bags_id));
+          } else {
+            setSelectedRows([...selectedRows, blood_bags_id]);
+          }
+        };
 
-        return (
-            <Card className="h-full w-full">
-              <CardBody className="overflow-x-auto px-0">
+        console.log(selectedRows);
+
+      return (
+        <Card className="w-full">
+            <CardBody>
                 <div className="flex items-center justify-between px-4 mb-4">
-                  <div>
-                  <Typography variant="subtitle1" className="mb-2 flex justify-center font-bold text-red-800">QTY:{bloodQty}</Typography>
-                  <Select onChange={handleBloodChange} label="Blood Type" value={blood_type}> 
-                    {bloodTypes.map((blood) => (
-                      <Option key={blood} value={blood}>
-                        {blood}
-                      </Option>
-                    ))}
-                  </Select>
-                  </div>
-                  <div>
-                    <Typography variant="subtitle1" className="mb-2 flex justify-center font-bold text-red-800">Expiration Date Filter</Typography>
-                    <div className="flex items-center gap-4">
-                      <Input
-                        type="date"
-                        label="Start Date"
-                        value={startDate}
-                        onChange={(e) => {
-                          const newStartDate = e.target.value;
-                          setStartDate(newStartDate);
-                          fetchBloodTypeFilteredData(blood_type, newStartDate, endDate); 
-                        }}
-                        className=""
-                      />
-                      <Typography> to </Typography>
-                      <Input
-                        type="date"
-                        label="End Date"
-                        value={endDate}
-                        onChange={(e) => {
-                          const newEndDate = e.target.value;
-                          setEndDate(newEndDate);
-                          fetchBloodTypeFilteredData(blood_type, startDate, newEndDate); 
-                        }}
-                        className=""
-                      />
+                    <div>
+                        <Typography variant="subtitle1" className="mb-2 flex justify-center font-bold text-red-800">
+                            QTY:{bloodQty}
+                        </Typography>
+                        <Select onChange={handleBloodChange} label="Blood Type" value={blood_type}>
+                            {bloodTypes.map((blood) => (
+                                <Option key={blood} value={blood}>
+                                    {blood}
+                                </Option>
+                            ))}
+                        </Select>
                     </div>
-                  </div>
+                    <div>
+                        <Typography variant="subtitle1" className="mb-2 flex justify-center font-bold text-red-800">
+                            Expiration Date Filter
+                        </Typography>
+                        <div className="flex items-center gap-4">
+                            <Input
+                                type="date"
+                                label="Start Date"
+                                value={startDate}
+                                onChange={(e) => {
+                                    const newStartDate = e.target.value;
+                                    setStartDate(newStartDate);
+                                    fetchBloodTypeFilteredData(blood_type, newStartDate, endDate);
+                                }}
+                                className=""
+                            />
+                            <Typography> to </Typography>
+                            <Input
+                                type="date"
+                                label="End Date"
+                                value={endDate}
+                                onChange={(e) => {
+                                    const newEndDate = e.target.value;
+                                    setEndDate(newEndDate);
+                                    fetchBloodTypeFilteredData(blood_type, startDate, newEndDate);
+                                }}
+                                className=""
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div className="flex items-center px-4 mt-8 mb-4">
+                  <Typography variant="subtitle1" className="font-bold text-sm">
+                    Selected Rows: {selectedRows.length}
+                  </Typography>
+                  <MultipleDisposed
+                    variant="contained"
+                    color="red"
+                    size="sm"
+                    className="ml-4"
+                    selectedRows={selectedRows}
+                    refreshData={fetchData}
+                  />
+                  
                 </div>
                 <table className="w-full min-w-max table-auto text-left">
-                  <thead>
-                    <tr>
-                      {TABLE_HEAD.map((head) => (
-                        <th
-                          key={head.key}
-                          className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
-                          onClick={() => handleSort(head.key)} 
-                        >
-                          <div className="flex items-center">
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-normal leading-none opacity-70"
-                            >
-                              {head.label}
-                            </Typography>
-                            {sortColumn === head.key && (
-                              <span className="ml-2">
-                                {sortOrder === "asc" ? "▲" : "▼"}
-                              </span>
-                            )}
-                          </div>
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {userDetails.map((user, index) => (
-                      <tr className="border-b">
-                        <td className={classes}>
-                          <div className="flex items-center gap-3">
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-bold"
-                            >
-                              {user.donor_no}
-                            </Typography>
-                          </div>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="text-red-600 font-bold"
-                          >
-                            {user.serial_no}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {`${user.first_name} ${user.last_name}`}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {user.blood_type}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {formatDate(user.date_donated)}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {formatDate(user.expiration_date)}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                            <Disposed 
-                                serial_no={user.serial_no} 
-                                countdown={user.countdown} 
-                                refreshData={fetchData}/>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
+                    <thead>
+                        <tr>
+                            <th>
+                            <input
+                                type="checkbox"
+                                onChange={() => {
+                                    if (selectedRows.length === userDetails.length) {
+                                        setSelectedRows([]);
+                                    } else {
+                                        setSelectedRows(userDetails.map((user) => user.blood_bags_id));
+                                    }
+                                }}
+                                checked={userDetails.length > 0 && selectedRows.length === userDetails.length}
+                                className="h-5 w-5 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
+                            />
+                            </th>
+                            {TABLE_HEAD.map((head) => (
+                                <th key={head.key} className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer" onClick={() => handleSort(head.key)}>
+                                    <div className="flex items-center">
+                                        <Typography variant="small" color="blue-gray" className="font-normal leading-none opacity-70">
+                                            {head.label}
+                                        </Typography>
+                                        {sortColumn === head.key && <span className="ml-2">{sortOrder === "asc" ? "▲" : "▼"}</span>}
+                                    </div>
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {userDetails.map((user, index) => (
+                            <tr key={user.blood_bags_id} className={`${selectedRows.includes(user.blood_bags_id) ? selectedRowClass : ""}`}>
+                                <td>
+                                    <input
+                                        type="checkbox"
+                                        onChange={() => {
+                                            if (selectedRows.includes(user.blood_bags_id)) {
+                                                setSelectedRows(selectedRows.filter((id) => id !== user.blood_bags_id));
+                                            } else {
+                                                setSelectedRows([...selectedRows, user.blood_bags_id]);
+                                            }
+                                        }}
+                                        checked={selectedRows.includes(user.blood_bags_id)}
+                                        className="h-5 w-5 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
+                                    />
+                                </td>
+                                <td className={classes}>
+                                    <div className="flex items-center gap-3">
+                                        <Typography variant="small" color="blue-gray" className="font-bold">
+                                            {user.donor_no}
+                                        </Typography>
+                                    </div>
+                                </td>
+                                <td className={classes}>
+                                    <Typography variant="small" color="blue-gray" className="text-red-600 font-bold">
+                                        {user.serial_no}
+                                    </Typography>
+                                </td>
+                                <td className={classes}>
+                                    <Typography variant="small" color="blue-gray" className="font-normal">
+                                        {`${user.first_name} ${user.last_name}`}
+                                    </Typography>
+                                </td>
+                                <td className={classes}>
+                                    <Typography variant="small" color="blue-gray" className="font-normal">
+                                        {user.blood_type}
+                                    </Typography>
+                                </td>
+                                <td className={classes}>
+                                    <Typography variant="small" color="blue-gray" className="font-normal">
+                                        {formatDate(user.date_donated)}
+                                    </Typography>
+                                </td>
+                                <td className={classes}>
+                                    <Typography variant="small" color="blue-gray" className="font-normal">
+                                        {formatDate(user.expiration_date)}
+                                    </Typography>
+                                </td>
+                                <td className={classes}>
+                                    <Disposed blood_bags_id={user.blood_bags_id} refreshData={fetchData} />
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
                 </table>
-              </CardBody>
-              <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-                <Button
-                  variant="outlined"
-                  size="sm"
-                  disabled={currentPage === 1}
-                  onClick={() => handlePageChange(currentPage - 1)}
-                >
-                  Previous
+            </CardBody>
+            <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+                <Button variant="outlined" size="sm" disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)}>
+                    Previous
                 </Button>
                 <div className="flex items-center gap-2">
-                  {Array.from({ length: totalPages }, (_, index) => (
-                    <IconButton
-                      key={index}
-                      variant={currentPage === index + 1 ? "outlined" : "text"}
-                      size="sm"
-                      onClick={() => handlePageChange(index + 1)}
-                    >
-                      {index + 1}
-                    </IconButton>
-                  ))}
+                    {Array.from({ length: totalPages }, (_, index) => (
+                        <IconButton key={index} variant={currentPage === index + 1 ? "outlined" : "text"} size="sm" onClick={() => handlePageChange(index + 1)}>
+                            {index + 1}
+                        </IconButton>
+                    ))}
                 </div>
-                <Button
-                  variant="outlined"
-                  size="sm"
-                  disabled={currentPage === totalPages}
-                  onClick={() => handlePageChange(currentPage + 1)}
-                >
-                  Next
+                <Button variant="outlined" size="sm" disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)}>
+                    Next
                 </Button>
-              </CardFooter>
-            </Card>
-          );
+            </CardFooter>
+        </Card>
+    );
+      
+    
 }
 
 function getCookie(name) {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Disposed} from "./popup";
+import { Disposed, MultipleDisposed} from "./popup";
 import axios from "axios";
 import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
 import { MagnifyingGlassIcon, DocumentArrowDownIcon } from "@heroicons/react/24/outline";
@@ -60,6 +60,7 @@ export function TabTemp() {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [bloodQty, setBloodQty] = useState();
+    const [selectedRows, setSelectedRows] = useState([]);
 
     const bloodTypes = ["All","AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
     const router = useRouter();
@@ -238,9 +239,20 @@ export function TabTemp() {
           );
         }
 
+        const selectedRowClass = "bg-red-100";
+        const handleRowSelection = (blood_bags_id) => {
+          if (selectedRows.includes(blood_bags_id)) {
+            setSelectedRows(selectedRows.filter((id) => id !== blood_bags_id));
+          } else {
+            setSelectedRows([...selectedRows, blood_bags_id]);
+          }
+        };
+
+        console.log(selectedRows);
+
         return (
-            <Card className="h-full w-full">
-              <CardBody className="overflow-x-auto px-0">
+            <Card className="w-full">
+              <CardBody>
               <div className="flex items-center justify-between px-4 mb-4">
                 <div>
                 <Typography variant="subtitle1" className="mb-2 flex justify-center font-bold text-red-800">QTY:{bloodQty}</Typography>
@@ -280,11 +292,38 @@ export function TabTemp() {
                     />
                   </div>
                 </div>
-
               </div>
+              <div className="flex items-center px-4 mt-8 mb-4">
+                  <Typography variant="subtitle1" className="font-bold text-sm">
+                    Selected Rows: {selectedRows.length}
+                  </Typography>
+                  <MultipleDisposed
+                    variant="contained"
+                    color="red"
+                    size="sm"
+                    className="ml-4"
+                    selectedRows={selectedRows}
+                    refreshData={fetchData}
+                  />
+                  
+                </div>
                 <table className="w-full min-w-max table-auto text-left">
                   <thead>
                     <tr>
+                      <th>
+                          <input
+                              type="checkbox"
+                              onChange={() => {
+                                  if (selectedRows.length === userDetails.length) {
+                                      setSelectedRows([]);
+                                  } else {
+                                      setSelectedRows(userDetails.map((user) => user.blood_bags_id));
+                                  }
+                              }}
+                              checked={userDetails.length > 0 && selectedRows.length === userDetails.length}
+                              className="h-5 w-5 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
+                          />
+                        </th>
                       {TABLE_HEAD.map((head) => (
                         <th
                           key={head.key}
@@ -311,7 +350,21 @@ export function TabTemp() {
                   </thead>
                   <tbody>
                     {userDetails.map((user, index) => (
-                      <tr className="border-b">
+                      <tr key={user.blood_bags_id} className={`${selectedRows.includes(user.blood_bags_id) ? selectedRowClass : ""}`}>
+                       <td>
+                            <input
+                                type="checkbox"
+                                onChange={() => {
+                                    if (selectedRows.includes(user.blood_bags_id)) {
+                                        setSelectedRows(selectedRows.filter((id) => id !== user.blood_bags_id));
+                                    } else {
+                                        setSelectedRows([...selectedRows, user.blood_bags_id]);
+                                    }
+                                }}
+                                checked={selectedRows.includes(user.blood_bags_id)}
+                                className="h-5 w-5 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
+                            />
+                        </td>
                         <td className={classes}>
                           <div className="flex items-center gap-3">
                             <Typography
@@ -369,10 +422,7 @@ export function TabTemp() {
                           </Typography>
                         </td>
                         <td className={classes}>
-                            <Disposed 
-                                serial_no={user.serial_no} 
-                                countdown={user.countdown} 
-                                refreshData={fetchData}/>
+                            <Disposed blood_bags_id={user.blood_bags_id} refreshData={fetchData} />
                         </td>
                       </tr>
                     ))}

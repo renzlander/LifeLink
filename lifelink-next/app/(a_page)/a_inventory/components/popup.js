@@ -191,41 +191,50 @@ export function Dispense({ serial_no, handleOpen, refreshData}){
 }
 
 
-export function Disposed({ serial_no, handleOpen, countdown,refreshData }) {
+export function Disposed({ blood_bags_id, refreshData }) {
   const [open, setOpen] = useState(false);
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
-  const [timeLeft, setTimeLeft] = useState(""); 
   const router = useRouter();
-    
-  const handleRemoveBloodBag = async () => {
+
+  console.log('blood_bags_id:',blood_bags_id);
+  
+  const handleDisposeBloodBag = async () => {
     try {
       const token = getCookie("token");
       if (!token) {
         router.push("/login");
         return;
       }
+      console.log("Token:", token);
   
-      // Construct the URL with serial_no as a query parameter
-      const apiUrl = `${laravelBaseUrl}/api/remove-bloodbag?serial_no=${serial_no}`;
+      if (!Array.isArray(blood_bags_id)) {
+        blood_bags_id = [blood_bags_id]; // Convert to array
+      }
   
-      // Send DELETE request to the constructed URL
-      const response = await axios.delete(apiUrl, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await axios.post(
+        `${laravelBaseUrl}/api/dispose-blood`,
+        {
+          blood_bags_id: blood_bags_id
         },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      ).catch((error) => {
+        console.error("Unknown error occurred:", error);
       });
-
   
       if (response.data.status === 'success') {
         refreshData();
         toast.success('Removed blood bag successfully');
-        console.log('Removed blood bag successfully');
+        console.log('Blood bag disposed successfully');
         setOpen(false);
       } else {
         console.error('Error removing blood bag:', response.data.message);
       }
     } catch (error) {
-      console.error('Error removing blood bag:', error); 
+      console.error('Error removing blood bag:', error);
     }
   };
   
@@ -242,9 +251,6 @@ export function Disposed({ serial_no, handleOpen, countdown,refreshData }) {
           <Typography className="font-bold text-xl text-red-600 text-center">
             Are you sure you want to disposed this blood bag?
           </Typography>
-            <Typography className="text-sm text-red-600 font-bold text-center">
-              This blood bag can be return in {countdown} days
-            </Typography>
         </DialogBody>
         {generalErrorMessage && (
           <div className="mt-4 text-center bg-red-100 p-2 rounded-lg">
@@ -261,7 +267,97 @@ export function Disposed({ serial_no, handleOpen, countdown,refreshData }) {
             >
               No
             </Button>
-          <Button variant="red-cross" color="red" onClick={handleRemoveBloodBag}>
+          <Button variant="red-cross" color="red" onClick={handleDisposeBloodBag}>
+            Yes
+          </Button>
+        </DialogFooter>
+      </Dialog>
+    </>
+  );
+}
+
+export function MultipleDisposed({ selectedRows, refreshData }) {
+  const [open, setOpen] = useState(false);
+  const [generalErrorMessage, setGeneralErrorMessage] = useState("");
+  const router = useRouter();
+  console.log('blood_bags_id:',selectedRows);
+  
+  const handleDisposeBloodBag = async () => {
+    try {
+      const token = getCookie("token");
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+      console.log("Token:", token);
+  
+      if (!Array.isArray(selectedRows)) {
+        blood_bags_id = [selectedRows]; // Convert to array
+      }
+  
+      const response = await axios.post(
+        `${laravelBaseUrl}/api/dispose-blood`,
+        {
+          blood_bags_id: selectedRows
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      ).catch((error) => {
+        console.error("Unknown error occurred:", error);
+      });
+    
+      if (response.data.status === 'success') {
+        refreshData();
+        toast.success('Removed blood bag successfully');
+        console.log('Blood bag disposed successfully');
+        setOpen(false);
+      } else {
+        console.error('Error removing blood bag:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error removing blood bag:', error);
+    }
+  };
+  
+  
+
+  return (
+    <>
+      <Button
+        variant="contained"
+        color="red"
+        size="sm"
+        className="ml-4"
+        onClick={() => setOpen(true)}
+      >
+        Dispose
+      </Button>
+      <Dialog open={open} handler={() => setOpen(false)} >
+        <DialogHeader>Remove Blood Bag</DialogHeader>
+        <DialogBody divider className="flex flex-col gap-4 items-center">
+          <Typography className="font-bold text-xl text-red-600 text-center">
+            Are you sure you want to disposed all of this blood bag?
+          </Typography>
+        </DialogBody>
+        {generalErrorMessage && (
+          <div className="mt-4 text-center bg-red-100 p-2 rounded-lg">
+            <Typography color="red" className="text-sm font-semibold">
+              {generalErrorMessage}
+            </Typography>
+          </div>
+        )}
+        <DialogFooter className="flex justify-center mt-4">
+            <Button
+              variant="red-cross"
+              onClick={() => setOpen(false)}
+              className="mr-2"
+            >
+              No
+            </Button>
+          <Button variant="red-cross" color="red" onClick={handleDisposeBloodBag}>
             Yes
           </Button>
         </DialogFooter>
