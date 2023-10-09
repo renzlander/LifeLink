@@ -51,7 +51,7 @@ export function BloodListCard({ bloodType, availability, legend }) {
 export function TableCard() {
   return (
     <Card className="mt-6 w-1/3">
-      <CardHeader color="red" variant="gradient" className="flex items-center justify-center relative px-6 h-96">
+      <CardHeader color="red" variant="gradient" className="flex items-center justify-center relative p-6 h-full">
         <LineChart />
       </CardHeader>
       <CardBody>

@@ -239,9 +239,9 @@ export function BagsTable() {
                     Collected Blood Bags
                 </Typography>
             </CardHeader>
-            <CardBody className="overflow-x-auto px-0">
-                <div className="flex items-center justify-between px-4 mb-4 my-10">
-                    <div className="flex flex-row gap-6">
+            <CardHeader floated={false} shadow={false} className="rounded-none mt-0 bg-transparent">
+                <div className="flex items-end justify-between px-4 mb-4 my-10">
+                    <div className="flex flex-row items-end gap-6">
                         <div>
                             <Select onChange={handleBloodChange} label="Blood Type" value={blood_type}>
                                 {bloodTypes.map((blood) => (
@@ -265,8 +265,8 @@ export function BagsTable() {
                                 </Option>
                             ))}
                         </Select>
-                        <div className="flex justify-center">
-                            <Typography variant="subtitle1" className="mb-8 font-bold text-red-800 absolute">
+                        <div className="flex flex-col items-center justify-center gap-2">
+                            <Typography variant="h6" className="font-bold text-red-800">
                                 Date Donated Filter
                             </Typography>
                             <div className="flex items-center gap-4">
@@ -316,6 +316,8 @@ export function BagsTable() {
                         </div>
                     </div>
                 </div>
+            </CardHeader>
+            <CardBody className="overflow-x-auto px-0">
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                         <tr>

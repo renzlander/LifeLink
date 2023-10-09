@@ -40,12 +40,13 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData }) {
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
 
   const handleIncrement = () => {
-    setDuration(duration + 1);
+    setDuration(parseInt(duration, 10) + 1);
   };
 
   const handleDecrement = () => {
-    if (duration > 0) {
-      setDuration(duration - 1);
+    const parsedDuration = parseInt(duration, 10);
+    if (parsedDuration > 0) {
+      setDuration(parsedDuration - 1);
     }
   };
 
@@ -148,14 +149,13 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData }) {
           </div>
         )}
   <DialogBody divider className="flex flex-col gap-6">
-    <Typography className="font-bold text-4xl -mb-3 rounded-md text-black px-2 py-1">
       <div className={`relative ${errorMessage.category.length > 0 ? "mb-4" : ""}`}>
         <Select
           label="Category"
           value={category}
           onChange={(value) => handleCategoryChange(value)}
         >
-          <Option value=""></Option>
+          <Option value="" disabled>Category</Option>
           <Option value="1">History and P.E</Option>
           <Option value="2">Abnormal Hemoglobin</Option>
           <Option value="3">Other Reason/s</Option>
@@ -199,32 +199,30 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData }) {
       </div>
       {remarks === '1' && (
         <div className="flex items-center justify-center mb-4 text-black">
-          <button
+          <Button
             onClick={handleDecrement}
             className="bg-gray-200 text-gray-600 px-4 py-1 rounded-l text-2xl"
           >
             -
-          </button>
-          <input
+          </Button>
+          <Input
             type="number"
-                    
+            label="Days"
             value={duration}
-            onChange={handleChange}
-            onKeyDown={(e) => {
-              // Allow only numeric characters and backspace
-              const validChars = /^[0-9\b]+$/;
-              if (!validChars.test(e.key)) {
-                e.preventDefault();
+            onChange={e => {
+              const inputVal = e.target.value;
+              if (/^[0-9]*$/.test(inputVal)) {
+                setDuration(inputVal);
               }
             }}
-            className="bg-gray-100 text-center w-32 h-10 rounded-none border-l border-r border-gray-200 text-xl mb-2" 
+            className="text-center" 
           />
-          <button
+          <Button
             onClick={handleIncrement}
             className="bg-gray-200 text-gray-600 px-3 py-1 rounded-r text-2xl"
           >
             +
-          </button>
+          </Button>
           <span className="ml-2 text-gray-600 text-2xl">Days</span>
           {errorMessage.duration.length > 0 && (
           <div className="error-message text-red-600 text-sm absolute mt-2">
@@ -233,7 +231,6 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData }) {
         )}
         </div>
       )}
-    </Typography>
   </DialogBody>
 
 
