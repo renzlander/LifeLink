@@ -14,6 +14,8 @@ import {
 import {
   TrashIcon,
   PencilIcon, 
+  PlusIcon,
+  MinusIcon,
 } from "@heroicons/react/24/solid";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
@@ -201,7 +203,7 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData }) {
         <div className="flex items-center justify-center mb-4 text-black">
           <Button
             onClick={handleDecrement}
-            className="bg-gray-200 text-gray-600 px-4 py-1 rounded-l text-2xl"
+            className="rounded-r-none"
           >
             -
           </Button>
@@ -211,15 +213,15 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData }) {
             value={duration}
             onChange={e => {
               const inputVal = e.target.value;
-              if (/^[0-9]*$/.test(inputVal)) {
+              if (/^[0-9]*$/.test(inputVal) && inputVal.length <= 3) {
                 setDuration(inputVal);
               }
             }}
-            className="text-center" 
+            className="text-center rounded-none"
           />
           <Button
             onClick={handleIncrement}
-            className="bg-gray-200 text-gray-600 px-3 py-1 rounded-r text-2xl"
+            className="rounded-l-none"
           >
             +
           </Button>
