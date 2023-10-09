@@ -44,3 +44,55 @@ body {
   width: 100%;
   height: 50rem;
 }
+
+/* Define a fade-in animation for active steps */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px); /* Adjust the distance as needed */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Define a fade-in and scale animation for active steps */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Define a fade-out and scale animation for inactive steps */
+@keyframes fadeOutScale {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+/* Apply the animation to elements with the "animate-fade" class */
+.animate-fade {
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+/* When active, apply the fade-in and scale animation */
+.animate-fade.active {
+  animation: fadeInScale 0.3s ease-in-out;
+}
+
+/* When inactive, apply the fade-out and scale animation */
+.animate-fade.inactive {
+  animation: fadeOutScale 0.3s ease-in-out;
+}
+
