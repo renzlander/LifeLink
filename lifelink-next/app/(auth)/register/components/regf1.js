@@ -58,7 +58,7 @@ export function RegF1({ onNextStep }) {
         onNextStep();
       }
     }, [onNextStep]);
-
+    
     useEffect(() => {
       // Check if password meets checklist rules
       const isPasswordValid = password.length >= 8 && /[!@#$%^&*(),.?":{}|<>]/.test(password) && /\d/.test(password) && /[A-Z]/.test(password);

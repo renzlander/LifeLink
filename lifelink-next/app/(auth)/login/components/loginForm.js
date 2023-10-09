@@ -20,6 +20,7 @@ export function LoginForm() {
   const [email_or_phone, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isToastShown, setIsToastShown] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();

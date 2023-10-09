@@ -266,7 +266,7 @@ export function BagsTable() {
                             ))}
                         </Select>
                         <div className="flex justify-center">
-                            <Typography variant="subtitle1" className="font-bold text-red-800 absolute">
+                            <Typography variant="subtitle1" className="mb-8 font-bold text-red-800 absolute">
                                 Date Donated Filter
                             </Typography>
                             <div className="flex items-center gap-4">
