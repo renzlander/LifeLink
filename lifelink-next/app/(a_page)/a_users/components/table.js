@@ -245,7 +245,7 @@ export function UsersTable() {
                                     <ViewPopUp user={user} />
                                     <EditPopUp user={user} onUpdate={handleUpdateUser} refreshData={fetchData} />
                                 </td>
-                                <td className={classes}>{user.remarks !== 0 ? <span className="font-bold text-red-700 p-2 rounded-md bg-[#212121]">----DEFERRED----</span> : <AddBloodBagPopup user_id={user.user_id} />}</td>
+                                <td className={classes}>{user.remarks !== 0 ? <Button size="small" disabled className="w-2/3">DEFERRED</Button> : <AddBloodBagPopup user_id={user.user_id} />}</td>
                             </tr>
                         ))}
                     </tbody>
