@@ -9,7 +9,6 @@ export function RegF1({ onNextStep }) {
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
   const [password_confirmation, setConfirmPassword] = useState("");
-  const [passwordChecklistMet, setPasswordChecklistMet] = useState(false);
   const [errorMessage, setErrorMessage] = useState({ email: [], mobile: [] });
 
   const handleSubmit = async (e) => {
@@ -49,8 +48,7 @@ export function RegF1({ onNextStep }) {
     mobile !== "" &&
     password !== "" &&
     password_confirmation !== "" &&
-    confirmPasswordStyle === "success" &&
-    passwordChecklistMet;
+    confirmPasswordStyle === "success";
 
     useEffect(() => {
       const user_id = document.cookie.replace(/(?:(?:^|.*;\s*)user_id\s*=\s*([^;]*).*$)|^.*$/, "$1");
@@ -58,12 +56,8 @@ export function RegF1({ onNextStep }) {
         onNextStep();
       }
     }, [onNextStep]);
-    
-    useEffect(() => {
-      // Check if password meets checklist rules
-      const isPasswordValid = password.length >= 8 && /[!@#$%^&*(),.?":{}|<>]/.test(password) && /\d/.test(password) && /[A-Z]/.test(password);
-      setPasswordChecklistMet(isPasswordValid);
-    }, [password]);
+
+ 
 
   return (
     <Card className="mt-6 flex justify-center items-center" color="transparent" shadow={false}>
@@ -71,73 +65,73 @@ export function RegF1({ onNextStep }) {
         Enter your details for logging in
       </Typography>
       <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96" onSubmit={handleSubmit}>
-        <div className="mb-6 space-y-6">
-          <div className={`relative ${errorMessage.email.length > 0 ? "mb-1" : ""}`}>
-            <Input
-                size="lg"
-                label="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className={`w-full ${errorMessage.email.length > 0 ? "border-red-500" : ""}`}
-              />
-
-              {errorMessage.email.length > 0 && (
-                <div className="error-message text-red-600 text-sm">
-                  {errorMessage.email[0]}
-                </div>
-              )}
-          </div>
-
-          <div className={`relative ${errorMessage.mobile.length > 0 ? "mb-1" : ""}`}>
-            <Input
+      <div className="mb-6 space-y-6">
+        <div className={`relative ${errorMessage.email.length > 0 ? "mb-1" : ""}`}>
+          <Input
               size="lg"
-              label="Phone Number"
-              value={mobile}
-              onChange={(e) => {
-                const inputValue = e.target.value;
-                const sanitizedValue = inputValue.replace(/[^0-9]/g, "").slice(0, 11);
-                setMobile(sanitizedValue);
-              }}
+              label="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
-              className={`w-full ${errorMessage.mobile.length > 0 ? "border-red-500" : ""}`}
+              className={`w-full ${errorMessage.email.length > 0 ? "border-red-500" : ""}`}
             />
 
-            {errorMessage.mobile.length > 0 && (
+            {errorMessage.email.length > 0 && (
               <div className="error-message text-red-600 text-sm">
-                {errorMessage.mobile[0]}
+                {errorMessage.email[0]}
               </div>
             )}
-          </div>
+        </div>
 
+        <div className={`relative ${errorMessage.mobile.length > 0 ? "mb-1" : ""}`}>
           <Input
-            type="password"
             size="lg"
-            label="Password"
-            value={password}
+            label="Phone Number"
+            value={mobile}
             onChange={(e) => {
-              setPassword(e.target.value);
+              const inputValue = e.target.value;
+              const sanitizedValue = inputValue.replace(/[^0-9]/g, "").slice(0, 11);
+              setMobile(sanitizedValue);
             }}
             required
-            className="mb-1"
+            className={`w-full ${errorMessage.mobile.length > 0 ? "border-red-500" : ""}`}
           />
-          <PasswordChecklist
-            rules={["minLength", "specialChar", "number", "capital"]}
-            minLength={8}
-            value={password}
-            className="mb-2"
-          />
-          <Input
-            type="password"
-            size="lg"
-            label="Confirm Password"
-            value={password_confirmation}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            {...(confirmPasswordStyle === "normal" ? {} : (confirmPasswordStyle === "success" ? { success: true } : { error: true }))}
-            className="mb-2"
-          />
+
+          {errorMessage.mobile.length > 0 && (
+            <div className="error-message text-red-600 text-sm">
+              {errorMessage.mobile[0]}
+            </div>
+          )}
         </div>
+
+        <Input
+          type="password"
+          size="lg"
+          label="Password"
+          value={password}
+          onChange={(e) => {
+            setPassword(e.target.value);
+          }}
+          required
+          className="mb-1"
+        />
+        <PasswordChecklist
+          rules={["minLength", "specialChar", "number", "capital"]}
+          minLength={8}
+          value={password}
+          className="mb-2"
+        />
+        <Input
+          type="password"
+          size="lg"
+          label="Confirm Password"
+          value={password_confirmation}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+          {...(confirmPasswordStyle === "normal" ? {} : (confirmPasswordStyle === "success" ? { success: true } : { error: true }))}
+          className="mb-2"
+        />
+      </div>
         <div className="flex justify-center mt-6">
           <Button type="submit" disabled={!isFormValid} className="w-full">
             NEXT STEP

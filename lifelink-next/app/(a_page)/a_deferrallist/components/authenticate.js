@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   CardHeader,
@@ -8,22 +8,54 @@ import {
   Input,
   Button,
 } from "@material-tailwind/react";
+import axios from "axios";
+import { laravelBaseUrl } from "@/app/variables";
+import { useRouter } from 'next/navigation';
+import { ToastContainer, toast } from "react-toastify";
 
 export function AuthCard({ onAuthenticate }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const router = useRouter();
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
+    setError(''); 
   };
 
-  const handleSubmit = () => {
-    // Check if the password matches the expected password 'admin123'
-    if (password === 'admin123') {
-      // Call the onAuthenticate function provided as a prop
-      onAuthenticate();
-    } else {
+  const handleSubmit = async () => {
+    try {
+      const token = getCookie("token");
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+
+      const response = await axios.post(
+        `${laravelBaseUrl}/api/check-security-pin`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params: {
+            security_pin: password
+          },
+        }
+      );
+
+      if (response.data.status === "success") {
+        toast.success('Security pin verified successfully.');
+        onAuthenticate();
+      } else {
+        toast.error('Invalid password. Please try again.');
+        setError('Invalid password. Please try again.');
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
       setError('Invalid password. Please try again.');
+      toast.error('Invalid password. Please try again.');
+
     }
   };
 
@@ -35,7 +67,7 @@ export function AuthCard({ onAuthenticate }) {
         className="p-6 mb-4 grid h-28 place-items-center"
       >
         <Typography variant="h5" color="white" className="text-center">
-          Oops! You need Admin password to access this page.
+          Oops! You need an Admin password to access this page.
         </Typography>
       </CardHeader>
       <CardBody className="flex flex-col gap-4">
@@ -55,4 +87,10 @@ export function AuthCard({ onAuthenticate }) {
       </CardFooter>
     </Card>
   );
+}
+
+function getCookie(name) {
+  const cookies = document.cookie.split("; ");
+  const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));
+  return cookie ? cookie.split("=")[1] : null;
 }
