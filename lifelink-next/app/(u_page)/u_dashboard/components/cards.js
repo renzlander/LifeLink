@@ -7,6 +7,8 @@ import {
     Button,
   } from "@material-tailwind/react";
 import React from "react";
+import LineChart from "./tableChart";
+import BarChart from "./barChart";
 
   export function BloodListCard({ bloodType, availability, legend }) {
     
@@ -43,3 +45,52 @@ import React from "react";
     );
   
   }
+
+  
+export function LineCard() {
+  return (
+    <Card className="mt-6 w-1/3">
+      <CardHeader color="red" variant="gradient" className="flex items-center justify-center relative p-6 h-full">
+        <LineChart />
+      </CardHeader>
+      <CardBody>
+        <Typography variant="h5" color="blue-gray" className="mb-2">
+          Bloods Stored
+        </Typography>
+        <Typography>
+          Collected blood bags in past few months
+        </Typography>
+      </CardBody>
+      <CardFooter className="border-t">
+        <Typography>
+          Updated 4 min ago
+        </Typography>
+      </CardFooter>
+    </Card>
+  );
+
+}
+
+export function BarCard() {
+  return (
+    <Card className="mt-6 w-1/3">
+      <CardHeader color="red" variant="gradient" className="flex items-center justify-center relative p-6 h-full">
+        <BarChart />
+      </CardHeader>
+      <CardBody>
+        <Typography variant="h5" color="blue-gray" className="mb-2">
+          Bloods Stored
+        </Typography>
+        <Typography>
+          Collected blood bags in past few months
+        </Typography>
+      </CardBody>
+      <CardFooter className="border-t">
+        <Typography>
+          Updated 4 min ago
+        </Typography>
+      </CardFooter>
+    </Card>
+  );
+
+}
