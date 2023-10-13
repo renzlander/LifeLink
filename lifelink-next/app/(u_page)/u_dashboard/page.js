@@ -6,8 +6,7 @@ import { BloodListCard } from './components/cards';
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
-import BarChart from './components/barChart';
-import LineChart from './components/tableChart';
+import { BarCard, LineCard } from './components/cards';
 
 export default function Home() {
   const router = useRouter();
@@ -65,7 +64,7 @@ export default function Home() {
   }
 
   return (
-    <div className="bg-gray-300 min-h-screen flex flex-col justify-between gap-y-3 p-4">
+    <div className="bg-gray-300 min-h-screen min-w flex flex-col justify-between gap-y-3 py-4">
       <div className='flex gap-3'>
         {bloodListCards.slice(0, 4)}
       </div>
@@ -74,8 +73,8 @@ export default function Home() {
       </div>
       
       <div className='mt-10 flex gap-3'>
-        <LineChart />
-        <BarChart />
+        <LineCard />
+        <BarCard />
       </div>
     </div>
   );
