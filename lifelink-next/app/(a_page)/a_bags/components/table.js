@@ -1,7 +1,7 @@
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { ArrowDownTrayIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Card, CardHeader, Typography, Button, CardBody, Chip, CardFooter, Avatar, IconButton, Tooltip, Input, Spinner, Select, Option } from "@material-tailwind/react";
-import { RemoveBlood, EditPopUp, MoveToStock } from "./popup";
+import { RemoveBlood, EditPopUp, MoveToStock, MultipleMoveToStock } from "./popup";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
@@ -44,6 +44,7 @@ export function BagsTable() {
     const [bloodQty, setBloodQty] = useState();
     const [bledBy, setBledBy] = useState("All");
     const [venue, setVenue] = useState("All");
+    const [selectedRows, setSelectedRows] = useState([]);
 
     const router = useRouter();
     const bledBys = ["All", "Ryan Jay", "Renz", "Ray", "James"];
@@ -52,7 +53,7 @@ export function BagsTable() {
 
     const handleBloodChange = (selectedBlood) => {
         setBlood(selectedBlood);
-        fetchBloodTypeFilteredData(selectedBlood, startDate, endDate, bledBy, venue); 
+        fetchBloodTypeFilteredData(selectedBlood, startDate, endDate, bledBy, venue);
     };
 
     const handleBledByChange = (selectedBledBy) => {
@@ -66,12 +67,6 @@ export function BagsTable() {
     };
 
     const fetchBloodTypeFilteredData = async (selectedBlood, startDate, endDate, bledBy, venue) => {
-        console.log("selectedBlood:", selectedBlood);
-        console.log("bledBy:", bledBy);
-        console.log("venue:", venue);
-        console.log("startDate:", startDate);
-        console.log("endDate:", endDate);
-
         try {
             const token = getCookie("token");
             if (!token) {
@@ -159,7 +154,7 @@ export function BagsTable() {
     };
 
     useEffect(() => {
-        fetchBloodTypeFilteredData(blood_type, startDate, endDate, bledBy, venue); 
+        fetchBloodTypeFilteredData(blood_type, startDate, endDate, bledBy, venue);
         // fetchData(currentPage);
     }, [router, sortColumn, sortOrder, searchQuery]);
 
@@ -231,8 +226,19 @@ export function BagsTable() {
         );
     }
 
+    const selectedRowClass = "bg-red-100";
+    const handleRowSelection = (blood_bags_id) => {
+        if (selectedRows.includes(blood_bags_id)) {
+            setSelectedRows(selectedRows.filter((id) => id !== blood_bags_id));
+        } else {
+            setSelectedRows([...selectedRows, blood_bags_id]);
+        }
+    };
+
+    console.log(selectedRows);
+
     return (
-        <Card className="h-full w-full mt-4">
+        <Card className="w-full">
             <CardHeader color="red" className="relative h-16 flex items-center">
                 <Typography variant="h4" color="white" className="ml-4">
                     Collected Blood Bags
@@ -316,10 +322,30 @@ export function BagsTable() {
                     </div>
                 </div>
             </CardHeader>
-            <CardBody className="overflow-x-auto px-0">
+            <CardBody className="">
+                <div className="flex items-center px-4 mt-8 mb-4">
+                    <Typography variant="subtitle1" className="font-bold text-sm">
+                        Selected Rows: {selectedRows.length}
+                    </Typography>
+                    <MultipleMoveToStock variant="contained" color="red" size="sm" className="ml-4" selectedRows={selectedRows} refreshData={fetchData} />
+                </div>
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                         <tr>
+                            <th>
+                                <input
+                                    type="checkbox"
+                                    onChange={() => {
+                                        if (selectedRows.length === userDetails.length) {
+                                            setSelectedRows([]);
+                                        } else {
+                                            setSelectedRows(userDetails.map((user) => user.serial_no));
+                                        }
+                                    }}
+                                    checked={userDetails.length > 0 && selectedRows.length === userDetails.length}
+                                    className="h-5 w-5 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
+                                />
+                            </th>
                             {TABLE_HEAD.map((head) => (
                                 <th key={head.key} className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer" onClick={() => handleSort(head.key)}>
                                     <div className="flex items-center">
@@ -334,7 +360,21 @@ export function BagsTable() {
                     </thead>
                     <tbody>
                         {userDetails.map((user, index) => (
-                            <tr className="border-b">
+                            <tr key={user.serial_no} className={`${selectedRows.includes(user.serial_no) ? selectedRowClass : ""}`}>
+                                <td>
+                                    <input
+                                        type="checkbox"
+                                        onChange={() => {
+                                            if (selectedRows.includes(user.serial_no)) {
+                                                setSelectedRows(selectedRows.filter((id) => id !== user.serial_no));
+                                            } else {
+                                                setSelectedRows([...selectedRows, user.serial_no]);
+                                            }
+                                        }}
+                                        checked={selectedRows.includes(user.blood_bags_id)}
+                                        className="h-5 w-5 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
+                                    />
+                                </td>
                                 <td className={classes}>
                                     <div className="flex items-center gap-3">
                                         <Typography variant="small" color="blue-gray" className="font-bold">
