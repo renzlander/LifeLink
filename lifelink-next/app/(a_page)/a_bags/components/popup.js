@@ -42,7 +42,6 @@ export function RemoveBlood({ serial_no, handleOpen, countdown, refreshData }) {
             if (response.data.status === "success") {
                 refreshData();
                 toast.success("Removed blood bag successfully");
-                console.log("Removed blood bag successfully");
                 setOpen(false);
             } else {
                 console.error("Error removing blood bag:", response.data.message);
@@ -94,7 +93,6 @@ export function EditPopUp({ user, countdown, refreshData }) {
     const [part2, setPart2] = useState("");
     const [part3, setPart3] = useState("");
     const srNumber = `${part1}${part2}${part3}`;
-    console.log("user:", user);
     const serialNo = user.serial_no;
     const serialFormat = serialNo.match(/^(\d{4})(\d{6})(\d{1})$/);
 
@@ -134,7 +132,6 @@ export function EditPopUp({ user, countdown, refreshData }) {
                 date_donated: dateDonated,
                 bled_by: bledBy,
             };
-            console.log("Before Axios POST request");
 
             const response = await axios
                 .put(`${laravelBaseUrl}/api/edit-bloodbag`, data, {
@@ -311,7 +308,6 @@ export function MoveToStock({ serial_no, handleOpen, refreshData }) {
 
             if (response.data.status === "success") {
                 refreshData();
-                console.log("Blood bag added successfully");
                 toast.success("Blood bag added to inventory successfully");
             } else if (response.data.status === "error") {
                 if (response.data.message) {

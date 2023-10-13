@@ -52,7 +52,7 @@ export function BagsTable() {
 
     const handleBloodChange = (selectedBlood) => {
         setBlood(selectedBlood);
-        fetchBloodTypeFilteredData(selectedBlood, startDate, endDate, bledBy, venue); // Pass bledBy and venue here
+        fetchBloodTypeFilteredData(selectedBlood, startDate, endDate, bledBy, venue); 
     };
 
     const handleBledByChange = (selectedBledBy) => {
@@ -92,8 +92,6 @@ export function BagsTable() {
                         endDate: endDate,
                         bledBy: bledBy,
                         venue: venue,
-                        sort: sortColumn, // Add sorting parameters here
-                        sorder: sortOrder,
                     },
                 }
             );
@@ -161,7 +159,8 @@ export function BagsTable() {
     };
 
     useEffect(() => {
-        fetchData(currentPage);
+        fetchBloodTypeFilteredData(blood_type, startDate, endDate, bledBy, venue); 
+        // fetchData(currentPage);
     }, [router, sortColumn, sortOrder, searchQuery]);
 
     const handlePageChange = (newPage) => {
@@ -277,7 +276,7 @@ export function BagsTable() {
                                     onChange={(e) => {
                                         const newStartDate = e.target.value;
                                         setStartDate(newStartDate);
-                                        fetchBloodTypeFilteredData(blood_type, startDate, endDate, bledBy, venue);
+                                        fetchBloodTypeFilteredData(blood_type, newStartDate, endDate, bledBy, venue);
                                     }}
                                     className=""
                                 />
@@ -289,7 +288,7 @@ export function BagsTable() {
                                     onChange={(e) => {
                                         const newEndDate = e.target.value;
                                         setEndDate(newEndDate);
-                                        fetchBloodTypeFilteredData(blood_type, startDate, endDate, bledBy, venue);
+                                        fetchBloodTypeFilteredData(blood_type, startDate, newEndDate, bledBy, venue);
                                     }}
                                     className=""
                                 />
