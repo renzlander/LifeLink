@@ -1,27 +1,116 @@
 'use client'
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Button } from "@material-tailwind/react";
+import { Button, Spinner } from "@material-tailwind/react";
 import { BloodListCard, LineCard, BarCard, CountDonorCard } from './components/cards';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { laravelBaseUrl } from "@/app/variables";
 
 export default function Home() {
   const router = useRouter();
+  const [bloodTypes, setBloodTypes] = useState([]);
+  const [availability, setAvailability] = useState([]);
+  const [legend, setLegend] = useState([]);
+  const [count, setCount] = useState([]);
+  const [percentage, setPercentage] = useState([]);
+  const [donorCount, setDonorCount] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  const bloodCards = Array.from({ length: 8 }, (_, i) => <BloodListCard key={i} />);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = getCookie("token");
+        if (!token) {
+          router.push("/login");
+          return;
+        }
+
+        const response = await axios.get(`${laravelBaseUrl}/api/dashboard-get-stocks`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setLoading(false);
+
+        if (response.data && Array.isArray(response.data.blood_bags)) {
+          const bloodTypes = response.data.blood_bags.map((bag) => bag.blood_type);
+          const availability = response.data.blood_bags.map((bag) => bag.status);
+          const legend = response.data.blood_bags.map((bag) => bag.legend);
+          const count = response.data.blood_bags.map((bag) => bag.count);
+          const percentage = response.data.blood_bags.map((bag) => bag.percentage);
+
+
+          setBloodTypes(bloodTypes);
+          setAvailability(availability);
+          setLegend(legend);
+          setCount(count);
+          setPercentage(percentage);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const fetchDonorCount = async () => {
+      try {
+        const token = getCookie("token");
+        if (!token) {
+          router.push("/login");
+          return;
+        }
+
+        const responseDonorCount = await axios.get(`${laravelBaseUrl}/api/dashboard-get-number-of-donors`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setLoading(false);
+
+        if (responseDonorCount.data.donorCount !== undefined) {
+          setDonorCount(responseDonorCount.data.donorCount);
+        }
+        
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchDonorCount();
+    fetchData();
+  }, []);
+
+  const bloodListCards = bloodTypes.map((bloodType, index) => {
+    const status = availability[index];
+    const legends = legend[index];
+    const counts = count[index];
+    const percentages = percentage[index];
+    return <BloodListCard key={index} bloodType={bloodType} availability={status} legend={legends} count={counts} percentage={percentages}/>;
+  });
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
+        <Spinner color="red" className="h-16 w-16" />
+        <p className="mb-[180px] text-gray-600">Loading...</p>
+      </div>
+    );
+  }
+
 
   return (
     <div className="bg-gray-300 min-h-screen flex flex-col justify-between gap-y-3 p-4">
         <div className='flex gap-3'>
           <div className='flex flex-col gap-y-10 w-2/3'>
             <div className='flex gap-3'>
-              {bloodCards.slice(0, 4)}
+              {bloodListCards.slice(0, 4)}
             </div>
             <div className='flex gap-3'>
-              {bloodCards.slice(4, 8)}
+              {bloodListCards.slice(4, 8)}
             </div>
           </div>
           <div className='w-1/3'>
-            <CountDonorCard />
+          <CountDonorCard donorCount={donorCount} />
           </div>
         </div>
         <div className='mt-10 flex gap-3'>
@@ -30,4 +119,10 @@ export default function Home() {
         </div>
     </div>
   );
+}
+
+function getCookie(name) {
+  const cookies = document.cookie.split("; ");
+  const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));
+  return cookie ? cookie.split("=")[1] : null;
 }
