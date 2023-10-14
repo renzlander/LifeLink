@@ -7,7 +7,7 @@ import {
     Button,
   } from "@material-tailwind/react";
 import React from "react";
-import LineChart from "./tableChart";
+import LineChart from "./lineChart";
 import BarChart from "./barChart";
 
   export function BloodListCard({ bloodType, availability, legend }) {
@@ -49,7 +49,7 @@ import BarChart from "./barChart";
   
 export function LineCard() {
   return (
-    <Card className="mt-6 w-1/3">
+    <Card className="mt-6 w-1/2">
       <CardHeader color="red" variant="gradient" className="flex items-center justify-center relative p-6 h-full">
         <LineChart />
       </CardHeader>
@@ -73,7 +73,7 @@ export function LineCard() {
 
 export function BarCard() {
   return (
-    <Card className="mt-6 w-1/3">
+    <Card className="mt-6 w-1/2">
       <CardHeader color="red" variant="gradient" className="flex items-center justify-center relative p-6 h-full">
         <BarChart />
       </CardHeader>
