@@ -357,7 +357,7 @@ export function MultipleMoveToStock({ selectedRows, refreshData }) {
     const [open, setOpen] = useState(false);
     const [generalErrorMessage, setGeneralErrorMessage] = useState("");
     const router = useRouter();
-
+    console.log('dada', selectedRows);
     const handleDisposeBloodBag = async () => {
         try {
             const token = getCookie("token");
@@ -374,7 +374,7 @@ export function MultipleMoveToStock({ selectedRows, refreshData }) {
                 .post(
                     `${laravelBaseUrl}/api/bulk-move-to-inventory`,
                     {
-                        serial_no: selectedRows,
+                        blood_bags_id: selectedRows,
                     },
                     {
                         headers: {

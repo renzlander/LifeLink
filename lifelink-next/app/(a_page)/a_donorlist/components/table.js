@@ -13,7 +13,7 @@ const TABLE_HEAD = [
     { label: "Blood Type", key: "blood_type" },
     { label: "Email Address", key: "email" },
     { label: "Mobile", key: "mobile" },
-    { label: "Birthday", key: "dob" },
+    { label: "Last Date Donated", key: "last_donated" },
     { label: "Donate Quantity", key: "donate_qty" },
     { label: "Badge", key: "badge" },
     { label: "" },
@@ -68,7 +68,7 @@ export function DonorTable() {
                     },
                 });
             }
-            console.log(searchQuery);
+            console.log(response);
             if (response.data.status === "success") {
                 setUserDetails(response.data.data.data);
                 setTotalPages(response.data.data.last_page);
@@ -233,7 +233,7 @@ export function DonorTable() {
                                 </td>
                                 <td className={classes}>
                                     <Typography variant="small" color="blue-gray" className="font-normal capitalize">
-                                        {formatDate(user.dob)}
+                                        {formatDate(user.last_donated)}
                                     </Typography>
                                 </td>
                                 <td className={classes}>

@@ -45,6 +45,7 @@ export function BagsTable() {
     const [bledBy, setBledBy] = useState("All");
     const [venue, setVenue] = useState("All");
     const [selectedRows, setSelectedRows] = useState([]);
+    const [countdown, setCountdown] = useState(0);
 
     const router = useRouter();
     const bledBys = ["All", "Ryan Jay", "Renz", "Ray", "James"];
@@ -136,11 +137,12 @@ export function BagsTable() {
                     },
                 });
             }
-
+            console.log('countdown',response.data.data.data[0].countdown);
             if (response.data.status === "success") {
                 setUserDetails(response.data.data.data);
                 setTotalPages(response.data.data.last_page);
                 setCurrentPage(response.data.data.current_page);
+                setCountdown(response.data.data.countdown);
                 setBloodQty(response.data.total_count);
                 setLoading(false);
             } else {
@@ -154,8 +156,8 @@ export function BagsTable() {
     };
 
     useEffect(() => {
-        fetchBloodTypeFilteredData(blood_type, startDate, endDate, bledBy, venue);
-        // fetchData(currentPage);
+        // fetchBloodTypeFilteredData(blood_type, startDate, endDate, bledBy, venue);
+        fetchData(currentPage);
     }, [router, sortColumn, sortOrder, searchQuery]);
 
     const handlePageChange = (newPage) => {
@@ -235,7 +237,6 @@ export function BagsTable() {
         }
     };
 
-    console.log(selectedRows);
 
     return (
         <Card className="w-full">
@@ -245,7 +246,10 @@ export function BagsTable() {
                 </Typography>
             </CardHeader>
             <CardHeader floated={false} shadow={false} className="rounded-none mt-0 bg-transparent">
-                <div className="flex items-end justify-between px-4 mb-4 my-10">
+                
+            </CardHeader>
+            <CardBody className="">
+            <div className="flex items-end justify-between px-4 mb-4 my-5">
                     <div className="flex flex-row items-end gap-6">
                         <div>
                             <Select onChange={handleBloodChange} label="Blood Type" value={blood_type}>
@@ -321,8 +325,6 @@ export function BagsTable() {
                         </div>
                     </div>
                 </div>
-            </CardHeader>
-            <CardBody className="">
                 <div className="flex items-center px-4 mt-8 mb-4">
                     <Typography variant="subtitle1" className="font-bold text-sm">
                         Selected Rows: {selectedRows.length}
@@ -339,7 +341,7 @@ export function BagsTable() {
                                         if (selectedRows.length === userDetails.length) {
                                             setSelectedRows([]);
                                         } else {
-                                            setSelectedRows(userDetails.map((user) => user.serial_no));
+                                            setSelectedRows(userDetails.map((user) => user.blood_bags_id));
                                         }
                                     }}
                                     checked={userDetails.length > 0 && selectedRows.length === userDetails.length}
@@ -360,15 +362,15 @@ export function BagsTable() {
                     </thead>
                     <tbody>
                         {userDetails.map((user, index) => (
-                            <tr key={user.serial_no} className={`${selectedRows.includes(user.serial_no) ? selectedRowClass : ""}`}>
+                            <tr key={user.blood_bags_id} className={`${selectedRows.includes(user.blood_bags_id) ? selectedRowClass : ""}`}>
                                 <td>
                                     <input
                                         type="checkbox"
                                         onChange={() => {
-                                            if (selectedRows.includes(user.serial_no)) {
-                                                setSelectedRows(selectedRows.filter((id) => id !== user.serial_no));
+                                            if (selectedRows.includes(user.blood_bags_id)) {
+                                                setSelectedRows(selectedRows.filter((id) => id !== user.blood_bags_id));
                                             } else {
-                                                setSelectedRows([...selectedRows, user.serial_no]);
+                                                setSelectedRows([...selectedRows, user.blood_bags_id]);
                                             }
                                         }}
                                         checked={selectedRows.includes(user.blood_bags_id)}
@@ -423,11 +425,16 @@ export function BagsTable() {
                                     </Typography>
                                 </td>
                                 <td className={classes}>
+                                {
                                     <EditPopUp user={user} countdown={user.countdown} refreshData={fetchData} />
+                                }
                                 </td>
                                 <td className={classes}>
+                                {
                                     <RemoveBlood serial_no={user.serial_no} countdown={user.countdown} refreshData={fetchData} />
+                                }
                                 </td>
+
                                 <td className={classes}>
                                     <MoveToStock serial_no={user.serial_no} refreshData={fetchData} />
                                 </td>
