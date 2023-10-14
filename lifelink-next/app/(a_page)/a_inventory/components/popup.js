@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, Tooltip, IconButton, Select, Option } from "@material-tailwind/react";
-import { TrashIcon, PencilIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { Typography } from "@mui/material";
-import { EyeIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import ArrowRightIcon from "@/public/ArrowRight"
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
+import { AccordionDispense } from "./accordion";
 
 function formatDate(dateString) {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -137,22 +138,52 @@ export function Dispense({ serial_no, handleOpen, refreshData }) {
             <Button size="sm" onClick={() => setOpen(true)} className="bg-red-600">
                 Dispense
             </Button>
-            <Dialog open={open} handler={() => setOpen(false)}>
+            <Dialog open={open} handler={() => setOpen(false)} size="xl">
                 <DialogHeader>Move Blood Bag to Inventory</DialogHeader>
                 <DialogBody divider className="flex flex-col gap-4 items-center">
-                    <div className="flex flex-col">
-                        <div>
-                            <div>
-                                
-                            </div>
-                            <div>
-                                
-                            </div>
-                        </div>
-                        <div>
-                            
-                        </div>
-                    </div>
+									<div className="w-full h-full flex items-start justify-between">
+										<AccordionDispense />
+										<div className="w-1/3 flex justify-center items-center my-16">
+										<ArrowRightIcon width={100} height={100} fill='#dc2626' />
+										</div>
+										<div className="w-1/3 flex flex-col">
+											<div className="w-full flex flex-col items-end">
+												<div className="mb-6 flex">
+													<Input
+														label="Search"
+														icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+													/>
+												</div>
+												<div className="flex">
+													<div className="flex flex-wrap items-center gap-4 mb-3 mr-3">
+														<Typography variant="h6" className="text-red-800 font-semibold">NAME</Typography>
+														<Input label="First Name" />
+														<Input label="Middle Name" />
+														<Input label="Last Name" />
+													</div>
+													<div className="flex flex-wrap items-center gap-4 mb-3 ml-3">
+														<Typography variant="h6" className="text-red-800 font-semibold">INFO</Typography>
+														<Input label="Date of Birth" type="date" />
+														<Select label="Blood Type">
+															<Option>A</Option>
+															<Option>B</Option>
+														</Select>
+														<Select label="Sex">
+															<Option>Male</Option>
+															<Option>Female</Option>
+														</Select>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div className="flex flex-col gap-y-6">
+										<Input label="Diagnosis" />
+										<Select label="Hospitals">
+											<Option>ValGen</Option>
+											<Option>Chinese General</Option>
+										</Select>
+									</div>
                 </DialogBody>
                 {generalErrorMessage && (
                     <div className="mt-4 text-center bg-red-100 p-2 rounded-lg">
@@ -163,10 +194,10 @@ export function Dispense({ serial_no, handleOpen, refreshData }) {
                 )}
                 <DialogFooter className="flex justify-center mt-4">
                     <Button variant="red-cross" onClick={() => setOpen(false)} className="mr-2">
-                        No
+                        Cancel
                     </Button>
                     <Button variant="red-cross" color="red" onClick={handleMovetoStock}>
-                        Yes
+                        Confirm
                     </Button>
                 </DialogFooter>
             </Dialog>
