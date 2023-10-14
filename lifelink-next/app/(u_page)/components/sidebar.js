@@ -124,6 +124,7 @@ import {
           variant="text"
           color="red"
           className='text-white flex items-center justify-between w-full hover:bg-gray-100 hover:bg-opacity-30'
+          onClick={handleLogout}
         >
           <div className="flex items-center gap-4">
             <ArrowLeftOnRectangleIcon className="h-5 w-5"/>

@@ -2,97 +2,40 @@
 import * as React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import CssBaseline from '@mui/material/CssBaseline';
-import Divider from '@mui/material/Divider';
-import MenuIcon from '@mui/icons-material/Menu';
+import { DrawerHeader, AppBar, Drawer, } from './components/constants';
 
-import { Bars3Icon } from '@heroicons/react/24/solid';
-import IconButton from '@mui/material/IconButton';
+import { useState, useEffect } from "react"; 
+import axios from "axios";
+import { laravelBaseUrl } from "@/app/variables";
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
+import {
+  HomeIcon,
+  ClockIcon,
+  GlobeAltIcon,
+  TruckIcon,
+  UserIcon,
+  ArrowLeftOnRectangleIcon,
+  ChevronRightIcon,
+  Bars3Icon,
+} from "@heroicons/react/24/solid";
+import {
+  Typography,
+  List,
+  Button,
+  IconButton,
+  Tooltip,
+} from "@material-tailwind/react";
 
-const drawerWidth = 240;
-
-const openedMixin = (theme) => ({
-  width: drawerWidth,
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  height: 'calc(100% - 15px)',
-  overflowX: 'hidden',
-  borderRadius: '10px 10px 10px 10px',
-  margin: theme.spacing(1),
-});
-
-const closedMixin = (theme) => ({
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: 'hidden',
-  borderRadius: '10px 10px 10px 10px',
-  width: `calc(${theme.spacing(7)} + 1px)`,
-  [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
-  },
-  height: 'calc(100% - 15px)',
-  margin: theme.spacing(1),
-});
-
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'flex-end',
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-}));
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  marginLeft: `calc(${theme.spacing(7)} + 1px)`,
-  width: `calc(100% - ${theme.spacing(7)} - 35px)`,
-  ...(open && {
-    marginLeft: `calc(${drawerWidth}px - 25px)`,
-    width: `calc(100% - ${drawerWidth}px - 25px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-  borderRadius: '10px 10px 10px 10px',
-  margin: theme.spacing(1),
-}));
-
-
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme, open }) => ({
-    width: drawerWidth,
-    flexShrink: 0,
-    whiteSpace: 'nowrap',
-    boxSizing: 'border-box',
-    ...(open && {
-      ...openedMixin(theme),
-      '& .MuiDrawer-paper': openedMixin(theme),
-    }),
-    ...(!open && {
-      ...closedMixin(theme),
-      '& .MuiDrawer-paper': closedMixin(theme),
-    }),
-  }),
-);
-
-export default function UserLayout({children}) {
+export default function UserLayout({ children }) {
   const theme = useTheme();
+  const [userData, setUserData] = useState(null); 
   const [open, setOpen] = React.useState(false);
+  const router = useRouter();
+  const pathName = usePathname();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -102,30 +45,139 @@ export default function UserLayout({children}) {
     setOpen(false);
   };
 
+  const menuItems = [
+    { icon: HomeIcon, text: "Dashboard", link: './u_dashboard' },
+    { icon: ClockIcon, text: "History", link: './u_history' },
+    { icon: GlobeAltIcon, text: "Network", link: './u_network' },
+    { icon: TruckIcon, text: "Journey", link: './u_journey' },
+    { icon: UserIcon, text: "Profile", link: './u_profile' },
+  ];
+
+  const handleLogout = async () => {
+    const token = getCookie("token");
+    if (!token) {
+      router.push("./login");
+      return;
+    }
+    try {
+      const response = await axios.post(`${laravelBaseUrl}/api/logout`, null, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+      router.push("./login");
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const token = getCookie("token");
+        if (!token) {
+          router.push("./login");
+          return;
+        }
+
+        const response = await axios.get(`${laravelBaseUrl}/api/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        setUserData(response.data.data);
+
+      } catch (error) {
+        console.error("Error fetching user information:", error);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
   return (
-    <Box sx={{ display: 'flex', backgroundColor: '#e5e7eb' }}>
+    <Box sx={{ display: 'flex', backgroundColor: '#e5e7eb', width: '100%' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar>
           <IconButton
-            color="inherit"
-            aria-label="open drawer"
+            variant="text"
             onClick={open ? handleDrawerClose : handleDrawerOpen}
-            edge="start"
           >
-            <MenuIcon />
+            <Bars3Icon className='h-6 w-6 text-gray-600' />
           </IconButton>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
+          <div className='flex items-center justify-between'>
+            <Image src='/prc_logo.png' width={50} height={50} />
+            <Image src='/logo_lifelink.png' width={120} height={50} />
+          </div>
         </DrawerHeader>
-        <Divider />
+        <hr className='custom-divider' />
+        <div className="flex justify-center items-center p-4 my-3">
+          <Link href='./u_profile'>
+            <Image src="/patient_icon.png" width={60} height={60} />
+          </Link>
+          <div className="flex flex-col ml-3 truncate">
+            <Tooltip placement="right-end" content={`${userData ? userData.first_name : ""} ${userData ? userData.last_name : ""}`}>
+              <Typography className="text-gray-100 font-medium text-md truncate overflow-hidden max-w-[8rem]">
+                {userData ? `${userData.first_name} ${userData.last_name}` : "Loading..."}
+              </Typography> 
+            </Tooltip>
+            <Typography className="text-gray-100 font-light text-sm">Donor no: {userData ? userData.donor_no : "Loading..."}</Typography>
+          </div>
+        </div>
+        <hr className='custom-divider' />
+        <List>
+          {menuItems.map((item, index) => (
+            <Link href={item.link} key={index} passHref>
+              <Button
+                variant={'.' + pathName === item.link ? 'gradient': 'text'}
+                color={'.' + pathName === item.link ? 'red' : undefined}
+                className='text-white flex items-center justify-between w-full hover:bg-gray-100 hover:bg-opacity-30'
+              >
+                <div className="flex items-center gap-4">
+                  {<item.icon className="h-5 w-5" />}
+                  <Typography variant="paragraph" className="normal-case font-medium">
+                    {item.text}
+                  </Typography>
+                </div>
+                {'.' + pathName === item.link ? <ChevronRightIcon className="h-5 w-5" /> : ''}
+              </Button>
+            </Link>
+          ))}
+        </List>
+        <hr className="custom-divider mt-4" />
+        
+        <Button
+          variant="text"
+          color="red"
+          className='text-white flex items-center justify-between w-full hover:bg-gray-100 hover:bg-opacity-30'
+          onClick={handleLogout}
+        >
+          <div className="flex items-center gap-4">
+            <ArrowLeftOnRectangleIcon className="h-5 w-5"/>
+            <Typography variant="paragraph" className="normal-case font-medium">
+              Log Out
+            </Typography>
+          </div>
+        </Button>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1 }}>
+      <Box component="main" sx={{ flexGrow: 1, pr: 1 }}>
         <DrawerHeader />
         {children}
       </Box>
     </Box>
   );
+}
+
+function getCookie(name) {
+  const cookies = document.cookie.split("; ");
+  const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));
+  return cookie ? cookie.split("=")[1] : null;
 }

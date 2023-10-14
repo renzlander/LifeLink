@@ -140,7 +140,19 @@ export function Dispense({ serial_no, handleOpen, refreshData }) {
             <Dialog open={open} handler={() => setOpen(false)}>
                 <DialogHeader>Move Blood Bag to Inventory</DialogHeader>
                 <DialogBody divider className="flex flex-col gap-4 items-center">
-                    <Typography className="font-bold text-xl text-red-600 text-center">DISPENSE FORM HERE.........</Typography>
+                    <div className="flex flex-col">
+                        <div>
+                            <div>
+                                
+                            </div>
+                            <div>
+                                
+                            </div>
+                        </div>
+                        <div>
+                            
+                        </div>
+                    </div>
                 </DialogBody>
                 {generalErrorMessage && (
                     <div className="mt-4 text-center bg-red-100 p-2 rounded-lg">
