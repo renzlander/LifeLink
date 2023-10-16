@@ -149,10 +149,10 @@ export function LineCard() {
       </CardHeader>
       <CardBody>
         <Typography variant="h5" color="blue-gray" className="mb-2">
-          Bloods Stocks
+          Blood Stocks
         </Typography>
         <Typography>
-          Collected blood bags over the past few months
+        Blood bags that have undergone thorough testing and are securely stored in the inventory.
         </Typography>
       </CardBody>
       <CardFooter className="border-t">

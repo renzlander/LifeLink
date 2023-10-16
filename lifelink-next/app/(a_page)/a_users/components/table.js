@@ -33,8 +33,40 @@ export function UsersTable() {
     const [sortColumn, setSortColumn] = useState(null);
     const [sortOrder, setSortOrder] = useState("asc");
     const [searchQuery, setSearchQuery] = useState("");
-
+    const [bledByOptions, setBledByOptions] = useState([]);
+    const [venueOptions, setVenueOptions] = useState([]);
+    
     const router = useRouter();
+    
+    const fetchBledByAndVenueLists = async () => {
+        try {
+            const token = getCookie("token");
+            if (!token) {
+                router.push("/login");
+                return;
+            }
+    
+            const response = await axios.get(`${laravelBaseUrl}/api/get-bledby-and-venue`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+    
+            console.log(response);
+    
+            if (response.data.status === "success") {
+                // Update the state variables with the data from the API response
+                setBledByOptions(response.data.bledBy);
+                setVenueOptions(response.data.venue);
+            } else {
+                // Handle the case when the API request fails
+                console.error("Oops! Something went wrong.");
+            }
+        } catch (error) {
+            console.error("Error fetching bled_by and venues lists:", error);
+            // You can handle the error here, e.g., by displaying a message to the user
+        }
+    };
 
     const fetchData = async (page) => {
         try {
@@ -85,6 +117,7 @@ export function UsersTable() {
 
     useEffect(() => {
         fetchData(currentPage);
+        fetchBledByAndVenueLists(); 
     }, [router, sortColumn, sortOrder, searchQuery]);
 
     const handlePageChange = (newPage) => {
@@ -245,7 +278,7 @@ export function UsersTable() {
                                     <ViewPopUp user={user} />
                                     <EditPopUp user={user} onUpdate={handleUpdateUser} refreshData={fetchData} />
                                 </td>
-                                <td className={classes}>{user.remarks !== 0 ? <Button size="small" disabled className="w-2/3">DEFERRED</Button> : <AddBloodBagPopup user_id={user.user_id} />}</td>
+                                <td className={classes}>{user.remarks !== 0 ? <Button size="small" disabled className="w-2/3">DEFERRED</Button> : <AddBloodBagPopup user_id={user.user_id} bledByOptions={bledByOptions} venueOptions={venueOptions}/>}</td>
                             </tr>
                         ))}
                     </tbody>
