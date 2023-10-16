@@ -112,63 +112,92 @@ export default function UserLayout({ children }) {
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <div className='flex items-center justify-between'>
-            <Image src='/prc_logo.png' width={50} height={50} />
-            <Image src='/logo_lifelink.png' width={120} height={50} />
-          </div>
+        <DrawerHeader sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 4}}>
+          <Image src='/prc_logo.png' width={50} height={50} />
+          {open ? (
+              <Image src='/logo_lifelink.png' width={120} height={50} className=' drop-shadow-md' />
+            ) : (
+              ''
+            )
+          }
         </DrawerHeader>
         <hr className='custom-divider' />
         <div className="flex justify-center items-center p-4 my-3">
           <Link href='./u_profile'>
             <Image src="/patient_icon.png" width={60} height={60} />
           </Link>
-          <div className="flex flex-col ml-3 truncate">
-            <Tooltip placement="right-end" content={`${userData ? userData.first_name : ""} ${userData ? userData.last_name : ""}`}>
-              <Typography className="text-gray-100 font-medium text-md truncate overflow-hidden max-w-[8rem]">
-                {userData ? `${userData.first_name} ${userData.last_name}` : "Loading..."}
-              </Typography> 
-            </Tooltip>
-            <Typography className="text-gray-100 font-light text-sm">Donor no: {userData ? userData.donor_no : "Loading..."}</Typography>
-          </div>
+              {open ? (
+                <div className="flex flex-col ml-3 truncate">
+                  <Tooltip placement="right-end" content={`${userData ? userData.first_name : ""} ${userData ? userData.last_name : ""}`}>
+                    <Typography className="text-gray-100 font-medium text-md truncate overflow-hidden max-w-[8rem]">
+                      {userData ? `${userData.first_name} ${userData.last_name}` : "Loading..."}
+                    </Typography>
+                  </Tooltip>
+                  <Typography className="text-gray-100 font-light text-sm">Donor no: {userData ? userData.donor_no : "Loading..."}</Typography>
+                </div>
+                ) : (
+                  ''
+                )
+              }
         </div>
         <hr className='custom-divider' />
         <List>
           {menuItems.map((item, index) => (
             <Link href={item.link} key={index} passHref>
-              <Button
-                variant={'.' + pathName === item.link ? 'gradient': 'text'}
-                color={'.' + pathName === item.link ? 'red' : undefined}
-                className='text-white flex items-center justify-between w-full hover:bg-gray-100 hover:bg-opacity-30'
-              >
-                <div className="flex items-center gap-4">
-                  {<item.icon className="h-5 w-5" />}
-                  <Typography variant="paragraph" className="normal-case font-medium">
-                    {item.text}
-                  </Typography>
-                </div>
-                {'.' + pathName === item.link ? <ChevronRightIcon className="h-5 w-5" /> : ''}
-              </Button>
+              {open ? (pathName,
+                <Button
+                  variant={'.' + pathName === item.link ? 'gradient' : 'text'}
+                  color={'.' + pathName === item.link ? 'red' : undefined}
+                  className='text-white flex items-center justify-between w-full hover:bg-gray-100 hover:bg-opacity-30'
+                >
+                  <div className="flex items-center gap-4">
+                    {<item.icon className="h-6 w-6" />}
+                    <Typography variant="paragraph" className="normal-case font-medium">
+                      {item.text}
+                    </Typography>
+                  </div>
+                  {'.' + pathName === item.link ? <ChevronRightIcon className="h-5 w-5" /> : ''}
+                </Button>
+              ) : (
+                <IconButton
+                  variant={'.' + pathName === item.link ? 'gradient' : 'text'}
+                  color={'.' + pathName === item.link ? 'red' : undefined}
+                  size='lg'
+                  className='text-white flex items-center justify-between w-full hover:bg-gray-100 hover:bg-opacity-30'
+                >
+                  {<item.icon className="h-6 w-6" />}
+                </IconButton>
+              )}
             </Link>
           ))}
         </List>
-        <hr className="custom-divider mt-4" />
-        
-        <Button
-          variant="text"
-          color="red"
-          className='text-white flex items-center justify-between w-full hover:bg-gray-100 hover:bg-opacity-30'
-          onClick={handleLogout}
-        >
-          <div className="flex items-center gap-4">
-            <ArrowLeftOnRectangleIcon className="h-5 w-5"/>
-            <Typography variant="paragraph" className="normal-case font-medium">
-              Log Out
-            </Typography>
+        <hr className="custom-divider my-2" />
+        { open ? (
+          <List>
+            <Button
+              variant="text"
+              color="red"
+              className='text-white flex items-center justify-between w-full hover:bg-gray-100 hover:bg-opacity-30'
+              onClick={handleLogout}
+            >
+              <div className="flex items-center gap-4">
+                <ArrowLeftOnRectangleIcon className="h-6 w-6"/>
+                <Typography variant="paragraph" className="normal-case font-medium">
+                  Log Out
+                </Typography>
+              </div>
+            </Button>
+          </List>
+          ) : (
+          <div className='w-full flex items-center justify-center'>
+            <IconButton variant='text' size='lg' className='w-full text-white hover:bg-gray-100 hover:bg-opacity-30'>
+              <ArrowLeftOnRectangleIcon className="h-6 w-6"/>
+            </IconButton>
           </div>
-        </Button>
+          )
+        }
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, pr: 1 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 1 }}>
         <DrawerHeader />
         {children}
       </Box>

@@ -50,7 +50,7 @@ export default function Home() {
 
   const bloodListCards = bloodTypes.map((bloodType, index) => {
     const status = availability[index];
-    const legends = legend[index];
+    const legends = legend[index];console.log("Legend values:", legend);
     return <BloodListCard key={index} bloodType={bloodType} availability={status} legend={legends} />;
   });
 

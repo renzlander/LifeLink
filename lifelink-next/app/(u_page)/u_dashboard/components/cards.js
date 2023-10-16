@@ -7,37 +7,39 @@ import {
     Button,
   } from "@material-tailwind/react";
 import React from "react";
-import Image from "next/image";
 import LineChart from "./lineChart";
 import BarChart from "./barChart";
+import BloodDropletIcon from "@/public/BloodDroplet";
 
   export function BloodListCard({ bloodType, availability, legend }) {
-    
     let colorClass = ""; 
+    let offsetTop = 0;
+
     if (legend === "Empty") {
         colorClass = "text-red-600"; 
-    } else if (legend === "Low") {
+        offsetTop = 100; 
+    } else if (legend === "Critically low") {
         colorClass = "text-yellow-600"; 
-    } else if (legend === "Critically low") {
-        colorClass = "text-orange-600"; 
-    }
-
-    let cardHeaderClass = "";
-    if (legend === "Empty") {
-      cardHeaderClass = "bg-black";
+        offsetTop = 80; 
     } else if (legend === "Low") {
-      cardHeaderClass = "bg-gradient-to-b from-black via-red-400 to-red-400";
-    } else if (legend === "Critically low") {
-      cardHeaderClass = "bg-gradient-to-b from-black via-black to-red-400";
+        colorClass = "text-orange-600"; 
+        offsetTop = 60; 
     }
 
     return (
       <Card className="mt-6 w-72 h-full">
         <div className="flex mb-2">
           <CardHeader
-            className={`relative flex flex-col justify-center items-center h-20 w-20 ${cardHeaderClass}`}
+            color="transparent"
+            shadow={false}
+            className='relative flex flex-col justify-center items-center h-28 w-28'
           >
-            <Typography variant="h4" color="white">
+            <BloodDropletIcon width={200} height={200} topOffset={offsetTop} />
+            <Typography
+              variant="h4"
+              color="white"
+              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-[40%]"
+            >
               {bloodType}
             </Typography>
           </CardHeader>

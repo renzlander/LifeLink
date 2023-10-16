@@ -63,7 +63,6 @@ export const AppBar = styled(MuiAppBar, {
   backgroundColor: 'rgba(255, 255, 255, 0.4)', // Set the background color with opacity
   backdropFilter: 'blur(10px)', // Apply blur effect to the background
   boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', // Add a subtle shadow
-  // border: '1px solid white', // Add a white border
 }));
 
 export const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -76,14 +75,14 @@ export const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 
       ...openedMixin(theme),
       '& .MuiDrawer-paper': {
         ...openedMixin(theme),
-        background: `linear-gradient(to right, #dc2626, #ef4444)`, // Red gradient background when open
+        background: `linear-gradient(to right, #b91c1c, #dc2626)`, // Red gradient background when open
       },
     }),
     ...(!open && {
       ...closedMixin(theme),
       '& .MuiDrawer-paper': {
         ...closedMixin(theme),
-        background: `linear-gradient(to right, #dc2626, #ef4444)`, // Red gradient background when closed
+        background: `linear-gradient(to right, #b91c1c, #dc2626)`, // Red gradient background when closed
       },
     }),
   }),
