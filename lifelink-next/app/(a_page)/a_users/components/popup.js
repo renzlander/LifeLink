@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, Tooltip, IconButton, Select, Option } from "@material-tailwind/react";
+import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, Tooltip, IconButton } from "@material-tailwind/react";
 import { TrashIcon, PencilIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
@@ -8,22 +8,44 @@ import { EyeIcon } from "@heroicons/react/24/outline";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
+import Select from 'react-select';
 
-export function AddBloodBagPopup({ user_id, handleOpen }) {
+export function AddBloodBagPopup({ user_id, handleOpen, bledByOptions, venueOptions }) {
     const router = useRouter();
 
     const [open, setOpen] = useState(false);
-    const [serialNumber, setSerialNumber] = useState("");
-    const [bledBy, setBledBy] = useState("Ryan Jay");
-    const [venue, setVenue] = useState("Malinta Valenzuela");
+    const [bledBy, setBledBy] = useState(""); 
+    const [venue, setVenue] = useState("");
+
     const [dateDonated, setDateDonated] = useState("");
     const [errorMessage, setErrorMessage] = useState({ serial_no: [], date_donated: [], bled_by: [], venue: [] });
     const [generalErrorMessage, setGeneralErrorMessage] = useState("");
-
     const [part1, setPart1] = useState("");
     const [part2, setPart2] = useState("");
     const [part3, setPart3] = useState("");
     const srNumber = `${part1}${part2}${part3}`;
+
+
+    const handleBledByChange = (selectedBledBy) => {
+        setBledBy(selectedBledBy);
+        
+    };
+    
+    const handleVenueChange = (selectedVenue) => {
+        setVenue(selectedVenue);
+    };
+    
+   
+    const dynamicBledByOptions = bledByOptions.map((item) => ({
+        label: item.full_name,
+        value: item.full_name, 
+    }));
+
+    const dynamicVenueOptions = venueOptions.map((item) => ({
+        label: item.venues_desc,
+        value: item.venues_desc,
+    }));
+
 
     const handleAddBloodBag = async () => {
         try {
@@ -37,9 +59,9 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
             const data = {
                 user_id,
                 serial_no: srNumber,
-                venue: venue,
+                bled_by: bledBy.value,
+                venue: venue.value,
                 date_donated: dateDonated,
-                bled_by: bledBy,
             };
             console.log("Before Axios POST request");
 
@@ -83,8 +105,10 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
             toast.error(error);
             console.error("Unknown error occurred:", error);
         }
+
     };
 
+    
     return (
         <>
             <Button size="sm" onClick={() => setOpen(true)} variant="gradient" color="red">
@@ -148,12 +172,37 @@ export function AddBloodBagPopup({ user_id, handleOpen }) {
                     </div>
 
                     <div className={`relative ${errorMessage.bled_by.length > 0 ? "mb-1" : ""}`}>
-                        <Input label="Bled by" value={bledBy} onChange={(e) => setBledBy(e.target.value)} />
-                        {errorMessage.bled_by.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.bled_by[0]}</div>}
+                    <Select
+                        label="Bled by"
+                        value={bledBy}
+                        onChange={handleBledByChange}
+                        options={dynamicBledByOptions}
+                        isSearchable
+                        required
+                        placeholder="Bled By" 
+                    />
+                    {errorMessage.bled_by.length > 0 && (
+                        <div className="error-message text-red-600 text-sm">
+                        {errorMessage.bled_by[0]}
+                        </div>
+                    )}
                     </div>
+
                     <div className={`relative ${errorMessage.venue.length > 0 ? "mb-1" : ""}`}>
-                        <Input label="Venue" value={venue} onChange={(e) => setVenue(e.target.value)} />
-                        {errorMessage.venue.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.venue[0]}</div>}
+                    <Select
+                        label="Venue"
+                        value={venue} 
+                        onChange={handleVenueChange}
+                        options={dynamicVenueOptions} 
+                        isSearchable
+                        required
+                        placeholder="Venue" 
+                    />
+                    {errorMessage.venue.length > 0 && (
+                        <div className="error-message text-red-600 text-sm">
+                        {errorMessage.venue[0]}
+                        </div>
+                    )}
                     </div>
                     <div className={`relative ${errorMessage.date_donated.length > 0 ? "mb-1" : ""}`}>
                         <Input type="date" label="Date" value={dateDonated} onChange={(e) => setDateDonated(e.target.value)} max={new Date().toISOString().split("T")[0]} />
