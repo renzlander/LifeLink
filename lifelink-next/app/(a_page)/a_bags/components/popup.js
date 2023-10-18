@@ -331,8 +331,14 @@ export function MoveToStock({ serial_no, handleOpen, refreshData }) {
             <Dialog open={open} handler={() => setOpen(false)}>
                 <DialogHeader>Move Blood Bag to Inventory</DialogHeader>
                 <DialogBody divider className="flex flex-col gap-4 items-center">
-                    <Typography className="font-bold text-xl text-red-600 text-center">Are you sure you want to move this blood bag to inventory?</Typography>
+                    <Typography className="text-lg text-center py-4">
+                        Move to Inventory: When the blood bag has completed testing and is ready for storage, it should be recorded in the inventory under the 'Stocks' tab.
+                    </Typography>
+                    <Typography className="font-bold text-xl text-red-600 text-center">
+                        Are you sure you want to move this blood bag to inventory?
+                    </Typography>
                 </DialogBody>
+
                 {generalErrorMessage && (
                     <div className="mt-4 text-center bg-red-100 p-2 rounded-lg">
                         <Typography color="red" className="text-sm font-semibold">
@@ -340,6 +346,7 @@ export function MoveToStock({ serial_no, handleOpen, refreshData }) {
                         </Typography>
                     </div>
                 )}
+
                 <DialogFooter className="flex justify-center mt-4">
                     <Button variant="red-cross" onClick={() => setOpen(false)} className="mr-2">
                         No
@@ -349,6 +356,7 @@ export function MoveToStock({ serial_no, handleOpen, refreshData }) {
                     </Button>
                 </DialogFooter>
             </Dialog>
+
         </>
     );
 }
