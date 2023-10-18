@@ -1,6 +1,8 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Card, CardHeader, Typography, Button, CardBody, CardFooter, IconButton, Input, Spinner } from "@material-tailwind/react";
-import { AddBloodBagPopup, ViewPopUp, EditPopUp } from "./popup";
+import { AddBloodBagPopup } from "./popupAdd";
+import { ViewPopUp } from "./popupView";
+import {  EditPopUp } from "./popupEdit";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
