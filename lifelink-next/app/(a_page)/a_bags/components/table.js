@@ -249,7 +249,7 @@ export function BagsTable() {
                 
             </CardHeader>
             <CardBody className="">
-            <div className="flex items-end justify-between px-4 mb-4 my-5">
+                <div className="flex items-end justify-between px-4 mb-4 my-5">
                     <div className="flex flex-row items-end gap-6">
                         <div>
                             <Select onChange={handleBloodChange} label="Blood Type" value={blood_type}>

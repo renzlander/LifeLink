@@ -6,7 +6,7 @@ import { BloodListCard } from './components/cards';
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
-import { BarCard, LineCard } from './components/cards';
+
 
 export default function Home() {
   const router = useRouter();
@@ -64,17 +64,12 @@ export default function Home() {
   }
 
   return (
-    <div className="bg-gray-300 min-h-screen flex flex-col justify-between gap-y-3 py-4">
+    <div className="bg-gray-300 min-h-screen flex flex-col gap-y-3 py-4">
       <div className='flex gap-3'>
         {bloodListCards.slice(0, 4)}
       </div>
       <div className='flex gap-3'>
         {bloodListCards.slice(4, 8)}
-      </div>
-      
-      <div className='mt-10 flex gap-3'>
-        <LineCard />
-        <BarCard />
       </div>
     </div>
   );

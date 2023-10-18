@@ -1,6 +1,5 @@
-import { PencilIcon } from "@heroicons/react/24/solid";
 import { ArrowDownTrayIcon, EyeIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Card, CardHeader, Typography, Button, CardBody, Chip, CardFooter, Avatar, IconButton, Tooltip, Input, Spinner } from "@material-tailwind/react";
+import { Card, CardHeader, Typography, Button, CardBody, Chip, CardFooter, Avatar, IconButton, Tooltip, Input, Spinner, Select, Option } from "@material-tailwind/react";
 import { ViewPopUp } from "./popup";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -16,6 +15,7 @@ const TABLE_HEAD = [
     { label: "Last Date Donated", key: "last_donated" },
     { label: "Donate Quantity", key: "donate_qty" },
     { label: "Badge", key: "badge" },
+    { label: "Donor Type", key: "donor Type" },
     { label: "" },
     { label: "" },
 ];
@@ -36,8 +36,22 @@ export function DonorTable() {
     const [sortColumn, setSortColumn] = useState(null);
     const [sortOrder, setSortOrder] = useState("asc");
     const [searchQuery, setSearchQuery] = useState("");
+    const [bloodType, setbloodType] = useState("All");
+    const [donorType, setDonorTypes] = useState("All");
+
+
 
     const router = useRouter();
+    const bloodTypes = ["All", "AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
+    const donorTypes = ["All","First Time", "Regular", "Lapsed", "Galloneer"]
+
+    const handleBloodChange = (selectedBlood) => {
+        setbloodType(selectedBlood);
+    };
+
+    const handleDonorTypeChange = (selectedDonorType) => {
+        setDonorTypes(selectedDonorType);
+    };
 
     const fetchData = async (page) => {
         try {
@@ -146,10 +160,6 @@ export function DonorTable() {
         return 0;
     });
 
-    // const handleUpdateDonor = (updatedDonorData) => {
-    //   console.log('Updated user data:', updatedUserData);
-    // };
-
     if (loading) {
         return (
             <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
@@ -167,6 +177,29 @@ export function DonorTable() {
                 </Typography>
             </CardHeader>
             <CardBody className="overflow-x-auto px-0">
+            <div className="flex items-end justify-between px-4 mb-4 my-5">
+                <div className="flex flex-row items-end gap-6">
+                    <div>
+                        <Select onChange={handleBloodChange} label="Blood Type" value={bloodType}>
+                            {bloodTypes.map((blood) => (
+                                <Option key={blood} value={blood}>
+                                    {blood}
+                                </Option>
+                            ))}
+                        </Select>
+                    </div>
+
+                    <div>
+                        <Select onChange={handleDonorTypeChange} label="Donor Types" value={donorType}>
+                            {donorTypes.map((donor) => (
+                                <Option key={donor} value={donor}>
+                                    {donor}
+                                </Option>
+                            ))}
+                        </Select>
+                    </div>
+
+                </div>
                 <div className="mb-4 ml-4 mr-4 flex justify-end items-center">
                     <div className="flex w-full shrink-0 gap-2 md:w-max">
                         <div className="w-full md:w-72">
@@ -186,6 +219,7 @@ export function DonorTable() {
                         </Button>
                     </div>
                 </div>
+            </div>
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                         <tr>
@@ -244,6 +278,11 @@ export function DonorTable() {
                                 <td className={classes}>
                                     <Typography variant="small" color="blue-gray" className="font-normal capitalize">
                                         {user.badge}
+                                    </Typography>
+                                </td>
+                                <td className={classes}>
+                                    <Typography variant="small" color="blue-gray" className="font-normal capitalize">
+                                        WALA PA
                                     </Typography>
                                 </td>
                                 <td className={classes}>

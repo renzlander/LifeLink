@@ -7,8 +7,6 @@ import {
     Button,
   } from "@material-tailwind/react";
 import React from "react";
-import LineChart from "./lineChart";
-import BarChart from "./barChart";
 import BloodDropletIcon from "@/public/BloodDroplet";
 
   export function BloodListCard({ bloodType, availability, legend }) {

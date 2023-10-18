@@ -15,6 +15,10 @@ export default function Home() {
   const [count, setCount] = useState([]);
   const [percentage, setPercentage] = useState([]);
   const [donorCount, setDonorCount] = useState(0);
+  const [deferralsCount, setDeferralsCount] = useState(0);
+  const [dispensedCount, setDispensedCount] = useState(0);
+  const [expiredCount, setExpiredCount] = useState(0);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -52,7 +56,7 @@ export default function Home() {
       }
     };
 
-    const fetchDonorCount = async () => {
+    const fetchMBDSummary = async () => {
       try {
         const token = getCookie("token");
         if (!token) {
@@ -60,15 +64,22 @@ export default function Home() {
           return;
         }
 
-        const responseDonorCount = await axios.get(`${laravelBaseUrl}/api/dashboard-get-number-of-donors`, {
+        const mbdSummary = await axios.get(`${laravelBaseUrl}/api/dashboard-mbd-quick-view`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         setLoading(false);
 
-        if (responseDonorCount.data.donorCount !== undefined) {
-          setDonorCount(responseDonorCount.data.donorCount);
+        if (mbdSummary.data.status === "success") {
+          setDonorCount(mbdSummary.data.data[0].total_donors);
+          setDeferralsCount(mbdSummary.data.data[0].total_deferrals);
+          setDispensedCount(mbdSummary.data.data[0].total_dispensed);
+          setExpiredCount(mbdSummary.data.data[0].total_expired);
+          setLoading(false);
+        } else {
+            console.error("Error fetching data:", mbdSummary.data.message);
+            setLoading(false);
         }
         
       } catch (error) {
@@ -76,7 +87,7 @@ export default function Home() {
       }
     };
 
-    fetchDonorCount();
+    fetchMBDSummary();
     fetchData();
   }, []);
 
@@ -110,7 +121,7 @@ export default function Home() {
             </div>
           </div>
           <div className='w-1/3'>
-          <CountDonorCard donorCount={donorCount} />
+          <CountDonorCard donorCount={donorCount} deferralsCount={deferralsCount} dispensedCount={dispensedCount} expiredCount={expiredCount} />
           </div>
         </div>
         <div className='mt-10 flex gap-3'>

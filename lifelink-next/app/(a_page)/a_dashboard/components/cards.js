@@ -283,19 +283,34 @@ export function BarCard() {
   );
 }
 
-
-export function CountDonorCard({donorCount}) {
+//ikaw na bahala sa layout yung mga kailangan ilagay. lagyan mo narin ng filter 
+export function CountDonorCard({donorCount, deferralsCount, dispensedCount, expiredCount}) {
   return (
     <Card className="mt-6 w-full">
       <CardBody>
         <Typography variant="h5" color="blue-gray" className="mb-2 text-center">
-          NO. OF DONORS
+          MBD Summary
         </Typography>
         <div className="flex justify-center">
           <Typography variant="h1" color="red" className="w-1/2 my-10 py-4 rounded-lg bg-red-600 text-gray-100 shadow-md shadow-gray-600 text-center">
-          {donorCount}
+          No. of Donors: {donorCount}
           </Typography>
         </div>
+        <Typography>
+          No. of Deferral: {deferralsCount}
+        </Typography>
+        <Typography>
+          No. of Dispensed Blood: {dispensedCount}
+        </Typography>
+        <Typography>
+          No. of Expired Blood: {expiredCount}
+        </Typography>
+        <Typography>
+          No. of Spoiled Blood Bag: 0
+        </Typography>
+        <Typography>
+          No. of Reactive Blood Bag: 0
+        </Typography>
       </CardBody>
     </Card>
   );

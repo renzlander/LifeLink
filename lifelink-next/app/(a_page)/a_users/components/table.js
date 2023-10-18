@@ -2,7 +2,7 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Card, CardHeader, Typography, Button, CardBody, CardFooter, IconButton, Input, Spinner } from "@material-tailwind/react";
 import { AddBloodBagPopup } from "./popup";
 import { ViewPopUp } from "./popupView";
-import {  EditPopUp } from "./popupEdit";
+import { EditPopUp } from "./popupEdit";
 import {MoveToDeferral} from "./popupMoveToDeferral";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -278,7 +278,7 @@ export function UsersTable() {
                                 </td>
                                 <td className={classes}>
                                     <ViewPopUp user={user} />
-                                    {/* <EditPopUp user={user} onUpdate={handleUpdateUser} refreshData={fetchData} /> */}
+                                    <EditPopUp user={user} onUpdate={handleUpdateUser} refreshData={fetchData} />
                                 </td>
                                 <td className={classes}>
                                 {user.remarks !== 0 ? (
