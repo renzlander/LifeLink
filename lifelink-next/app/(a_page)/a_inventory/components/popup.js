@@ -60,7 +60,7 @@ export function Revert({ serial_no, refreshData }) {
     return (
         <>
             <Button size="sm" onClick={() => setOpen(true)} className="bg-red-600 mr-4">
-                Revert
+                Undo
             </Button>
             <Dialog open={open} handler={() => setOpen(false)}>
                 <DialogHeader>Remove Blood Bag</DialogHeader>
@@ -139,7 +139,7 @@ export function Dispense({ serial_no, handleOpen, refreshData }) {
                 Dispense
             </Button>
             <Dialog open={open} handler={() => setOpen(false)} size="xl">
-                <DialogHeader>Move Blood Bag to Inventory</DialogHeader>
+                <DialogHeader>Dispense Blood</DialogHeader>
                 <DialogBody divider className="flex flex-col gap-4 items-center">
 									<div className="w-full h-full flex items-start justify-between">
 										<AccordionDispense />

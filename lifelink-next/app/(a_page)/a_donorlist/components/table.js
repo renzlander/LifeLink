@@ -1,7 +1,7 @@
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { ArrowDownTrayIcon, EyeIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Card, CardHeader, Typography, Button, CardBody, Chip, CardFooter, Avatar, IconButton, Tooltip, Input, Spinner } from "@material-tailwind/react";
-import { MoveToDeferral, ViewPopUp } from "./popup";
+import { ViewPopUp } from "./popup";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
@@ -248,9 +248,6 @@ export function DonorTable() {
                                 </td>
                                 <td className={classes}>
                                     <ViewPopUp user={user} />
-                                </td>
-                                <td className={classes}>
-                                    <MoveToDeferral user_id={user.user_id} refreshData={fetchData} />
                                 </td>
                             </tr>
                         ))}
