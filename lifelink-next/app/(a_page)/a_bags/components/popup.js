@@ -436,6 +436,109 @@ export function MultipleMoveToStock({ selectedRows, refreshData }) {
     );
 }
 
+
+export function Unsafe({ serial_no, handleOpen, refreshData }) {
+    const [open, setOpen] = useState(false);
+    const [generalErrorMessage, setGeneralErrorMessage] = useState("");
+
+    const handleMovetoStock = async () => {
+        try {
+            const token = getCookie("token");
+            if (!token) {
+                router.push("/login");
+                return;
+            }
+
+            const response = await axios
+                .post(
+                    `${laravelBaseUrl}/api/add-to-inventory`,
+                    {
+                        serial_no,
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                )
+                .catch((error) => {
+                    console.error("Unknown error occurred:", error);
+                });
+
+            if (response.data.status === "success") {
+                refreshData();
+                toast.success("Blood bag added to inventory successfully");
+            } else if (response.data.status === "error") {
+                if (response.data.message) {
+                    setGeneralErrorMessage(response.data.message);
+                } else {
+                    console.error("Unknown error occurred:", response.data);
+                }
+            }
+            // Close the dialog
+            setOpen(false);
+        } catch (error) {
+            console.error("Unknown error occurred:", error);
+        }
+    };
+
+    return (
+        <>
+            <Button size="sm" onClick={() => setOpen(true)} className="bg-red-600">
+                Unsafe
+            </Button>
+            <Dialog open={open} handler={() => setOpen(false)}>
+                <DialogHeader>Mark as unsafe</DialogHeader>
+                {/* <DialogBody className="flex flex-col gap-4 items-center text-center">
+                    <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-2 items-center">
+                        <Button
+                            size="sm"
+                            onClick={() => setOpen(true)}
+                            className="bg-red-600 text-white hover:bg-red-700"
+                        >
+                            Spoiled
+                        </Button>
+                        <Typography variant="body1">
+                            <span style={{ fontWeight: 'bold' }}>Spoiled blood</span> refers to blood bags that have become unusable due to factors such as contamination and exposure to inappropriate conditions. It is essential to maintain strict quality control in the handling and storage of blood products.
+                        </Typography>
+                        </div>
+                        <div className="flex flex-col gap-2 items-center">
+                        <Button
+                            size="sm"
+                            onClick={() => setOpen(true)}
+                            className="bg-red-600 text-white hover-bg-red-700"
+                        >
+                            Reactive
+                        </Button>
+                        <Typography variant="body1">
+                            <span style={{ fontWeight: 'bold' }}>Reactive blood</span> refers to blood bags that have become unusable due to factors such as contamination and exposure to inappropriate conditions. Ensuring the safety and integrity of blood products is paramount in healthcare.
+                        </Typography>
+                        </div>
+                    </div>
+                </DialogBody> */}
+                {generalErrorMessage && (
+                    <div className="mt-4 text-center bg-red-100 p-2 rounded-lg">
+                        <Typography color="red" className="text-sm font-semibold">
+                            {generalErrorMessage}
+                        </Typography>
+                    </div>
+                )}
+
+                <DialogFooter className="flex justify-center mt-4">
+                    <Button variant="red-cross" onClick={() => setOpen(false)} className="mr-2">
+                        No
+                    </Button>
+                    <Button variant="red-cross" color="red" onClick={handleMovetoStock}>
+                        Yes
+                    </Button>
+                </DialogFooter>
+            </Dialog>
+
+        </>
+    );
+}
+
 function getCookie(name) {
     const cookies = document.cookie.split("; ");
     const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));

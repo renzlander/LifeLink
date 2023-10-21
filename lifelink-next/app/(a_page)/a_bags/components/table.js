@@ -1,7 +1,7 @@
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { ArrowDownTrayIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Card, CardHeader, Typography, Button, CardBody, Chip, CardFooter, Avatar, IconButton, Tooltip, Input, Spinner, Select, Option } from "@material-tailwind/react";
-import { RemoveBlood, EditPopUp, MoveToStock, MultipleMoveToStock } from "./popup";
+import { RemoveBlood, EditPopUp, MoveToStock, MultipleMoveToStock, Unsafe } from "./popup";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
@@ -16,6 +16,7 @@ const TABLE_HEAD = [
     { label: "Expiration Date", key: "expiration_date" },
     { label: "Venue", key: "venue" },
     { label: "Bled By", key: "bled_by" },
+    { label: "" },
     { label: "" },
     { label: "" },
     { label: "" },
@@ -437,6 +438,9 @@ export function BagsTable() {
 
                                 <td className={classes}>
                                     <MoveToStock serial_no={user.serial_no} refreshData={fetchData} />
+                                </td>
+                                <td className="{classes}">
+                                    <Unsafe serial_no={user.serial_no} refreshData={fetchData} />
                                 </td>
                             </tr>
                         ))}
