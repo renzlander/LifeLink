@@ -26,12 +26,12 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
     const part3InputRef = useRef(null);
     const srNumber = `${part1}${part2}${part3}`;
 
-    const handleBledByChange = (selectedBledBy) => {
-        setBledBy(selectedBledBy);
+    const handleBledBySelect = (selectedValue) => {
+        setBledBy(selectedValue);
     };
 
-    const handleVenueChange = (selectedVenue) => {
-        setVenue(selectedVenue);
+    const handleVenueSelect = (selectedValue) => {
+        setVenue(selectedValue);
     };
 
     const dynamicBledByOptions = bledByOptions.map((item) => ({
@@ -56,11 +56,10 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
             const data = {
                 user_id,
                 serial_no: srNumber,
-                bled_by: bledBy.value,
-                venue: venue.value,
+                bled_by: bledBy,
+                venue: venue,
                 date_donated: dateDonated,
             };
-            console.log("Before Axios POST request");
 
             // Send POST request to add-bloodbag API
             const response = await axios
@@ -87,7 +86,6 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
 
             if (response.data.status === "success") {
                 toast.success("Blood bag added successfully");
-                console.log("Blood bag added successfully");
             } else if (response.data.status === "error") {
                 if (response.data.message) {
                     setGeneralErrorMessage(response.data.message);
@@ -175,12 +173,12 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
                     </div>
 
                     <div className={`relative ${errorMessage.bled_by.length > 0 ? "mb-1" : ""}`}>
-                        <InputSelect label="Bled by" value={bledBy} onChange={handleBledByChange} options={dynamicBledByOptions} isSearchable required placeholder="Bled By" />
+                        <InputSelect label="Bled by" value={bledBy} onSelect={handleBledBySelect} options={dynamicBledByOptions} isSearchable required placeholder="Bled By" />
                         {errorMessage.bled_by.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.bled_by[0]}</div>}
                     </div>
 
                     <div className={`relative ${errorMessage.venue.length > 0 ? "mb-1" : ""}`}>
-                        <InputSelect label="Venue" value={venue} onChange={handleVenueChange} options={dynamicVenueOptions} isSearchable required placeholder="Venue" />
+                        <InputSelect label="Venue" value={venue} onSelect={handleVenueSelect} options={dynamicVenueOptions} isSearchable required placeholder="Venue" />
                         {errorMessage.venue.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.venue[0]}</div>}
                     </div>
                     <div className={`relative ${errorMessage.date_donated.length > 0 ? "mb-1" : ""}`}>
