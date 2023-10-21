@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
     Card,
     CardHeader,
@@ -86,7 +86,30 @@ export function BloodListCard({ bloodType, availability, legend, count, percenta
   );
 }
 
-export function CountDonorCard({donorCount, deferralsCount, dispensedCount, expiredCount}) {
+
+export function CountDonorCard({
+  donorCount,
+  deferralsCount,
+  dispensedCount,
+  expiredCount,
+  onMonthChange,
+  onYearChange,
+}) {
+  
+  const [month, setMonth] = useState("All");
+  const [year, setYear] = useState(new Date().getFullYear().toString()); 
+
+
+  const handleMonthChange = (selectedMonth) => {
+    setMonth(selectedMonth)
+    onMonthChange(selectedMonth);
+  };
+
+  const handleYearChange = (selectedYear) => {
+    setYear(selectedYear)
+    onYearChange(selectedYear);
+  };
+
   const TABLE_ROWS = [
     {
       label: "Donors",
@@ -114,17 +137,22 @@ export function CountDonorCard({donorCount, deferralsCount, dispensedCount, expi
     },
   ];
 
-  const months = Array.from({ length: 12 }, (_, index) => {
-    const date = new Date();
-    date.setMonth(index);
-    return date.toLocaleDateString(undefined, { month: "long" });
-  });
+  const months = [
+    { value: "All", label: "All" }, // Idagdag ang "All" bilang default option
+    ...Array.from({ length: 12 }, (_, index) => {
+      const monthNumber = (index + 1).toString().padStart(2, '0'); 
+      const monthName = new Date(new Date().getFullYear(), index, 1).toLocaleString(undefined, { month: "long" });
+      return { value: monthNumber, label: monthName };
+    }),
+  ];
 
+  // Calculate years and create the year options
   const startYear = 2000;
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: currentYear - startYear + 1 }, (_, index) => {
-    return (currentYear - index).toString();
-  });
+  const years = Array.from(
+    { length: currentYear - startYear + 1 },
+    (_, index) => (currentYear - index).toString()
+  );
 
   return (
     <Card className="mt-6 w-full">
@@ -135,16 +163,31 @@ export function CountDonorCard({donorCount, deferralsCount, dispensedCount, expi
       </CardHeader>
       <CardBody className="p-0">
       <div className="mt-3 flex justify-end items-center gap-3 w-full px-4">
-        <Select label="Month" containerProps={{ className: "min-w-[25px]" }}>
-          {months.map((month) => (
-            <Option key={month} value={month}>{month}</Option>
-          ))}
-        </Select>
-        <Select label="Year" containerProps={{ className: "min-w-[25px]" }}>
-          {years.map((year) => (
-            <Option key={year} value={year}>{year}</Option>
-          ))}
-        </Select>
+      <Select
+  label="Month"
+  containerProps={{ className: "min-w-[25px]" }}
+  value={month} // Set the selected month as the value
+  onChange={handleMonthChange}
+>
+  {months.map((month) => (
+    <Option key={month.value} value={month.value}>
+      {month.label}
+    </Option>
+  ))}
+</Select>
+<Select
+  label="Year"
+  containerProps={{ className: "min-w-[25px]" }}
+  value={year} // Set the selected year as the value
+  onChange={handleYearChange}
+>
+  {years.map((year) => (
+    <Option key={year} value={year}>
+      {year}
+    </Option>
+  ))}
+</Select>
+
       </div>
       <table className="w-full min-w-max table-auto text-left">
         <tbody>
@@ -180,8 +223,3 @@ export function CountDonorCard({donorCount, deferralsCount, dispensedCount, expi
   );
 }
 
-function getCookie(name) {
-  const cookies = document.cookie.split("; ");
-  const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));
-  return cookie ? cookie.split("=")[1] : null;
-}

@@ -48,22 +48,11 @@ export function LineCard() {
         if (response.data.status === "success") {
           const monthData = response.data.month_counts[0]; // Get the data for the first (and only) element
           const lastUpdate = response.data.latest_date;
-          const dateObject = new Date(lastUpdate);
-
-          // Extract the time components (hours and minutes)
-          const hours = dateObject.getHours();
-          const minutes = dateObject.getMinutes();
-
-          // Determine if it's AM or PM
-          const amPm = hours >= 12 ? "PM" : "AM";
-
-          // Convert hours to 12-hour format
-          const hours12 = hours % 12 || 12;
-
-          // Create a string representation of the time in 12-hour format
-          const timeString = `${hours12}:${minutes} ${amPm}`;
-          setTime(timeString);
-          setMonthCounts(monthData); // Update with your API data
+          const date = new Date(lastUpdate);
+          const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+          const time = date.toLocaleTimeString(undefined, options);
+          setTime(time);
+          setMonthCounts(monthData); 
           setLastUpdate(lastUpdate);
 
           setLoading(false);
@@ -153,21 +142,10 @@ export function BarCard() {
           const donorCounts = response.data.donors_per_barangay;
           const lastUpdate = response.data.latest_date;
 
-          const dateObject = new Date(lastUpdate);
-
-          // Extract the time components (hours and minutes)
-          const hours = dateObject.getHours();
-          const minutes = dateObject.getMinutes();
-
-          // Determine if it's AM or PM
-          const amPm = hours >= 12 ? "PM" : "AM";
-
-          // Convert hours to 12-hour format
-          const hours12 = hours % 12 || 12;
-
-          // Create a string representation of the time in 12-hour format
-          const timeString = `${hours12}:${minutes} ${amPm}`;
-          setTime(timeString);
+          const date = new Date(lastUpdate);
+          const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+          const time = date.toLocaleTimeString(undefined, options);
+          setTime(time);
           // Create an object with all barangays and default to zero donors
           const allBarangays = [
             'Bagbaguin', 'Bignay', 'Bisig', 'Canumay', 'Coloong',
