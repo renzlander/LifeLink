@@ -1,5 +1,5 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { Card, CardHeader, Typography, Button, CardBody, CardFooter, IconButton, Input, Spinner } from "@material-tailwind/react";
+import { Card, CardHeader, Typography, Button, CardBody, CardFooter, IconButton, Input, Spinner, Chip } from "@material-tailwind/react";
 import { AddBloodBagPopup } from "./popupAdd";
 import { ViewPopUp } from "./popupView";
 import { EditPopUp } from "./popupEdit";
@@ -280,11 +280,11 @@ export function UsersTable() {
                                     <ViewPopUp user={user} />
                                     <EditPopUp user={user} onUpdate={handleUpdateUser} refreshData={fetchData} />
                                 </td>
-                                <td className={classes}>
+                                <td className={`${classes} flex justify-center items-center`}>
                                     {user.remarks !== 0 ? (
-                                        <Button size="small" disabled className="w-2/3">
+                                        <Chip size="lg" value="DEFERRED" color="blue-gray">
                                             DEFERRED
-                                        </Button>
+                                        </Chip>
                                     ) : (
                                         <div className="space-x-2">
                                             <AddBloodBagPopup user_id={user.user_id} bledByOptions={bledByOptions} venueOptions={venueOptions} />
