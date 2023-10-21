@@ -18,7 +18,13 @@ import { laravelBaseUrl } from "@/app/variables";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
-// import Select from 'react-select';
+import InputSelect from "@/app/components/InputSelect";
+
+const options = [
+    { label: 'Option 1', value: 'option1' },
+    { label: 'Option 2', value: 'option2' },
+    // ... other options
+];
 
 export function EditPopUp({ user, onUpdate, refreshData }) {
     const [open, setOpen] = useState(false);
@@ -136,6 +142,10 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
         }
     };
 
+    const handleSelect = (value) => {
+        console.log('Selected option:', value);
+        // Do something with the selected option value, e.g., set it in state
+    };
     return (
         <>
             <Tooltip content="Edit User">
@@ -145,7 +155,7 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
             </Tooltip>
             <Dialog open={open} handler={() => setOpen(false)}>
                 <DialogHeader>Edit User</DialogHeader>
-                <DialogBody divider className="flex flex-col gap-6">
+                <DialogBody divider className="flex flex-col gap-6 overscroll-y-auto	">
                     <div className="flex items-center gap-2">
                         <Input 
                             type="text" 
@@ -175,9 +185,19 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
                             {/* {errorMessage.last_name.length > 0 && <Typography variant="small" color="gray" className="mt-2 flex items-center gap-1 font-normal">{errorMessage.last_name[0]}</Typography>} */}
                     </div>
                     <div className="flex items-center gap-2">
-                        <Input type="text" label="Email" value={editedUser.email} onChange={(e) => setEditedUser({ ...editedUser, email: e.target.value })} />
+                        <Input 
+													type="text" 
+													label="Email" 
+													value={editedUser.email} 
+													onChange={(e) => setEditedUser({ ...editedUser, email: e.target.value })} 
+												/>
                         {errorMessage.email.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.email[0]}</div>}
-                        <Input type="text" label="Mobile" value={editedUser.mobile} onChange={(e) => setEditedUser({ ...editedUser, mobile: e.target.value })} />
+                        <Input 
+													type="text" 
+													label="Mobile" 
+													value={editedUser.mobile} 
+													onChange={(e) => setEditedUser({ ...editedUser, mobile: e.target.value })} 
+												/>
                         {errorMessage.mobile.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.mobile[0]}</div>}
                     </div>
                     <div className="flex items-center gap-2">
@@ -186,8 +206,14 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
                             <Option value="Female">Female</Option>
                         </Select>
                         {errorMessage.sex.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.sex[0]}</div>}
-                        <Input type="date" label="Date of Birth" value={editedUser.dob} onChange={(e) => setEditedUser({ ...editedUser, dob: e.target.value })} containerProps={{ className: "min-w-[50px]" }} />
+                        <Input 
+													type="date" 
+													label="Date of Birth" 
+													value={editedUser.dob} 
+													onChange={(e) => setEditedUser({ ...editedUser, dob: e.target.value })} containerProps={{ className: "min-w-[50px]" }} 
+												/>
                         {errorMessage.dob.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.dob[0]}</div>}
+
                         <Select label="Blood Type" value={editedUser.blood_type} onChange={(value) => setEditedUser({ ...editedUser, blood_type: value })} containerProps={{ className: "min-w-[50px]" }}>
                             {bloodTypes.map((type) => (
                                 <Option key={type} value={type}>
@@ -196,16 +222,20 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
                             ))}
                         </Select>
                         {errorMessage.blood_type.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.blood_type[0]}</div>}
+
                     </div>
-                    <Input type="text" label="Street" value={editedUser.street} onChange={(e) => setEditedUser({ ...editedUser, street: e.target.value })} />
+                    <Input 
+											type="text"
+											label="Street" 
+											value={editedUser.street} 
+											onChange={(e) => setEditedUser({ ...editedUser, street: e.target.value })} 
+										/>
                     <div className="flex items-center gap-2">
-                        <Select label="Region" value={selectedRegion} onChange={(value) => setSelectedRegion(value)}>
-                            {regionList.map((region) => (
-                                <Option key={region.regCode} value={user.region}>
-                                    {region.regDesc}
-                                </Option>
-                            ))}
-                        </Select>
+                        <InputSelect 
+													label="Region" 
+													options={options} 
+													onSelect={handleSelect} 
+												/>
                         <Select label="Province" value={selectedProvince} onChange={(value) => setSelectedProvince(value)}>
                             {provinceList.map((province) => (
                                 <Option key={province.provCode} value={province.provCode}>

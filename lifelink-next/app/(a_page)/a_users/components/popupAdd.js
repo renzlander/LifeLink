@@ -25,16 +25,13 @@ export function AddBloodBagPopup({ user_id, handleOpen, bledByOptions, venueOpti
     const [part3, setPart3] = useState("");
     const srNumber = `${part1}${part2}${part3}`;
 
-
     const handleBledByChange = (selectedBledBy) => {
         setBledBy(selectedBledBy);
-        
     };
     
     const handleVenueChange = (selectedVenue) => {
         setVenue(selectedVenue);
     };
-    
    
     const dynamicBledByOptions = bledByOptions.map((item) => ({
         label: item.full_name,
@@ -45,7 +42,6 @@ export function AddBloodBagPopup({ user_id, handleOpen, bledByOptions, venueOpti
         label: item.venues_desc,
         value: item.venues_desc,
     }));
-
 
     const handleAddBloodBag = async () => {
         try {
@@ -105,7 +101,6 @@ export function AddBloodBagPopup({ user_id, handleOpen, bledByOptions, venueOpti
             toast.error(error);
             console.error("Unknown error occurred:", error);
         }
-
     };
     
     return (

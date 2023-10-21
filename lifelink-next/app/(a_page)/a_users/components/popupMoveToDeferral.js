@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, Tooltip, IconButton, Select, Option } from "@material-tailwind/react";
-import { TrashIcon, PencilIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { Typography } from "@mui/material";
-import { EyeIcon } from "@heroicons/react/24/outline";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useRouter } from "next/navigation";
 
 export function MoveToDeferral({ user_id, handleOpen, refreshData }) {
     const [open, setOpen] = useState(false);
@@ -35,7 +32,6 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData }) {
         setDuration(newValue);
       }
     };
-  
   
     const handleCategoryChange = (value) => {
       setCategory(value);
@@ -93,7 +89,6 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData }) {
             }
           });
     
-    
           if (response.data.status === "success") {
             
           } else if (response.data.status === "error") {
@@ -110,9 +105,7 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData }) {
         console.error("Unknown error occurred:", error);
       }
     };
-    
-  
-  
+
     return (
       <>
         <Button size="sm" onClick={() => setOpen(true)} variant="gradient" color="red">
@@ -127,92 +120,90 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData }) {
               </Typography>
             </div>
           )}
-    <DialogBody divider className="flex flex-col gap-6">
-        <div className={`relative ${errorMessage.category.length > 0 ? "mb-4" : ""}`}>
-          <Select
-            label="Category"
-            value={category}
-            onChange={(value) => handleCategoryChange(value)}
-          >
-            <Option value="" disabled>Category</Option>
-            <Option value="1">History and P.E</Option>
-            <Option value="2">Abnormal Hemoglobin</Option>
-            <Option value="3">Other Reason/s</Option>
-          </Select>
-          {errorMessage.category.length > 0 && (
-            <div className="error-message text-red-600 text-sm mt-1">
-              {errorMessage.category[0]}
-            </div>
-          )}
-        </div>
-  
-        {category === '3' && (
-          <div className={`relative mb-8`}>
-            <Input
-              label="Other Reason/s"
-              value={otherReason}
-              onChange={(e) => setOtherReason(e.target.value)}
-            />
-            {errorMessage.specific_reason.length > 0 && (
-              <div className="error-message text-red-600 text-sm absolute mt-2">
-                {errorMessage.specific_reason[0]}
+          <DialogBody divider className="flex flex-col gap-6">
+              <div className={`relative ${errorMessage.category.length > 0 ? "mb-4" : ""}`}>
+                <Select
+                  label="Category"
+                  value={category}
+                  onChange={(value) => handleCategoryChange(value)}
+                >
+                  <Option value="" disabled>Category</Option>
+                  <Option value="1">History and P.E</Option>
+                  <Option value="2">Abnormal Hemoglobin</Option>
+                  <Option value="3">Other Reason/s</Option>
+                </Select>
+                {errorMessage.category.length > 0 && (
+                  <div className="error-message text-red-600 text-sm mt-1">
+                    {errorMessage.category[0]}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        )}
-        <div className={`relative mb-8`}>
-          <Select
-            label="Remarks"
-            value={remarks}
-            onChange={(value) => handleRemarksChange(value)}
-          >
-            <Option value=""></Option>
-            <Option value="1">Temporary Deferral</Option>
-            <Option value="2">Permanent Deferral</Option>
-          </Select>
-          {errorMessage.remarks.length > 0 && (
-            <div className="error-message text-red-600 text-sm absolute mt-2">
-              {errorMessage.remarks[0]}
-            </div>
-          )}
-        </div>
-        {remarks === '1' && (
-          <div className="flex items-center justify-center mb-4 text-black">
-            <Button
-              onClick={handleDecrement}
-              className="rounded-r-none"
-            >
-              -
-            </Button>
-            <Input
-              type="number"
-              label="Days"
-              value={duration}
-              onChange={e => {
-                const inputVal = e.target.value;
-                if (/^[0-9]*$/.test(inputVal) && inputVal.length <= 3) {
-                  setDuration(inputVal);
-                }
-              }}
-              className="text-center rounded-none"
-            />
-            <Button
-              onClick={handleIncrement}
-              className="rounded-l-none"
-            >
-              +
-            </Button>
-            <span className="ml-2 text-gray-600 text-2xl">Days</span>
-            {errorMessage.duration.length > 0 && (
-            <div className="error-message text-red-600 text-sm absolute mt-2">
-              {errorMessage.duration[0]}
-            </div>
-          )}
-          </div>
-        )}
-    </DialogBody>
-  
-  
+        
+              {category === '3' && (
+                <div className={`relative mb-8`}>
+                  <Input
+                    label="Other Reason/s"
+                    value={otherReason}
+                    onChange={(e) => setOtherReason(e.target.value)}
+                  />
+                  {errorMessage.specific_reason.length > 0 && (
+                    <div className="error-message text-red-600 text-sm absolute mt-2">
+                      {errorMessage.specific_reason[0]}
+                    </div>
+                  )}
+                </div>
+              )}
+              <div className={`relative mb-8`}>
+                <Select
+                  label="Remarks"
+                  value={remarks}
+                  onChange={(value) => handleRemarksChange(value)}
+                >
+                  <Option value=""></Option>
+                  <Option value="1">Temporary Deferral</Option>
+                  <Option value="2">Permanent Deferral</Option>
+                </Select>
+                {errorMessage.remarks.length > 0 && (
+                  <div className="error-message text-red-600 text-sm absolute mt-2">
+                    {errorMessage.remarks[0]}
+                  </div>
+                )}
+              </div>
+              {remarks === '1' && (
+                <div className="flex items-center justify-center mb-4 text-black">
+                  <Button
+                    onClick={handleDecrement}
+                    className="rounded-r-none"
+                  >
+                    -
+                  </Button>
+                  <Input
+                    type="number"
+                    label="Days"
+                    value={duration}
+                    onChange={e => {
+                      const inputVal = e.target.value;
+                      if (/^[0-9]*$/.test(inputVal) && inputVal.length <= 3) {
+                        setDuration(inputVal);
+                      }
+                    }}
+                    className="text-center rounded-none"
+                  />
+                  <Button
+                    onClick={handleIncrement}
+                    className="rounded-l-none"
+                  >
+                    +
+                  </Button>
+                  <span className="ml-2 text-gray-600 text-2xl">Days</span>
+                  {errorMessage.duration.length > 0 && (
+                  <div className="error-message text-red-600 text-sm absolute mt-2">
+                    {errorMessage.duration[0]}
+                  </div>
+                )}
+                </div>
+              )}
+          </DialogBody>
           <DialogFooter>
             <Button
               variant="text"
