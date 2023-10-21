@@ -61,17 +61,17 @@ export default function AdminLayout({ children }) {
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <ToastContainer
-              position="bottom-left"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="dark"
-            />
+        position="bottom-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        />
       <AppBar position="fixed" open={open} sx={{ backgroundColor: '#dc2626' }}>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <div>
@@ -92,9 +92,9 @@ export default function AdminLayout({ children }) {
       </AppBar>
       <Drawer variant="permanent" open={open}>
         <DrawerHeader sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 4}}>
-          <Image src='/prc_logo.png' width={50} height={50} />
+          <Image src='/prc_logo.png' width={50} height={50} alt='Red Cross' />
           {open ? (
-              <Image src='/logo_lifelink.png' width={120} height={50} className=' drop-shadow-md' />
+              <Image src='/logo_lifelink.png' width={120} height={50} className=' drop-shadow-md' alt='Lifelink' />
             ) : (
               ''
             )

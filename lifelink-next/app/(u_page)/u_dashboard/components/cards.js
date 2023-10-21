@@ -12,16 +12,20 @@ import BloodDropletIcon from "@/public/BloodDroplet";
   export function BloodListCard({ bloodType, availability, legend }) {
     let colorClass = ""; 
     let offsetTop = 0;
+    let offsetBot = 0;
 
     if (legend === "Empty") {
         colorClass = "text-red-600"; 
         offsetTop = 100; 
+        offsetBot = 0; 
     } else if (legend === "Critically low") {
         colorClass = "text-yellow-600"; 
         offsetTop = 80; 
+        offsetBot = 20; 
     } else if (legend === "Low") {
         colorClass = "text-orange-600"; 
         offsetTop = 60; 
+        offsetBot = 40; 
     }
 
     return (
@@ -32,7 +36,7 @@ import BloodDropletIcon from "@/public/BloodDroplet";
             shadow={false}
             className='relative flex flex-col justify-center items-center h-28 w-28'
           >
-            <BloodDropletIcon width={200} height={200} topOffset={offsetTop} />
+            <BloodDropletIcon width={200} height={200} topOffset={offsetTop} botOffset={offsetBot} />
             <Typography
               variant="h4"
               color="white"

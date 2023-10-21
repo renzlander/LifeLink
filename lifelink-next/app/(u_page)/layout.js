@@ -113,18 +113,18 @@ export default function UserLayout({ children }) {
       </AppBar>
       <Drawer variant="permanent" open={open}>
         <DrawerHeader sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 4}}>
-          <Image src='/prc_logo.png' width={50} height={50} />
+          <Image src='/prc_logo.png' width={50} height={50} alt='Red Cross'/>
           {open ? (
-              <Image src='/logo_lifelink.png' width={120} height={50} className=' drop-shadow-md' />
+              <Image src='/logo_lifelink.png' width={120} height={50} className='drop-shadow-md' alt='Lifelink' />
             ) : (
               ''
             )
           }
         </DrawerHeader>
-        <hr className='custom-divider' />
+        <hr className='fading_divider_white' />
         <div className="flex justify-center items-center p-4 my-3">
           <Link href='./u_profile'>
-            <Image src="/patient_icon.png" width={60} height={60} />
+            <Image src="/patient_icon.png" width={60} height={60} alt='User Profile' />
           </Link>
               {open ? (
                 <div className="flex flex-col ml-3 truncate">
@@ -140,7 +140,7 @@ export default function UserLayout({ children }) {
                 )
               }
         </div>
-        <hr className='custom-divider' />
+        <hr className='fading_divider_white' />
         <List>
           {menuItems.map((item, index) => (
             <Link href={item.link} key={index} passHref>
@@ -171,7 +171,7 @@ export default function UserLayout({ children }) {
             </Link>
           ))}
         </List>
-        <hr className="custom-divider my-2" />
+        <hr className="fading_divider_white my-2" />
         { open ? (
           <List>
             <Button
@@ -190,7 +190,7 @@ export default function UserLayout({ children }) {
           </List>
           ) : (
           <div className='w-full flex items-center justify-center'>
-            <IconButton variant='text' size='lg' className='w-full text-white hover:bg-gray-100 hover:bg-opacity-30'>
+            <IconButton variant='text' size='lg' onClick={handleLogout} className='w-full text-white hover:bg-gray-100 hover:bg-opacity-30'>
               <ArrowLeftOnRectangleIcon className="h-6 w-6"/>
             </IconButton>
           </div>

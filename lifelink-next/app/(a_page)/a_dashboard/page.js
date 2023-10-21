@@ -44,7 +44,6 @@ export default function Home() {
           const count = response.data.blood_bags.map((bag) => bag.count);
           const percentage = response.data.blood_bags.map((bag) => bag.percentage);
 
-
           setBloodTypes(bloodTypes);
           setAvailability(availability);
           setLegend(legend);
@@ -110,20 +109,20 @@ export default function Home() {
 
   return (
     <div className="bg-gray-300 min-h-screen flex flex-col justify-between gap-y-3 p-4">
-        <div className='flex gap-3'>
-          <div className='flex flex-col gap-y-10 w-2/3'>
-            <div className='flex gap-3'>
+        <div className='grid grid-cols-4'>
+          <div className='col-start-1 col-end-3 w-full'>
+            <div className='flex 3xl:gap-16 gap-3'>
               {bloodListCards.slice(0, 4)}
             </div>
-            <div className='flex gap-3'>
+            <div className='flex 3xl:mt-9 mt-[2.75rem] 3xl:gap-16 gap-3'>
               {bloodListCards.slice(4, 8)}
             </div>
           </div>
-          <div className='w-1/3'>
-          <CountDonorCard donorCount={donorCount} deferralsCount={deferralsCount} dispensedCount={dispensedCount} expiredCount={expiredCount} />
+          <div className='col-start-4 col-end-5 w-full'>
+            <CountDonorCard donorCount={donorCount} deferralsCount={deferralsCount} dispensedCount={dispensedCount} expiredCount={expiredCount} />
           </div>
         </div>
-        <div className='mt-10 flex gap-3'>
+        <div className='mt-2 flex gap-3'>
           <LineCard />
           <BarCard />
         </div>

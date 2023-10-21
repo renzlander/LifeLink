@@ -1,17 +1,20 @@
+import React from "react";
 import {
     Card,
     CardHeader,
     CardBody,
     CardFooter,
     Typography,
-    Button,
+    Chip,
   } from "@material-tailwind/react";
+import { ClockIcon } from "@heroicons/react/24/outline";
 import LineChart from "./lineChart";
 import BarChart from "./barChart";
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import { laravelBaseUrl } from "@/app/variables";
 import axios from "axios";
+import BloodDropletIcon from "@/public/BloodDroplet";
 
 function formatDate(dateString) {
   const options = { year: "numeric", month: "long", day: "numeric" };
@@ -20,44 +23,79 @@ function formatDate(dateString) {
 }
 
 export function BloodListCard({ bloodType, availability, legend, count, percentage }) {
-  
-  let colorClass = ""; 
+  let colorClass = "";
+  let offsetTop = 0;
+  let offsetBot = 0;
 
   if (legend === "Empty") {
-      colorClass = "text-red-600"; 
-  } else if (legend === "Low") {
-      colorClass = "text-yellow-600"; 
+      colorClass = "gray";
+      offsetTop = 100; 
+      offsetBot = 0; 
   } else if (legend === "Critically low") {
-      colorClass = "text-orange-600"; 
+      colorClass = "red"; 
+      offsetTop = 80; 
+      offsetBot = 20; 
+  } else if (legend === "Low") {
+      colorClass = "orange"; 
+      offsetTop = 60; 
+      offsetBot = 40; 
   }
 
+  let status = "";
+  if (availability === "Available") {
+    status = "green";
+  } else {
+    status = "blue-gray";
+  }
+  
   return (
-    <Card className="mt-6 w-1/4 h-full">
-      <div className="flex mb-5">
-        <CardHeader color="red" className="relative flex justify-center items-center h-20 w-20">
-          <Typography variant="h2" color="white" className="mb-2">
+    <Card className="mt-6 3xl:w-72 w-56 h-full">
+      <div className="flex justify-between">
+        <CardHeader
+          color="red"
+          variant="gradient"
+          className='relative flex flex-col justify-center items-center h-16 w-16 p-2'
+        >
+          <BloodDropletIcon width={200} height={200} topOffset={offsetTop} botOffset={offsetBot} />
+          <Typography
+            variant="h6"
+            color="white"
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-[40%]"
+          >
             {bloodType}
           </Typography>
         </CardHeader>
-        <CardBody>
-          <Typography variant="h5" className="mb-2">
-            {availability}
+        <CardBody className="flex flex-col items-end justify-end py-3 px-4 w-1/2">
+          <Typography variant="paragraph" color="gray" className="text-gray-500">
+            Quantity
           </Typography>
+          <Typography variant="h5" color="blue-gray" className="text-2xl font-bold">
+            {count}
+          </Typography>
+          <div className="flex gap-2">
+            <Chip size="sm" variant="gradient" color={status} value={availability} className="flex justify-center 3xl:w-full w-16 3xl:text-xs text-[8px]" />
+            <Chip size="sm" variant="gradient" color={colorClass} value={legend} className="flex justify-center 3xl:w-full w-16 3xl:text-xs text-[6px]" />
+          </div>
         </CardBody>
       </div>
-      <CardFooter className="border-t flex justify-center items-center">
-        <div className="flex flex-col">
-          <Typography variant="h6" className={`${colorClass}`}>
-            Quantity: {count}
+      <hr className="fading_divider_gray" />
+      <CardFooter className="flex justify-start items-center p-3">
+        <div className="flex justify-between items-center gap-2 w-full">
+          <div className="flex items-center">
+            <ClockIcon className="h-5 w-5" />
+            <Typography variant="paragraph" className='text-gray-600 text-sm font-medium'>
+              Updated:
+            </Typography>
+          </div>
+          <div>
+          <Typography variant="paragraph" className='text-gray-600 3xl:textsm text-xs font-medium'>
+            10-21-23 4:04 PM
           </Typography>
-          <Typography variant="h6" className={`${colorClass}`}>
-            percentage: {percentage}%
-          </Typography>
+          </div>
         </div>
       </CardFooter>
     </Card>
   );
-
 }
 
 export function LineCard() {
@@ -163,7 +201,6 @@ export function LineCard() {
     </Card>
   );
 }
-
 
 export function BarCard() {
   const [barangayDonorCount, setBarangayDonorCount] = useState([]);
@@ -283,36 +320,71 @@ export function BarCard() {
   );
 }
 
-//ikaw na bahala sa layout yung mga kailangan ilagay. lagyan mo narin ng filter 
 export function CountDonorCard({donorCount, deferralsCount, dispensedCount, expiredCount}) {
+  const TABLE_ROWS = [
+    {
+      label: "Donors",
+      count: donorCount,
+    },
+    {
+      label: "Deffered",
+      count: deferralsCount,
+    },
+    {
+      label: "Dispensed Blood",
+      count: dispensedCount,
+    },
+    {
+      label: "Expired Blood",
+      count: expiredCount,
+    },
+    {
+      label: "Spoiled Blood Bag",
+      count: "0",
+    },
+    {
+      label: "Reactive Blood Bag",
+      count: "0",
+    },
+  ];
+
   return (
     <Card className="mt-6 w-full">
-      <CardHeader color="red" className="relative h-16 flex items-center">
+      <CardHeader color="gray" className="relative h-16 flex items-center">
         <Typography variant="h4" color="white" className="ml-4">
           MBD Summary
         </Typography>
       </CardHeader>
-      <CardBody>
-        <div className="flex justify-center">
-          <Typography variant="h1" color="red" className="w-1/2 my-10 py-4 rounded-lg bg-red-600 text-gray-100 shadow-md shadow-gray-600 text-center">
-          No. of Donors: {donorCount}
-          </Typography>
-        </div>
-        <Typography>
-          No. of Deferral: {deferralsCount}
-        </Typography>
-        <Typography>
-          No. of Dispensed Blood: {dispensedCount}
-        </Typography>
-        <Typography>
-          No. of Expired Blood: {expiredCount}
-        </Typography>
-        <Typography>
-          No. of Spoiled Blood Bag: 0
-        </Typography>
-        <Typography>
-          No. of Reactive Blood Bag: 0
-        </Typography>
+      <CardBody className="p-0">
+      <table className="w-full min-w-max table-auto text-left">
+        <tbody>
+          {TABLE_ROWS.map(({ label, count }, index) => {
+            const isLast = index === TABLE_ROWS.length - 1;
+            const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
+ 
+            return (
+              <tr key={name}>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    className="font-normal text-blue-gray-500"
+                  >
+                    {label}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    className="font-normal text-blue-gray-500"
+                  >
+                    {count}
+                  </Typography>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
       </CardBody>
     </Card>
   );

@@ -39,3 +39,14 @@ body {
   background-position: center;
   background-repeat: no-repeat;
 }
+.fading_divider_white {
+  height: 1px;
+  border: none;
+  background: -webkit-gradient(linear, 0 0, 100% 0, from(transparent), to(transparent), color-stop(50%, white));
+}
+
+.fading_divider_gray {
+  height: 1px;
+  border: none;
+  background: -webkit-gradient(linear, 0 0, 100% 0, from(transparent), to(transparent), color-stop(50%, #e5e7eb));
+}
