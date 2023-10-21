@@ -35,13 +35,48 @@ export function UsersTable() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [sortColumn, setSortColumn] = useState(DEFAULT_SORT_COLUMN); // Set default sort column
-    const [sortOrder, setSortOrder] = useState(DEFAULT_SORT_ORDER); 
+    const [sortOrder, setSortOrder] = useState(DEFAULT_SORT_ORDER);
     const [searchQuery, setSearchQuery] = useState("");
     const [bledByOptions, setBledByOptions] = useState([]);
     const [venueOptions, setVenueOptions] = useState([]);
-    
+    const [temporaryDeferralCategories, setTemporaryDeferralCategories] = useState([]);
+    const [temporaryDeferralRemarks, setTemporaryDeferralRemarks] = useState([]);
+    const [permanentDeferralCategories, setPermanentDeferralCategories] = useState([]);
+
     const router = useRouter();
-    
+
+    useEffect(() => {
+        const fetchDeferralCategories = async () => {
+            try {
+                const token = getCookie("token");
+                if (!token) {
+                    router.push("/login");
+                    return;
+                }
+
+                const response = await axios.get(`${laravelBaseUrl}/api/get-defferal-categories`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (response.data.status === "success") {
+                    const tempCategories = response.data.tempCategories;
+                    const permaCategories = response.data.permaCategories;
+
+                    setTemporaryDeferralCategories(tempCategories);
+                    setPermanentDeferralCategories(permaCategories);
+                } else {
+                    console.error("Failed to fetch deferral categories.");
+                }
+            } catch (error) {
+                console.error("An error occurred while fetching deferral categories:", error);
+            }
+        };
+
+        fetchDeferralCategories();
+    }, []);
+
     const fetchBledByAndVenueLists = async () => {
         try {
             const token = getCookie("token");
@@ -49,15 +84,15 @@ export function UsersTable() {
                 router.push("/login");
                 return;
             }
-    
+
             const response = await axios.get(`${laravelBaseUrl}/api/get-bledby-and-venue`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-    
+
             console.log(response);
-    
+
             if (response.data.status === "success") {
                 // Update the state variables with the data from the API response
                 setBledByOptions(response.data.bledBy);
@@ -121,7 +156,7 @@ export function UsersTable() {
 
     useEffect(() => {
         fetchData(currentPage);
-        fetchBledByAndVenueLists(); 
+        fetchBledByAndVenueLists();
     }, [router, sortColumn, sortOrder, searchQuery]);
 
     const handlePageChange = (newPage) => {
@@ -233,17 +268,13 @@ export function UsersTable() {
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                         <tr>
-                        {TABLE_HEAD.map((head) => (
+                            {TABLE_HEAD.map((head) => (
                                 <th key={head.key} className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer" onClick={() => handleSort(head.key)}>
                                     <div className="flex items-center">
                                         <Typography variant="small" color="blue-gray" className="font-normal leading-none opacity-70">
                                             {head.label}
                                         </Typography>
-                                        {sortColumn === head.key && (
-                                            <span className="ml-2">
-                                                {sortOrder === "asc" ? <BarsArrowUpIcon className="h-5 w-5" /> : <BarsArrowDownIcon className="h-5 w-5" />}
-                                            </span>
-                                        )}
+                                        {sortColumn === head.key && <span className="ml-2">{sortOrder === "asc" ? <BarsArrowUpIcon className="h-5 w-5" /> : <BarsArrowDownIcon className="h-5 w-5" />}</span>}
                                     </div>
                                 </th>
                             ))}
@@ -294,7 +325,7 @@ export function UsersTable() {
                                     ) : (
                                         <div className="space-x-2">
                                             <AddBloodBagPopup user_id={user.user_id} bledByOptions={bledByOptions} venueOptions={venueOptions} />
-                                            <MoveToDeferral user_id={user.user_id} refreshData={fetchData} />
+                                            <MoveToDeferral user_id={user.user_id} refreshData={fetchData} temporaryDeferralCategories={temporaryDeferralCategories} permanentDeferralCategories={permanentDeferralCategories} />
                                         </div>
                                     )}
                                 </td>
