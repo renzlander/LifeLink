@@ -20,12 +20,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 import InputSelect from "@/app/components/InputSelect";
 
-const options = [
-    { label: 'Option 1', value: 'option1' },
-    { label: 'Option 2', value: 'option2' },
-    // ... other options
-];
-
 export function EditPopUp({ user, onUpdate, refreshData }) {
     const [open, setOpen] = useState(false);
     const [editedUser, setEditedUser] = useState({ ...user });
@@ -142,10 +136,14 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
         }
     };
 
-    const handleSelect = (value) => {
-        console.log('Selected option:', value);
-        // Do something with the selected option value, e.g., set it in state
-    };
+    const options = (userRegion) => [
+        { label: userRegion, value: userRegion.toLowerCase() },
+      ];
+
+    const handleRegionSelect = (selected) => {
+        selectedRegion(selected);
+    }
+
     return (
         <>
             <Tooltip content="Edit User">
@@ -193,11 +191,11 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
                         />
                         {errorMessage.email.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.email[0]}</div>}
                         <Input 
-													type="text" 
-													label="Mobile" 
-													value={editedUser.mobile} 
-													onChange={(e) => setEditedUser({ ...editedUser, mobile: e.target.value })} 
-												/>
+                            type="text" 
+                            label="Mobile" 
+                            value={editedUser.mobile} 
+                            onChange={(e) => setEditedUser({ ...editedUser, mobile: e.target.value })} 
+                        />
                         {errorMessage.mobile.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.mobile[0]}</div>}
                     </div>
                     <div className="flex items-center gap-2">
@@ -207,11 +205,11 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
                         </Select>
                         {errorMessage.sex.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.sex[0]}</div>}
                         <Input 
-													type="date" 
-													label="Date of Birth" 
-													value={editedUser.dob} 
-													onChange={(e) => setEditedUser({ ...editedUser, dob: e.target.value })} containerProps={{ className: "min-w-[50px]" }} 
-												/>
+                            type="date" 
+                            label="Date of Birth" 
+                            value={editedUser.dob} 
+                            onChange={(e) => setEditedUser({ ...editedUser, dob: e.target.value })} containerProps={{ className: "min-w-[50px]" }} 
+                        />
                         {errorMessage.dob.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.dob[0]}</div>}
 
                         <Select label="Blood Type" value={editedUser.blood_type} onChange={(value) => setEditedUser({ ...editedUser, blood_type: value })} containerProps={{ className: "min-w-[50px]" }}>
@@ -224,18 +222,18 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
                         {errorMessage.blood_type.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.blood_type[0]}</div>}
 
                     </div>
-                    <Input 
-											type="text"
-											label="Street" 
-											value={editedUser.street} 
-											onChange={(e) => setEditedUser({ ...editedUser, street: e.target.value })} 
-										/>
+                        <Input 
+                            type="text"
+                            label="Street" 
+                            value={editedUser.street} 
+                            onChange={(e) => setEditedUser({ ...editedUser, street: e.target.value })} 
+                        />
                     <div className="flex items-center gap-2">
                         <InputSelect 
-													label="Region" 
-													options={options} 
-													onSelect={handleSelect} 
-												/>
+                            label="Region" 
+                            options={options(user.region)}
+                            onSelect={(selected) => setSelectedRegion(selected)}
+                        />
                         <Select label="Province" value={selectedProvince} onChange={(value) => setSelectedProvince(value)}>
                             {provinceList.map((province) => (
                                 <Option key={province.provCode} value={province.provCode}>

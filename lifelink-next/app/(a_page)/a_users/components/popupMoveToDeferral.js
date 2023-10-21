@@ -10,6 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 export function MoveToDeferral({ user_id, handleOpen, refreshData }) {
     const [open, setOpen] = useState(false);
     const [otherReason, setOtherReason] = useState('');
+    const [typesDefferal, setTypesDefferal] = useState('');
     const [category, setCategory] = useState('');
     const [remarks, setRemarks] = useState('');
     const [duration, setDuration] = useState(1);
@@ -38,6 +39,9 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData }) {
       }
     };
   
+    const handleTypesChange = (value) => {
+      setTypesDefferal(value);
+    };
     const handleCategoryChange = (value) => {
       setCategory(value);
     };
@@ -128,13 +132,12 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData }) {
               </Typography>
             </div>
           )}
-          <DialogBody divider className="flex flex-col gap-6">
-            
-          <div className={`relative mb-8`}>
+          <DialogBody divider className="flex flex-col gap-4">
+              <div className={`relative`}>
                 <Select
                   label="Type of Defferal"
                   value={remarks}
-                  onChange={(value) => handleRemarksChange(value)}
+                  onChange={(value) => handleTypesChange(value)}
                   required
                 >
                   <Option value="1">Temporary Deferral</Option>
@@ -163,14 +166,17 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData }) {
                   </div>
                 )}
               </div>
-        
-              {category === '3' && (
-                <div className={`relative mb-8`}>
-                  <Input
-                    label="Other Reason/s"
+              {category && (
+                <div className={`relative`}>
+                  <Select
+                    label="Remarks"
                     value={otherReason}
-                    onChange={(e) => setOtherReason(e.target.value)}
-                  />
+                    onChange={(value) => handleRemarksChange(value)}
+                  >
+                    <Option>Alcohol</Option>
+                    <Option>Incomplete Sleep</Option>
+                    <Option>Smoke</Option>
+                  </Select>
                   {errorMessage.specific_reason.length > 0 && (
                     <div className="error-message text-red-600 text-sm absolute mt-2">
                       {errorMessage.specific_reason[0]}
@@ -178,8 +184,8 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData }) {
                   )}
                 </div>
               )}
-              {remarks === '1' && (
-                <div className="flex items-center justify-center mb-4 text-black w-full">
+              {typesDefferal === '1' && (
+                <div className="flex items-center justify-center text-black w-full">
                   <IconButton
                     onClick={handleDecrement}
                     className="rounded-r-none"
