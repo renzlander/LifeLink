@@ -1,4 +1,4 @@
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, BarsArrowUpIcon, BarsArrowDownIcon } from "@heroicons/react/24/outline";
 import { Card, CardHeader, Typography, Button, CardBody, CardFooter, IconButton, Input, Spinner, Chip } from "@material-tailwind/react";
 import { AddBloodBagPopup } from "./popupAdd";
 import { ViewPopUp } from "./popupView";
@@ -20,6 +20,8 @@ const TABLE_HEAD = [
     { label: "", key: "actions" },
 ];
 const classes = "p-4";
+const DEFAULT_SORT_COLUMN = "donor_no"; // Set your default sort column key here
+const DEFAULT_SORT_ORDER = "asc";
 
 function formatDate(dateString) {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -32,8 +34,8 @@ export function UsersTable() {
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [sortColumn, setSortColumn] = useState(null);
-    const [sortOrder, setSortOrder] = useState("asc");
+    const [sortColumn, setSortColumn] = useState(DEFAULT_SORT_COLUMN); // Set default sort column
+    const [sortOrder, setSortOrder] = useState(DEFAULT_SORT_ORDER); 
     const [searchQuery, setSearchQuery] = useState("");
     const [bledByOptions, setBledByOptions] = useState([]);
     const [venueOptions, setVenueOptions] = useState([]);
@@ -231,13 +233,17 @@ export function UsersTable() {
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                         <tr>
-                            {TABLE_HEAD.map((head) => (
+                        {TABLE_HEAD.map((head) => (
                                 <th key={head.key} className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer" onClick={() => handleSort(head.key)}>
                                     <div className="flex items-center">
                                         <Typography variant="small" color="blue-gray" className="font-normal leading-none opacity-70">
                                             {head.label}
                                         </Typography>
-                                        {sortColumn === head.key && <span className="ml-2">{sortOrder === "asc" ? "▲" : "▼"}</span>}
+                                        {sortColumn === head.key && (
+                                            <span className="ml-2">
+                                                {sortOrder === "asc" ? <BarsArrowUpIcon className="h-5 w-5" /> : <BarsArrowDownIcon className="h-5 w-5" />}
+                                            </span>
+                                        )}
                                     </div>
                                 </th>
                             ))}
@@ -245,7 +251,7 @@ export function UsersTable() {
                     </thead>
                     <tbody>
                         {userDetails.map((user, index) => (
-                            <tr key={user.donor_no}>
+                            <tr key={user.donor_no} className="border-b border-blue-gray-100">
                                 <td className={classes}>
                                     <Typography variant="small" color="blue-gray" className="font-bold">
                                         {user.donor_no}
@@ -280,7 +286,7 @@ export function UsersTable() {
                                     <ViewPopUp user={user} />
                                     <EditPopUp user={user} onUpdate={handleUpdateUser} refreshData={fetchData} />
                                 </td>
-                                <td className={`${classes} flex justify-center items-center`}>
+                                <td className={`${classes} mt-1 flex items-center justify-center gap-2`}>
                                     {user.remarks !== 0 ? (
                                         <Chip size="lg" value="DEFERRED" color="blue-gray">
                                             DEFERRED

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, Tooltip, IconButton } from "@material-tailwind/react";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
@@ -22,8 +22,9 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
     const [part1, setPart1] = useState("");
     const [part2, setPart2] = useState("");
     const [part3, setPart3] = useState("");
-    const part2InputRef = useRef(null);
-    const part3InputRef = useRef(null);
+    const inputRef1 = useRef(null);
+    const inputRef2 = useRef(null);
+    const inputRef3 = useRef(null);
     const srNumber = `${part1}${part2}${part3}`;
 
     const handleBledBySelect = (selectedValue) => {
@@ -102,6 +103,18 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
         }
     };
 
+    useEffect(() => {
+        if (part1.length === 4 && inputRef2.current) {
+          inputRef2.current.focus();
+        }
+      }, [part1]);
+    
+      useEffect(() => {
+        if (part2.length === 6 && inputRef3.current) {
+          inputRef3.current.focus();
+        }
+      }, [part2]);
+
     return (
         <>
             <Tooltip content="Add Blood Bag">
@@ -126,17 +139,14 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
                                 maxLength={4}
                                 value={part1}
                                 onChange={(e) => {
-                                    const newValue = e.target.value;
-                                    if (!/^[0-9]*$/.test(newValue)) {
-                                        return;
-                                    }
-                                    setPart1(newValue);
-                                    if (newValue.length === 4) {
-                                        part2InputRef.current.focus();
-                                    }
+                                const newValue = e.target.value;
+                                if (!/^[0-9]*$/.test(newValue)) {
+                                    return;
+                                }
+                                setPart1(newValue);
                                 }}
                                 containerProps={{ className: "min-w-[75px]" }}
-                                ref={part2InputRef}
+                                inputRef={inputRef1}
                             />
                             <Typography>-</Typography>
                             <Input
@@ -144,14 +154,14 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
                                 maxLength={6}
                                 value={part2}
                                 onChange={(e) => {
-                                    const newValue = e.target.value;
-                                    if (!/^[0-9]*$/.test(newValue)) {
-                                        return;
-                                    }
-                                    setPart2(newValue);
+                                  const newValue = e.target.value;
+                                  if (!/^[0-9]*$/.test(newValue)) {
+                                    return;
+                                  }
+                                  setPart2(newValue);
                                 }}
                                 containerProps={{ className: "min-w-[100px]" }}
-                                ref={part2InputRef}
+                                inputRef={inputRef2}
                             />
                             <Typography>-</Typography>
                             <Input
@@ -159,30 +169,52 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
                                 maxLength={1}
                                 value={part3}
                                 onChange={(e) => {
-                                    const newValue = e.target.value;
-                                    if (!/^[0-9]*$/.test(newValue)) {
-                                        return;
-                                    }
-                                    setPart3(newValue);
+                                  const newValue = e.target.value;
+                                  if (!/^[0-9]*$/.test(newValue)) {
+                                    return;
+                                  }
+                                  setPart3(newValue);
                                 }}
                                 containerProps={{ className: "min-w-[25px]" }}
-                                ref={part3InputRef}
+                                inputRef={inputRef3}
                             />
                         </div>
                         {errorMessage.serial_no.length > 0 && <div className="error-message text-red-600 text-sm mt-1">{errorMessage.serial_no[0]}</div>}
                     </div>
 
                     <div className={`relative ${errorMessage.bled_by.length > 0 ? "mb-1" : ""}`}>
-                        <InputSelect label="Bled by" value={bledBy} onSelect={handleBledBySelect} options={dynamicBledByOptions} isSearchable required placeholder="Bled By" />
+                        <InputSelect 
+                            label="Bled by" 
+                            value={bledBy} 
+                            onSelect={handleBledBySelect} 
+                            options={dynamicBledByOptions} 
+                            isSearchable 
+                            required 
+                            placeholder="Bled By" 
+                        />
                         {errorMessage.bled_by.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.bled_by[0]}</div>}
                     </div>
 
                     <div className={`relative ${errorMessage.venue.length > 0 ? "mb-1" : ""}`}>
-                        <InputSelect label="Venue" value={venue} onSelect={handleVenueSelect} options={dynamicVenueOptions} isSearchable required placeholder="Venue" />
+                        <InputSelect 
+                            label="Venue" 
+                            value={venue} 
+                            onSelect={handleVenueSelect} 
+                            options={dynamicVenueOptions} 
+                            isSearchable 
+                            required 
+                            placeholder="Venue" 
+                        />
                         {errorMessage.venue.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.venue[0]}</div>}
                     </div>
                     <div className={`relative ${errorMessage.date_donated.length > 0 ? "mb-1" : ""}`}>
-                        <Input type="date" label="Date" value={dateDonated} onChange={(e) => setDateDonated(e.target.value)} max={new Date().toISOString().split("T")[0]} />
+                        <Input 
+                            type="date" 
+                            label="Date" 
+                            value={dateDonated}
+                            onChange={(e) => setDateDonated(e.target.value)} 
+                            max={new Date().toISOString().split("T")[0]} 
+                        />
                         {errorMessage.date_donated.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.date_donated[0]}</div>}
                     </div>
                 </DialogBody>
@@ -198,8 +230,6 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
         </>
     );
 }
-
-
     
 function getCookie(name) {
     const cookies = document.cookie.split("; ");
