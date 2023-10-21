@@ -155,7 +155,7 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
             </Tooltip>
             <Dialog open={open} handler={() => setOpen(false)}>
                 <DialogHeader>Edit User</DialogHeader>
-                <DialogBody divider className="flex flex-col gap-6 overscroll-y-auto	">
+                <DialogBody divider className="flex flex-col gap-6 overscroll-y-auto">
                     <div className="flex items-center gap-2">
                         <Input 
                             type="text" 
@@ -186,11 +186,11 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
                     </div>
                     <div className="flex items-center gap-2">
                         <Input 
-													type="text" 
-													label="Email" 
-													value={editedUser.email} 
-													onChange={(e) => setEditedUser({ ...editedUser, email: e.target.value })} 
-												/>
+                            type="text" 
+                            label="Email" 
+                            value={editedUser.email} 
+                            onChange={(e) => setEditedUser({ ...editedUser, email: e.target.value })} 
+                        />
                         {errorMessage.email.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.email[0]}</div>}
                         <Input 
 													type="text" 

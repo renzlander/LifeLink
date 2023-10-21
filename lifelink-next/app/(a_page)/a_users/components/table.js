@@ -1,9 +1,9 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Card, CardHeader, Typography, Button, CardBody, CardFooter, IconButton, Input, Spinner } from "@material-tailwind/react";
-import { AddBloodBagPopup } from "./popup";
+import { AddBloodBagPopup } from "./popupAdd";
 import { ViewPopUp } from "./popupView";
 import { EditPopUp } from "./popupEdit";
-import {MoveToDeferral} from "./popupMoveToDeferral";
+import { MoveToDeferral } from "./popupMoveToDeferral";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
@@ -281,18 +281,17 @@ export function UsersTable() {
                                     <EditPopUp user={user} onUpdate={handleUpdateUser} refreshData={fetchData} />
                                 </td>
                                 <td className={classes}>
-                                {user.remarks !== 0 ? (
-                                    <Button size="small" disabled className="w-2/3">
-                                    DEFERRED
-                                    </Button>
-                                ) : (
-                                    <div className="space-x-2">
-                                    <AddBloodBagPopup user_id={user.user_id} bledByOptions={bledByOptions} venueOptions={venueOptions} />
-                                    <MoveToDeferral user_id={user.user_id} refreshData={fetchData} />
-                                    </div>
-                                )}
+                                    {user.remarks !== 0 ? (
+                                        <Button size="small" disabled className="w-2/3">
+                                            DEFERRED
+                                        </Button>
+                                    ) : (
+                                        <div className="space-x-2">
+                                            <AddBloodBagPopup user_id={user.user_id} bledByOptions={bledByOptions} venueOptions={venueOptions} />
+                                            <MoveToDeferral user_id={user.user_id} refreshData={fetchData} />
+                                        </div>
+                                    )}
                                 </td>
-
                             </tr>
                         ))}
                     </tbody>

@@ -1,20 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, Tooltip, IconButton, Select, Option } from "@material-tailwind/react";
-import { TrashIcon, PencilIcon } from "@heroicons/react/24/solid";
+import React, { useRef, useState } from "react";
+import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, Tooltip, IconButton } from "@material-tailwind/react";
+import { PlusIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { Typography } from "@mui/material";
-import { EyeIcon } from "@heroicons/react/24/outline";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
-// import Select from 'react-select';
+import InputSelect from "@/app/components/InputSelect";
 
-export function AddBloodBagPopup({ user_id, handleOpen, bledByOptions, venueOptions }) {
+export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
     const router = useRouter();
 
     const [open, setOpen] = useState(false);
-    const [bledBy, setBledBy] = useState(""); 
+    const [bledBy, setBledBy] = useState("");
     const [venue, setVenue] = useState("");
 
     const [dateDonated, setDateDonated] = useState("");
@@ -23,19 +22,21 @@ export function AddBloodBagPopup({ user_id, handleOpen, bledByOptions, venueOpti
     const [part1, setPart1] = useState("");
     const [part2, setPart2] = useState("");
     const [part3, setPart3] = useState("");
+    const part2InputRef = useRef(null);
+    const part3InputRef = useRef(null);
     const srNumber = `${part1}${part2}${part3}`;
 
     const handleBledByChange = (selectedBledBy) => {
         setBledBy(selectedBledBy);
     };
-    
+
     const handleVenueChange = (selectedVenue) => {
         setVenue(selectedVenue);
     };
-   
+
     const dynamicBledByOptions = bledByOptions.map((item) => ({
         label: item.full_name,
-        value: item.full_name, 
+        value: item.full_name,
     }));
 
     const dynamicVenueOptions = venueOptions.map((item) => ({
@@ -102,12 +103,14 @@ export function AddBloodBagPopup({ user_id, handleOpen, bledByOptions, venueOpti
             console.error("Unknown error occurred:", error);
         }
     };
-    
+
     return (
         <>
-            <Button size="sm" onClick={() => setOpen(true)} variant="gradient" color="red">
-                + Add Blood Bag
-            </Button>
+            <Tooltip content="Add Blood Bag">
+                <IconButton size="sm" onClick={() => setOpen(true)} variant="gradient" color="red">
+                    <PlusIcon className="h-5 w-5" />
+                </IconButton>
+            </Tooltip>
             <Dialog open={open} handler={() => setOpen(false)}>
                 <DialogHeader>Add Blood Bag</DialogHeader>
                 {generalErrorMessage && (
@@ -130,8 +133,12 @@ export function AddBloodBagPopup({ user_id, handleOpen, bledByOptions, venueOpti
                                         return;
                                     }
                                     setPart1(newValue);
+                                    if (newValue.length === 4) {
+                                        part2InputRef.current.focus();
+                                    }
                                 }}
                                 containerProps={{ className: "min-w-[75px]" }}
+                                ref={part2InputRef}
                             />
                             <Typography>-</Typography>
                             <Input
@@ -146,6 +153,7 @@ export function AddBloodBagPopup({ user_id, handleOpen, bledByOptions, venueOpti
                                     setPart2(newValue);
                                 }}
                                 containerProps={{ className: "min-w-[100px]" }}
+                                ref={part2InputRef}
                             />
                             <Typography>-</Typography>
                             <Input
@@ -160,43 +168,20 @@ export function AddBloodBagPopup({ user_id, handleOpen, bledByOptions, venueOpti
                                     setPart3(newValue);
                                 }}
                                 containerProps={{ className: "min-w-[25px]" }}
+                                ref={part3InputRef}
                             />
                         </div>
                         {errorMessage.serial_no.length > 0 && <div className="error-message text-red-600 text-sm mt-1">{errorMessage.serial_no[0]}</div>}
                     </div>
 
                     <div className={`relative ${errorMessage.bled_by.length > 0 ? "mb-1" : ""}`}>
-                    <Select
-											label="Bled by"
-											value={bledBy}
-											onChange={handleBledByChange}
-											options={dynamicBledByOptions}
-											isSearchable
-											required
-											placeholder="Bled By" 
-                    />
-                    {errorMessage.bled_by.length > 0 && (
-                        <div className="error-message text-red-600 text-sm">
-                        {errorMessage.bled_by[0]}
-                        </div>
-                    )}
+                        <InputSelect label="Bled by" value={bledBy} onChange={handleBledByChange} options={dynamicBledByOptions} isSearchable required placeholder="Bled By" />
+                        {errorMessage.bled_by.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.bled_by[0]}</div>}
                     </div>
 
                     <div className={`relative ${errorMessage.venue.length > 0 ? "mb-1" : ""}`}>
-                    <Select
-											label="Venue"
-											value={venue} 
-											onChange={handleVenueChange}
-											options={dynamicVenueOptions} 
-											isSearchable
-											required
-											placeholder="Venue" 
-                    />
-                    {errorMessage.venue.length > 0 && (
-                        <div className="error-message text-red-600 text-sm">
-                        {errorMessage.venue[0]}
-                        </div>
-                    )}
+                        <InputSelect label="Venue" value={venue} onChange={handleVenueChange} options={dynamicVenueOptions} isSearchable required placeholder="Venue" />
+                        {errorMessage.venue.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.venue[0]}</div>}
                     </div>
                     <div className={`relative ${errorMessage.date_donated.length > 0 ? "mb-1" : ""}`}>
                         <Input type="date" label="Date" value={dateDonated} onChange={(e) => setDateDonated(e.target.value)} max={new Date().toISOString().split("T")[0]} />
@@ -216,6 +201,8 @@ export function AddBloodBagPopup({ user_id, handleOpen, bledByOptions, venueOpti
     );
 }
 
+
+    
 function getCookie(name) {
     const cookies = document.cookie.split("; ");
     const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));

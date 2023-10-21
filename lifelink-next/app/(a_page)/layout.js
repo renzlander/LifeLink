@@ -5,12 +5,7 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
 import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -27,7 +22,12 @@ import {
   ArrowUpOnSquareIcon,
   DocumentPlusIcon,
   ClipboardDocumentIcon,
+  Bars3Icon,
+  Bars3BottomLeftIcon,
 } from "@heroicons/react/24/outline";
+import {
+  IconButton,
+} from "@material-tailwind/react";
 import { DrawerHeader, AppBar, Drawer, } from './components/constants';
 import UserPopover from './components/popover';
 import Image from 'next/image';
@@ -76,27 +76,29 @@ export default function AdminLayout({ children }) {
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <div>
             <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              sx={{
-                marginRight: 5,
-                ...(open && { display: 'none' }),
-              }}
+              variant='text'
+              onClick={open ? handleDrawerClose : handleDrawerOpen}
+              className='-ml-3'
             >
-              <MenuIcon />
+              {open ? (
+                <Bars3BottomLeftIcon className='w-7 h-7 text-white' />
+              ) : (
+                <Bars3Icon className='w-7 h-7 text-white' />
+              )}
             </IconButton>
           </div>
           <UserPopover />
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <Image src="/logo_lifelink.png" width={150} height={50} className='mx-auto' />
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
+        <DrawerHeader sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 4}}>
+          <Image src='/prc_logo.png' width={50} height={50} />
+          {open ? (
+              <Image src='/logo_lifelink.png' width={120} height={50} className=' drop-shadow-md' />
+            ) : (
+              ''
+            )
+          }
         </DrawerHeader>
         <Divider />
         <List>

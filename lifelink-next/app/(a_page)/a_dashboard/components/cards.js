@@ -287,10 +287,12 @@ export function BarCard() {
 export function CountDonorCard({donorCount, deferralsCount, dispensedCount, expiredCount}) {
   return (
     <Card className="mt-6 w-full">
-      <CardBody>
-        <Typography variant="h5" color="blue-gray" className="mb-2 text-center">
+      <CardHeader color="red" className="relative h-16 flex items-center">
+        <Typography variant="h4" color="white" className="ml-4">
           MBD Summary
         </Typography>
+      </CardHeader>
+      <CardBody>
         <div className="flex justify-center">
           <Typography variant="h1" color="red" className="w-1/2 my-10 py-4 rounded-lg bg-red-600 text-gray-100 shadow-md shadow-gray-600 text-center">
           No. of Donors: {donorCount}

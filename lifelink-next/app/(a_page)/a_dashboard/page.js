@@ -108,7 +108,6 @@ export default function Home() {
     );
   }
 
-
   return (
     <div className="bg-gray-300 min-h-screen flex flex-col justify-between gap-y-3 p-4">
         <div className='flex gap-3'>

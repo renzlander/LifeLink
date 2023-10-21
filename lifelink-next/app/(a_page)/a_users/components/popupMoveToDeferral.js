@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, Tooltip, IconButton, Select, Option } from "@material-tailwind/react";
+import { ArrowsRightLeftIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { Typography } from "@mui/material";
@@ -108,9 +109,11 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData }) {
 
     return (
       <>
-        <Button size="sm" onClick={() => setOpen(true)} variant="gradient" color="red">
-          Move to Deferral
-        </Button>
+        <Tooltip content="Move to Defferal">
+            <IconButton size="sm" onClick={() => setOpen(true)} variant="gradient" color="red">
+                <ArrowsRightLeftIcon className="h-5 w-5" />
+            </IconButton>
+        </Tooltip>
         <Dialog open={open} handler={() => setOpen(false)}>
           <DialogHeader>Move to Deferral</DialogHeader>
           {generalErrorMessage && (
