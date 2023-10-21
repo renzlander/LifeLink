@@ -1,11 +1,13 @@
 'use client'
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Button, Spinner } from "@material-tailwind/react";
-import { BloodListCard, LineCard, BarCard, CountDonorCard } from './components/cards';
+import { Spinner, Card, Typography } from "@material-tailwind/react";
+import { BloodListCard, CountDonorCard } from './components/cards';
+import { LineCard, BarCard } from './components/charts';
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
+import { ClockIcon } from '@heroicons/react/24/outline';
 
 export default function Home() {
   const router = useRouter();
@@ -95,7 +97,11 @@ export default function Home() {
     const legends = legend[index];
     const counts = count[index];
     const percentages = percentage[index];
-    return <BloodListCard key={index} bloodType={bloodType} availability={status} legend={legends} count={counts} percentage={percentages}/>;
+    return (
+      <div>
+        <BloodListCard key={index} bloodType={bloodType} availability={status} legend={legends} count={counts} percentage={percentages}/>
+      </div>
+    );
   });
 
   if (loading) {
@@ -109,15 +115,22 @@ export default function Home() {
 
   return (
     <div className="bg-gray-300 min-h-screen flex flex-col justify-between gap-y-3 p-4">
-        <div className='grid grid-cols-4'>
-          <div className='col-start-1 col-end-3 w-full'>
-            <div className='flex 3xl:gap-16 gap-3'>
+        <div className='grid grid-cols-4 gap-3'>
+          <Card className='p-4 col-start-1 col-end-4 place-items-center w-full gap-y-3 bg-gray-100'>
+            <div className='flex 3xl:gap-16 gap-3 shrink'>
               {bloodListCards.slice(0, 4)}
             </div>
-            <div className='flex 3xl:mt-9 mt-[2.75rem] 3xl:gap-16 gap-3'>
+            <div className='flex 3xl:gap-16 gap-3 shrink mb-6'>
               {bloodListCards.slice(4, 8)}
             </div>
-          </div>
+            <div className='flex items-center gap-4 absolute bottom-1 right-4'>
+              <div className='flex items-center gap-1'>
+                <ClockIcon className='w-5 h-5 text-gray-700' />
+                <Typography className='text-sm text-gray-700 font-normal'>Updated:</Typography>
+              </div>
+              <Typography className='text-gray-700 text-md font-normal'>08:34 PM 10/21/2023</Typography>
+            </div>
+          </Card>
           <div className='col-start-4 col-end-5 w-full'>
             <CountDonorCard donorCount={donorCount} deferralsCount={deferralsCount} dispensedCount={dispensedCount} expiredCount={expiredCount} />
           </div>
