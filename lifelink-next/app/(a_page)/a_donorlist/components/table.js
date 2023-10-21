@@ -38,6 +38,7 @@ export function DonorTable() {
     const [searchQuery, setSearchQuery] = useState("");
     const [bloodType, setbloodType] = useState("All");
     const [donorType, setDonorTypes] = useState("All");
+    const [donorQty, setDonorQty] = useState();
 
 
 
@@ -47,10 +48,52 @@ export function DonorTable() {
 
     const handleBloodChange = (selectedBlood) => {
         setbloodType(selectedBlood);
+        fetchBloodTypeFilteredData(selectedBlood, donorType);
     };
 
     const handleDonorTypeChange = (selectedDonorType) => {
         setDonorTypes(selectedDonorType);
+        fetchBloodTypeFilteredData(bloodType, selectedDonorType);
+    };
+
+    const fetchBloodTypeFilteredData = async (bloodType, donorType) => {
+        console.log('donortype:', donorType)
+
+        try {
+            const token = getCookie("token");
+            if (!token) {
+                router.push("/login");
+                return;
+            }
+
+            const response = await axios.post(
+                `${laravelBaseUrl}/api/filter-donor-list`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    params: {
+                        blood_type: bloodType,
+                        donor_type: donorType,
+                    },
+                }
+            );
+                console.log('flter: ', response);
+            if (response.data.status === "success") {
+                setUserDetails(response.data.data.data);
+                setDonorQty(response.data.total_count);
+                setTotalPages(response.data.data.last_page);
+                setCurrentPage(response.data.total_count);
+                setLoading(false);
+            } else {
+                console.error("Error fetching data:", response.data.message);
+                setLoading(false);
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            setLoading(false);
+        }
     };
 
     const fetchData = async (page) => {
@@ -282,7 +325,7 @@ export function DonorTable() {
                                 </td>
                                 <td className={classes}>
                                     <Typography variant="small" color="blue-gray" className="font-normal capitalize">
-                                        WALA PA
+                                        {user.donor_type_desc}
                                     </Typography>
                                 </td>
                                 <td className={classes}>
