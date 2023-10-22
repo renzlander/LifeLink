@@ -95,7 +95,7 @@ export function LineCard() {
 
   return (
     <Card className="mt-6 w-1/2">
-      <CardHeader color="red" variant="gradient" className="flex items-center justify-center relative p-6 h-full">
+      <CardHeader color="white" variant="gradient" className="flex items-center justify-center relative p-6 h-full">
         <LineChart data={monthCounts} /> {/* Pass your data to the LineChart component */}
       </CardHeader>
       <CardBody>
@@ -202,7 +202,7 @@ export function BarCard() {
 
   return (
     <Card className="mt-6 w-1/2">
-      <CardHeader color="red" variant="gradient" className="flex items-center justify-center relative p-4 h-full">
+      <CardHeader color="white" variant="gradient" className="flex items-center justify-center relative p-4 h-full">
         <BarChart data={barangayDonorCount} />
       </CardHeader>
       <CardBody>
