@@ -3,49 +3,101 @@ import Chart from 'chart.js/auto';
 import { Line } from 'react-chartjs-2';
 
 export default function LineChart({ data }) {
+  const redCrossRed = "rgb(206, 17, 38)";
+  const hoverRed = "rgb(255, 0, 0)";
+
   const LineGraph = {
     type: "line",
     data: {
-      labels: Object.keys(data), // Use the keys (months) from the API data
+      labels: Object.keys(data),
       datasets: [
         {
           label: "Blood Bags",
-          fill: false,
-          lineTension: 0,
-          backgroundColor: "rgba(255, 255, 255, 1)",
-          borderColor: "rgba(255, 255, 255, 1)",
-          borderWidth: 5,
-          data: Object.values(data), // Use the values (counts) from the API data
+          data: Object.values(data),
+          fill: true,
+          lineTension: 0.4,
+          backgroundColor: "rgba(206, 17, 38, 0.2)",
+          borderColor: redCrossRed,
+          borderWidth: 2,
+          pointRadius: 6,
+          pointBackgroundColor: "#fff",
+          pointBorderColor: redCrossRed,
+          pointHoverRadius: 8,
+          pointHoverBackgroundColor: hoverRed,
+          pointHoverBorderColor: "#fff",
         },
       ],
     },
     options: {
+      maintainAspectRatio: false,
       responsive: true,
       plugins: {
-        legend: {
-          display: false,
+        title: {
+          display: true,
+          text: "Monthly Blood Bag Data",
+          font: {
+            size: 20,
+            weight: "bold",
+            color: redCrossRed,
+          },
         },
-        labels: {
-          color: "rgba(255, 255, 255, 1)",
+        legend: {
+          display: true,
+          position: "top",
+          labels: {
+            font: {
+              size: 16,
+              color: redCrossRed,
+            },
+          },
         },
       },
       scales: {
         y: {
+          beginAtZero: true,
           ticks: {
-            color: "white",
+            color: redCrossRed,
+            stepSize: 1,
           },
           grid: {
-            color: "white",
+            color: "rgba(0, 0, 0, 0.2)", // Increased grid line opacity
           },
         },
         x: {
           ticks: {
-            color: "white",
+            color: redCrossRed,
           },
           grid: {
-            color: "transparent",
+            color: "rgba(0, 0, 0, 0.2)", // Increased grid line opacity
           },
         },
+      },
+      interaction: {
+        mode: "index",
+        intersect: false,
+      },
+      elements: {
+        point: {
+          radius: 6,
+          hoverRadius: 8,
+        },
+      },
+      tooltips: {
+        enabled: true,
+        mode: "index",
+        callbacks: {
+          label: function (tooltipItem) {
+            return tooltipItem.yLabel + " Bags";
+          },
+        },
+      },
+      hover: {
+        mode: "nearest",
+        intersect: false,
+      },
+      animation: {
+        duration: 800,
+        easing: "easeInOutQuart",
       },
     },
   };
