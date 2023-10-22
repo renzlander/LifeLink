@@ -54,7 +54,7 @@ export default function AdminLayout({ children }) {
     { href: './a_dispensed', text: 'Dispensed Blood', icon: <ArrowUpOnSquareIcon /> },
     { href: './a_posts', text: 'Donor Posts', icon: <DocumentPlusIcon /> },
     { href: './a_logs', text: 'Activity Logs', icon: <ClipboardDocumentIcon /> },
-    { href: '#', text: 'MBD Report', icon: <Squares2X2Icon /> },
+    { href: './a_mbd', text: 'MBD Report', icon: <Squares2X2Icon /> },
   ];
 
   return (

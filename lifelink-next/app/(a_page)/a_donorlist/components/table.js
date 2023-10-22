@@ -219,31 +219,29 @@ export function DonorTable() {
                     Donor List
                 </Typography>
             </CardHeader>
-            <CardBody className="overflow-x-auto px-0">
-            <div className="flex items-end justify-between px-4 mb-4 my-5">
-                <div className="flex flex-row items-end gap-6">
-                    <div>
-                        <Select onChange={handleBloodChange} label="Blood Type" value={bloodType}>
-                            {bloodTypes.map((blood) => (
-                                <Option key={blood} value={blood}>
-                                    {blood}
-                                </Option>
-                            ))}
-                        </Select>
-                    </div>
+            <div className="flex items-end justify-between px-4 mt-6">
+                <div className="mx-4 flex justify-between items-center w-full">
+                    <div className="flex flex-row items-end gap-6">
+                        <div>
+                            <Select onChange={handleBloodChange} label="Blood Type" value={bloodType}>
+                                {bloodTypes.map((blood) => (
+                                    <Option key={blood} value={blood}>
+                                        {blood}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </div>
 
-                    <div>
-                        <Select onChange={handleDonorTypeChange} label="Donor Types" value={donorType}>
-                            {donorTypes.map((donor) => (
-                                <Option key={donor} value={donor}>
-                                    {donor}
-                                </Option>
-                            ))}
-                        </Select>
+                        <div>
+                            <Select onChange={handleDonorTypeChange} label="Donor Types" value={donorType}>
+                                {donorTypes.map((donor) => (
+                                    <Option key={donor} value={donor}>
+                                        {donor}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </div>
                     </div>
-
-                </div>
-                <div className="mb-4 ml-4 mr-4 flex justify-end items-center">
                     <div className="flex w-full shrink-0 gap-2 md:w-max">
                         <div className="w-full md:w-72">
                             <Input
@@ -263,6 +261,7 @@ export function DonorTable() {
                     </div>
                 </div>
             </div>
+            <CardBody className="overflow-x-auto px-0">
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                         <tr>
