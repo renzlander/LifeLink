@@ -14,8 +14,8 @@ const TABLE_HEAD = [
     { label: "Mobile", key: "mobile" },
     { label: "Birthday", key: "dob" },
     { label: "Duration (Days)", key: "deferred_duration" },
+    { label: "Category", key: "category" },
     { label: "Remarks", key: "remarks" },
-    { label: "Other Reason", key: "reason" },
     { label: "End Date of Deferral", key: "end_date" },
     { label: "", key: "tools" },
     { label: "", key: "actions" },
@@ -227,7 +227,7 @@ export function TemporaryTable() {
                         </td>
                         <td className={classes}>
                             <Typography variant="small" color="blue-gray" className="font-normal">
-                                {user.specific_reason}
+                                {user.remarks}
                             </Typography>
                         </td>
                         <td className={classes}>

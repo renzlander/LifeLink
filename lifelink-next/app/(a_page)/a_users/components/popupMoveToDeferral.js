@@ -7,16 +7,16 @@ import { Typography } from "@mui/material";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export function MoveToDeferral({ user_id, handleOpen, refreshData, temporaryDeferralCategories, permanentDeferralCategories }) {
+export function MoveToDeferral({ user_id, refreshData, temporaryDeferralCategories, permanentDeferralCategories }) {
     const [open, setOpen] = useState(false);
-    const [otherReason, setOtherReason] = useState("");
-    const [typesDeferral, setTypesDeferral] = useState("1"); // Default to temporary deferral
+    const [typesDeferral, setTypesDeferral] = useState("1");
     const [category, setCategory] = useState("");
     const [remarks, setRemarks] = useState("");
-    const [duration, setDuration] = useState("001"); // Pad with leading zeros
+    const [duration, setDuration] = useState("001");
 
     const [errorMessage, setErrorMessage] = useState({ category: "", specific_reason: "", remarks: "", duration: "" });
     const [generalErrorMessage, setGeneralErrorMessage] = useState("");
+    const [selectedCategoryRemarks, setSelectedCategoryRemarks] = useState(null); // State to store selected category's remarks
 
     const handleIncrement = () => {
         const parsedDuration = parseInt(duration, 10);
@@ -32,13 +32,25 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData, temporaryDefe
         }
     };
 
+    const handleCategoryChange = (value) => {
+        setCategory(value);
+
+        // Find the selected category's remarks
+        const selectedCategory = temporaryDeferralCategories.find((category) => category.categories_id === value);
+        if (selectedCategory) {
+            setSelectedCategoryRemarks(selectedCategory.remarks);
+        } else {
+            setSelectedCategoryRemarks(null); // Reset remarks if the selected category is not found
+        }
+    };
+
     const handleTypesChange = (value) => {
         setTypesDeferral(value);
         setCategory(""); // Reset category when changing the type
     };
 
-    const handleCategoryChange = (value) => {
-        setCategory(value);
+    const handleRemarksChange = (value) => {
+        setRemarks(value);
     };
 
     const handleMoveToDeferral = async (e) => {
@@ -53,13 +65,17 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData, temporaryDefe
 
             const data = {
                 user_id,
-                category,
-                specific_reason: otherReason,
-                remarks: typesDeferral,
+                deferral_type_id:typesDeferral,
+                categories_id: category,
+                remarks: remarks,
                 duration: duration,
             };
-
-            const response = await axios.post(`${laravelBaseUrl}/api/move-to-deferral`, data, {
+            console.log(user_id);
+            console.log('deferral_type_id',typesDeferral);
+            console.log(category);
+            console.log(remarks);
+            console.log(duration);
+            const response = await axios.post(`${laravelBaseUrl}/api/move-to-defferal`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -72,6 +88,8 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData, temporaryDefe
                 refreshData();
             } else if (response.data.status === "error") {
                 handleErrorResponse(response.data);
+                toast.error("error");
+
             }
         } catch (error) {
             console.error("Unknown error occurred:", error);
@@ -117,7 +135,7 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData, temporaryDefe
                         {errorMessage.remarks && <div className="error-message text-red-600 text-sm absolute mt-2">{errorMessage.remarks}</div>}
                     </div>
                     <div className={`relative ${errorMessage.category ? "mb-4" : ""}`}>
-                        <Select label="Category" value={category} onChange={(value) => handleCategoryChange(value)} required>
+                        <Select label="Category" value={category} onChange={handleCategoryChange} required>
                             {typesDeferral === "1"
                                 ? temporaryDeferralCategories.map((tempCategory) => (
                                       <Option key={tempCategory.categories_id} value={tempCategory.categories_id}>
@@ -132,18 +150,22 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData, temporaryDefe
                                   ))
                                 : null}
                         </Select>
+
                         {errorMessage.category && <div className="error-message text-red-600 text-sm mt-1">{errorMessage.category}</div>}
                     </div>
-                    {category && (
+                    {category && typesDeferral === "1" && (
                         <div className={`relative`}>
-                            <Select label="Remarks" value={otherReason} onChange={(value) => handleRemarksChange(value)}>
-                                <Option>Alcohol</Option>
-                                <Option>Incomplete Sleep</Option>
-                                <Option>Smoke</Option>
+                            <Select label="Remarks" value={selectedCategoryRemarks} onChange={(value) => handleRemarksChange(value)}>
+                                {selectedCategoryRemarks && (
+                                    <Option value={selectedCategoryRemarks}>
+                                        {selectedCategoryRemarks}
+                                    </Option>
+                                )}
                             </Select>
                             {errorMessage.specific_reason && <div className="error-message text-red-600 text-sm absolute mt-2">{errorMessage.specific_reason}</div>}
                         </div>
                     )}
+
                     {typesDeferral === "1" && (
                         <div className="flex items-center justify-center text-black w-full">
                             <IconButton onClick={handleDecrement} className="rounded-r-none">
@@ -181,4 +203,10 @@ export function MoveToDeferral({ user_id, handleOpen, refreshData, temporaryDefe
             </Dialog>
         </>
     );
+}
+
+function getCookie(name) {
+  const cookies = document.cookie.split("; ");
+  const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));
+  return cookie ? cookie.split("=")[1] : null;
 }

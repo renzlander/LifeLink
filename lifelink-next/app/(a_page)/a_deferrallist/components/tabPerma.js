@@ -13,10 +13,9 @@ const TABLE_HEAD = [
     { label: "Email Address", key: "email" },
     { label: "Mobile", key: "mobile" },
     { label: "Birthday", key: "dob" },
-    { label: "Remarks", key: "remarks" },
-    { label: "Other Reason", key: "reason" },
+    { label: "Category", key: "category" },
     { label: "", key: "tools" },
-    { label: "", key: "actions" },
+
 ];
 
 const classes = "p-4";
