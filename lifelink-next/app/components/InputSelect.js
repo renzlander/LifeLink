@@ -50,7 +50,7 @@ export default function InputSelect({ label, options, onSelect }) {
           onChange={(e) => setSearchTerm(e.target.value)}
           autoComplete="off"
         />
-      <div className={`absolute inset-y-0 right-2 flex items-center pointer-events-none transition-transform duration-300 ease-in-out transform ${isDropdownOpen ? 'rotate-180' : ''} ${isDropdownOpen ? 'rotate-180' : ''}`}>
+      <div className={`absolute inset-y-0 right-2 flex items-center pointer-events-none transition-transform ${isDropdownOpen ? 'rotate-180' : ''} ${isDropdownOpen ? 'rotate-180' : ''}`}>
         <ChevronDownIcon className="h-3 w-3 text-gray-900" />
       </div>
       </div>

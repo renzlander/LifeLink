@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, Tooltip, IconButton, Select, Option } from "@material-tailwind/react";
+import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, Card, CardBody, Chip, Tooltip, Select, Option } from "@material-tailwind/react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { Typography } from "@mui/material";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import ArrowRightIcon from "@/public/ArrowRight"
+import { DocumentIcon } from "@heroicons/react/24/outline";
+import PointRightBlood from "@/public/PointRightBlood";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import { AccordionDispense } from "./accordion";
@@ -59,7 +59,7 @@ export function Revert({ serial_no, refreshData }) {
 
     return (
         <>
-            <Button size="sm" onClick={() => setOpen(true)} className="bg-red-600 mr-4">
+            <Button size="sm" onClick={() => setOpen(true)} color="red" variant="gradient">
                 Undo
             </Button>
             <Dialog open={open} handler={() => setOpen(false)}>
@@ -87,8 +87,11 @@ export function Revert({ serial_no, refreshData }) {
     );
 }
 
-export function Dispense({ serial_no, handleOpen, refreshData }) {
+export function Dispense({ serial_no, refreshData }) {
     const [open, setOpen] = useState(false);
+    const bloodType = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+   
+    const handleOpen = () => setOpen(!open);
     const [generalErrorMessage, setGeneralErrorMessage] = useState("");
 
     const handleMovetoStock = async () => {
@@ -135,72 +138,74 @@ export function Dispense({ serial_no, handleOpen, refreshData }) {
 
     return (
         <>
-            <Button size="sm" onClick={() => setOpen(true)} className="bg-red-600">
-                Dispense
-            </Button>
-            <Dialog open={open} handler={() => setOpen(false)} size="xl">
-                <DialogHeader>Dispense Blood</DialogHeader>
-                <DialogBody divider className="flex flex-col gap-4 items-center">
-									<div className="w-full h-full flex items-start justify-between">
-										<AccordionDispense />
-										<div className="w-1/3 flex justify-center items-center my-16">
-										<ArrowRightIcon width={100} height={100} fill='#dc2626' />
-										</div>
-										<div className="w-1/3 flex flex-col">
-											<div className="w-full flex flex-col items-end">
-												<div className="mb-6 flex">
-													<Input
-														label="Search"
-														icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-													/>
-												</div>
-												<div className="flex">
-													<div className="flex flex-wrap items-center gap-4 mb-3 mr-3">
-														<Typography variant="h6" className="text-red-800 font-semibold">NAME</Typography>
-														<Input label="First Name" />
-														<Input label="Middle Name" />
-														<Input label="Last Name" />
-													</div>
-													<div className="flex flex-wrap items-center gap-4 mb-3 ml-3">
-														<Typography variant="h6" className="text-red-800 font-semibold">INFO</Typography>
-														<Input label="Date of Birth" type="date" />
-														<Select label="Blood Type">
-															<Option>A</Option>
-															<Option>B</Option>
-														</Select>
-														<Select label="Sex">
-															<Option>Male</Option>
-															<Option>Female</Option>
-														</Select>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div className="flex flex-col gap-y-6">
-										<Input label="Diagnosis" />
-										<Select label="Hospitals">
-											<Option>ValGen</Option>
-											<Option>Chinese General</Option>
-										</Select>
-									</div>
-                </DialogBody>
-                {generalErrorMessage && (
-                    <div className="mt-4 text-center bg-red-100 p-2 rounded-lg">
-                        <Typography color="red" className="text-sm font-semibold">
-                            {generalErrorMessage}
-                        </Typography>
+          <Button onClick={handleOpen} size="sm" color="red" variant="gradient">
+            Dispense
+          </Button>
+          <Dialog open={open} handler={handleOpen} size="lg">
+            <DialogHeader className="border-b-2">Dispense Blood</DialogHeader>
+            <DialogBody className="flex flex-col gap-5 overscroll-y-auto">
+              <div className="flex items-start justify-between">
+                <Card className="border-2 w-1/3">
+                  <CardBody>
+                    <AccordionDispense />
+                  </CardBody>
+                </Card>
+                <PointRightBlood height={150} width={150} />
+                <Card className="border-2 w-1/2">
+                  <CardBody className="flex flex-col items-center justify-center gap-3">
+                    <Select label="search">
+                      <Option>Ray Reyes</Option>
+                      <Option>James Robles</Option>
+                    </Select>
+                    <Chip value="Manual" size="sm" className="w-full mt-4 pl-4" />
+                    <div className="flex items-center justify-between w-full">
+                        <div className="flex flex-col items-center gap-3">
+                            <Input label="First Name"/>
+                            <Input label="Middle Name"/>
+                            <Input label="Last Name"/>
+                        </div>
+                        <div className="flex flex-col items-center gap-3">
+                            <Input type="date" label="Date of Birth"/>
+                            <Select label="Blood Type">
+                                {bloodType.map((bloodTypes) => (
+                                    <Option key={bloodTypes}>{bloodTypes}</Option>
+                                ))}
+                            </Select>
+                            <Select label="Sex">
+                                <Option>Male</Option>
+                                <Option>Female</Option>
+                            </Select>
+                        </div>
                     </div>
-                )}
-                <DialogFooter className="flex justify-center mt-4">
-                    <Button variant="red-cross" onClick={() => setOpen(false)} className="mr-2">
-                        Cancel
-                    </Button>
-                    <Button variant="red-cross" color="red" onClick={handleMovetoStock}>
-                        Confirm
-                    </Button>
-                </DialogFooter>
-            </Dialog>
+                  </CardBody>
+                </Card>
+              </div>
+              <div>
+                <Card shadow={false}>
+                  <CardBody className="flex flex-col items-center justify-center gap-4">
+                    <Input label="Diagnosis for transfusion" containerProps={{ className: "w-[50%]" }}/>
+                    <Select label="Hospital" containerProps={{ className: "w-[50%]" }}>
+                      <Option>ValGen</Option>
+                      <Option>Dalandanan Hospital</Option>
+                    </Select>
+                  </CardBody>
+                </Card>
+              </div>
+            </DialogBody>
+            <DialogFooter className="border-t-2">
+              <Button
+                variant="text"
+                color="red"
+                onClick={handleOpen}
+                className="mr-1"
+              >
+                <span>Cancel</span>
+              </Button>
+              <Button variant="gradient" color="green" onClick={handleOpen}>
+                <span>Confirm</span>
+              </Button>
+            </DialogFooter>
+          </Dialog>
         </>
     );
 }

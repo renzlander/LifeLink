@@ -326,7 +326,7 @@ export function TabStock() {
                                         />
                                     </div>
                                 </td>
-                                <td className={classes}>
+                                <td className={`${classes} flex items-center gap-3`}>
                                     <Revert serial_no={user.serial_no} refreshData={fetchData} />
 
                                     <Dispense serial_no={user.serial_no} refreshData={fetchData} />

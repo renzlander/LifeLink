@@ -13,14 +13,11 @@ import {
   Spinner,
   Chip,
 } from "@material-tailwind/react";
-import { AddBloodBagPopup } from "./popup";
 import { ViewPopUp } from "./popupView";
-import { EditPopUp } from "./popupEdit";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { useRouter } from "next/navigation";
-import { ToastContainer, toast } from "react-toastify";
 
 const TABLE_HEAD = [
   { label: "Donor Number", key: "donor_no" },
@@ -30,9 +27,8 @@ const TABLE_HEAD = [
   { label: "Mobile", key: "mobile" },
   { label: "Birthday", key: "dob" },
   { label: "", key: "tools" },
-  { label: "", key: "actions" },
 ];
-const classes = "p-4";
+const classes = "p-4 border-b border-blue-gray-50";
 
 function formatDate(dateString) {
   const options = { year: "numeric", month: "long", day: "numeric" };
@@ -258,7 +254,7 @@ export function DispenseTable() {
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="font-bold"                  >
+                    className="font-bold">
                     {user.donor_no}
                   </Typography>
                 </td>
@@ -309,16 +305,6 @@ export function DispenseTable() {
                 </td>
                 <td className={classes}>
                   <ViewPopUp user={user} />
-                  <EditPopUp user={user} onUpdate={handleUpdateUser} refreshData={fetchData}/>
-                </td>
-                <td className={`${classes} flex items-center justify-center`}>
-                  {user.remarks !== 0 ? (
-                    <Chip variant="gradient" size="lg" value="DEFERRED" color="blue-gray">
-                      DEFERRED
-                    </Chip>
-                  ) : (
-                    <AddBloodBagPopup user_id={user.user_id} />
-                  )}
                 </td>
               </tr>
             ))}
