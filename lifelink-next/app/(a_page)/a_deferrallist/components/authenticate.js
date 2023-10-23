@@ -11,7 +11,6 @@ import {
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { useRouter } from 'next/navigation';
-import { ToastContainer, toast } from "react-toastify";
 
 export function AuthCard({ onAuthenticate }) {
   const [password, setPassword] = useState('');
@@ -23,7 +22,8 @@ export function AuthCard({ onAuthenticate }) {
     setError(''); 
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
       const token = getCookie("token");
       if (!token) {
@@ -45,22 +45,18 @@ export function AuthCard({ onAuthenticate }) {
       );
 
       if (response.data.status === "success") {
-        toast.success('Security pin verified successfully.');
         onAuthenticate();
       } else {
-        toast.error('Invalid password. Please try again.');
         setError('Invalid password. Please try again.');
       }
     } catch (error) {
       console.error("Error fetching data:", error);
       setError('Invalid password. Please try again.');
-      toast.error('Invalid password. Please try again.');
-
     }
   };
 
   return (
-    <Card className="w-96">
+    <Card className="w-96 mt-20">
       <CardHeader
         variant="gradient"
         color="gray"
@@ -70,21 +66,21 @@ export function AuthCard({ onAuthenticate }) {
           Oops! You need an Admin password to access this page.
         </Typography>
       </CardHeader>
-      <CardBody className="flex flex-col gap-4">
-        <Input
-          label="Password"
-          size="lg"
-          type="password"
-          value={password}
-          onChange={handlePasswordChange}
-        />
-        {error && <Typography variant="body" color="red">{error}</Typography>}
+      <CardBody>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-10">
+          <Input
+            label="Password"
+            size="lg"
+            type="password"
+            value={password}
+            onChange={handlePasswordChange}
+          />
+          {error && <Typography variant="body" color="red">{error}</Typography>}
+          <Button variant="gradient" type='submit' fullWidth>
+            Submit
+          </Button>
+        </form>
       </CardBody>
-      <CardFooter className="pt-0">
-        <Button variant="gradient" fullWidth onClick={handleSubmit}>
-          Submit
-        </Button>
-      </CardFooter>
     </Card>
   );
 }

@@ -1,6 +1,20 @@
-import { PencilIcon } from "@heroicons/react/24/solid";
-import { ArrowDownTrayIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Card, CardHeader, Typography, Button, CardBody, Chip, CardFooter, Avatar, IconButton, Tooltip, Input, Spinner, Select, Option } from "@material-tailwind/react";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { 
+    Card, 
+    CardHeader, 
+    Typography, 
+    Button, 
+    CardBody, 
+    Checkbox, 
+    CardFooter, 
+    Avatar, 
+    IconButton, 
+    Tooltip, 
+    Input, 
+    Spinner, 
+    Select, 
+    Option 
+} from "@material-tailwind/react";
 import { RemoveBlood, EditPopUp, MoveToStock, MultipleMoveToStock, Unsafe } from "./popup";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -16,10 +30,6 @@ const TABLE_HEAD = [
     { label: "Expiration Date", key: "expiration_date" },
     { label: "Venue", key: "venue" },
     { label: "Bled By", key: "bled_by" },
-    { label: "" },
-    { label: "" },
-    { label: "" },
-    { label: "" },
     { label: "" },
 ];
 
@@ -229,7 +239,7 @@ export function BagsTable() {
         );
     }
 
-    const selectedRowClass = "bg-red-100";
+    const selectedRowClass = "bg-gray-400";
     const handleRowSelection = (blood_bags_id) => {
         if (selectedRows.includes(blood_bags_id)) {
             setSelectedRows(selectedRows.filter((id) => id !== blood_bags_id));
@@ -238,16 +248,12 @@ export function BagsTable() {
         }
     };
 
-
     return (
         <Card className="w-full">
             <CardHeader color="red" className="relative h-16 flex items-center">
                 <Typography variant="h4" color="white" className="ml-4">
                     Collected Blood Bags
                 </Typography>
-            </CardHeader>
-            <CardHeader floated={false} shadow={false} className="rounded-none mt-0 bg-transparent">
-                
             </CardHeader>
             <CardBody className="">
                 <div className="flex items-end justify-between px-4 mb-4 my-5">
@@ -327,7 +333,7 @@ export function BagsTable() {
                     </div>
                 </div>
                 <div className="flex items-center px-4 mt-8 mb-4">
-                    <Typography variant="subtitle1" className="font-bold text-sm">
+                    <Typography variant="h6" className="text-lg">
                         Selected Rows: {selectedRows.length}
                     </Typography>
                     <MultipleMoveToStock variant="contained" color="red" size="sm" className="ml-4" selectedRows={selectedRows} refreshData={fetchData} />
@@ -335,9 +341,8 @@ export function BagsTable() {
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                         <tr>
-                            <th>
-                                <input
-                                    type="checkbox"
+                            <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer">
+                                <Checkbox
                                     onChange={() => {
                                         if (selectedRows.length === userDetails.length) {
                                             setSelectedRows([]);
@@ -346,7 +351,6 @@ export function BagsTable() {
                                         }
                                     }}
                                     checked={userDetails.length > 0 && selectedRows.length === userDetails.length}
-                                    className="h-5 w-5 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
                                 />
                             </th>
                             {TABLE_HEAD.map((head) => (
@@ -364,9 +368,8 @@ export function BagsTable() {
                     <tbody>
                         {userDetails.map((user, index) => (
                             <tr key={user.blood_bags_id} className={`${selectedRows.includes(user.blood_bags_id) ? selectedRowClass : ""}`}>
-                                <td>
-                                    <input
-                                        type="checkbox"
+                                <td className={classes}>
+                                    <Checkbox
                                         onChange={() => {
                                             if (selectedRows.includes(user.blood_bags_id)) {
                                                 setSelectedRows(selectedRows.filter((id) => id !== user.blood_bags_id));
@@ -375,7 +378,6 @@ export function BagsTable() {
                                             }
                                         }}
                                         checked={selectedRows.includes(user.blood_bags_id)}
-                                        className="h-5 w-5 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
                                     />
                                 </td>
                                 <td className={classes}>
@@ -420,26 +422,10 @@ export function BagsTable() {
                                         {user.bled_by}
                                     </Typography>
                                 </td>
-                                <td className={classes}>
-                                    <Typography variant="small" color="blue-gray" className="font-normal">
-                                        {user.email}
-                                    </Typography>
-                                </td>
-                                <td className={classes}>
-                                {
+                                <td className={`${classes} flex items-center justify-around gap-3`}>
                                     <EditPopUp user={user} countdown={user.countdown} refreshData={fetchData} />
-                                }
-                                </td>
-                                <td className={classes}>
-                                {
                                     <RemoveBlood serial_no={user.serial_no} countdown={user.countdown} refreshData={fetchData} />
-                                }
-                                </td>
-
-                                <td className={classes}>
                                     <MoveToStock serial_no={user.serial_no} refreshData={fetchData} />
-                                </td>
-                                <td className="{classes}">
                                     <Unsafe serial_no={user.serial_no} refreshData={fetchData} />
                                 </td>
                             </tr>

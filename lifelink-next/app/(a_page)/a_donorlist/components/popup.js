@@ -8,20 +8,16 @@ import {
   Input,
   Tooltip,
   IconButton,
+  Typography,
+  Card,
+  CardHeader,
+  CardBody,
   Select,
   Option,
 } from "@material-tailwind/react";
-import {
-  TrashIcon,
-  PencilIcon, 
-  PlusIcon,
-  MinusIcon,
-} from "@heroicons/react/24/solid";
-import axios from "axios";
-import { laravelBaseUrl } from "@/app/variables";
-import { Typography } from "@mui/material";
 import { EyeIcon } from "@heroicons/react/24/outline";
-import { toast } from "react-toastify";
+import { TableDonated } from "./tableDonated";
+import { TableReceived } from "./tableReceived";
 
 function formatDate(dateString) {
   const options = { year: "numeric", month: "long", day: "numeric" };
@@ -31,7 +27,6 @@ function formatDate(dateString) {
   );
   return formattedDate;
 }
-  
 
 export function ViewPopUp({user}) {
   const [open, setOpen] = useState(false);
@@ -88,83 +83,24 @@ export function ViewPopUp({user}) {
           <Typography className="text-lg text-gray-900 font-medium">
             {user.street}, {user.barangay}, {user.municipality}, {user.province}, {user.region}
           </Typography>
-          <div className="flex justify-around w-full gap-10 overflow-x-auto">
-            <div className="bg-white p-4 shadow-md rounded-lg">
-              <h3 className="text-xl font-semibold mb-4">Donated Blood</h3>
-              <div className="overflow-y-auto max-h-[150px]">
-                <table className="table-auto w-full">
-                  <thead>
-                    <tr className="bg-red-100">
-                      <th className="px-4 py-2">Serial Number</th>
-                      <th className="px-4 py-2">Date Donated</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="px-4 py-2">
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                        {user.blood_bags.map((bag, index) => (
-                          <div key={index}>
-                            {bag.serial_no}
-                          </div>
-                        ))}
-                        </Typography>
-                      </td>
-                      <td className="px-4 py-2">
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {user.blood_bags.map((bag, index) => (
-                          <div key={index}>
-                            {formatDate(bag.date_donated)}
-                          </div>
-                        ))}
-                        </Typography>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div className="bg-white p-4 shadow-md rounded-lg">
-              <h3 className="text-xl font-semibold mb-4">Received Blood</h3>
-              <div className="overflow-y-auto max-h-[150px]">
-                <table className="table-auto w-full">
-                  <thead>
-                    <tr className="bg-red-100">
-                      <th className="px-4 py-2">Serial Number</th>
-                      <th className="px-4 py-2">Date Received</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="px-4 py-2">78901221251</td>
-                      <td className="px-4 py-2">2023-09-25</td>
-                    </tr>
-                    <tr>
-                      <td className="px-4 py-2">78901221251</td>
-                      <td className="px-4 py-2">2023-09-25</td>
-                    </tr>
-                    <tr>
-                      <td className="px-4 py-2">78901221251</td>
-                      <td className="px-4 py-2">2023-09-25</td>
-                    </tr>
-                    <tr>
-                      <td className="px-4 py-2">78901221251</td>
-                      <td className="px-4 py-2">2023-09-25</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+          <div className="mt-6 flex justify-between w-full gap-10">
+            <Card className="border-2 w-1/2">
+              <CardHeader color="gray" shadow={false} className="relative h-10 flex items-center pl-4">
+                <Typography variant="h6">Donated Blood</Typography>
+              </CardHeader>
+              <CardBody>
+                <TableDonated />
+              </CardBody>
+            </Card>
+            <Card className="border-2 w-1/2">
+              <CardHeader color="gray" shadow={false} className="relative h-10 flex items-center pl-4">
+                <Typography variant="h6">Received Blood</Typography>
+              </CardHeader>
+              <CardBody>
+                <TableReceived />
+              </CardBody>
+            </Card>
           </div>
-
         </DialogBody>
         <DialogFooter>
           <Button variant="gradient" onClick={() => setOpen(false)}>

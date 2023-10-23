@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, Tooltip, IconButton, Select, Option } from "@material-tailwind/react";
+import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, Tooltip, IconButton, Typography, Chip, Select, Option } from "@material-tailwind/react";
 import { TrashIcon, PencilIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
-import { Typography } from "@mui/material";
 import { EyeIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
@@ -193,15 +192,17 @@ export function EditPopUp({ user, countdown, refreshData }) {
             <Dialog open={open} handler={() => setOpen(false)}>
                 <DialogHeader className="flex justify-between">
                     <div>Edit Blood Bag</div>
-                    <div>
-                        Serial Number:{" "}
-                        <span className="text-red-600">
-                            {part1}-{part2}-{part3}
-                        </span>
-                    </div>
                 </DialogHeader>
-                <Typography className="text-sm text-red-600 font-bold text-center">{countdown === 0 ? "Editing is not available at the moment." : `This blood bag can be edited in ${countdown} days.`}</Typography>
                 <DialogBody divider className="flex flex-col gap-4">
+                    <div className="flex items-center justify-between mb-3">
+                        <Typography variant="h4" className="text-gray-800">
+                            Serial Number:{" "}
+                            <span className="text-red-600">
+                                {part1}-{part2}-{part3}
+                            </span>
+                        </Typography>
+                        <Chip size="sm" value={countdown === 0 ? "Editing is not available at the moment." : `This blood bag can be edited in ${countdown} ${countdown === 1 ? "day" : "days"}.`} />
+                    </div>
                     <div>
                         <div className={`relative flex gap-3 items-center`}>
                             <Input

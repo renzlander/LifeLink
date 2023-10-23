@@ -1,15 +1,24 @@
 'use client'
 import React, { useState } from 'react';
-import Image from 'next/image';
-import { Button } from "@material-tailwind/react";
 import { DeferralTable } from './components/table';
-import { AuthCard } from './components/authenticate';
+import { AuthCard } from './components/authenticate';  
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const handleAuthentication = () => {
     setIsAuthenticated(true);
+    toast.success('Password is Verified!', {
+      position: "bottom-right",
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: false,
+      theme: "colored",
+      });
   };
 
   return (
@@ -19,6 +28,18 @@ export default function Home() {
       ) : (
         <AuthCard onAuthenticate={handleAuthentication} />
       )}
+      <ToastContainer
+        position="bottom-right"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable={false}
+        pauseOnHover={false}
+        theme="colored"
+      />
     </div>
   );
 }

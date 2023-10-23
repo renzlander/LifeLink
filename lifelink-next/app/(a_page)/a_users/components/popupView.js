@@ -8,6 +8,7 @@ import {
     DialogFooter, 
     Tooltip, 
     IconButton, 
+    Chip,
 } from "@material-tailwind/react";
 import { EyeIcon } from "@heroicons/react/24/outline";
 
@@ -24,7 +25,7 @@ export function ViewPopUp({ user }) {
             <Dialog open={open} handler={() => setOpen(false)}>
                 <DialogHeader>View User</DialogHeader>
                 <DialogBody divider className="flex flex-col gap-4">
-                    <Typography className="font-bold text-xs -mb-3 bg-red-400 rounded-md text-white px-2 py-1">NAME</Typography>
+                    <Chip value="DEFERRED" color="blue-gray" />
                     <div className="flex gap-10 text-gray-900">
                         <Typography>
                             <strong>First Name:</strong>
@@ -42,7 +43,7 @@ export function ViewPopUp({ user }) {
                             {user.last_name}
                         </Typography>
                     </div>
-                    <Typography className="font-bold text-xs -mb-3 bg-red-400 rounded-md text-white px-2 py-1">Donor Info</Typography>
+                    <Chip value="Donor Info" color="blue-gray" />
                     <div className="flex gap-12 text-gray-900">
                         <Typography>
                             <strong>Number of Donation:</strong> {user.donate_qty}
@@ -51,7 +52,7 @@ export function ViewPopUp({ user }) {
                             <strong>Badge:</strong> {user.badge}
                         </Typography>
                     </div>
-                    <Typography className="font-bold text-xs -mb-3 bg-red-400 rounded-md text-white px-2 py-1">CONTACT INFO</Typography>
+                    <Chip value="Contact Info" color="blue-gray" />
                     <div className="flex gap-10 text-gray-900">
                         <Typography>
                             <strong>Email:</strong> {user.email}
@@ -60,7 +61,7 @@ export function ViewPopUp({ user }) {
                             <strong>Mobile:</strong> {user.mobile}
                         </Typography>
                     </div>
-                    <Typography className="font-bold text-xs -mb-3 bg-red-400 rounded-md text-white px-2 py-1">PERSONAL INFO</Typography>
+                    <Chip value="Personal Info" color="blue-gray" />
                     <div className="flex gap-10 text-gray-900">
                         <Typography>
                             <strong>Sex:</strong> {user.sex}
@@ -72,7 +73,7 @@ export function ViewPopUp({ user }) {
                             <strong>Blood Type:</strong> {user.blood_type}
                         </Typography>
                     </div>
-                    <Typography className="font-bold text-xs -mb-3 bg-red-400 rounded-md text-white px-2 py-1">ADDRESS</Typography>
+                    <Chip value="Address" color="blue-gray" />
                     <Typography className="text-lg text-gray-900 font-medium">
                         {user.street}, {user.barangay}, {user.municipality}, {user.province}, {user.region}
                     </Typography>
