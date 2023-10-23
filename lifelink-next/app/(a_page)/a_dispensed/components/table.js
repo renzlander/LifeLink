@@ -11,8 +11,11 @@ import {
   IconButton,
   Input,
   Spinner,
+  Chip,
 } from "@material-tailwind/react";
-import { AddBloodBagPopup, ViewPopUp, EditPopUp } from "./popup";
+import { AddBloodBagPopup } from "./popup";
+import { ViewPopUp } from "./popupView";
+import { EditPopUp } from "./popupEdit";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
@@ -308,9 +311,11 @@ export function DispenseTable() {
                   <ViewPopUp user={user} />
                   <EditPopUp user={user} onUpdate={handleUpdateUser} refreshData={fetchData}/>
                 </td>
-                <td className={classes}>
+                <td className={`${classes} flex items-center justify-center`}>
                   {user.remarks !== 0 ? (
-                    <span className="font-bold text-red-700 p-2 rounded-md bg-[#212121]">----DEFERRED----</span>
+                    <Chip variant="gradient" size="lg" value="DEFERRED" color="blue-gray">
+                      DEFERRED
+                    </Chip>
                   ) : (
                     <AddBloodBagPopup user_id={user.user_id} />
                   )}
