@@ -30,11 +30,11 @@ const TABLE_ROWS = [
   },
 ];
  
-export function ManPowerTable() {
+export function ManPowerTable({manPowerCount, manPowerList}) {
   const numberOfColumns = 3; // Define the number of columns in the table
-  const chunkedNames = Array.from({ length: Math.ceil(TABLE_ROWS.length / numberOfColumns) }, (_, rowIndex) => {
-    const rowNames = TABLE_ROWS.slice(rowIndex * numberOfColumns, (rowIndex + 1) * numberOfColumns).map(
-      (item) => item.name || ""
+  const chunkedNames = Array.from({ length: Math.ceil(manPowerList.length / numberOfColumns) }, (_, rowIndex) => {
+    const rowNames = manPowerList.slice(rowIndex * numberOfColumns, (rowIndex + 1) * numberOfColumns).map(
+      (item) => item || ""
     );
 
     // Add blank columns if there are 1 or 2 names in the row
@@ -80,7 +80,7 @@ export function ManPowerTable() {
           </tr>
         </thead>
         <tbody>
-          {chunkedNames.map((column, colIndex) => (
+            {chunkedNames.map((column, colIndex) => (
               <tr key={colIndex}>
                 {column.map((name, rowIndex) => (
                   <td
@@ -98,7 +98,7 @@ export function ManPowerTable() {
           <tr>
             <td colSpan={3} className="p-4 border-b border-r border-blue-gray-50">
               <Typography variant="small" color="blue-gray" className="font-normal">
-                Number of Staff: {TABLE_ROWS.length}
+                Number of Staff: {manPowerCount}
               </Typography>
             </td>
           </tr>

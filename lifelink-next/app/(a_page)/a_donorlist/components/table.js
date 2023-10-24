@@ -8,7 +8,9 @@ import { useRouter } from "next/navigation";
 
 const TABLE_HEAD = [
     { label: "Donor Number", key: "donor_no" },
-    { label: "Name", key: "name" },
+    { label: "First Name", key: "first_name" },
+    { label: "Middle Name", key: "middle_name" },
+    { label: "Last", key: "last_name" },
     { label: "Blood Type", key: "blood_type" },
     { label: "Email Address", key: "email" },
     { label: "Mobile", key: "mobile" },
@@ -289,7 +291,17 @@ export function DonorTable() {
                                 </td>
                                 <td className={classes}>
                                     <Typography variant="small" color="blue-gray" className="font-normal">
-                                        {`${user.first_name} ${user.last_name}`}
+                                        {user.first_name}
+                                    </Typography>
+                                </td>
+                                <td className={classes}>
+                                    <Typography variant="small" color="blue-gray" className="font-normal">
+                                        {user.middle_name}
+                                    </Typography>
+                                </td>
+                                <td className={classes}>
+                                    <Typography variant="small" color="blue-gray" className="font-normal">
+                                        {user.last_name}
                                     </Typography>
                                 </td>
                                 <td className={classes}>

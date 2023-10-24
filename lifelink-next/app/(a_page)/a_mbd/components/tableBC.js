@@ -5,78 +5,98 @@ const TABLE_HEAD = ["Blood Type", "Successful", "Spoilage"];
 const TABLE_ROWS = [
   {
     bTypes: "O",
-    successCount: 12,
-    spoilCount: 3,
+    successCount: 0,
+    spoilCount: 0,
   },
   {
     bTypes: "A",
-    successCount: 5,
-    spoilCount: 1,
+    successCount:0,
+    spoilCount: 0,
   },
   {
     bTypes: "B",
-    successCount: 7,
-    spoilCount: 2,
+    successCount: 0,
+    spoilCount: 0,
   },
   {
     bTypes: "AB",
-    successCount: 3,
+    successCount: 0,
     spoilCount: 0,
   },
 ];
- 
-export function BloodCollectionTable() {
-  const totalSuccessCount = TABLE_ROWS.reduce((sum, row) => sum + parseInt(row.successCount), 0);
-  const totalSpoilCount = TABLE_ROWS.reduce((sum, row) => sum + parseInt(row.spoilCount), 0);
+
+
+export function BloodCollectionTable({ bloodCollection }) {
+  const totalSuccessCount = bloodCollection.reduce((sum, row) => sum + parseInt(row.Count), 0);
+  const totalSpoilCount = bloodCollection.reduce((sum, row) => sum, 0); // You should update this according to your business logic
 
   return (
     <Card className="h-full w-full">
       <table className="w-full min-w-max table-auto text-left">
         <thead>
           <tr>
-              <th
-                colSpan={3}
-                className="rounded-t-xl border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+            <th
+              colSpan={3}
+              className="rounded-t-xl border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+            >
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="font-normal leading-none opacity-70 text-center"
               >
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-normal leading-none opacity-70 text-center"
-                >
-                  BLOOD COLLECTION
-                </Typography>
-              </th>
+                BLOOD COLLECTION
+              </Typography>
+            </th>
           </tr>
           <tr>
-            {TABLE_HEAD.map((head) => (
-              <th
-                key={head}
-                className="border-b border-r border-blue-gray-100 bg-gray-50 p-4"
+            <th
+              className="border-b border-r border-blue-gray-100 bg-gray-50 p-4"
+            >
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="font-normal leading-none opacity-70"
               >
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-normal leading-none opacity-70"
-                >
-                  {head}
-                </Typography>
-              </th>
-            ))}
+                Blood Type
+              </Typography>
+            </th>
+            <th
+              className="border-b border-r border-blue-gray-100 bg-gray-50 p-4"
+            >
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="font-normal leading-none opacity-70"
+              >
+                Successful
+              </Typography>
+            </th>
+            <th
+              className="border-b border-r border-blue-gray-50 p-4"
+            >
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="font-normal leading-none opacity-70"
+              >
+                Spoilage
+              </Typography>
+            </th>
           </tr>
         </thead>
         <tbody>
-          {TABLE_ROWS.map(({ bTypes, successCount, spoilCount }, index) => {
+          {bloodCollection.map(({ blood_type, Count }, index) => {
             const classes = "p-4 border-b border-r border-blue-gray-50";
  
             return (
-              <tr key={bTypes}>
+              <tr key={blood_type}>
                 <td className={classes}>
                   <Typography
                     variant="small"
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {bTypes}
+                    {blood_type}
                   </Typography>
                 </td>
                 <td className={classes}>
@@ -85,7 +105,7 @@ export function BloodCollectionTable() {
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {successCount}
+                    {Count}
                   </Typography>
                 </td>
                 <td className={classes}>
@@ -94,7 +114,7 @@ export function BloodCollectionTable() {
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {spoilCount}
+                    {0} {/* You should update this to display spoilage based on your business logic */}
                   </Typography>
                 </td>
               </tr>

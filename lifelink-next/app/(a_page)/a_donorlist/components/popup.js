@@ -89,7 +89,7 @@ export function ViewPopUp({user}) {
                 <Typography variant="h6">Donated Blood</Typography>
               </CardHeader>
               <CardBody>
-                <TableDonated />
+                <TableDonated user={user} />
               </CardBody>
             </Card>
             <Card className="border-2 w-1/2">
@@ -110,10 +110,4 @@ export function ViewPopUp({user}) {
       </Dialog>
     </>
   );
-}
-
-function getCookie(name) {
-  const cookies = document.cookie.split("; ");
-  const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));
-  return cookie ? cookie.split("=")[1] : null;
 }

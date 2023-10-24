@@ -1,27 +1,48 @@
 import React from "react";
 import { Card, Typography } from "@material-tailwind/react";
  
-export function AgeDistributionTable() {
+export function AgeDistributionTable({ ageDistributionLeft }) {
   const TABLE_HEAD = ["Age Distribution", "16-17", "18-20", "21-30", "31-40", "41-50", "51-60", "61-65", ">65"];
-  const TABLE_ROWS = [
-    { sex: "MALE", sexCount: 50, count16_17: 25, count18_20: 12, count21_30: 3, count31_40: 3, count41_50: 3, count51_60: 3, count61_65: 3, count65: 3 },
-    { sex: "FEMALE", sexCount: 50, count16_17: 25, count18_20: 12, count21_30: 3, count31_40: 3, count41_50: 3, count51_60: 3, count61_65: 3, count65: 3 },
-  ];
 
+  // Map the age distribution data to TABLE_ROWS
+  const TABLE_ROWS = ageDistributionLeft.map((row) => ({
+    sex: row.sex ? row.sex.toUpperCase() : "",
+    sexCount: parseInt(row["count"]) || 0,
+    count16_17: parseInt(row["16-17"]) || 0,
+    count18_20: parseInt(row["18-20"]) || 0,
+    count21_30: parseInt(row["21-30"]) || 0,
+    count31_40: parseInt(row["31-40"]) || 0,
+    count41_50: parseInt(row["41-50"]) || 0,
+    count51_60: parseInt(row["51-60"]) || 0,
+    count61_65: parseInt(row["61-65"]) || 0,
+    count65: parseInt(row[">65"]) || 0,
+  }));
+
+  // Calculate totals dynamically based on the entire dataset
   const totals = TABLE_ROWS.reduce(
-    (acc, { sexCount, count16_17, count18_20, count21_30, count31_40, count41_50, count51_60, count61_65, count65 }) => {
-      acc.totalSexCount += sexCount;
-      acc.total16_17Count += count16_17;
-      acc.total18_20Count += count18_20;
-      acc.total21_30Count += count21_30;
-      acc.total31_40Count += count31_40;
-      acc.total41_50Count += count41_50;
-      acc.total51_60Count += count51_60;
-      acc.total61_65Count += count61_65;
-      acc.total65Count += count65;
+    (acc, row) => {
+      acc.totalSexCount += row.sexCount;
+      acc.total16_17Count += row.count16_17;
+      acc.total18_20Count += row.count18_20;
+      acc.total21_30Count += row.count21_30;
+      acc.total31_40Count += row.count31_40;
+      acc.total41_50Count += row.count41_50;
+      acc.total51_60Count += row.count51_60;
+      acc.total61_65Count += row.count61_65;
+      acc.total65Count += row.count65;
       return acc;
     },
-    { totalSexCount: 0, total16_17Count: 0, total18_20Count: 0, total21_30Count: 0, total31_40Count: 0, total41_50Count: 0, total51_60Count: 0, total61_65Count: 0, total65Count: 0 }
+    {
+      totalSexCount: 0,
+      total16_17Count: 0,
+      total18_20Count: 0,
+      total21_30Count: 0,
+      total31_40Count: 0,
+      total41_50Count: 0,
+      total51_60Count: 0,
+      total61_65Count: 0,
+      total65Count: 0,
+    }
   );
 
   return (
@@ -78,28 +99,20 @@ export function AgeDistributionTable() {
   );
 }
 
-export function AgeCountTable() {
-  const TABLE_HEAD = ["18-24", "24-44", "45-64", "≥65"];
-  const TABLE_ROWS_MALE = [
-    {
-      male18_24: 23,
-      male24_44: 25,
-      male45_64: 25,
-      male65: 12,
-    },
-  ];
-  const TABLE_ROWS_FEMALE = [
-    {
-      female18_24: 23,
-      female24_44: 25,
-      female45_64: 25,
-      female65: 12,
-    },
-  ];
-  const total18Count = TABLE_ROWS_MALE.reduce((sum, row) => sum + parseInt(row.male18_24), 0) + TABLE_ROWS_FEMALE.reduce((sum, row) => sum + parseInt(row.female18_24), 0);
-  const total24Count = TABLE_ROWS_MALE.reduce((sum, row) => sum + parseInt(row.male24_44), 0) + TABLE_ROWS_FEMALE.reduce((sum, row) => sum + parseInt(row.female24_44), 0);
-  const total45Count = TABLE_ROWS_MALE.reduce((sum, row) => sum + parseInt(row.male45_64), 0) + TABLE_ROWS_FEMALE.reduce((sum, row) => sum + parseInt(row.female45_64), 0);
-  const total65Count = TABLE_ROWS_MALE.reduce((sum, row) => sum + parseInt(row.male65), 0) + TABLE_ROWS_FEMALE.reduce((sum, row) => sum + parseInt(row.female65), 0);
+
+export function AgeCountTable({ ageDistributionRight }) {
+  // Define the table head with dynamic column names
+  const TABLE_HEAD = ["18-24", "25-44", "45-64", ">=65"];
+
+  // Create an array for male and female rows separately based on the response
+  const TABLE_ROWS_MALE = ageDistributionRight.filter((row) => row.sex === "Male");
+  const TABLE_ROWS_FEMALE = ageDistributionRight.filter((row) => row.sex === "Female");
+
+  // Calculate the totals for each age group
+  const total18Count = TABLE_ROWS_MALE.reduce((sum, row) => sum + parseInt(row["18-24"]), 0) + TABLE_ROWS_FEMALE.reduce((sum, row) => sum + parseInt(row["18-24"]), 0);
+  const total25Count = TABLE_ROWS_MALE.reduce((sum, row) => sum + parseInt(row["25-44"]), 0) + TABLE_ROWS_FEMALE.reduce((sum, row) => sum + parseInt(row["25-44"]), 0);
+  const total45Count = TABLE_ROWS_MALE.reduce((sum, row) => sum + parseInt(row["45-64"]), 0) + TABLE_ROWS_FEMALE.reduce((sum, row) => sum + parseInt(row["45-64"]), 0);
+  const total65Count = TABLE_ROWS_MALE.reduce((sum, row) => sum + parseInt(row[">=65"]), 0) + TABLE_ROWS_FEMALE.reduce((sum, row) => sum + parseInt(row[">=65"]), 0);
 
   return (
     <Card className="h-full w-full">
@@ -123,94 +136,38 @@ export function AgeCountTable() {
           </tr>
         </thead>
         <tbody>
-          {TABLE_ROWS_MALE.map(({ male18_24, male24_44, male45_64, male65 }, index) => {
+          {TABLE_ROWS_MALE.map((row, index) => {
             const classes = "p-4 border-b border-r border-blue-gray-50";
- 
+
             return (
-              <tr>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {male18_24}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {male24_44}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {male45_64}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {male65}
-                  </Typography>
-                </td>
+              <tr key={row.sex + index}>
+                {TABLE_HEAD.map((ageGroup) => (
+                  <td className={classes} key={ageGroup}>
+                    <Typography variant="small" color="blue-gray" className="font-normal">
+                      {row[ageGroup]}
+                    </Typography>
+                  </td>
+                ))}
               </tr>
             );
           })}
-          {TABLE_ROWS_FEMALE.map(({ female18_24, female24_44, female45_64, female65 }, index) => {
+
+          {TABLE_ROWS_FEMALE.map((row, index) => {
             const classes = "p-4 border-b border-r border-blue-gray-50";
- 
+
             return (
-              <tr>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {female18_24}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {female24_44}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {female45_64}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {female65}
-                  </Typography>
-                </td>
+              <tr key={row.sex + index}>
+                {TABLE_HEAD.map((ageGroup) => (
+                  <td className={classes} key={ageGroup}>
+                    <Typography variant="small" color="blue-gray" className="font-normal">
+                      {row[ageGroup]}
+                    </Typography>
+                  </td>
+                ))}
               </tr>
             );
           })}
+
           <tr>
             <td className="p-4 border-b border-r border-blue-gray-50">
               <Typography variant="small" color="blue-gray" className="font-normal">
@@ -219,7 +176,7 @@ export function AgeCountTable() {
             </td>
             <td className="p-4 border-b border-r border-blue-gray-50">
               <Typography variant="small" color="blue-gray" className="font-normal">
-                {total24Count}
+                {total25Count}
               </Typography>
             </td>
             <td className="p-4 border-b border-r border-blue-gray-50">
