@@ -20,6 +20,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { useRouter } from "next/navigation";
+import InputSelect from "@/app/components/InputSelect";
 
 const TABLE_HEAD = [
     { label: "Donor Number", key: "donor_no" },
@@ -53,15 +54,36 @@ export function BagsTable() {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [bloodQty, setBloodQty] = useState();
-    const [bledBy, setBledBy] = useState("All");
-    const [venue, setVenue] = useState("All");
     const [selectedRows, setSelectedRows] = useState([]);
     const [countdown, setCountdown] = useState(0);
+    const [venueOptions, setVenueOptions] = useState([]);
+    const [bledByOptions, setBledByOptions] = useState([]);
+    const [venue, setVenue] = useState("All");
+    const [bledBy, setBledBy] = useState("All");
+
+
+
+
 
     const router = useRouter();
-    const bledBys = ["All", "Ryan Jay", "Renz", "Ray", "James"];
     const bloodTypes = ["All", "AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
-    const venues = ["All", "Malinta Valenzuela", "Balubaran Valenzuela"];
+    
+    const dynamicBledByOptions = [
+        { label: "All", value: "All" }, 
+        ...bledByOptions.map((item) => ({
+          label: item.full_name,
+          value: item.full_name,
+        })),
+      ];
+
+    const dynamicVenueOptions = [
+        { label: "All", value: "All" }, 
+        ...venueOptions.map((item) => ({
+          label: item.venues_desc,
+          value: item.venues_desc,
+        })),
+      ];
+      
 
     const handleBloodChange = (selectedBlood) => {
         setBlood(selectedBlood);
@@ -76,6 +98,32 @@ export function BagsTable() {
     const handleVenueChange = (selectedVenue) => {
         setVenue(selectedVenue);
         fetchBloodTypeFilteredData(blood_type, startDate, endDate, bledBy, selectedVenue);
+    };
+
+    const fetchBledByAndVenueLists = async () => {
+        try {
+            const token = getCookie("token");
+            if (!token) {
+                router.push("/login");
+                return;
+            }
+
+            const response = await axios.get(`${laravelBaseUrl}/api/get-bledby-and-venue`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.data.status === "success") {
+                setVenueOptions(response.data.venue);
+                setBledByOptions(response.data.bledBy);
+
+            } else {
+                console.error("Oops! Something went wrong.");
+            }
+        } catch (error) {
+            console.error("Error fetching bled_by and venues lists:", error);
+        }
     };
 
     const fetchBloodTypeFilteredData = async (selectedBlood, startDate, endDate, bledBy, venue) => {
@@ -169,6 +217,7 @@ export function BagsTable() {
     useEffect(() => {
         // fetchBloodTypeFilteredData(blood_type, startDate, endDate, bledBy, venue);
         fetchData(currentPage);
+        fetchBledByAndVenueLists();
     }, [router, sortColumn, sortOrder, searchQuery]);
 
     const handlePageChange = (newPage) => {
@@ -267,20 +316,10 @@ export function BagsTable() {
                                 ))}
                             </Select>
                         </div>
-                        <Select label="Venue" onChange={handleVenueChange} value={venue}>
-                            {venues.map((ven) => (
-                                <Option key={ven} value={ven}>
-                                    {ven}
-                                </Option>
-                            ))}
-                        </Select>
-                        <Select label="Bled By" onChange={handleBledByChange} value={bledBy}>
-                            {bledBys.map((bledby) => (
-                                <Option key={bledby} value={bledby}>
-                                    {bledby}
-                                </Option>
-                            ))}
-                        </Select>
+                        <InputSelect label="Venue" value={venue} onSelect={handleVenueChange} options={dynamicVenueOptions} isSearchable required placeholder="Venue" />
+   
+                        <InputSelect label="Bled By" value={bledBy} onSelect={handleBledByChange} options={dynamicBledByOptions} isSearchable required placeholder="Venue" />
+
                         <div className="flex flex-col items-center justify-center gap-2">
                             <Typography variant="h6" className="font-bold text-red-800">
                                 Date Donated Filter
@@ -332,12 +371,14 @@ export function BagsTable() {
                         </div>
                     </div>
                 </div>
+                {selectedRows.length > 0 && (
                 <div className="flex items-center px-4 mt-8 mb-4">
-                    <Typography variant="h6" className="text-lg">
-                        Selected Rows: {selectedRows.length}
+                    <Typography variant="h6" className="text-lg mr-4">
+                    Selected Rows: {selectedRows.length}
                     </Typography>
                     <MultipleMoveToStock variant="contained" color="red" size="sm" className="ml-4" selectedRows={selectedRows} refreshData={fetchData} />
                 </div>
+                )}
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                         <tr>
@@ -424,7 +465,7 @@ export function BagsTable() {
                                 </td>
                                 <td className={`${classes} flex items-center justify-around gap-3`}>
                                     <EditPopUp user={user} countdown={user.countdown} refreshData={fetchData} />
-                                    <RemoveBlood serial_no={user.serial_no} countdown={user.countdown} refreshData={fetchData} />
+                                    <RemoveBlood serial_no={user.serial_no} countdown={user.countdown_end_date} refreshData={fetchData} />
                                     <MoveToStock serial_no={user.serial_no} refreshData={fetchData} />
                                     <Unsafe serial_no={user.serial_no} refreshData={fetchData} />
                                 </td>

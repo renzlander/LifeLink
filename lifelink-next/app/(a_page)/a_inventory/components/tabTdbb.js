@@ -264,12 +264,14 @@ export function TabTemp() {
                         </div>
                     </div>
                 </div>
+                {selectedRows.length > 0 && (
                 <div className="flex items-center px-4 mt-8 mb-4">
-                    <Typography variant="subtitle1" className="font-bold text-sm">
-                        Selected Rows: {selectedRows.length}
+                    <Typography variant="h6" className="text-lg mr-4">
+                    Selected Rows: {selectedRows.length}
                     </Typography>
                     <MultipleDisposed variant="contained" color="red" size="sm" className="ml-4" selectedRows={selectedRows} refreshData={fetchData} />
                 </div>
+                )}
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                         <tr>

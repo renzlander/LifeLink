@@ -23,7 +23,9 @@ export function ViewPopUp({ user }) {
                 </IconButton>
             </Tooltip>
             <Dialog open={open} handler={() => setOpen(false)}>
-                <DialogHeader>View User</DialogHeader>
+                <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">
+                    User Details
+                </DialogHeader>
                 <DialogBody divider className="flex flex-col gap-4">
                     <Chip value="DEFERRED" color="blue-gray" />
                     <div className="flex gap-10 text-gray-900">

@@ -53,13 +53,22 @@ export function RemoveBlood({ serial_no, handleOpen, countdown, refreshData }) {
     return (
         <>
             <Button size="sm" onClick={() => setOpen(true)} className="bg-red-600" disabled={countdown === 0}>
-                Remove
+                Undo
             </Button>
             <Dialog open={open} handler={() => setOpen(false)}>
-                <DialogHeader>Remove Blood Bag</DialogHeader>
-                <DialogBody divider className="flex flex-col gap-4 items-center">
-                    <Typography className="font-bold text-xl text-red-600 text-center">Are you sure you want to remove this blood bag?</Typography>
-                    <Typography className="text-sm text-red-600 font-bold text-center">This blood bag can be remove in {countdown} days</Typography>
+            <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">
+                Blood Bag Removal Confirmation
+            </DialogHeader>
+                    <DialogBody divider className="flex flex-col gap-4 items-center">
+                    <Typography className="text-base text-gray-700 text-center">
+                        The 'Undo' option allows you to remove a blood bag that you previously added. Please be aware that this option has a time limit. Once the time has elapsed, you won't be able to reverse this action.
+                    </Typography>
+                    <Typography className="text-base text-gray-700 text-center">
+                        Are you certain you want to proceed with the removal of this blood bag?
+                    </Typography>
+                    <Typography className="text-sm text-gray-700 text-center">
+                        The removal of this blood bag is allowed until <span className="font-bold">{formatDate(countdown)}</span>.
+                    </Typography>
                 </DialogBody>
                 {generalErrorMessage && (
                     <div className="mt-4 text-center bg-red-100 p-2 rounded-lg">
@@ -70,10 +79,10 @@ export function RemoveBlood({ serial_no, handleOpen, countdown, refreshData }) {
                 )}
                 <DialogFooter className="flex justify-center mt-4">
                     <Button variant="red-cross" onClick={() => setOpen(false)} className="mr-2">
-                        No
+                        Cancel
                     </Button>
                     <Button variant="red-cross" color="red" onClick={handleRemoveBloodBag} disabled={countdown === 0}>
-                        Yes
+                        Confirm Removal
                     </Button>
                 </DialogFooter>
             </Dialog>
@@ -190,7 +199,7 @@ export function EditPopUp({ user, countdown, refreshData }) {
                 </IconButton>
             </Tooltip>
             <Dialog open={open} handler={() => setOpen(false)}>
-                <DialogHeader className="flex justify-between">
+                <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">
                     <div>Edit Blood Bag</div>
                 </DialogHeader>
                 <DialogBody divider className="flex flex-col gap-4">
@@ -330,7 +339,9 @@ export function MoveToStock({ serial_no, handleOpen, refreshData }) {
                 Move to stock
             </Button>
             <Dialog open={open} handler={() => setOpen(false)}>
-                <DialogHeader>Move Blood Bag to Inventory</DialogHeader>
+            <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">
+            Move Blood Bag to Inventory
+            </DialogHeader>
                 <DialogBody divider className="flex flex-col gap-4 items-center">
                     <Typography className="text-lg text-center py-4">
                         Move to Inventory: When the blood bag has completed testing and is ready for storage, it should be recorded in the inventory under the 'Stocks' tab.
@@ -413,7 +424,9 @@ export function MultipleMoveToStock({ selectedRows, refreshData }) {
                 Move to Stock
             </Button>
             <Dialog open={open} handler={() => setOpen(false)}>
-                <DialogHeader>Remove Blood Bag</DialogHeader>
+            <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">
+            Move to Stocks
+            </DialogHeader>
                 <DialogBody divider className="flex flex-col gap-4 items-center">
                     <Typography className="font-bold text-xl text-red-600 text-center">Are you sure you want to move all of this blood bag to stocks?</Typography>
                 </DialogBody>
@@ -489,7 +502,9 @@ export function Unsafe({ serial_no, handleOpen, refreshData }) {
                 Unsafe
             </Button>
             <Dialog open={open} handler={() => setOpen(false)}>
-                <DialogHeader>Mark as unsafe</DialogHeader>
+                <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">
+                Mark as unsafe
+                </DialogHeader>
                 {/* <DialogBody className="flex flex-col gap-4 items-center text-center">
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col gap-2 items-center">

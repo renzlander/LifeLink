@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Revert, Dispense } from "./popup";
+import { Revert, Dispense, MultipleDisposed } from "./popup";
 import axios from "axios";
 import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
 import { MagnifyingGlassIcon, DocumentArrowDownIcon } from "@heroicons/react/24/outline";
-import { Card, CardHeader, Input, Typography, Button, CardBody, Chip, CardFooter, Tabs, TabsHeader, Tab, Avatar, IconButton, Tooltip, Spinner, Select, Option } from "@material-tailwind/react";
+import { Card, CardHeader, Checkbox, Input, Typography, Button, CardBody, Chip, CardFooter, Tabs, TabsHeader, Tab, Avatar, IconButton, Tooltip, Spinner, Select, Option } from "@material-tailwind/react";
 import { laravelBaseUrl } from "@/app/variables";
 
 const TABLE_HEAD = [
@@ -39,6 +39,8 @@ export function TabStock() {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [bloodQty, setBloodQty] = useState();
+    const [selectedRows, setSelectedRows] = useState([]);
+
 
     const bloodTypes = ["All", "AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
     const router = useRouter();
@@ -214,6 +216,26 @@ export function TabStock() {
         );
     }
 
+    const handleRowSelect = (rowId) => {
+        // Check if the rowId is already in the selectedRows array
+        if (selectedRows.includes(rowId)) {
+            // If it's already selected, remove it from the array
+            setSelectedRows(selectedRows.filter((id) => id !== rowId));
+        } else {
+            // If it's not selected, add it to the array
+            setSelectedRows([...selectedRows, rowId]);
+        }
+    };
+
+    const selectedRowClass = "bg-gray-400";
+    const handleRowSelection = (blood_bags_id) => {
+        if (selectedRows.includes(blood_bags_id)) {
+            setSelectedRows(selectedRows.filter((id) => id !== blood_bags_id));
+        } else {
+            setSelectedRows([...selectedRows, blood_bags_id]);
+        }
+    };
+
     return (
         <Card className="h-full w-full">
             <CardBody className="px-0">
@@ -261,9 +283,29 @@ export function TabStock() {
                         </div>
                     </div>
                 </div>
+                {selectedRows.length > 0 && (
+                <div className="flex items-center px-4 mt-8 mb-4">
+                    <Typography variant="h6" className="text-lg mr-4">
+                    Selected Rows: {selectedRows.length}
+                    </Typography>
+                    <Dispense variant="contained" color="red" size="sm" className="ml-4" selectedRows={selectedRows} refreshData={fetchData} />
+                </div>
+                )}
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                         <tr>
+                            <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer">
+                                <Checkbox
+                                    onChange={() => {
+                                        if (selectedRows.length === userDetails.length) {
+                                            setSelectedRows([]);
+                                        } else {
+                                            setSelectedRows(userDetails.map((user) => user.blood_bags_id));
+                                        }
+                                    }}
+                                    checked={userDetails.length > 0 && selectedRows.length === userDetails.length}
+                                />
+                            </th>
                             {TABLE_HEAD.map((head) => (
                                 <th key={head.key} className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer" onClick={() => handleSort(head.key)}>
                                     <div className="flex items-center">
@@ -278,7 +320,19 @@ export function TabStock() {
                     </thead>
                     <tbody>
                         {userDetails.map((user, index) => (
-                            <tr className="border-b">
+                            <tr key={user.blood_bags_id} className={`${selectedRows.includes(user.blood_bags_id) ? selectedRowClass : ""}`}>
+                                <td className={classes}>
+                                    <Checkbox
+                                        onChange={() => {
+                                            if (selectedRows.includes(user.blood_bags_id)) {
+                                                setSelectedRows(selectedRows.filter((id) => id !== user.blood_bags_id));
+                                            } else {
+                                                setSelectedRows([...selectedRows, user.blood_bags_id]);
+                                            }
+                                        }}
+                                        checked={selectedRows.includes(user.blood_bags_id)}
+                                    />
+                                </td>
                                 <td className={classes}>
                                     <div className="flex items-center gap-3">
                                         <Typography variant="small" color="blue-gray" className="font-bold">

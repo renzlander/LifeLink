@@ -63,7 +63,9 @@ export function Revert({ serial_no, refreshData }) {
                 Undo
             </Button>
             <Dialog open={open} handler={() => setOpen(false)}>
-                <DialogHeader>Remove Blood Bag</DialogHeader>
+                    <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">
+                        Remove Blood Bag
+                    </DialogHeader>
                 <DialogBody divider className="flex flex-col gap-4 items-center">
                     <Typography className="font-bold text-xl text-red-600 text-center">Are you sure you want to return it to collected?</Typography>
                 </DialogBody>
@@ -142,7 +144,9 @@ export function Dispense({ serial_no, refreshData }) {
             Dispense
           </Button>
           <Dialog open={open} handler={handleOpen} size="lg">
-            <DialogHeader className="border-b-2">Dispense Blood</DialogHeader>
+                <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">
+                    Dispense Blood
+                </DialogHeader>
             <DialogBody className="flex flex-col gap-5 overscroll-y-auto">
               <div className="flex items-start justify-between">
                 <Card className="border-2 w-1/3">
@@ -265,7 +269,9 @@ export function Disposed({ blood_bags_id, refreshData }) {
                 Dispose
             </Button>
             <Dialog open={open} handler={() => setOpen(false)}>
-                <DialogHeader>Remove Blood Bag</DialogHeader>
+                    <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">
+                        Dispose Blood Bag
+                    </DialogHeader>
                 <DialogBody divider className="flex flex-col gap-4 items-center">
                     <Typography className="font-bold text-xl text-red-600 text-center">Are you sure you want to disposed this blood bag?</Typography>
                 </DialogBody>
@@ -343,7 +349,9 @@ export function MultipleDisposed({ selectedRows, refreshData }) {
                 Dispose
             </Button>
             <Dialog open={open} handler={() => setOpen(false)}>
-                <DialogHeader>Remove Blood Bag</DialogHeader>
+                    <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">
+                        Dispose Blood Bag
+                    </DialogHeader>
                 <DialogBody divider className="flex flex-col gap-4 items-center">
                     <Typography className="font-bold text-xl text-red-600 text-center">Are you sure you want to disposed all of this blood bag?</Typography>
                 </DialogBody>
