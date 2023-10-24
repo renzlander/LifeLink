@@ -127,6 +127,14 @@ export function MoveToDeferral({ user_id, refreshData, temporaryDeferralCategori
                     </div>
                 )}
                 <DialogBody divider className="flex flex-col gap-4">
+                    <div className={`relative flex items-center justify-between gap-5 w-full`}>
+                        <Select label="Venue" required>
+                            <Option>ValGen</Option>
+                            <Option>Dalandanan Hospital</Option>
+                        </Select>
+                        <Input type="date" label="Date" />
+                        {errorMessage.remarks && <div className="error-message text-red-600 text-sm absolute mt-2">{errorMessage.remarks}</div>}
+                    </div>
                     <div className={`relative`}>
                         <Select label="Type of Deferral" value={typesDeferral} onChange={(value) => handleTypesChange(value)} required>
                             <Option value="1">Temporary Deferral</Option>
