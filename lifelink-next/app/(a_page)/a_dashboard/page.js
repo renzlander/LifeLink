@@ -1,7 +1,7 @@
 'use client'
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Spinner, Card, Typography } from "@material-tailwind/react";
+import { Spinner, Card, CardHeader, CardBody, CardFooter, Typography } from "@material-tailwind/react";
 import { BloodListCard, CountDonorCard } from './components/cards';
 import { LineCard, BarCard } from './components/charts';
 import { useEffect, useState } from "react";
@@ -153,21 +153,28 @@ export default function Home() {
 
   return (
     <div className="bg-gray-300 min-h-screen flex flex-col justify-between gap-y-3 p-4">
-      <div className="grid grid-cols-4 gap-3">
-        <Card className="p-4 col-start-1 col-end-4 place-items-center w-full gap-y-3 bg-gray-100">
-          <div className="flex 3xl:gap-16 gap-3 shrink">
-            {bloodListCards.slice(0, 4)}
-          </div>
-          <div className="flex 3xl:gap-16 gap-3 shrink mb-6">
-            {bloodListCards.slice(4, 8)}
-          </div>
-          <div className="flex items-center gap-4 absolute bottom-1 right-4">
+      <div className="flex items-start justify-between gap-4 w-full">
+        <Card className="mt-6 w-full bg-gray-100">
+          <CardHeader color='gray' variant='gradient' className="h-16 flex items-center mb-4">
+            <Typography variant="h4" color="white" className="ml-4">
+              Blood Stock
+            </Typography>
+          </CardHeader>
+          <CardBody className='w-full flex flex-col items-center gap-10'>
+            <div className="flex 3xl:gap-16 gap-3 shrink">
+              {bloodListCards.slice(0, 4)}
+            </div>
+            <div className="flex 3xl:gap-16 gap-3 shrink">
+              {bloodListCards.slice(4, 8)}
+            </div>
+          </CardBody>
+          <CardFooter className="flex justify-end items-center gap-4 pt-0 pb-2 pr-6">
             <div className="flex items-center gap-1">
               <ClockIcon className="w-5 h-5 text-gray-700" />
               <Typography className="text-sm text-gray-700 font-normal">Last Updated:</Typography>
             </div>
             <Typography className="text-gray-700 text-md font-normal">{formatDate(updatedAt)} {updatedAtTime}</Typography>
-          </div>
+          </CardFooter>
         </Card>
         <div className="col-start-4 col-end-5 w-full">
           <CountDonorCard
@@ -180,7 +187,7 @@ export default function Home() {
           />
         </div>
       </div>
-      <div className="mt-2 flex gap-3">
+      <div className="mt-2 flex gap-4">
         <LineCard />
         <BarCard />
       </div>

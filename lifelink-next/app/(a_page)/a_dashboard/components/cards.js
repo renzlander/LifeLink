@@ -41,13 +41,11 @@ export function BloodListCard({ bloodType, availability, legend, count, percenta
   }
   
   return (
-    <Card className="3xl:w-72 w-[13.5rem]">
+    <Card className="w-56">
       <CardHeader
-        color="red"
-        variant="filled"
+        color="transparent"
         shadow={false}
-        floated={false} 
-        className='mx-auto flex flex-col justify-center items-center h-16 w-16 p-2'
+        className='mx-auto flex flex-col justify-center items-center h-20 w-20'
       >
         <BloodDropletIcon width={200} height={200} topOffset={offsetTop} botOffset={offsetBot} />
         <Typography
@@ -58,10 +56,10 @@ export function BloodListCard({ bloodType, availability, legend, count, percenta
           {bloodType}
         </Typography>
       </CardHeader>
-      <CardBody className="flex items-center justify-center py-3 px-4 w-full">
-        <div className="flex items-center">
+      <CardBody className="flex items-center justify-center py-3 px-2 w-full">
+        <div className="flex flex-col justify-center items-center">
           <Typography variant="paragraph" color="gray" className="text-blue-gray-500 font-medium mr-2">
-            Quantity:
+            QUANTITY
           </Typography>
           <Typography variant="paragraph" color="blue-gray" className="text-xl font-semibold">
             {count}
@@ -72,13 +70,13 @@ export function BloodListCard({ bloodType, availability, legend, count, percenta
       </CardBody>
       <hr className="fading_divider_gray" />
       <CardFooter className="flex justify-start items-center p-3">
-        <div className="flex justify-between items-center gap-2 w-full">
+        <div className="flex flex-col justify-between items-center gap-2 w-full">
           <Typography variant="paragraph" className='text-gray-600 text-sm font-medium'>
             Status:
           </Typography>
           <div className="flex flex-col gap-2">
             <Chip size="sm" variant="gradient" color={colorClass} value={legend} className="flex justify-center" />
-            <Chip size="sm" variant="gradient" color={status} value={availability} className="flex justify-center"/>
+            <Chip size="sm" variant="ghost" color={status} value={availability} className="flex justify-center"/>
           </div>
         </div>
       </CardFooter>
@@ -156,7 +154,7 @@ export function CountDonorCard({
 
   return (
     <Card className="mt-6 w-full">
-      <CardHeader color="gray" className="relative h-16 flex items-center mb-4">
+      <CardHeader color="gray" variant="gradient" className="h-16 flex items-center mb-4">
         <Typography variant="h4" color="white" className="ml-4">
           MBD Summary
         </Typography>
@@ -164,30 +162,29 @@ export function CountDonorCard({
       <CardBody className="p-0">
       <div className="mt-3 flex justify-end items-center gap-3 w-full px-4">
       <Select
-  label="Month"
-  containerProps={{ className: "min-w-[25px]" }}
-  value={month} // Set the selected month as the value
-  onChange={handleMonthChange}
->
-  {months.map((month) => (
-    <Option key={month.value} value={month.value}>
-      {month.label}
-    </Option>
-  ))}
-</Select>
-<Select
-  label="Year"
-  containerProps={{ className: "min-w-[25px]" }}
-  value={year} // Set the selected year as the value
-  onChange={handleYearChange}
->
-  {years.map((year) => (
-    <Option key={year} value={year}>
-      {year}
-    </Option>
-  ))}
-</Select>
-
+        label="Month"
+        containerProps={{ className: "min-w-[25px]" }}
+        value={month} // Set the selected month as the value
+        onChange={handleMonthChange}
+      >
+        {months.map((month) => (
+          <Option key={month.value} value={month.value}>
+            {month.label}
+          </Option>
+        ))}
+      </Select>
+      <Select
+        label="Year"
+        containerProps={{ className: "min-w-[25px]" }}
+        value={year} // Set the selected year as the value
+        onChange={handleYearChange}
+      >
+        {years.map((year) => (
+          <Option key={year} value={year}>
+            {year}
+          </Option>
+        ))}
+      </Select>
       </div>
       <table className="w-full min-w-max table-auto text-left">
         <tbody>
