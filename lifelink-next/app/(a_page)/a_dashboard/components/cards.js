@@ -162,30 +162,29 @@ export function CountDonorCard({
       <CardBody className="p-0">
       <div className="mt-3 flex justify-end items-center gap-3 w-full px-4">
       <Select
-  label="Month"
-  containerProps={{ className: "min-w-[25px]" }}
-  value={month} // Set the selected month as the value
-  onChange={handleMonthChange}
->
-  {months.map((month) => (
-    <Option key={month.value} value={month.value}>
-      {month.label}
-    </Option>
-  ))}
-</Select>
-<Select
-  label="Year"
-  containerProps={{ className: "min-w-[25px]" }}
-  value={year} // Set the selected year as the value
-  onChange={handleYearChange}
->
-  {years.map((year) => (
-    <Option key={year} value={year}>
-      {year}
-    </Option>
-  ))}
-</Select>
-
+        label="Month"
+        containerProps={{ className: "min-w-[25px]" }}
+        value={month} // Set the selected month as the value
+        onChange={handleMonthChange}
+      >
+        {months.map((month) => (
+          <Option key={month.value} value={month.value}>
+            {month.label}
+          </Option>
+        ))}
+      </Select>
+      <Select
+        label="Year"
+        containerProps={{ className: "min-w-[25px]" }}
+        value={year} // Set the selected year as the value
+        onChange={handleYearChange}
+      >
+        {years.map((year) => (
+          <Option key={year} value={year}>
+            {year}
+          </Option>
+        ))}
+      </Select>
       </div>
       <table className="w-full min-w-max table-auto text-left">
         <tbody>
