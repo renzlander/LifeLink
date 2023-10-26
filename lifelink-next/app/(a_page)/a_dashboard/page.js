@@ -1,4 +1,5 @@
 'use client'
+import * as React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Spinner, Card, CardHeader, CardBody, CardFooter, Typography } from "@material-tailwind/react";
@@ -8,6 +9,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { ClockIcon } from '@heroicons/react/24/outline';
+import Skeleton from '@mui/material/Skeleton';
 
 
 function formatDate(dateString) {
@@ -145,8 +147,7 @@ export default function Home() {
   if (loading) {
     return (
       <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
-        <Spinner color="red" className="h-16 w-16" />
-        <p className="mb-[180px] text-gray-600">Loading...</p>
+          <Skeleton variant="rounded" width={500} height={500} animation="wave" />
       </div>
     );
   }

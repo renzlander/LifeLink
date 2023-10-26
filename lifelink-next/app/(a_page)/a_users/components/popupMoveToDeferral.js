@@ -118,7 +118,7 @@ export function MoveToDeferral({ user_id, refreshData, temporaryDeferralCategori
                 </IconButton>
             </Tooltip>
             <Dialog open={open} handler={() => setOpen(false)}>
-                    <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">
+                    <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
                         Move to Deferral
                     </DialogHeader>
                 {generalErrorMessage && (

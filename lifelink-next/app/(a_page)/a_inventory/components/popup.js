@@ -63,7 +63,7 @@ export function Revert({ serial_no, refreshData }) {
                 Undo
             </Button>
             <Dialog open={open} handler={() => setOpen(false)}>
-                    <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">
+                    <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
                         Remove Blood Bag
                     </DialogHeader>
                 <DialogBody divider className="flex flex-col gap-4 items-center">
@@ -144,7 +144,7 @@ export function Dispense({ serial_no, refreshData }) {
             Dispense
           </Button>
           <Dialog open={open} handler={handleOpen} size="lg">
-                <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">
+                <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
                     Dispense Blood
                 </DialogHeader>
             <DialogBody className="flex flex-col gap-5 overscroll-y-auto">

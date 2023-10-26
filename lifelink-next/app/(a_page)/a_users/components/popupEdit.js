@@ -152,7 +152,7 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
                 </IconButton>
             </Tooltip>
             <Dialog open={open} handler={() => setOpen(false)}>
-                <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">
+                <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
                     Edit User
                 </DialogHeader>
                 <DialogBody divider className="flex flex-col gap-6 overscroll-y-auto">
