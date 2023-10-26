@@ -8,6 +8,7 @@ import PointRightBlood from "@/public/PointRightBlood";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import { AccordionDispense } from "./accordion";
+import InputSelect from "@/app/components/InputSelect";
 
 function formatDate(dateString) {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -63,9 +64,7 @@ export function Revert({ serial_no, refreshData }) {
                 Undo
             </Button>
             <Dialog open={open} handler={() => setOpen(false)}>
-                    <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
-                        Remove Blood Bag
-                    </DialogHeader>
+                <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">Remove Blood Bag</DialogHeader>
                 <DialogBody divider className="flex flex-col gap-4 items-center">
                     <Typography className="font-bold text-xl text-red-600 text-center">Are you sure you want to return it to collected?</Typography>
                 </DialogBody>
@@ -89,10 +88,33 @@ export function Revert({ serial_no, refreshData }) {
     );
 }
 
-export function Dispense({ serial_no, refreshData }) {
+export function Dispense({ user, blood_bags_id, refreshData, registeredUser }) {
     const [open, setOpen] = useState(false);
+    const [selectedValue, setSelectedValue] = useState(null);
+    const [selectedUserDetails, setSelectedUserDetails] = useState(null);
+
+    const handleSelect = (selectedOption) => {
+        console.log("handleSelect called");
+        setSelectedValue(selectedOption);
+
+        const selectedUser = registeredUser.find((user) => user.user_id === selectedOption.value);
+
+        console.log("selectedUser", selectedUser);
+
+        if (selectedUser) {
+            setSelectedUserDetails(selectedUser);
+        }
+    };
+    console.log("registeredUser", registeredUser);
+
+    useEffect(() => {
+        console.log("selectedUserDetails", selectedUserDetails);
+    }, [selectedUserDetails]);
+
+    console.log("selectedUserDetails", selectedUserDetails);
+
     const bloodType = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
-   
+
     const handleOpen = () => setOpen(!open);
     const [generalErrorMessage, setGeneralErrorMessage] = useState("");
 
@@ -140,76 +162,202 @@ export function Dispense({ serial_no, refreshData }) {
 
     return (
         <>
-          <Button onClick={handleOpen} size="sm" color="red" variant="gradient">
-            Dispense
-          </Button>
-          <Dialog open={open} handler={handleOpen} size="lg">
-                <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
-                    Dispense Blood
-                </DialogHeader>
-            <DialogBody className="flex flex-col gap-5 overscroll-y-auto">
-              <div className="flex items-start justify-between">
-                <Card className="border-2 w-1/3">
-                  <CardBody>
-                    <AccordionDispense />
-                  </CardBody>
-                </Card>
-                <PointRightBlood height={150} width={150} />
-                <Card className="border-2 w-1/2">
-                  <CardBody className="flex flex-col items-center justify-center gap-3">
-                    <Select label="search">
-                      <Option>Ray Reyes</Option>
-                      <Option>James Robles</Option>
-                    </Select>
-                    <Chip value="Manual" size="sm" className="w-full mt-4 pl-4" />
-                    <div className="flex items-center justify-between w-full">
-                        <div className="flex flex-col items-center gap-3">
-                            <Input label="First Name"/>
-                            <Input label="Middle Name"/>
-                            <Input label="Last Name"/>
-                        </div>
-                        <div className="flex flex-col items-center gap-3">
-                            <Input type="date" label="Date of Birth"/>
-                            <Select label="Blood Type">
-                                {bloodType.map((bloodTypes) => (
-                                    <Option key={bloodTypes}>{bloodTypes}</Option>
-                                ))}
-                            </Select>
-                            <Select label="Sex">
-                                <Option>Male</Option>
-                                <Option>Female</Option>
-                            </Select>
-                        </div>
+            <Button onClick={handleOpen} size="sm" color="red" variant="gradient">
+                Dispense
+            </Button>
+            <Dialog open={open} handler={handleOpen} size="lg">
+                <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">Dispense Blood</DialogHeader>
+              
+                <DialogBody className="flex flex-col gap-5 overscroll-y-auto">
+                    <div className="flex items-start justify-between">
+                        <Card className="border-2 w-1/3">
+                            <CardBody>
+                                <AccordionDispense user={user} />
+                            </CardBody>
+                        </Card>
+                        <PointRightBlood height={150} width={150} />
+                        <Card className="border-2 w-1/2">
+                            <CardBody className="flex flex-col items-center justify-center gap-3">
+                                <InputSelect
+                                    label="search"
+                                    value={selectedValue}
+                                    onSelect={handleSelect}
+                                    options={registeredUser.map((user) => ({
+                                        label: `${user.first_name} ${user.middle_name} ${user.last_name}`,
+                                        value: user.user_id,
+                                    }))}
+                                    isSearchable
+                                    required
+                                    placeholder="Select a user"
+                                />
+
+                                <Chip value="Manual" size="sm" className="w-full mt-4 pl-4" />
+                                <div className="flex items-center justify-between w-full">
+                                    <div className="flex flex-col items-center gap-3">
+                                        <Input label="First Name" value={selectedUserDetails ? selectedUserDetails.first_name : ""} />
+                                        <Input label="Middle Name" value={selectedUserDetails ? selectedUserDetails.middle_name : ""} />
+                                        <Input label="Last Name" value={selectedUserDetails ? selectedUserDetails.last_name : ""} />
+                                    </div>
+                                    <div className="flex flex-col items-center gap-3">
+                                        <Input type="date" label="Date of Birth" value={selectedUserDetails ? selectedUserDetails.dob : ""} />
+                                        <Select label="Blood Type">
+                                            {bloodType.map((bloodTypes) => (
+                                                <Option key={bloodTypes}>{bloodTypes}</Option>
+                                            ))}
+                                        </Select>
+                                        <Select label="Sex">
+                                            <Option>Male</Option>
+                                            <Option>Female</Option>
+                                        </Select>
+                                    </div>
+                                </div>
+                            </CardBody>
+                        </Card>
                     </div>
-                  </CardBody>
-                </Card>
-              </div>
-              <div>
-                <Card shadow={false}>
-                  <CardBody className="flex flex-col items-center justify-center gap-4">
-                    <Input label="Diagnosis for transfusion" containerProps={{ className: "w-[50%]" }}/>
-                    <Select label="Hospital" containerProps={{ className: "w-[50%]" }}>
-                      <Option>ValGen</Option>
-                      <Option>Dalandanan Hospital</Option>
-                    </Select>
-                  </CardBody>
-                </Card>
-              </div>
-            </DialogBody>
-            <DialogFooter className="border-t-2">
-              <Button
-                variant="text"
-                color="red"
-                onClick={handleOpen}
-                className="mr-1"
-              >
-                <span>Cancel</span>
-              </Button>
-              <Button variant="gradient" color="green" onClick={handleOpen}>
-                <span>Confirm</span>
-              </Button>
-            </DialogFooter>
-          </Dialog>
+                    <div>
+                        <Card shadow={false}>
+                            <CardBody className="flex flex-col items-center justify-center gap-4">
+                                <Input label="Diagnosis for transfusion" containerProps={{ className: "w-[50%]" }} />
+                                <Select label="Hospital" containerProps={{ className: "w-[50%]" }}>
+                                    <Option>ValGen</Option>
+                                    <Option>Dalandanan Hospital</Option>
+                                </Select>
+                            </CardBody>
+                        </Card>
+                    </div>
+                </DialogBody>
+
+
+
+
+                <DialogFooter className="border-t-2">
+                    <Button variant="text" color="red" onClick={handleOpen} className="mr-1">
+                        <span>Cancel</span>
+                    </Button>
+                    <Button variant="gradient" color="red" onClick={handleOpen}>
+                        <span>Confirm</span>
+                    </Button>
+                </DialogFooter>
+            </Dialog>
+        </>
+    );
+}
+
+export function MultipleDispensed({ selectedData, refreshData }) {
+    console.log(selectedData);
+    const [open, setOpen] = useState(false);
+    const bloodType = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+
+    const handleOpen = () => setOpen(!open);
+    const [generalErrorMessage, setGeneralErrorMessage] = useState("");
+
+    const handleMovetoStock = async () => {
+        try {
+            const token = getCookie("token");
+            if (!token) {
+                router.push("/login");
+                return;
+            }
+
+            const response = await axios
+                .post(
+                    `${laravelBaseUrl}/api/add-to-inventory`,
+                    {
+                        serial_no,
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                )
+                .catch((error) => {
+                    console.error("Unknown error occurred:", error);
+                });
+
+            if (response.data.status === "success") {
+                refreshData();
+                console.log("Blood bag added successfully");
+                toast.success("Blood bag added to inventory successfully");
+            } else if (response.data.status === "error") {
+                if (response.data.message) {
+                    setGeneralErrorMessage(response.data.message);
+                } else {
+                    console.error("Unknown error occurred:", response.data);
+                }
+            }
+            // Close the dialog
+            setOpen(false);
+        } catch (error) {
+            console.error("Unknown error occurred:", error);
+        }
+    };
+
+    return (
+        <>
+            <Button onClick={handleOpen} size="sm" color="red" variant="gradient">
+                Dispense
+            </Button>
+            <Dialog open={open} handler={handleOpen} size="lg">
+                <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">Dispense Blood</DialogHeader>
+                <DialogBody className="flex flex-col gap-5 overscroll-y-auto">
+                    <div className="flex items-start justify-between">
+                        <Card className="border-2 w-1/3">
+                            <CardBody>
+                                <AccordionDispense />
+                            </CardBody>
+                        </Card>
+                        <PointRightBlood height={150} width={150} />
+                        <Card className="border-2 w-1/2">
+                            <CardBody className="flex flex-col items-center justify-center gap-3">
+                                <Select label="search">
+                                    <Option>Ray Reyes</Option>
+                                    <Option>James Robles</Option>
+                                </Select>
+                                <Chip value="Manual" size="sm" className="w-full mt-4 pl-4" />
+                                <div className="flex items-center justify-between w-full">
+                                    <div className="flex flex-col items-center gap-3">
+                                        <Input label="First Name" />
+                                        <Input label="Middle Name" />
+                                        <Input label="Last Name" />
+                                    </div>
+                                    <div className="flex flex-col items-center gap-3">
+                                        <Input type="date" label="Date of Birth" />
+                                        <Select label="Blood Type">
+                                            {bloodType.map((bloodTypes) => (
+                                                <Option key={bloodTypes}>{bloodTypes}</Option>
+                                            ))}
+                                        </Select>
+                                        <Select label="Sex">
+                                            <Option>Male</Option>
+                                            <Option>Female</Option>
+                                        </Select>
+                                    </div>
+                                </div>
+                            </CardBody>
+                        </Card>
+                    </div>
+                    <div>
+                        <Card shadow={false}>
+                            <CardBody className="flex flex-col items-center justify-center gap-4">
+                                <Input label="Diagnosis for transfusion" containerProps={{ className: "w-[50%]" }} />
+                                <Select label="Hospital" containerProps={{ className: "w-[50%]" }}>
+                                    <Option>ValGen</Option>
+                                    <Option>Dalandanan Hospital</Option>
+                                </Select>
+                            </CardBody>
+                        </Card>
+                    </div>
+                </DialogBody>
+                <DialogFooter className="border-t-2">
+                    <Button variant="text" color="red" onClick={handleOpen} className="mr-1">
+                        <span>Cancel</span>
+                    </Button>
+                    <Button variant="gradient" color="green" onClick={handleOpen}>
+                        <span>Confirm</span>
+                    </Button>
+                </DialogFooter>
+            </Dialog>
         </>
     );
 }
@@ -269,9 +417,7 @@ export function Disposed({ blood_bags_id, refreshData }) {
                 Dispose
             </Button>
             <Dialog open={open} handler={() => setOpen(false)}>
-                    <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">
-                        Dispose Blood Bag
-                    </DialogHeader>
+                <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">Dispose Blood Bag</DialogHeader>
                 <DialogBody divider className="flex flex-col gap-4 items-center">
                     <Typography className="font-bold text-xl text-red-600 text-center">Are you sure you want to disposed this blood bag?</Typography>
                 </DialogBody>
@@ -349,9 +495,7 @@ export function MultipleDisposed({ selectedRows, refreshData }) {
                 Dispose
             </Button>
             <Dialog open={open} handler={() => setOpen(false)}>
-                    <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">
-                        Dispose Blood Bag
-                    </DialogHeader>
+                <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">Dispose Blood Bag</DialogHeader>
                 <DialogBody divider className="flex flex-col gap-4 items-center">
                     <Typography className="font-bold text-xl text-red-600 text-center">Are you sure you want to disposed all of this blood bag?</Typography>
                 </DialogBody>
