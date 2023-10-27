@@ -10,9 +10,8 @@ import {
     ListItemPrefix,
     Avatar,
     Chip,
-    IconButton,
   } from "@material-tailwind/react";
-import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { ApprovePost, DisapprovePost } from "./popup";
    
 export function PostCard() {
   const chipColor = [
@@ -59,8 +58,8 @@ export function PostCard() {
         </CardBody>
       </Card>
       <div className="flex flex-col items-start gap-5">
-        <IconButton color="green" variant="gradient" className="rounded-l-none"><CheckIcon className="h-5 w-5" /></IconButton>
-        <IconButton color="red" variant="gradient" className="rounded-l-none"><XMarkIcon className="h-5 w-5" /></IconButton>
+        <ApprovePost />
+        <DisapprovePost />
       </div>
     </div>
   );
