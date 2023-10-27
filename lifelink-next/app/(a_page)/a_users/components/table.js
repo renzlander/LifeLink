@@ -337,7 +337,7 @@ export function UsersTable() {
                                     ) : (
                                         <div className="space-x-2">
                                             <AddBloodBagPopup user_id={user.user_id} bledByOptions={bledByOptions} venueOptions={venueOptions} />
-                                            <MoveToDeferral user_id={user.user_id} refreshData={fetchData} temporaryDeferralCategories={temporaryDeferralCategories} permanentDeferralCategories={permanentDeferralCategories} />
+                                            <MoveToDeferral user_id={user.user_id} refreshData={fetchData} temporaryDeferralCategories={temporaryDeferralCategories} permanentDeferralCategories={permanentDeferralCategories} venueOptions={venueOptions}/>
                                         </div>
                                     )}
                                 </td>

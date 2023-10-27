@@ -6,17 +6,30 @@ import { laravelBaseUrl } from "@/app/variables";
 import { Typography } from "@mui/material";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import InputSelect from "@/app/components/InputSelect";
 
-export function MoveToDeferral({ user_id, refreshData, temporaryDeferralCategories, permanentDeferralCategories }) {
+export function MoveToDeferral({ user_id, refreshData, temporaryDeferralCategories, permanentDeferralCategories, venueOptions }) {
     const [open, setOpen] = useState(false);
     const [typesDeferral, setTypesDeferral] = useState("1");
     const [category, setCategory] = useState("");
     const [remarks, setRemarks] = useState("");
     const [duration, setDuration] = useState("001");
+    const [venue, setVenue] = useState("");
+    const [dateDeferred, setDateDeferred] = useState("");
+
 
     const [errorMessage, setErrorMessage] = useState({ category: "", specific_reason: "", remarks: "", duration: "" });
     const [generalErrorMessage, setGeneralErrorMessage] = useState("");
     const [selectedCategoryRemarks, setSelectedCategoryRemarks] = useState(null); // State to store selected category's remarks
+
+    const handleVenueSelect = (selectedValue) => {
+        setVenue(selectedValue);
+    };
+
+    const dynamicVenueOptions = venueOptions.map((item) => ({
+        label: item.venues_desc,
+        value: item.venues_desc,
+    }));
 
     const handleIncrement = () => {
         const parsedDuration = parseInt(duration, 10);
@@ -69,6 +82,8 @@ export function MoveToDeferral({ user_id, refreshData, temporaryDeferralCategori
                 categories_id: category,
                 remarks: remarks,
                 duration: duration,
+                venue: venue,
+                date_deferred: dateDeferred
             };
             console.log(user_id);
             console.log('deferral_type_id',typesDeferral);
@@ -130,11 +145,22 @@ export function MoveToDeferral({ user_id, refreshData, temporaryDeferralCategori
                 )}
                 <DialogBody divider className="flex flex-col gap-4">
                     <div className={`relative flex items-center justify-between gap-5 w-full`}>
-                        <Select label="Venue" required>
-                            <Option>ValGen</Option>
-                            <Option>Dalandanan Hospital</Option>
-                        </Select>
-                        <Input type="date" label="Date" />
+                        <InputSelect 
+                            label="Venue" 
+                            value={venue} 
+                            onSelect={handleVenueSelect} 
+                            options={dynamicVenueOptions} 
+                            isSearchable 
+                            required 
+                            placeholder="Venue" 
+                        />
+                        <Input 
+                            type="date" 
+                            label="Date" 
+                            value={dateDeferred}
+                            onChange={(e) => setDateDeferred(e.target.value)} 
+                            max={new Date().toISOString().split("T")[0]} 
+                        />
                         {errorMessage.remarks && <div className="error-message text-red-600 text-sm absolute mt-2">{errorMessage.remarks}</div>}
                     </div>
                     <div className={`relative`}>
