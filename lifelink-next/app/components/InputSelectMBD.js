@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Card, Input, Typography } from "@material-tailwind/react";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
 
-export default function InputSelect({ label, options, onSelect }) {
+export default function InputSelectMBD({ label, options, onSelect }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const inputRef = useRef(null);
@@ -49,6 +49,7 @@ export default function InputSelect({ label, options, onSelect }) {
           onClick={handleInputClick}
           onChange={(e) => setSearchTerm(e.target.value)}
           autoComplete="off"
+          className="h-[50px]"
         />
       <div className={`absolute inset-y-0 right-2 flex items-center pointer-events-none transition-transform ${isDropdownOpen ? 'rotate-180' : ''} ${isDropdownOpen ? 'rotate-180' : ''}`}>
         <ChevronDownIcon className="h-3 w-3 text-gray-900" />

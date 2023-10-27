@@ -11,13 +11,11 @@ import { PDDeferralSexTable, PDDefSexCountTable } from "./tablePDDefSD";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
-import InputSelect from "@/app/components/InputSelect";
+import InputSelectMBD from "@/app/components/InputSelectMBD";
 import { useRouter } from "next/navigation";
 
 export function MBDCard() {
     const router = useRouter();
-
-    
     const [venueOptions, setVenueOptions] = useState([]);
     const [venue, setVenue] = useState("Pamantasan Ng Lungsod Ng Valenzuela");
     const [startDate, setStartDate] = useState(getCurrentDate());
@@ -32,6 +30,8 @@ export function MBDCard() {
     const [ageDistributionRight, setAgeDistributionRight] = useState ([]);
     const [tempCategoriesDeferral, setTempCategoriesDeferral] = useState ([]);
     const [countDeferral, setCountDeferral] = useState ([]);
+    const [totalUnitsCollected, setTotalUnitsCollected] = useState("0");
+    const [totalDeferred, setTotalDeferred] = useState("0");
 
 
     function getCurrentDate() {
@@ -119,6 +119,8 @@ export function MBDCard() {
                 setAgeDistributionRight(response.data.getAgeDistributionRight);
                 setTempCategoriesDeferral(response.data.getTempCategoriesDeferral);
                 setCountDeferral(response.data.countDeferral);
+                setTotalUnitsCollected(response.data.numberOfUnitsCollected);
+                setTotalDeferred(response.data.countDeferredDonors);
             } else {
                 console.error("Error fetching data:", response.data.message);
             }
@@ -138,8 +140,8 @@ export function MBDCard() {
             <CardBody className="flex flex-col gap-6">
                 <div className="flex items-center gap-2 w-full">
                     <div className="flex flex-col items-start justify-center gap-2 w-1/2">
-                        <InputSelect label="Venue" value={venue} onSelect={handleVenueSelect} options={dynamicVenueOptions} isSearchable required placeholder="Venue" />
-                        <div className="flex items-center gap-2 w-full">
+                        <InputSelectMBD label="Venue" value={venue} onSelect={handleVenueSelect} options={dynamicVenueOptions} isSearchable required placeholder="Venue"/>
+                        <div className="flex items-center gap-2 w-full mt-2">
                             <Input
                                 type="date"
                                 label="Start Date"
@@ -149,7 +151,7 @@ export function MBDCard() {
                                     setStartDate(newStartDate);
                                     fetchBloodTypeFilteredData(venue, newStartDate, endDate);
                                 }}
-                                className=""
+                                className="h-[55px]"
                             />                            
                             <ArrowRightIcon className="h-5 w-5 text-blue-gray-700" />
                             <Input
@@ -161,7 +163,7 @@ export function MBDCard() {
                                     setEndDate(newEndDate);
                                     fetchBloodTypeFilteredData(venue, startDate, newEndDate);
                                 }}
-                                className=""
+                                className="h-[55px]"
                             />                        
                         </div>
                     </div>
@@ -204,7 +206,7 @@ export function MBDCard() {
                     </div>
                 </div>
                 <div className="w-full">
-                    <NumbersTable />
+                    <NumbersTable totalUnitsCollected={totalUnitsCollected} totalDeferred={totalDeferred}/>
                 </div>
                 <Chip variant="gradient" color="blue-gray" size="lg" value="PATIENT DIRECTED" className="flex justify-center items-center p-4 text-lg" />
                 <div className="w-full">

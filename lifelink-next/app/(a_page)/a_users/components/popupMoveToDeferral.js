@@ -16,6 +16,7 @@ export function MoveToDeferral({ user_id, refreshData, temporaryDeferralCategori
     const [duration, setDuration] = useState("001");
     const [venue, setVenue] = useState("");
     const [dateDeferred, setDateDeferred] = useState("");
+    const [donationType, setDonationType] = useState();
 
 
     const [errorMessage, setErrorMessage] = useState({ category: "", specific_reason: "", remarks: "", duration: "" });
@@ -25,6 +26,17 @@ export function MoveToDeferral({ user_id, refreshData, temporaryDeferralCategori
     const handleVenueSelect = (selectedValue) => {
         setVenue(selectedValue);
     };
+
+    const handleDonationTypeSelect = (selectedValue) => {
+        console.log("selectedValue:", selectedValue);
+
+        setDonationType(selectedValue);
+    };
+
+    const donationTypeOptions = [
+        { label: "Non-Patient Blood Donation", value: "1" },
+        { label: "Direct Patient Blood Donation", value: "2" },
+    ];
 
     const dynamicVenueOptions = venueOptions.map((item) => ({
         label: item.venues_desc,
@@ -83,7 +95,8 @@ export function MoveToDeferral({ user_id, refreshData, temporaryDeferralCategori
                 remarks: remarks,
                 duration: duration,
                 venue: venue,
-                date_deferred: dateDeferred
+                date_deferred: dateDeferred,
+                donation_type: donationType,
             };
             console.log(user_id);
             console.log('deferral_type_id',typesDeferral);
@@ -202,6 +215,17 @@ export function MoveToDeferral({ user_id, refreshData, temporaryDeferralCategori
                         </div>
                     )}
 
+<div className={`relative`}>
+                        <Select onChange={handleDonationTypeSelect} label="Donation Type" value={donationType}>
+                            {donationTypeOptions.map((option) => (
+                                <Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Option>
+                            ))}
+                        </Select>
+                            {errorMessage.specific_reason && <div className="error-message text-red-600 text-sm absolute mt-2">{errorMessage.specific_reason}</div>}
+                        </div>
+
                     {typesDeferral === "1" && (
                         <div className="flex items-center justify-center text-black w-full">
                             <IconButton onClick={handleDecrement} className="rounded-r-none">
@@ -227,6 +251,7 @@ export function MoveToDeferral({ user_id, refreshData, temporaryDeferralCategori
                             {errorMessage.duration && <div className="error-message text-red-600 text-sm absolute mt-2">{errorMessage.duration}</div>}
                         </div>
                     )}
+                    
                 </DialogBody>
                 <DialogFooter>
                     <Button variant="text" color="red" onClick={() => setOpen(false)} className="mr-1">

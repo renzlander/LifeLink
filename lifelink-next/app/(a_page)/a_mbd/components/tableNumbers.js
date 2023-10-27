@@ -1,10 +1,10 @@
 import React from "react";
 import { Card, Typography } from "@material-tailwind/react";
 
-export function NumbersTable() {
+export function NumbersTable({totalUnitsCollected, totalDeferred}) {
   const TABLE_HEAD1 = ["No. of blood units collected", "No. of donors bled", "No. of unsuccessful donation", "No. of deferred donors"];
   const TABLE_HEAD2 = ["No. of bags used", "No. of spoiled bags", "No. of defective bags", "No. of donors with adverse reaction"];
-  const TABLE_COL1 = [1,2,3,4];
+  const TABLE_COL1 = [totalUnitsCollected,totalUnitsCollected,3,totalDeferred];
   const TABLE_COL2 = [1,2,3,4];
 
   return (

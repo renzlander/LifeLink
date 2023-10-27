@@ -83,8 +83,8 @@ export function DefSexCountTable({ countDeferral }) {
   const TABLE_HEAD = ["TEMPORARY", "PERMANENT"];
 
   // Create an array for male and female rows separately based on the response
-  const TABLE_ROWS_MALE = countDeferral.filter((row) => row.sex === "Male");
-  const TABLE_ROWS_FEMALE = countDeferral.filter((row) => row.sex === "Female");
+  const TABLE_ROWS_MALE = countDeferral.filter((row) => row.sex === "Female");
+  const TABLE_ROWS_FEMALE = countDeferral.filter((row) => row.sex === "Male");
 
   // Calculate the totals for each category, checking if the array is empty
   const totalTempMale = TABLE_ROWS_MALE.length > 0 ? TABLE_ROWS_MALE.reduce((sum, row) => sum + parseInt(row.temporary, 10), 0) : 0;
