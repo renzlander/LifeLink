@@ -22,6 +22,7 @@ import {
   ArrowUpOnSquareIcon,
   DocumentPlusIcon,
   ClipboardDocumentIcon,
+  DocumentTextIcon,
   Bars3Icon,
   Bars3BottomLeftIcon,
 } from "@heroicons/react/24/outline";
@@ -32,9 +33,12 @@ import { DrawerHeader, AppBar, Drawer, } from './components/constants';
 import UserPopover from './components/popover';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
 
 export default function AdminLayout({ children }) {
   const theme = useTheme();
+  const router = useRouter();
+  const pathName = usePathname();
   const [open, setOpen] = React.useState(false);
 
   const handleDrawerOpen = () => {
@@ -54,7 +58,7 @@ export default function AdminLayout({ children }) {
     { href: './a_dispensed', text: 'Dispensed Blood', icon: <ArrowUpOnSquareIcon /> },
     { href: './a_posts', text: 'Donor Posts', icon: <DocumentPlusIcon /> },
     { href: './a_logs', text: 'Activity Logs', icon: <ClipboardDocumentIcon /> },
-    { href: './a_mbd', text: 'MBD Report', icon: <Squares2X2Icon /> },
+    { href: './a_mbd', text: 'MBD Report', icon: <DocumentTextIcon /> },
   ];
 
   return (
@@ -104,7 +108,7 @@ export default function AdminLayout({ children }) {
         <List>
           {links.map((link, index) => (
             <Link key={index} href={link.href}>
-              <ListItem disablePadding sx={{ display: 'block' }}>
+              <ListItem disablePadding sx={{ display: 'block' }} className={'.' + pathName === link.href ? 'bg-gray-200' : ''}>
                 <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }}>
                   <ListItemIcon className='p-4'>
                     {link.icon}

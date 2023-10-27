@@ -50,3 +50,26 @@ body {
   border: none;
   background: -webkit-gradient(linear, 0 0, 100% 0, from(transparent), to(transparent), color-stop(50%, #e5e7eb));
 }
+
+/* ===== Scrollbar CSS ===== */
+  /* Firefox */
+  * {
+    scrollbar-width: none;
+    scrollbar-color: #db2929 #4b0707;
+  }
+
+  /* Chrome, Edge, and Safari */
+  *::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #4b0707;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: #db2929;
+    border-radius: 10px;
+    border: 0px none #ffffff;
+  }
