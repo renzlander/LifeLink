@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Revert, Dispense, MultipleDisposed } from "./popup";
+import { Revert, Dispense, MultipleDisposed, MultipleDispensed } from "./popup";
 import axios from "axios";
 import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
 import { MagnifyingGlassIcon, DocumentArrowDownIcon } from "@heroicons/react/24/outline";
@@ -40,7 +40,9 @@ export function TabStock() {
     const [endDate, setEndDate] = useState("");
     const [bloodQty, setBloodQty] = useState();
     const [selectedRows, setSelectedRows] = useState([]);
-
+    const [user, setUser] = useState([]);
+    const [selectedData, setSelectedData] = useState([]);
+    const [registeredUser, setRegisteredUser] = useState([]);
 
     const bloodTypes = ["All", "AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
     const router = useRouter();
@@ -87,6 +89,34 @@ export function TabStock() {
         } catch (error) {
             console.error("Error fetching data:", error);
             setLoading(false);
+        }
+    };
+
+    const fetchUserDetails = async () => {
+        try {
+            const token = getCookie("token");
+            if (!token) {
+                router.push("/login");
+                return;
+            }
+
+            const response = await axios.get(`${laravelBaseUrl}/api/registered-users`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            console.log(response);
+
+            if (response.data.status === "success") {
+                setRegisteredUser(response.data.userDetails);
+            } else {
+                // Handle the case when the API request fails
+                console.error("Oops! Something went wrong.");
+            }
+        } catch (error) {
+            console.error("Error fetching bled_by and venues lists:", error);
+            // You can handle the error here, e.g., by displaying a message to the user
         }
     };
 
@@ -146,6 +176,7 @@ export function TabStock() {
 
     useEffect(() => {
         fetchData(currentPage);
+        fetchUserDetails();
     }, [router, sortColumn, sortOrder, searchQuery]);
 
     const handlePageChange = (newPage) => {
@@ -228,11 +259,25 @@ export function TabStock() {
     };
 
     const selectedRowClass = "bg-gray-400";
-    const handleRowSelection = (blood_bags_id) => {
-        if (selectedRows.includes(blood_bags_id)) {
+    const handleRowSelection = (user, blood_bags_id) => {
+        const isSelected = selectedRows.includes(blood_bags_id);
+
+        if (isSelected) {
+            // If the row is already selected, remove it from the array
             setSelectedRows(selectedRows.filter((id) => id !== blood_bags_id));
         } else {
+            // If the row is not selected, add it to the array
             setSelectedRows([...selectedRows, blood_bags_id]);
+        }
+
+        // Check if the user object and blood_bags_id are not already in the selectedData array
+        const selectedDataIndex = selectedData.findIndex((data) => data.blood_bags_id === blood_bags_id);
+        if (isSelected && selectedDataIndex !== -1) {
+            // If the row is deselected and exists in selectedData, remove it
+            setSelectedData(selectedData.filter((data) => data.blood_bags_id !== blood_bags_id));
+        } else if (!isSelected && selectedDataIndex === -1) {
+            // If the row is selected and not in selectedData, add it
+            setSelectedData([...selectedData, { user, blood_bags_id }]);
         }
     };
 
@@ -284,12 +329,12 @@ export function TabStock() {
                     </div>
                 </div>
                 {selectedRows.length > 0 && (
-                <div className="flex items-center px-4 mt-8 mb-4">
-                    <Typography variant="h6" className="text-lg mr-4">
-                    Selected Rows: {selectedRows.length}
-                    </Typography>
-                    <Dispense variant="contained" color="red" size="sm" className="ml-4" selectedRows={selectedRows} refreshData={fetchData} />
-                </div>
+                    <div className="flex items-center px-4 mt-8 mb-4">
+                        <Typography variant="h6" className="text-lg mr-4">
+                            Selected Rows: {selectedRows.length}
+                        </Typography>
+                        <MultipleDispensed variant="contained" color="red" size="sm" className="ml-4" user={user} selectedData={selectedData} registeredUser={registeredUser} refreshData={fetchData} />
+                    </div>
                 )}
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
@@ -298,9 +343,13 @@ export function TabStock() {
                                 <Checkbox
                                     onChange={() => {
                                         if (selectedRows.length === userDetails.length) {
+                                            // Deselect all users
                                             setSelectedRows([]);
+                                            setUser([]); // Clear the selected users
                                         } else {
+                                            // Select all users
                                             setSelectedRows(userDetails.map((user) => user.blood_bags_id));
+                                            setUser(userDetails); // Select all users and update the user state
                                         }
                                     }}
                                     checked={userDetails.length > 0 && selectedRows.length === userDetails.length}
@@ -325,9 +374,15 @@ export function TabStock() {
                                     <Checkbox
                                         onChange={() => {
                                             if (selectedRows.includes(user.blood_bags_id)) {
+                                                // Deselect the user
                                                 setSelectedRows(selectedRows.filter((id) => id !== user.blood_bags_id));
+                                                // Remove the user from the user state
+                                                setUser((prevUsers) => prevUsers.filter((selectedUser) => selectedUser.blood_bags_id !== user.blood_bags_id));
                                             } else {
+                                                // Select the user
                                                 setSelectedRows([...selectedRows, user.blood_bags_id]);
+                                                // Add the user to the user state
+                                                setUser((prevUsers) => [...prevUsers, user]);
                                             }
                                         }}
                                         checked={selectedRows.includes(user.blood_bags_id)}
@@ -383,7 +438,7 @@ export function TabStock() {
                                 <td className={`${classes} flex items-center gap-3`}>
                                     <Revert serial_no={user.serial_no} refreshData={fetchData} />
 
-                                    <Dispense serial_no={user.serial_no} refreshData={fetchData} />
+                                    <Dispense user={user} blood_bags_id={user.blood_bags_id} refreshData={fetchData} registeredUser={registeredUser} />
                                 </td>
                             </tr>
                         ))}

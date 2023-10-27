@@ -4,7 +4,7 @@ import { Card, CardHeader, Typography, Button, CardBody, Chip, CardFooter, Avata
 
 const TABLE_HEAD = [
     { label: "Log Id", key: "audit_trails_id" },
-    { label: "User Id", key: "user_id" },
+    { label: "Name", key: "Name" },
     { label: "Module", key: "module" },
     { label: "Action", key: "action" },
     { label: "Status", key: "status" },
@@ -12,8 +12,6 @@ const TABLE_HEAD = [
     { label: "Region", key: "ip_address" },
     { label: "City", key: "city" },
     { label: "Postal", key: "postal" },
-    { label: "Latitude", key: "latitude" },
-    { label: "Longitude", key: "longitude" },
     { label: "Date", key: "created_at" },
     { label: "Time", key: "created_at" },
 ];
@@ -99,7 +97,7 @@ export function LogsTable({ activityLogs }) {
                                     </td>
                                     <td className="p-4">
                                         <Typography variant="small" className="font-normal">
-                                            {logs.user_id}
+                                            {`${logs.first_name} ${logs.middle_name} ${logs.last_name}`}
                                         </Typography>
                                     </td>
                                     <td className="p-4">
@@ -135,16 +133,6 @@ export function LogsTable({ activityLogs }) {
                                     <td className="p-4">
                                         <Typography variant="small" className="font-normal">
                                             {logs.postal}
-                                        </Typography>
-                                    </td>
-                                    <td className="p-4">
-                                        <Typography variant="small" className="font-normal">
-                                            {logs.latitude}
-                                        </Typography>
-                                    </td>
-                                    <td className="p-4">
-                                        <Typography variant="small" className="font-normal">
-                                            {logs.longitude}
                                         </Typography>
                                     </td>
                                     <td className="p-4">
