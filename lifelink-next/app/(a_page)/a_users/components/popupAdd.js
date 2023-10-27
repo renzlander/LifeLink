@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, Tooltip, IconButton } from "@material-tailwind/react";
+import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, Tooltip, IconButton, Select, Option } from "@material-tailwind/react";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
@@ -15,9 +15,9 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
     const [open, setOpen] = useState(false);
     const [bledBy, setBledBy] = useState("");
     const [venue, setVenue] = useState("");
-
+    const [donationType, setDonationType] = useState();
     const [dateDonated, setDateDonated] = useState("");
-    const [errorMessage, setErrorMessage] = useState({ serial_no: [], date_donated: [], bled_by: [], venue: [] });
+    const [errorMessage, setErrorMessage] = useState({ serial_no: [], date_donated: [], bled_by: [], venue: [], donationType: [],});
     const [generalErrorMessage, setGeneralErrorMessage] = useState("");
     const [part1, setPart1] = useState("");
     const [part2, setPart2] = useState("");
@@ -35,6 +35,10 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
         setVenue(selectedValue);
     };
 
+    const handleDonationTypeSelect = (selectedValue) => {
+        setDonationType(selectedValue);
+    };
+
     const dynamicBledByOptions = bledByOptions.map((item) => ({
         label: item.full_name,
         value: item.full_name,
@@ -45,6 +49,12 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
         value: item.venues_desc,
     }));
 
+    const donationTypeOptions = [
+        { label: "Non-Patient Blood Donation", value: "1" },
+        { label: "Direct Patient Blood Donation", value: "2" },
+    ];
+    
+
     const handleAddBloodBag = async () => {
         try {
             const token = getCookie("token");
@@ -52,6 +62,7 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
                 router.push("/login");
                 return;
             }
+            console.log("donationType:", donationType)
 
             // Prepare data for the POST request
             const data = {
@@ -60,6 +71,7 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
                 bled_by: bledBy,
                 venue: venue,
                 date_donated: dateDonated,
+                donation_type: donationType,
             };
 
             // Send POST request to add-bloodbag API
@@ -77,11 +89,12 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
                         const dateError = errors.date_donated || [];
                         const bledByError = errors.bled_by || [];
                         const venueError = errors.venue || [];
-                        setErrorMessage({ serial_no: serialNumberError, date_donated: dateError, bled_by: bledByError, venue: venueError });
+                        const donationTypeError = errors.donation_type || [];
+                        setErrorMessage({ serial_no: serialNumberError, date_donated: dateError, bled_by: bledByError, venue: venueError, donationType: donationTypeError });
                     } else {
                         setGeneralErrorMessage(error.response.data.message);
                         toast.error("Opps! Something went wrong.");
-                        setErrorMessage({ serial_no: [], date_donated: [], bled_by: [], venue: [] });
+                        setErrorMessage({ serial_no: [], date_donated: [], bled_by: [], venue: [], donationType: [] });
                     }
                 });
 
@@ -218,6 +231,16 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
                             max={new Date().toISOString().split("T")[0]} 
                         />
                         {errorMessage.date_donated.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.date_donated[0]}</div>}
+                    </div>
+                    <div className={`relative ${errorMessage.donationType.length > 0 ? "mb-1" : ""}`}>
+                        <Select onChange={handleDonationTypeSelect} label="Donation Type" value={donationType}>
+                            {donationTypeOptions.map((option) => (
+                                <Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Option>
+                            ))}
+                        </Select>
+                        {errorMessage.donationType.length > 0 && <div className="error-message text-red-600 text-sm">{errorMessage.donationType[0]}</div>}
                     </div>
                 </DialogBody>
                 <DialogFooter>
