@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, Typography } from "@material-tailwind/react";
  
-export function PDSexDistributionTable() {
+export function PDSexDistributionTable({bloodCollectionPD}) {
   const TABLE_HEAD = ["Sex Distribution", "O", "A", "B", "AB", "Age", "FT", "RR", "RL", ""];
   const TABLE_ROWS = [
     { sex: "MALE", sexCount: 25, O: 235, A: 34, B: 46, AB: 23, age: 25, ftCount: 12, rrCount: 3, rlCount: 3 },

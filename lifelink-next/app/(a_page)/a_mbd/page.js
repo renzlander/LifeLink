@@ -11,7 +11,7 @@ export default function Home() {
   const captureScreenshot = () => {
     if (contentRef.current) {
       const contentElement = contentRef.current;
-      const screenshotQuality = 4; // Increase quality
+      const screenshotQuality = 5; // Increase quality
 
       setIsGenerating(true); // Show loading indicator
 

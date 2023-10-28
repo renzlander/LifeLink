@@ -32,7 +32,9 @@ export function MBDCard() {
     const [countDeferral, setCountDeferral] = useState ([]);
     const [totalUnitsCollected, setTotalUnitsCollected] = useState("0");
     const [totalDeferred, setTotalDeferred] = useState("0");
-
+    const [tempCategoriesDeferralPD, setTempCategoriesDeferralPD] = useState ([]);
+    const [countDeferralPD, setCountDeferralPD] = useState ([]);
+    const [bloodCollectionPD, setBloodCollectionPD] = useState([]);
 
     function getCurrentDate() {
         const today = new Date();
@@ -121,6 +123,10 @@ export function MBDCard() {
                 setCountDeferral(response.data.countDeferral);
                 setTotalUnitsCollected(response.data.numberOfUnitsCollected);
                 setTotalDeferred(response.data.countDeferredDonors);
+                setTempCategoriesDeferralPD(response.data.getTempCategoriesDeferralPD);
+                setCountDeferralPD(response.data.countDeferralPD);
+                setBloodCollectionPD(response.data.bloodCollectionPD);
+
             } else {
                 console.error("Error fetching data:", response.data.message);
             }
@@ -140,6 +146,8 @@ export function MBDCard() {
             <CardBody className="flex flex-col gap-6">
                 <div className="flex items-center gap-2 w-full">
                     <div className="flex flex-col items-start justify-center gap-2 w-1/2">
+
+                        {/* I adjusted the height because when exporting it the field is putol */}
                         <InputSelectMBD label="Venue" value={venue} onSelect={handleVenueSelect} options={dynamicVenueOptions} isSearchable required placeholder="Venue"/>
                         <div className="flex items-center gap-2 w-full mt-2">
                             <Input
@@ -151,7 +159,7 @@ export function MBDCard() {
                                     setStartDate(newStartDate);
                                     fetchBloodTypeFilteredData(venue, newStartDate, endDate);
                                 }}
-                                className="h-[55px]"
+                                className="h-[60px]"
                             />                            
                             <ArrowRightIcon className="h-5 w-5 text-blue-gray-700" />
                             <Input
@@ -163,9 +171,10 @@ export function MBDCard() {
                                     setEndDate(newEndDate);
                                     fetchBloodTypeFilteredData(venue, startDate, newEndDate);
                                 }}
-                                className="h-[55px]"
+                                className="h-[60px]"
                             />                        
                         </div>
+
                     </div>
                     <div className="flex flex-col gap-2 items-end justify-center w-1/2">
                         <Chip value={`Expiry : `} variant="gradient" color="gray" size="lg" />
@@ -210,15 +219,15 @@ export function MBDCard() {
                 </div>
                 <Chip variant="gradient" color="blue-gray" size="lg" value="PATIENT DIRECTED" className="flex justify-center items-center p-4 text-lg" />
                 <div className="w-full">
-                    <PDSexDistributionTable />
+                    <PDSexDistributionTable bloodCollectionPD={bloodCollectionPD}/>
                 </div>
                 <Chip variant="gradient" color="gray" size="lg" value="DEFERRAL" className="flex justify-center items-center text-sm" />
                 <div className="grid grid-cols-6 gap-3">
                     <div className="col-start-1 col-span-4">
-                        <PDDeferralSexTable />
+                        <PDDeferralSexTable tempCategoriesDeferralPD={tempCategoriesDeferralPD} />
                     </div>
                     <div className="col-start-5 col-span-7">
-                        <PDDefSexCountTable />
+                        <PDDefSexCountTable countDeferralPD={countDeferralPD}/>
                     </div>
                 </div>
             </CardBody>
