@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Typography } from "@material-tailwind/react";
+import { Card, Typography, Input } from "@material-tailwind/react";
 
 export function NumbersTable({totalUnitsCollected, totalDeferred}) {
   const TABLE_HEAD1 = ["No. of blood units collected", "No. of donors bled", "No. of unsuccessful donation", "No. of deferred donors"];
@@ -22,13 +22,26 @@ export function NumbersTable({totalUnitsCollected, totalDeferred}) {
                   {head}
                 </Typography>
               </th>
-              <td className="border-b border-r border-blue-gray-100 p-4">
+              <td className={`border-b border-r border-blue-gray-100 ${TABLE_COL1[index] === 3 ? "px-0" : "px-4"}`}>
                 <Typography
                   variant="small"
                   color="blue-gray"
                   className="font-normal text-center leading-none opacity-70"
                 >
-                  {TABLE_COL1[index]}
+                  {TABLE_COL1[index] === 3 ? 
+                    <input 
+                      className="h-10 w-full text-center" 
+                      type="text"
+                      placeholder="Please enter a number here"
+                      maxLength={3}
+                      onInput={(e) => {
+                        e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                        }
+                      }
+                    /> 
+                    : 
+                    `${TABLE_COL1[index]}`
+                  }
                 </Typography>
               </td>
               <td className="border-b border-r border-blue-gray-100 bg-blue-gray-50 p-4">
@@ -40,13 +53,22 @@ export function NumbersTable({totalUnitsCollected, totalDeferred}) {
                   {TABLE_HEAD2[index]}
                 </Typography>
               </td>
-              <td className="border-b border-r border-blue-gray-100 p-4">
+              <td className="border-b border-r border-blue-gray-100 p-0">
                 <Typography
                   variant="small"
                   color="blue-gray"
                   className="font-normal text-center leading-none opacity-70"
                 >
-                  {TABLE_COL2[index]}
+                  <input 
+                    className="h-10 w-full text-center" 
+                    type="text"
+                    placeholder="Please enter a number here"
+                    maxLength={3}
+                    onInput={(e) => {
+                      e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                      }
+                    }
+                  /> 
                 </Typography>
               </td>
             </tr>

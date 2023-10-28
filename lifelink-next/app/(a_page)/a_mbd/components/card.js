@@ -231,8 +231,9 @@ export function MBDCard() {
                     </div>
                 </div>
             </CardBody>
-            <CardFooter className="pt-0">
-                <Chip variant="gradient" color="gray" size="lg" value="TEAM LEADER:" className="w-1/5" />
+            <CardFooter className="flex items-center pt-0">
+                <Chip value="TEAM LEADER :" size="sm" className="h-full rounded-r-none" />
+                <input placeholder="Full name here..." className="rounded-l-none rounded-r-md bg-gradient-to-r from-gray-900 to-gray-800 text-white" />
             </CardFooter>
         </Card>
     );
