@@ -20,7 +20,7 @@ import { laravelBaseUrl } from "@/app/variables";
 import { useRouter } from "next/navigation";
 
 const TABLE_HEAD = [
-  { label: "Donor Number", key: "donor_no" },
+  { label: "Serial No", key: "serial_no" },
   { label: "Name", key: "name" },
   { label: "Blood Type", key: "blood_type" },
   { label: "Email Address", key: "email" },
