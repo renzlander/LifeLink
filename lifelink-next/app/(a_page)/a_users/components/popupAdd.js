@@ -25,7 +25,7 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
     const inputRef1 = useRef(null);
     const inputRef2 = useRef(null);
     const inputRef3 = useRef(null);
-    const srNumber = `${part1}${part2}${part3}`;
+    const srNumber = `${part1}-${part2}-${part3}`;
 
     const handleBledBySelect = (selectedValue) => {
         setBledBy(selectedValue);

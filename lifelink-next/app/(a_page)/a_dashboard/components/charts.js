@@ -1,12 +1,5 @@
 import React from "react";
-import {
-    Card,
-    CardHeader,
-    CardBody,
-    CardFooter,
-    Typography,
-    Chip,
-  } from "@material-tailwind/react";
+import { Card, CardHeader, Checkbox, Input, Typography, Button, CardBody, Chip, CardFooter, Tabs, TabsHeader, Tab, Avatar, IconButton, Tooltip, Spinner, Select, Option } from "@material-tailwind/react";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import LineChart from "./lineChart";
 import BarChart from "./barChart";
@@ -28,7 +21,14 @@ export function LineCard() {
   const [lastUpdate, setLastUpdate] = useState("");
   const [time, setTime] = useState('');
   const [timeAgoo, setTimeAgo] = useState('');
+  const [filterBloodType, setFilterBloodType] = useState("All");
+  const bloodTypes = ["All", "AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
   const router = useRouter();
+
+  const handleBloodChange = (selectedBlood) => {
+      console.log("Selected Blood Type:", selectedBlood);
+      setFilterBloodType(selectedBlood);
+  };
 
   useEffect(() => {
     const fetchBloodBagData = async () => {
@@ -39,12 +39,23 @@ export function LineCard() {
           return;
         }
 
-        const response = await axios.get(`${laravelBaseUrl}/api/dashboard-count-bloodbag-per-month`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        console.log(filterBloodType);
 
+  
+        const response = await axios.post(
+          `${laravelBaseUrl}/api/dashboard-count-bloodbag-per-month`,
+          null, // Set the request body to null
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              blood_type: filterBloodType,
+            },
+          }
+        );
+  
+  
         if (response.data.status === "success") {
           const monthData = response.data.month_counts[0]; // Get the data for the first (and only) element
           const lastUpdate = response.data.latest_date;
@@ -52,18 +63,18 @@ export function LineCard() {
           const options = { hour: '2-digit', minute: '2-digit', hour12: true };
           const time = date.toLocaleTimeString(undefined, options);
           setTime(time);
-          setMonthCounts(monthData); 
+          setMonthCounts(monthData);
           setLastUpdate(lastUpdate);
-
+  
           setLoading(false);
         }
       } catch (error) {
         console.error(error);
       }
     };
-
+  
     fetchBloodBagData();
-  }, []);
+  }, [filterBloodType]);
 
   useEffect(() => {
     if (lastUpdate) {
@@ -99,9 +110,18 @@ export function LineCard() {
         <LineChart data={monthCounts} /> {/* Pass your data to the LineChart component */}
       </CardHeader>
       <CardBody>
-        <Typography variant="h5" color="blue-gray" className="mb-2">
-          Blood Stocks
-        </Typography>
+        <div className="flex flex-row justify-between">
+            <Typography variant="h5" color="blue-gray" className="mb-2">
+              Blood Stocks
+            </Typography>
+            <Select onChange={handleBloodChange} label="Blood Type" value={filterBloodType}>
+              {bloodTypes.map((blood) => (
+                  <Option key={blood} value={blood}>
+                      {blood}
+                  </Option>
+              ))}
+          </Select>
+        </div>
         <Typography>
         Blood bags that have undergone thorough testing and are securely stored in the inventory.
         </Typography>
@@ -121,7 +141,21 @@ export function BarCard() {
   const [lastUpdate, setLastUpdate] = useState('');
   const [time, setTime] = useState('');
   const [timeAgoo, setTimeAgo] = useState('');
+  const [filterQuarter, setFilterQuarter] = useState("All");
   const router = useRouter();
+
+  const quarters = [
+    { label: "All", value: "All" },
+    { label: "January - March", value: "Q1" },
+    { label: "April - June", value: "Q2" },
+    { label: "July - September", value: "Q3" },
+    { label: "October - December", value: "Q4" }
+  ];
+
+  const handleQuarterChange = (selectedQuarter) => {
+      console.log("Selected Quarter:", selectedQuarter);
+      setFilterQuarter(selectedQuarter);
+  };
 
   useEffect(() => {
     const fetchDonorCountPerBarangay = async () => {
@@ -132,12 +166,21 @@ export function BarCard() {
           return;
         }
 
-        const response = await axios.get(`${laravelBaseUrl}/api/dashboard-count-donor-per-barangay`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.post(
+          `${laravelBaseUrl}/api/dashboard-count-donor-per-barangay`,
+          {}, // Pass an empty object as the request body
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              quarter: filterQuarter,
+            },
+          }
+        );
+        
 
+        console.log(response);
         if (response.data.status === "success") {
           const donorCounts = response.data.donors_per_barangay;
           const lastUpdate = response.data.latest_date;
@@ -170,7 +213,7 @@ export function BarCard() {
     };
 
     fetchDonorCountPerBarangay();
-  }, []);
+  }, [filterQuarter]);
 
   useEffect(() => {
     if (lastUpdate) {
@@ -206,9 +249,18 @@ export function BarCard() {
         <BarChart data={barangayDonorCount} />
       </CardHeader>
       <CardBody>
-        <Typography variant="h5" color="blue-gray" className="mb-2">
+      <div className="flex flex-row justify-between">
+      <Typography variant="h5" color="blue-gray" className="mb-2">
           Donors per Barangay
         </Typography>
+        <Select onChange={handleQuarterChange} label="Blood Type" value={filterQuarter}>
+          {quarters.map((quarter) => (
+            <Option key={quarter.value} value={quarter.value}>
+              {quarter.label}
+            </Option>
+          ))}
+        </Select>
+      </div>
         <Typography>
           The number of donors within different barangays in Valenzuela City.
         </Typography>
