@@ -11,73 +11,120 @@ import {
   IconButton,
   Input,
   Spinner,
-  Tabs, 
-  Tab, 
-  TabsHeader,
+  Chip,
 } from "@material-tailwind/react";
+import { ViewPopUp } from "./popupView";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { useRouter } from "next/navigation";
-import { SerialNumbers } from "./serialNumbers";
-import { PatientRecord } from "./patientRecord";
 
-const SerialNumbersComponent = ({ dispensedSerialNumbers, onSearch }) => (
-  <SerialNumbers dispensedSerialNumbers={dispensedSerialNumbers} onSearch={{ dispensedSerialNumbers, onSearch }} />
-);
-const PatientRecordComponent = ({ dispensedRecords, donors }) => (
-  <PatientRecord dispensedRecords={dispensedRecords} donors={donors}/>
-);
-const TABS = [
-  {
-    label: "Stock",
-    value: "stock",
-    tableRender: <SerialNumbersComponent/>,
-  },
-  {
-    label: "Expired",
-    value: "exp",
-    tableRender: <PatientRecordComponent />,
-  },
+const TABLE_HEAD = [
+  { label: "Serial No", key: "serial_no" },
+  { label: "Name", key: "name" },
+  { label: "Blood Type", key: "blood_type" },
+  { label: "Email Address", key: "email" },
+  { label: "Mobile", key: "mobile" },
+  { label: "Birthday", key: "dob" },
+  { label: "", key: "tools" },
 ];
+const classes = "p-4 border-b border-blue-gray-50";
 
-export function DispenseTable() { 
-  const [donors, setDonors] = useState([]);
+function formatDate(dateString) {
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  const formattedDate = new Date(dateString).toLocaleDateString(
+    undefined,
+    options
+  );
+  return formattedDate;
+}
+
+export function DispenseTable() {
+  const [userDetails, setUserDetails] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [sortColumn, setSortColumn] = useState(null);
+  const [sortOrder, setSortOrder] = useState("asc");
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState(TABS[0].value);
-  const [dispensedSerialNumbers, setDispensedSerialNumbers] = useState([]); // Initialize with an empty array here
-  const [dispensedRecords, setDispensedRecords] = useState([]);
-
-  const handleTabChange = (tabValue) => {
-    setActiveTab(tabValue);
-  };
 
   const router = useRouter();
 
-  const fetchSerialNumbers = async () => {
+  const fetchData = async (page) => {
     try {
       const token = getCookie("token");
       if (!token) {
         router.push("/login");
         return;
       }
-
-      const response = await axios.get(`${laravelBaseUrl}/api/get-all-serial-no`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.data.status === "success") {
-        setDispensedSerialNumbers(response.data.serialNumbers);
+  
+      let response;
+  
+      if (searchQuery) {
+        response = await axios.post(
+          `${laravelBaseUrl}/api/search-user?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
+          {
+            searchInput: searchQuery,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
       } else {
-        console.error("Oops! Something went wrong.");
+        response = await axios.get(
+          `${laravelBaseUrl}/api/get-user-details?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
+  
+      console.log("Response:", response);
+
+      if (response && response.data && response.data.status === "success") {
+        setUserDetails(response.data.data.data);
+        setTotalPages(response.data.data.last_page);
+        setCurrentPage(response.data.data.current_page);
+        setLoading(false);
+      } else {
+        console.error("Error fetching data:", response.data.message);
+        setLoading(false);
       }
     } catch (error) {
-      console.error("Error fetching SerialNumbers:", error);
+      console.error("Error fetching data:", error);
+      setLoading(false);
     }
   };
-  const fetchDispenseRecords = async () => {
+  
+
+  useEffect(() => {
+    fetchData(currentPage);
+  }, [router, sortColumn, sortOrder, searchQuery]);
+
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > totalPages) {
+      return;
+    }
+
+    setCurrentPage(newPage);
+    fetchData(newPage);
+  };
+
+  const handleSort = (columnKey) => {
+    // If the same column is clicked, toggle the sort order
+    if (sortColumn === columnKey) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortColumn(columnKey);
+      setSortOrder("asc");
+    }
+  };
+
+  const exportUserDetailsAsPDF = async () => {
     try {
       const token = getCookie("token");
       if (!token) {
@@ -85,63 +132,62 @@ export function DispenseTable() {
         return;
       }
 
-      const data = {
-        serialNo: searchQuery,
-        serialNumbers: serialNumbersArray,
-    };
-
-      const response = await axios.post(`${laravelBaseUrl}/api/dispensed-list`, data,{
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+      // Send a request to the PDF export endpoint
+      const response = await axios.get(
+        `${laravelBaseUrl}/api/export-pdf-user-details`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          responseType: "blob", // Set the response type to blob for binary data
         }
-      });
+      );
 
-      if (response.data.status === "success") {
-        setDispensedRecords(response.data.dispensedList);
-        setDonors(response.data.donors); 
-      } else {
-        console.error("Oops! Something went wrong.");
-      }
+      // Create a Blob object from the response data
+      const pdfBlob = new Blob([response.data], { type: "application/pdf" });
+
+      // Create a URL for the Blob object
+      const pdfUrl = window.URL.createObjectURL(pdfBlob);
+
+      // Open the PDF in a new window or tab
+      window.open(pdfUrl);
+
+      // Clean up by revoking the URL when it's no longer needed
+      window.URL.revokeObjectURL(pdfUrl);
     } catch (error) {
-      console.error("Error fetching SerialNumbers:", error);
+      console.error("Error exporting PDF:", error);
     }
+  };
+
+  const sortedUserDetails = userDetails.sort((a, b) => {
+    const columnA =
+      sortColumn === "name" ? `${a.first_name} ${a.last_name}` : a[sortColumn];
+    const columnB =
+      sortColumn === "name" ? `${b.first_name} ${b.last_name}` : b[sortColumn];
+
+    if (sortOrder === "asc") {
+      if (columnA < columnB) return -1;
+      if (columnA > columnB) return 1;
+    } else {
+      if (columnA < columnB) return 1;
+      if (columnA > columnB) return -1;
+    }
+
+    return 0;
+  });
+
+  const handleUpdateUser = (updatedUserData) => {
+    console.log("Updated user data:", updatedUserData);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
+        <Spinner color="red" className="h-16 w-16" />
+        <p className="mb-[180px] text-gray-600">Loading...</p>
+      </div>
+    );
   }
-
-  const serialNumbersArray = dispensedRecords.map((record) =>
-    record.serial_numbers.split(',').map((serial) => serial.trim())
-  ).flat();
-
-  useEffect(() => {
-    const fetchSerialNumbers = async () => {
-      try {
-        // Your API call to fetch serial numbers
-        // Example:
-        const response = await axios.get(`${laravelBaseUrl}/api/get-all-serial-no`);
-
-        if (response.data.status === "success") {
-          setDispensedSerialNumbers(response.data.serialNumbers);
-        } else {
-          console.error("Oops! Something went wrong while fetching serial numbers.");
-        }
-      } catch (error) {
-        console.error("Error fetching SerialNumbers:", error);
-      }
-    };
-
-    fetchSerialNumbers();
-  }, []);
-
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-  };
-
-  useEffect(() => {
-    if (searchQuery.trim() !== "") {
-      // Only make the API call when searchQuery is not empty
-      fetchDispenseRecords();
-    }
-  }, [searchQuery]);
 
   return (
     <Card className="h-full w-full mt-4">
@@ -150,18 +196,9 @@ export function DispenseTable() {
           Dispensed Bloods
         </Typography>
       </CardHeader>
-      <CardHeader floated={false} shadow={false} className="rounded-none mt-6">
+      <CardBody className="overflow-x-auto px-0">
         <div className="mb-4 ml-4 mr-4 flex justify-end items-center">
           <div className="flex w-full shrink-0 gap-2 md:w-max">
-            <Tabs value={activeTab} className="w-full md:w-max">
-              <TabsHeader>
-                {TABS.map(({ label, value }) => (
-                  <Tab value={value} onClick={() => handleTabChange(value)}>
-                    &nbsp;&nbsp;{label}&nbsp;&nbsp;
-                  </Tab>
-                ))}
-              </TabsHeader>
-            </Tabs>
             <div className="w-full md:w-72">
               <Input
                 label="Search"
@@ -177,17 +214,105 @@ export function DispenseTable() {
             <Button
               className="flex items-center gap-3"
               size="sm"
+              onClick={exportUserDetailsAsPDF}
             >
               Export as PDF
             </Button>
           </div>
         </div>
-      </CardHeader>
-      <CardBody className="overflow-x-auto px-0">
-        {TABS.find((tab) => tab.value === activeTab)?.tableRender} 
+        <table className="w-full min-w-max table-auto text-left">
+          <thead>
+            <tr>
+              {TABLE_HEAD.map((head) => (
+                <th
+                  key={head.key}
+                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
+                  onClick={() => handleSort(head.key)}
+                >
+                  <div className="flex items-center">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal leading-none opacity-70"
+                    >
+                      {head.label}
+                    </Typography>
+                    {sortColumn === head.key && (
+                      <span className="ml-2">
+                        {sortOrder === "asc" ? "▲" : "▼"}
+                      </span>
+                    )}
+                  </div>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {userDetails.map((user, index) => (
+              <tr key={user.donor_no}>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-bold">
+                    {user.donor_no}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {`${user.first_name} ${user.last_name}`}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {user.blood_type}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {user.email}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {user.mobile}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal capitalize"
+                  >
+                    {formatDate(user.dob)}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <ViewPopUp user={user} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </CardBody>
       <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        {/* <Button
+        <Button
           variant="outlined"
           size="sm"
           disabled={currentPage === 1}
@@ -214,7 +339,7 @@ export function DispenseTable() {
           onClick={() => handlePageChange(currentPage + 1)}
         >
           Next
-        </Button> */}
+        </Button>
       </CardFooter>
     </Card>
   );
@@ -225,3 +350,4 @@ function getCookie(name) {
   const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));
   return cookie ? cookie.split("=")[1] : null;
 }
+
