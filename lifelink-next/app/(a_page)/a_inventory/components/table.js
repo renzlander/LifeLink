@@ -80,7 +80,9 @@ export function InventoryTable() {
                     </div>
                 </div>
             </CardHeader>
-            <CardBody className="overflow-scroll px-0">{TABS.find((tab) => tab.value === activeTab)?.tableRender}</CardBody>
+            <CardBody className="overflow-scroll px-0">
+                {TABS.find((tab) => tab.value === activeTab)?.tableRender}
+            </CardBody>
         </Card>
     );
 }

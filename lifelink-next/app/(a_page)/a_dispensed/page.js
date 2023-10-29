@@ -5,7 +5,7 @@ import { laravelBaseUrl } from "@/app/variables";
 import { SerialNumbers } from "./components/serialNumbers";
 import { PatientRecord } from "./components/patientRecord";
 import { ListOfDonors } from "./components/listOfDonors";
-
+import { DispenseTable } from "./components/table";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -14,8 +14,6 @@ export default function Home() {
   const [dispensedRecords, setDispensedRecords] = useState([]);
   const [donors, setDonors] = useState([]);
   const router = useRouter();
-
-
 
   const fetchSerialNumbers = async () => {
     try {
@@ -74,11 +72,9 @@ export default function Home() {
   }
 
   const serialNumbersArray = dispensedRecords.map((record) =>
-  record.serial_numbers.split(',').map((serial) => serial.trim())
-).flat();
+    record.serial_numbers.split(',').map((serial) => serial.trim())
+  ).flat();
 
-
- 
   useEffect(() => {
     fetchSerialNumbers();
     
@@ -96,14 +92,14 @@ export default function Home() {
     }
   }, [searchQuery]);
 
-
   return (
-    <div className="flex min-h-screen">
-      <SerialNumbers
+    <div className="bg-gray-200 flex min-h-screen flex-col items-center justify-between p-12">
+      <DispenseTable />
+      {/* <SerialNumbers
         dispensedSerialNumbers={dispensedSerialNumbers}
-        onSearch={handleSearch} // Pass the search query update function
+        onSearch={handleSearch}
       />
-        <PatientRecord dispensedRecords={dispensedRecords} donors={donors}/>
+        <PatientRecord dispensedRecords={dispensedRecords} donors={donors}/> */}
     </div>
   );
 }
