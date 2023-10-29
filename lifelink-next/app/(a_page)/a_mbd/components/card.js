@@ -14,6 +14,12 @@ import { laravelBaseUrl } from "@/app/variables";
 import InputSelectMBD from "@/app/components/InputSelectMBD";
 import { useRouter } from "next/navigation";
 
+function formatDate(dateString) {
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  const formattedDate = new Date(dateString).toLocaleDateString(undefined, options);
+  return formattedDate;
+}
+
 export function MBDCard() {
     const router = useRouter();
     const [venueOptions, setVenueOptions] = useState([]);
@@ -35,6 +41,8 @@ export function MBDCard() {
     const [tempCategoriesDeferralPD, setTempCategoriesDeferralPD] = useState ([]);
     const [countDeferralPD, setCountDeferralPD] = useState ([]);
     const [bloodCollectionPD, setBloodCollectionPD] = useState([]);
+    const [totalUnit, setTotalUnit] = useState("");
+    const [expiry,setExpiry] = useState("");
 
     function getCurrentDate() {
         const today = new Date();
@@ -108,8 +116,6 @@ export function MBDCard() {
                 }
             );
 
-            console.log("mbd:", response);
-            console.log(response.data.donateFrequency);
             if (response.data.status === "success") {
                 setManPowerCount(response.data.manPowerCount);
                 setManPowerList(response.data.manPowerList);
@@ -126,6 +132,8 @@ export function MBDCard() {
                 setTempCategoriesDeferralPD(response.data.getTempCategoriesDeferralPD);
                 setCountDeferralPD(response.data.countDeferralPD);
                 setBloodCollectionPD(response.data.bloodCollectionPD);
+                setTotalUnit(response.data.totalUnit);
+                setExpiry(response.data.expiredDate);
 
             } else {
                 console.error("Error fetching data:", response.data.message);
@@ -135,6 +143,7 @@ export function MBDCard() {
         }
     };
 
+  console.log("mbd:", expiry);
     
     return (
         <Card className="w-full">
@@ -177,8 +186,8 @@ export function MBDCard() {
 
                     </div>
                     <div className="flex flex-col gap-2 items-end justify-center w-1/2">
-                        <Chip value={`Expiry : `} variant="gradient" color="gray" size="lg" />
-                        <Chip value={`Total Unit : `} variant="gradient" color="gray" size="lg" />
+                        <Chip value={`Expiry : ${formatDate(expiry)}`} variant="gradient" color="gray" size="lg" />
+                        <Chip value={`Total Unit : ${totalUnit}`} variant="gradient" color="gray" size="lg" />
                     </div>
                 </div>
                 <div className="grid grid-cols-4 gap-3">
