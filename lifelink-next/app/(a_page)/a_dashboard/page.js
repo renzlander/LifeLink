@@ -57,7 +57,6 @@ export default function Home() {
           },
         });
         setLoading(false);
-        console.log("dadasdasr", response.data.latest_created_at);
         if (response.data && Array.isArray(response.data.blood_bags)) {
           const bloodBags = response.data.blood_bags;
           const bloodTypeData = bloodBags.map((bag) => ({
