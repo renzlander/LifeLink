@@ -4,7 +4,7 @@ import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { SerialNumbers } from "./components/serialNumbers";
 import { PatientRecord } from "./components/patientRecord";
-import { DispenseTable } from "./components/table";
+import { ListOfDonors } from "./components/listOfDonors";
 
 import { useRouter } from "next/navigation";
 
@@ -14,6 +14,8 @@ export default function Home() {
   const [dispensedRecords, setDispensedRecords] = useState([]);
   const [donors, setDonors] = useState([]);
   const router = useRouter();
+
+
 
   const fetchSerialNumbers = async () => {
     try {
@@ -47,10 +49,11 @@ export default function Home() {
         return;
       }
 
+
       const data = {
         serialNo: searchQuery,
         serialNumbers: serialNumbersArray,
-      };
+    };
 
       const response = await axios.post(`${laravelBaseUrl}/api/dispensed-list`, data,{
         headers: {
@@ -71,9 +74,11 @@ export default function Home() {
   }
 
   const serialNumbersArray = dispensedRecords.map((record) =>
-    record.serial_numbers.split(',').map((serial) => serial.trim())
-  ).flat();
+  record.serial_numbers.split(',').map((serial) => serial.trim())
+).flat();
 
+
+ 
   useEffect(() => {
     fetchSerialNumbers();
     
@@ -91,14 +96,14 @@ export default function Home() {
     }
   }, [searchQuery]);
 
+
   return (
-    <div className="bg-gray-200 flex min-h-screen flex-col items-center justify-between p-12">
-      <DispenseTable
+    <div className="flex min-h-screen">
+      <SerialNumbers
         dispensedSerialNumbers={dispensedSerialNumbers}
-        fetchDispenseRecords={fetchDispenseRecords}
-        dispensedRecords={dispensedRecords}
-        donors={donors}
+        onSearch={handleSearch} // Pass the search query update function
       />
+        <PatientRecord dispensedRecords={dispensedRecords} donors={donors}/>
     </div>
   );
 }
