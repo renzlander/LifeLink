@@ -474,7 +474,6 @@ export function Unsafe({ serial_no, handleOpen, reactiveOptions, spoiledOptions,
         setRemarks(selectedValue);
     }; 
 
-
     const handUnsafeBags = async () => {
         try {
             const token = getCookie("token");
@@ -482,7 +481,7 @@ export function Unsafe({ serial_no, handleOpen, reactiveOptions, spoiledOptions,
                 router.push("/login");
                 return;
             }
-
+            
             const response = await axios.post(
                 `${laravelBaseUrl}/api/mark-unsafe`,
                 {
@@ -532,7 +531,7 @@ export function Unsafe({ serial_no, handleOpen, reactiveOptions, spoiledOptions,
                             <input
                                 type="radio"
                                 name="reason"
-                                value="1"
+                                value="Spoiled"
                                 checked={reason === "Reactive"}
                                 onChange={() => setReason("Reactive")}
                             />{' '}
@@ -542,7 +541,7 @@ export function Unsafe({ serial_no, handleOpen, reactiveOptions, spoiledOptions,
                             <input
                                 type="radio"
                                 name="reason"
-                                value="2"
+                                value="Spoiled"
                                 checked={reason === "Spoiled"}
                                 onChange={() => setReason("Spoiled")}
                             />{' '}
