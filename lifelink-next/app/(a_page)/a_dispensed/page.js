@@ -50,7 +50,7 @@ export default function Home() {
       const data = {
         serialNo: searchQuery,
         serialNumbers: serialNumbersArray,
-      };
+    };
 
       const response = await axios.post(`${laravelBaseUrl}/api/dispensed-list`, data,{
         headers: {
@@ -73,10 +73,9 @@ export default function Home() {
   const serialNumbersArray = dispensedRecords.map((record) =>
     record.serial_numbers.split(',').map((serial) => serial.trim())
   ).flat();
-
+ 
   useEffect(() => {
     fetchSerialNumbers();
-    
   }, []);
 
   // Function to update the search query
@@ -95,10 +94,12 @@ export default function Home() {
     <div className="bg-gray-200 flex min-h-screen flex-col items-center justify-between p-12">
       <DispenseTable
         dispensedSerialNumbers={dispensedSerialNumbers}
+        onSearch={handleSearch}
         fetchDispenseRecords={fetchDispenseRecords}
         dispensedRecords={dispensedRecords}
         donors={donors}
       />
+        <PatientRecord dispensedRecords={dispensedRecords} donors={donors}/>
     </div>
   );
 }

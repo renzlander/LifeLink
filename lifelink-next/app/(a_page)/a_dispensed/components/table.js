@@ -92,4 +92,3 @@ export function DispenseTable({ dispensedSerialNumbers, fetchDispenseRecords, di
     </Card>
   );
 }
-

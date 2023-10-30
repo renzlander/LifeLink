@@ -43,6 +43,7 @@ export function TabStock() {
     const [user, setUser] = useState([]);
     const [selectedData, setSelectedData] = useState([]);
     const [registeredUser, setRegisteredUser] = useState([]);
+    const [hospitalOptions, setHospitalOptions] = useState([]);
 
     const bloodTypes = ["All", "AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
     const router = useRouter();
@@ -52,6 +53,22 @@ export function TabStock() {
         setBlood(selectedBlood);
         fetchBloodTypeFilteredData(selectedBlood, startDate, endDate);
     };
+
+    const getHospitalList = async () => {
+        try {
+            const response = await axios.get(`${laravelBaseUrl}/api/get-hospitals`, {
+                headers: {
+                    Authorization: `Bearer ${getCookie("token")}`,
+                },
+            });
+            if (response.data.status === "success") {
+                setHospitalOptions(response.data.hospitals);
+            }
+        }catch (error) {
+                toast.error("An error occurred while making the request.");
+                console.error("Unknown error occurred:", error);
+            }
+    }
 
     const fetchBloodTypeFilteredData = async (selectedBlood, startDate, endDate) => {
         try {
@@ -177,6 +194,7 @@ export function TabStock() {
     useEffect(() => {
         fetchData(currentPage);
         fetchUserDetails();
+        getHospitalList();
     }, [router, sortColumn, sortOrder, searchQuery]);
 
     const handlePageChange = (newPage) => {
@@ -333,7 +351,7 @@ export function TabStock() {
                         <Typography variant="h6" className="text-lg mr-4">
                             Selected Rows: {selectedRows.length}
                         </Typography>
-                        <MultipleDispensed variant="contained" color="red" size="sm" className="ml-4" user={user} selectedData={selectedData} registeredUser={registeredUser} refreshData={fetchData} />
+                        <MultipleDispensed variant="contained" color="red" size="sm" className="ml-4" user={user} selectedData={selectedData} registeredUser={registeredUser} refreshData={fetchData} hospitalOptions={hospitalOptions}/>
                     </div>
                 )}
                 <table className="w-full min-w-max table-auto text-left">
@@ -438,7 +456,7 @@ export function TabStock() {
                                 <td className={`${classes} flex items-center gap-3`}>
                                     <Revert serial_no={user.serial_no} refreshData={fetchData} />
 
-                                    <Dispense user={user} blood_bags_id={user.blood_bags_id} refreshData={fetchData} registeredUser={registeredUser} />
+                                    <Dispense user={user} blood_bags_id={user.blood_bags_id} refreshData={fetchData} registeredUser={registeredUser} hospitalOptions={hospitalOptions}/>
                                 </td>
                             </tr>
                         ))}

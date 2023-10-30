@@ -88,7 +88,7 @@ export function Revert({ serial_no, refreshData }) {
     );
 }
 
-export function Dispense({ user, refreshData, blood_bags_id, registeredUser }) {
+export function Dispense({ user, refreshData, blood_bags_id, registeredUser, hospitalOptions }) {
     const [open, setOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState(null);
     const [selectedUserDetails, setSelectedUserDetails] = useState(null);
@@ -96,19 +96,24 @@ export function Dispense({ user, refreshData, blood_bags_id, registeredUser }) {
     const [middleName, setMiddleName] = useState("");
     const [lastName, setLastName] = useState("");
     const [dob, setDob] = useState("");
-    const [patientBloodType, setPatientBloodType] = useState("A+");
-    const [sex, setSex] = useState("Male");
+    const [patientBloodType, setPatientBloodType] = useState("");
+    const [sex, setSex] = useState("");
     const [diagnosis, setDiagnosis] = useState("");
-    const [hospital, setHospital] = useState("ValGen");
+    const [hospital, setHospital] = useState("");
     const [paymentType, setPaymentType] = useState("");
-
     const bloodType = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+    const dynamicHospitalOptions = hospitalOptions.map((item) => ({
+        label: item.hospital_desc,
+        value: item.hospital_desc,
+    }));
+    
     const handleOpen = () => setOpen(!open);
 
     const handleSelect = (value) => {
         if (value === selectedValue) {
             setSelectedValue(null);
             setSelectedUserDetails(null);
+            setPatientBloodType(""); // Clear the blood type when user is deselected
         } else {
             const selectedUser = registeredUser.find((user) => user.user_id === value);
             setSelectedValue(value);
@@ -118,11 +123,12 @@ export function Dispense({ user, refreshData, blood_bags_id, registeredUser }) {
                 setMiddleName(selectedUser.middle_name);
                 setLastName(selectedUser.last_name);
                 setDob(selectedUser.dob);
-                setPatientBloodType(selectedUser.blood_type);
+                setPatientBloodType(selectedUser.blood_type); // Set blood type here
                 setSex(selectedUser.sex);
             }
         }
     };
+    
 
     const handleClear = () => {
         setSelectedValue(null);
@@ -135,6 +141,7 @@ export function Dispense({ user, refreshData, blood_bags_id, registeredUser }) {
     };
 
     const handleBloodType = (selectedBloodType) => {
+        console.log("selectedBloodType:", selectedBloodType);
         setPatientBloodType(selectedBloodType);
     };
 
@@ -199,6 +206,20 @@ export function Dispense({ user, refreshData, blood_bags_id, registeredUser }) {
         }
     };
 
+    useEffect(() => {
+        if (selectedValue !== null) {
+            console.log("User selected. Setting patientBloodType.");
+            setPatientBloodType(selectedUserDetails?.blood_type);
+            setSex(selectedUserDetails?.sex);
+        } else {
+            console.log("No user selected. Setting default patientBloodType.");
+            setPatientBloodType(""); // or any other default value
+            setSex(""); // or any other default value
+
+        }
+    }, [selectedValue, selectedUserDetails]);
+    
+
     return (
         <>
             <Button onClick={handleOpen} size="sm" color="red" variant="gradient">
@@ -248,15 +269,23 @@ export function Dispense({ user, refreshData, blood_bags_id, registeredUser }) {
                                     </div>
                                     <div className="flex flex-col items-center gap-3">
                                         <Input type="date" label="Date of Birth" value={selectedValue !== null ? selectedUserDetails?.dob : dob} disabled={selectedValue !== null} onChange={(e) => setDob(e.target.value)} />
-                                        <Select label="Blood Type" value={selectedValue !== null ? selectedUserDetails?.blood_type : patientBloodType} disabled={selectedValue !== null} onSelect={handleBloodType}>
-                                            {bloodType.map((bloodTypes) => (
-                                                <Option key={bloodTypes} value={bloodTypes}>
-                                                    {bloodTypes}
-                                                </Option>
-                                            ))}
-                                        </Select>
+                                        <Select
+  label="Blood Type"
+  value={patientBloodType}
+  onChange={(selectedBloodType) => setPatientBloodType(selectedBloodType)}
+  disabled={selectedValue !== null}
+>
+  {bloodType.map((bloodTypes) => (
+    <Option key={bloodTypes} value={bloodTypes}>
+      {bloodTypes}
+    </Option>
+  ))}
+</Select>
 
-                                        <Select label="Sex" value={selectedValue !== null ? selectedUserDetails?.sex : sex} disabled={selectedValue !== null} onSelect={handleSex}>
+
+
+
+                                        <Select label="Sex" value={selectedValue !== null ? selectedUserDetails?.sex : sex} disabled={selectedValue !== null} onChange={(selectedSex) => setSex(selectedSex)}>
                                             <Option value="Male">Male</Option>
                                             <Option value="Female">Female</Option>
                                         </Select>
@@ -269,10 +298,17 @@ export function Dispense({ user, refreshData, blood_bags_id, registeredUser }) {
                         <Card shadow={false}>
                             <CardBody className="flex flex-col items-center justify-center gap-4">
                                 <Input label="Diagnosis for transfusion" containerProps={{ className: "w-[50%]" }} value={diagnosis} onChange={(e) => setDiagnosis(e.target.value)} />
-                                <Select label="Hospital" containerProps={{ className: "w-[50%]" }} value={hospital} onSelect={handleHospital}>
-                                    <Option>ValGen</Option>
-                                    <Option>Dalandanan Hospital</Option>
-                                </Select>
+                                <InputSelect
+                                    label="Hospital"
+                                    containerProps={{ className: "w-[50%]" }}
+                                    value={hospital} 
+                                    onSelect={handleHospital}
+                                    options={dynamicHospitalOptions}
+                                    isSearchable 
+                                    required 
+                                    placeholder="Hospital"
+                                />
+
                                 <div className="flex gap-10">
                                     <Radio name="type" label="free" color="red" checked={paymentType === "free"} onChange={() => setPaymentType("free")} />
                                     <Radio name="type" label="Discounted" color="red" checked={paymentType === "discounted"} onChange={() => setPaymentType("discounted")} />
@@ -295,7 +331,7 @@ export function Dispense({ user, refreshData, blood_bags_id, registeredUser }) {
     );
 }
 
-export function MultipleDispensed({ selectedRows, user, refreshData, registeredUser }) {
+export function MultipleDispensed({ selectedRows, user, refreshData, registeredUser, hospitalOptions }) {
     const [open, setOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState(null);
     const [selectedUserDetails, setSelectedUserDetails] = useState(null);
@@ -303,12 +339,16 @@ export function MultipleDispensed({ selectedRows, user, refreshData, registeredU
     const [middleName, setMiddleName] = useState("");
     const [lastName, setLastName] = useState("");
     const [dob, setDob] = useState("");
-    const [patientBloodType, setPatientBloodType] = useState("A+");
-    const [sex, setSex] = useState("Male");
+    const [patientBloodType, setPatientBloodType] = useState("");
+    const [sex, setSex] = useState("");
     const [diagnosis, setDiagnosis] = useState("");
     const [hospital, setHospital] = useState("ValGen");
     const [paymentType, setPaymentType] = useState("");
     const bloodType = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+    const dynamicHospitalOptions = hospitalOptions.map((item) => ({
+        label: item.hospital_desc,
+        value: item.hospital_desc,
+    }));
     const handleOpen = () => setOpen(!open);
 
     const blood_bags_ids = [];
@@ -347,12 +387,17 @@ export function MultipleDispensed({ selectedRows, user, refreshData, registeredU
     };
 
     const handleBloodType = (selectedBloodType) => {
+        console.log("Blood Type selected:", selectedBloodType);
         setPatientBloodType(selectedBloodType);
     };
-
+    
     const handleSex = (selectedSex) => {
+        console.log("Sex selected:", selectedSex);
         setSex(selectedSex);
     };
+    
+    
+    
 
     const handleHospital = (selectedHospital) => {
         setHospital(selectedHospital);
@@ -364,9 +409,6 @@ export function MultipleDispensed({ selectedRows, user, refreshData, registeredU
             router.push("/login");
             return;
         }
-        // if (!Array.isArray(blood_bags_ids)) {
-        //     blood_bags_id = [blood_bags_ids];
-        // }
 
         const data = {
             user_id: selectedValue,
@@ -410,6 +452,10 @@ export function MultipleDispensed({ selectedRows, user, refreshData, registeredU
             console.error("Unknown error occurred:", error);
         }
     };
+
+    useEffect(() => {
+        
+    })
 
     return (
         <>
@@ -463,7 +509,7 @@ export function MultipleDispensed({ selectedRows, user, refreshData, registeredU
                                     </div>
                                     <div className="flex flex-col items-center gap-3">
                                         <Input type="date" label="Date of Birth" value={selectedValue !== null ? selectedUserDetails?.dob : dob} disabled={selectedValue !== null} onChange={(e) => setDob(e.target.value)} />
-                                        <Select label="Blood Type" value={selectedValue !== null ? selectedUserDetails?.blood_type : patientBloodType} disabled={selectedValue !== null} onSelect={handleBloodType}>
+                                        <Select label="Blood Type" value={selectedValue !== "" ? selectedUserDetails?.blood_type : patientBloodType} disabled={selectedValue !== null} onSelect={handleBloodType}>
                                             {bloodType.map((bloodTypes) => (
                                                 <Option key={bloodTypes} value={bloodTypes}>
                                                     {bloodTypes}
@@ -471,7 +517,7 @@ export function MultipleDispensed({ selectedRows, user, refreshData, registeredU
                                             ))}
                                         </Select>
 
-                                        <Select label="Sex" value={selectedValue !== null ? selectedUserDetails?.sex : sex} disabled={selectedValue !== null} onSelect={handleSex}>
+                                        <Select label="Sex" value={selectedValue !== "" ? selectedUserDetails?.sex : sex} disabled={selectedValue !== null} onSelect={handleSex}>
                                             <Option value="Male">Male</Option>
                                             <Option value="Female">Female</Option>
                                         </Select>
@@ -484,10 +530,16 @@ export function MultipleDispensed({ selectedRows, user, refreshData, registeredU
                         <Card shadow={false}>
                             <CardBody className="flex flex-col items-center justify-center gap-4">
                                 <Input label="Diagnosis for transfusion" containerProps={{ className: "w-[50%]" }} value={diagnosis} onChange={(e) => setDiagnosis(e.target.value)} />
-                                <Select label="Hospital" containerProps={{ className: "w-[50%]" }} value={hospital} onSelect={handleHospital}>
-                                    <Option>ValGen</Option>
-                                    <Option>Dalandanan Hospital</Option>
-                                </Select>
+                                <InputSelect
+                                    label="Hospital"
+                                    containerProps={{ className: "w-[50%]" }}
+                                    value={hospital} // The selected value will be stored in the 'hospital' variable
+                                    onSelect={handleHospital}
+                                    options={dynamicHospitalOptions}
+                                    isSearchable 
+                                    required 
+                                    placeholder="Hospital"
+                                />
                                 <div className="flex gap-10">
                                     <Radio name="type" label="free" color="red" checked={paymentType === "free"} onChange={() => setPaymentType("free")} />
                                     <Radio name="type" label="Discounted" color="red" checked={paymentType === "discounted"} onChange={() => setPaymentType("discounted")} />
@@ -666,6 +718,8 @@ export function MultipleDisposed({ selectedRows, refreshData }) {
         </>
     );
 }
+
+
 
 function getCookie(name) {
     const cookies = document.cookie.split("; ");
