@@ -464,8 +464,8 @@ export function BagsTable() {
                                     </Typography>
                                 </td>
                                 <td className={`${classes} flex items-center justify-around gap-3`}>
-                                    <EditPopUp user={user} countdown={user.countdown} refreshData={fetchData} />
-                                    <RemoveBlood serial_no={user.serial_no} countdown={user.countdown_end_date} refreshData={fetchData} />
+                                    <EditPopUp user={user} countdown={user.countdown} countdownEndDate={user.countdown_end_date} refreshData={fetchData} />
+                                    <RemoveBlood user={user} serial_no={user.serial_no} countdown={user.countdown} countdownEndDate={user.countdown_end_date} refreshData={fetchData} />
                                     <MoveToStock serial_no={user.serial_no} refreshData={fetchData} />
                                     <Unsafe serial_no={user.serial_no} refreshData={fetchData} />
                                 </td>

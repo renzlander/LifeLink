@@ -13,10 +13,13 @@ function formatDate(dateString) {
     return formattedDate;
 }
 
-export function RemoveBlood({ serial_no, handleOpen, countdown, refreshData }) {
+export function RemoveBlood({ serial_no, countdownEndDate, handleOpen, countdown, refreshData }) {
     const [open, setOpen] = useState(false);
     const [generalErrorMessage, setGeneralErrorMessage] = useState("");
     const [timeLeft, setTimeLeft] = useState("");
+    
+    console.log("countdown", countdown);
+    console.log("countdownEndDate", countdownEndDate);
 
     const router = useRouter();
 
@@ -67,7 +70,7 @@ export function RemoveBlood({ serial_no, handleOpen, countdown, refreshData }) {
                         Are you certain you want to proceed with the removal of this blood bag?
                     </Typography>
                     <Typography className="text-sm text-gray-700 text-center">
-                        The removal of this blood bag is allowed until <span className="font-bold">{formatDate(countdown)}</span>.
+                        The removal of this blood bag is allowed until <span className="font-bold">{formatDate(countdownEndDate)}</span>.
                     </Typography>
                 </DialogBody>
                 {generalErrorMessage && (
@@ -90,7 +93,7 @@ export function RemoveBlood({ serial_no, handleOpen, countdown, refreshData }) {
     );
 }
 
-export function EditPopUp({ user, countdown, refreshData }) {
+export function EditPopUp({ user, countdown, countdownEndDate, refreshData }) {
     const [errorMessage, setErrorMessage] = useState({ serial_no: [], date_donated: [], bled_by: [], venue: [] });
     const [generalErrorMessage, setGeneralErrorMessage] = useState("");
     const [open, setOpen] = useState(false);
@@ -100,23 +103,23 @@ export function EditPopUp({ user, countdown, refreshData }) {
     const [part1, setPart1] = useState("");
     const [part2, setPart2] = useState("");
     const [part3, setPart3] = useState("");
-    const srNumber = `${part1}${part2}${part3}`;
+    const srNumber = `${part1}-${part2}-${part3}`;
     const serialNo = user.serial_no;
-    const serialFormat = serialNo.match(/^(\d{4})(\d{6})(\d{1})$/);
-
+    const serialNoWithoutHyphens = serialNo.replace(/-/g, ''); 
+    const serialFormat = serialNoWithoutHyphens.match(/^(\d{4})(\d{6})(\d{1})$/);
     let firstPart = "";
     let secondPart = "";
     let thirdPart = "";
-
+   console.log|("countdowndddd", countdown);
     if (serialFormat) {
         firstPart = serialFormat[1];
         secondPart = serialFormat[2];
         thirdPart = serialFormat[3];
     }
-
+    // console.log("serialFormat[1]", firstPart);
     useEffect(() => {
         if (user.serial_no) {
-            const serialFormat = user.serial_no.match(/^(\d{4})(\d{6})(\d{1})$/);
+            const serialFormat = serialNoWithoutHyphens.match(/^(\d{4})(\d{6})(\d{1})$/);
             if (serialFormat) {
                 setPart1(serialFormat[1]);
                 setPart2(serialFormat[2]);
@@ -207,10 +210,10 @@ export function EditPopUp({ user, countdown, refreshData }) {
                         <Typography variant="h4" className="text-gray-800">
                             Serial Number:{" "}
                             <span className="text-red-600">
-                                {part1}-{part2}-{part3}
+                               {user.serial_no}
                             </span>
                         </Typography>
-                        <Chip size="sm" value={countdown === 0 ? "Editing is not available at the moment." : `This blood bag can be edited in ${countdown} ${countdown === 1 ? "day" : "days"}.`} />
+                        <Chip size="sm" value={countdown === 0 ? "Editing is not available at the moment." : `This blood bag can be edited until  ${formatDate(countdownEndDate)}`} />
                     </div>
                     <div>
                         <div className={`relative flex gap-3 items-center`}>
