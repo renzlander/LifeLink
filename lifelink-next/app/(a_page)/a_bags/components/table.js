@@ -59,9 +59,9 @@ export function BagsTable() {
     const [venueOptions, setVenueOptions] = useState([]);
     const [bledByOptions, setBledByOptions] = useState([]);
     const [venue, setVenue] = useState("All");
-    const [bledBy, setBledBy] = useState("All");
-
-
+    const [bledBy, setBledBy] = useState("All");    
+    const [reactiveOptions, setReactiveOptions] = useState([]);
+    const [spoiledOptions, setSpoiledOptions] = useState([]);
 
 
 
@@ -117,6 +117,32 @@ export function BagsTable() {
             if (response.data.status === "success") {
                 setVenueOptions(response.data.venue);
                 setBledByOptions(response.data.bledBy);
+
+            } else {
+                console.error("Oops! Something went wrong.");
+            }
+        } catch (error) {
+            console.error("Error fetching bled_by and venues lists:", error);
+        }
+    };
+
+    const fetchUnsafeRemarks = async () => {
+        try {
+            const token = getCookie("token");
+            if (!token) {
+                router.push("/login");
+                return;
+            }
+
+            const response = await axios.get(`${laravelBaseUrl}/api/get-unsafe-remarks`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.data.status === "success") {
+                setReactiveOptions(response.data.reactiveRemarks);
+                setSpoiledOptions(response.data.spoiledRemarks);
 
             } else {
                 console.error("Oops! Something went wrong.");
@@ -218,6 +244,7 @@ export function BagsTable() {
         // fetchBloodTypeFilteredData(blood_type, startDate, endDate, bledBy, venue);
         fetchData(currentPage);
         fetchBledByAndVenueLists();
+        fetchUnsafeRemarks();
     }, [router, sortColumn, sortOrder, searchQuery]);
 
     const handlePageChange = (newPage) => {
@@ -467,7 +494,7 @@ export function BagsTable() {
                                     <EditPopUp user={user} countdown={user.countdown} countdownEndDate={user.countdown_end_date} refreshData={fetchData} />
                                     <RemoveBlood user={user} serial_no={user.serial_no} countdown={user.countdown} countdownEndDate={user.countdown_end_date} refreshData={fetchData} />
                                     <MoveToStock serial_no={user.serial_no} refreshData={fetchData} />
-                                    <Unsafe serial_no={user.serial_no} refreshData={fetchData} />
+                                    <Unsafe serial_no={user.serial_no} refreshData={fetchData} reactiveOptions={reactiveOptions} spoiledOptions={spoiledOptions}/>
                                 </td>
                             </tr>
                         ))}

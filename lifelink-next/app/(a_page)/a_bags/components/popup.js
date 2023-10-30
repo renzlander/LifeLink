@@ -6,6 +6,7 @@ import { laravelBaseUrl } from "@/app/variables";
 import { EyeIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
+import InputSelect from "@/app/components/InputSelect";
 
 function formatDate(dateString) {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -453,12 +454,28 @@ export function MultipleMoveToStock({ selectedRows, refreshData }) {
     );
 }
 
-
-export function Unsafe({ serial_no, handleOpen, refreshData }) {
+export function Unsafe({ serial_no, handleOpen, reactiveOptions, spoiledOptions, refreshData }) {
     const [open, setOpen] = useState(false);
     const [generalErrorMessage, setGeneralErrorMessage] = useState("");
+    const [reason, setReason] = useState(null); // To store the selected reason (Reactive or Spoiled)
+    const [remarks, setRemarks] = useState(""); // To store the selected remarks
 
-    const handleMovetoStock = async () => {
+    const reactiveDynamicOptions = reactiveOptions.map((item) => ({
+        label: item.reactive_remarks_desc,
+        value: item.reactive_remarks_id,
+    }));
+
+    const spoiledDynamicOptions = spoiledOptions.map((item) => ({
+        label: item.spoiled_remarks_desc,
+        value: item.spoiled_remarks_id,
+    }));
+
+    const handleRemarks = (selectedValue) => {
+        setRemarks(selectedValue);
+    }; 
+
+
+    const handUnsafeBags = async () => {
         try {
             const token = getCookie("token");
             if (!token) {
@@ -466,76 +483,102 @@ export function Unsafe({ serial_no, handleOpen, refreshData }) {
                 return;
             }
 
-            const response = await axios
-                .post(
-                    `${laravelBaseUrl}/api/add-to-inventory`,
-                    {
-                        serial_no,
+            const response = await axios.post(
+                `${laravelBaseUrl}/api/mark-unsafe`,
+                {
+                    serial_no: serial_no,
+                    reason: reason,
+                    remarks: remarks,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
                     },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                )
-                .catch((error) => {
-                    console.error("Unknown error occurred:", error);
-                });
+                }
+            );
+            
 
             if (response.data.status === "success") {
+                console.log("yehey successss");
                 refreshData();
-                toast.success("Blood bag added to inventory successfully");
-            } else if (response.data.status === "error") {
-                if (response.data.message) {
-                    setGeneralErrorMessage(response.data.message);
-                } else {
-                    console.error("Unknown error occurred:", response.data);
-                }
+                toast.success("Marked as unsafe successfully");
+            } else {
+                console.error("Oops! Something went wrong.");
             }
-            // Close the dialog
             setOpen(false);
         } catch (error) {
-            console.error("Unknown error occurred:", error);
+            console.error("Error fetching bled_by and venues lists:", error);
         }
     };
+
+
+
 
     return (
         <>
             <Button size="sm" onClick={() => setOpen(true)} className="bg-red-600">
-                Unsafe
+                Mark as Unsafe
             </Button>
             <Dialog open={open} handler={() => setOpen(false)}>
-                <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
-                Mark as unsafe
+                <DialogHeader className="bg-gradient-to-r from-[#282828] to-[#A00C08] rounded-t-md text-white font-semibold">
+                    Mark as Unsafe
                 </DialogHeader>
-                {/* <DialogBody className="flex flex-col gap-4 items-center text-center">
-                    <div className="flex flex-col gap-4">
-                        <div className="flex flex-col gap-2 items-center">
-                        <Button
-                            size="sm"
-                            onClick={() => setOpen(true)}
-                            className="bg-red-600 text-white hover:bg-red-700"
-                        >
-                            Spoiled
-                        </Button>
-                        <Typography variant="body1">
-                            <span style={{ fontWeight: 'bold' }}>Spoiled blood</span> refers to blood bags that have become unusable due to factors such as contamination and exposure to inappropriate conditions. It is essential to maintain strict quality control in the handling and storage of blood products.
-                        </Typography>
-                        </div>
-                        <div className="flex flex-col gap-2 items-center">
-                        <Button
-                            size="sm"
-                            onClick={() => setOpen(true)}
-                            className="bg-red-600 text-white hover-bg-red-700"
-                        >
-                            Reactive
-                        </Button>
-                        <Typography variant="body1">
-                            <span style={{ fontWeight: 'bold' }}>Reactive blood</span> refers to blood bags that have become unusable due to factors such as contamination and exposure to inappropriate conditions. Ensuring the safety and integrity of blood products is paramount in healthcare.
-                        </Typography>
-                        </div>
+                <DialogBody className="flex flex-col gap-4 items-center text-center">
+                    <div className="text-lg text-gray-700 text-center">
+                        Select a reason:
                     </div>
-                </DialogBody> */}
+                    <div className="flex flex-col gap-2">
+                        <label>
+                            <input
+                                type="radio"
+                                name="reason"
+                                value="1"
+                                checked={reason === "Reactive"}
+                                onChange={() => setReason("Reactive")}
+                            />{' '}
+                            Reactive
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="reason"
+                                value="2"
+                                checked={reason === "Spoiled"}
+                                onChange={() => setReason("Spoiled")}
+                            />{' '}
+                            Spoiled
+                        </label>
+                    </div>
+                    {reason && (
+                        <div className="text-lg text-gray-700 text-center">
+                            Select remarks for {reason}:
+                        </div>
+                    )}
+                    {reason === "Reactive" && (
+                        <InputSelect
+                            label="Reactive Remarks"
+                            containerProps={{ className: "w-[50%]" }}
+                            value={remarks} 
+                            onSelect={handleRemarks}
+                            options={reactiveDynamicOptions}
+                            isSearchable 
+                            required 
+                            placeholder="Reactive Remarks" 
+                        />
+                    )}
+                    {reason === "Spoiled" && (
+                        <InputSelect
+                            label="Spoiled Remarks"
+                            containerProps={{ className: "w-[50%]" }}
+                            value={remarks} 
+                            onSelect={handleRemarks}
+                            options={spoiledDynamicOptions}
+                            isSearchable 
+                            required 
+                            placeholder="Spoiled Remarks" 
+                        />
+                    )}
+                </DialogBody>
                 {generalErrorMessage && (
                     <div className="mt-4 text-center bg-red-100 p-2 rounded-lg">
                         <Typography color="red" className="text-sm font-semibold">
@@ -543,20 +586,25 @@ export function Unsafe({ serial_no, handleOpen, refreshData }) {
                         </Typography>
                     </div>
                 )}
-
                 <DialogFooter className="flex justify-center mt-4">
                     <Button variant="red-cross" onClick={() => setOpen(false)} className="mr-2">
                         No
                     </Button>
-                    <Button variant="red-cross" color="red" onClick={handleMovetoStock}>
+                    <Button
+                        variant="red-cross"
+                        color="red"
+                        disabled={!reason || !remarks}
+                        onClick={handUnsafeBags}
+                    >
                         Yes
                     </Button>
                 </DialogFooter>
             </Dialog>
-
         </>
     );
 }
+
+
 
 function getCookie(name) {
     const cookies = document.cookie.split("; ");
