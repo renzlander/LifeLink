@@ -1,5 +1,5 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { Card, CardHeader, Typography, CardBody, Input } from "@material-tailwind/react";
+import { Input, Typography } from "@material-tailwind/react";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
@@ -27,46 +27,63 @@ export function SerialNumbers({ dispensedSerialNumbers, onSearch }) {
   }, [searchQuery, dispensedSerialNumbers, onSearch]);
 
   return (
-    <Card className="w-auto mt-4 flex flex-start mx-8 my-12">
-      <CardHeader color="red" className="relative h-16 flex items-center">
-        <Typography variant="h4" color="white" className="ml-4">
-            Dispensed Blood Finder
-        </Typography>
-      </CardHeader>
-
-      <CardBody className="overflow-y-auto px-4">
-        <div className="mb-4 ml-4 mr-4 flex justify-end items-center">
-          <div className="flex w-full md:w-max">
-            <div className="w-full md:w-72">
-              <Input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                label="Search serial number"
-                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-              />
-            </div>
+    <div>
+      <div className="mb-4 ml-4 mr-4 flex justify-end items-center">
+        <div className="flex w-full md:w-max">
+          <div className="w-full md:w-72">
+            <Input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              label="Search serial number"
+              icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+            />
           </div>
         </div>
-        <div className="ml-4">
-          <table className="table-auto">
-            <thead>
-              <tr>
-                <th className="px-4 py-2">Serial Number</th>
-                <th className="px-4 py-2">Dispensed Date</th>
+      </div>
+      <div>
+        <table className="w-full min-w-max table-auto text-left">
+          <thead>
+            <tr>
+              <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                <Typography
+                  variant="lead"
+                  color="blue-gray"
+                  className="font-semibold text-md leading-none"
+                >
+                  Serial Number
+                </Typography>
+              </th>
+              <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                <Typography
+                  variant="lead"
+                  color="blue-gray"
+                  className="font-semibold text-md leading-none"
+                >
+                  Dispensed Date
+                </Typography>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredSerialNumbers.map((serial) => (
+              <tr key={serial.id}>
+                <td className="border px-4 py-2">
+                  
+                <Typography
+                  variant="lead"
+                  color="gray"
+                  className="font-medium text-md leading-none"
+                >
+                  {serial.serial_no}
+                </Typography>
+                </td>
+                <td className="border px-4 py-2">{formatDate(serial.created_at)}</td>
               </tr>
-            </thead>
-            <tbody>
-              {filteredSerialNumbers.map((serial) => (
-                <tr key={serial.id}>
-                  <td className="border px-4 py-2">{serial.serial_no}</td>
-                  <td className="border px-4 py-2">{formatDate(serial.created_at)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </CardBody>
-    </Card>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }

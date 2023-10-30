@@ -74,7 +74,7 @@ export function DispenseTable({ dispensedSerialNumbers, fetchDispenseRecords, di
         </Typography>
       </CardHeader>
       <CardHeader floated={false} shadow={false} className="rounded-none mt-6">
-        <Tabs value={activeTab} className="w-full md:w-1/3">
+        <Tabs value={activeTab} className="w-full">
           <TabsHeader>
               {TABS.map(({ label, value }) => {
                   return (
@@ -89,8 +89,6 @@ export function DispenseTable({ dispensedSerialNumbers, fetchDispenseRecords, di
       <CardBody className="overflow-x-auto px-0">
         {TABS.find((tab) => tab.value === activeTab)?.tableRender}
       </CardBody>
-      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-      </CardFooter>
     </Card>
   );
 }
