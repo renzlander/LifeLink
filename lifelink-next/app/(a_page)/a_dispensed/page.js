@@ -7,6 +7,18 @@ import { PatientRecord } from "./components/patientRecord";
 import { DispenseTable } from "./components/table";
 
 import { useRouter } from "next/navigation";
+import { Card, Tab, Tabs, TabsHeader } from "@material-tailwind/react";
+
+const TABS = [
+  {
+      label: "Dispensed Blood Finder",
+      value: "stock",
+  },
+  {
+      label: "Dispensed List",
+      value: "exp",
+  },
+];
 
 export default function Home() {
   const [dispensedSerialNumbers, setDispensedSerialNumbers] = useState([]);
@@ -14,6 +26,11 @@ export default function Home() {
   const [dispensedRecords, setDispensedRecords] = useState([]);
   const [donors, setDonors] = useState([]);
   const router = useRouter();
+
+  const [activeTab, setActiveTab] = useState(TABS[0].value);
+  const handleTabChange = (tabValue) => {
+      setActiveTab(tabValue);
+  };
 
   const fetchSerialNumbers = async () => {
     try {
@@ -46,11 +63,10 @@ export default function Home() {
         router.push("/login");
         return;
       }
-
       const data = {
         serialNo: searchQuery,
         serialNumbers: serialNumbersArray,
-    };
+      };
 
       const response = await axios.post(`${laravelBaseUrl}/api/dispensed-list`, data,{
         headers: {
@@ -73,33 +89,47 @@ export default function Home() {
   const serialNumbersArray = dispensedRecords.map((record) =>
     record.serial_numbers.split(',').map((serial) => serial.trim())
   ).flat();
- 
+
   useEffect(() => {
     fetchSerialNumbers();
   }, []);
 
-  // Function to update the search query
   const handleSearch = (query) => {
     setSearchQuery(query);
   };
 
   useEffect(() => {
     if (searchQuery.trim() !== "") {
-      // Only make the API call when searchQuery is not empty
       fetchDispenseRecords();
     }
   }, [searchQuery]);
 
   return (
-    <div className="bg-gray-200 flex min-h-screen flex-col items-center justify-between p-12">
-      <DispenseTable
-        dispensedSerialNumbers={dispensedSerialNumbers}
-        onSearch={handleSearch}
-        fetchDispenseRecords={fetchDispenseRecords}
-        dispensedRecords={dispensedRecords}
-        donors={donors}
-      />
-        <PatientRecord dispensedRecords={dispensedRecords} donors={donors}/>
+    <div className="bg-gray-200 flex min-h-screen flex-col items-center gap-10 py-4 px-12">
+      <Card className="w-full">
+        <Tabs value={activeTab} className="w-full">
+          <TabsHeader>
+              {TABS.map(({ label, value }) => {
+                  return (
+                    <Tab value={value} onClick={() => handleTabChange(value)}>
+                        &nbsp;&nbsp;{label}&nbsp;&nbsp;
+                    </Tab>
+                  );
+              })}
+          </TabsHeader>
+        </Tabs>
+      </Card>
+      {activeTab === TABS[0].value ? (
+        <div className="flex items-start justify-between gap-3 w-full">
+          <SerialNumbers
+            dispensedSerialNumbers={dispensedSerialNumbers}
+            onSearch={handleSearch}
+          />
+          <PatientRecord dispensedRecords={dispensedRecords} donors={donors} />
+        </div>
+      ) : (
+        <DispenseTable />
+      )}
     </div>
   );
 }
