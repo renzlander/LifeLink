@@ -18,12 +18,12 @@ const TABS = [
         tableRender: <TabExp />,
     },
     {
-        label: "SBB",
+        label: "RBB",
         value: "tdbb",
         tableRender: <TabTemp />,
     },
     {
-        label: "RBB",
+        label: "SBB",
         value: "pdbb",
         tableRender: <TabPerma />,
     },
@@ -55,9 +55,9 @@ export function InventoryTable() {
                                 } else if (value === "exp") {
                                     tooltipText = "Expired";
                                 } else if (value === "tdbb") {
-                                    tooltipText = "Spoiled Blood Bags";
-                                } else if (value === "pdbb") {
                                     tooltipText = "Reactive Blood Bags";
+                                } else if (value === "pdbb") {
+                                    tooltipText = "Spoiled Blood Bags";
                                 }
 
                                 return (
