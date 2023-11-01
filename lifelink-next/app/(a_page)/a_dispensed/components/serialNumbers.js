@@ -1,4 +1,4 @@
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Card, CardHeader, Typography, CardBody, Input } from "@material-tailwind/react";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -25,46 +25,52 @@ export function SerialNumbers({ dispensedSerialNumbers, onSearch }) {
     onSearch(searchQuery);
   }, [searchQuery, dispensedSerialNumbers, onSearch]);
 
+  const onRowClick = (serialNumber) => {
+    setSearchQuery(serialNumber);
+    onSearch(serialNumber);
+  };
+  
+  const onClearSearch = () => {
+    setSearchQuery("");
+  };
+
   return (
     <Card className="w-auto flex flex-col">
       <CardHeader color="red" className="relative h-16 flex items-center">
-        <Typography variant="h4" color="white" className="ml-4">
+        <Typography variant="h5" color="white" className="ml-4">
             Dispensed Blood Finder
         </Typography>
       </CardHeader>
-
-      <CardBody className="overflow-y-auto px-4">
-        <div className="mb-4 ml-4 mr-4 flex justify-end items-center">
-          <div className="flex w-full md:w-max">
-            <div className="w-full md:w-72">
-              <Input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                label="Search serial number"
-                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-              />
-            </div>
+      <div className=" mt-6 mx-4 flex justify-end items-center">
+        <div className="flex w-full md:w-max">
+          <div className="w-full md:w-72">
+            <Input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              label="Search serial number"
+              icon={searchQuery === "" ? <MagnifyingGlassIcon className="h-5 w-5" /> : <XMarkIcon onClick={() => onClearSearch()} className="cursor-pointer h-5 w-5" />}
+            />
           </div>
         </div>
-        <div className="ml-4">
-          <table className="table-auto">
-            <thead>
-              <tr>
-                <th className="px-4 py-2">Serial Number</th>
-                <th className="px-4 py-2">Dispensed Date</th>
+      </div>
+      <CardBody className="overflow-y-auto px-0">
+        <table className="w-full min-w-max table-auto text-left">
+          <thead>
+            <tr>
+              <th className="border-y border-r border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer">Serial Number</th>
+              <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer">Dispensed Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredSerialNumbers.map((serial) => (
+              <tr className="cursor-pointer" key={serial.id} onClick={() => onRowClick(serial.serial_no)}>
+                <td className="border px-4 py-2">{serial.serial_no}</td>
+                <td className="border px-4 py-2">{formatDate(serial.created_at)}</td>
               </tr>
-            </thead>
-            <tbody>
-              {filteredSerialNumbers.map((serial) => (
-                <tr key={serial.id}>
-                  <td className="border px-4 py-2">{serial.serial_no}</td>
-                  <td className="border px-4 py-2">{formatDate(serial.created_at)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </CardBody>
     </Card>
   );
