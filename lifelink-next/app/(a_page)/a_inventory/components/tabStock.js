@@ -10,7 +10,6 @@ import { laravelBaseUrl } from "@/app/variables";
 const TABLE_HEAD = [
     { label: "Donor Number", key: "donor_no" },
     { label: "Serial Number", key: "serial_no" },
-    { label: "Name", key: "name" },
     { label: "Blood Type", key: "blood_type" },
     { label: "Date Donated", key: "date_donated" },
     { label: "Expiration Date", key: "expiration_date" },
@@ -416,11 +415,6 @@ export function TabStock() {
                                 <td className={classes}>
                                     <Typography variant="small" color="blue-gray" className="text-red-600 font-bold">
                                         {user.serial_no}
-                                    </Typography>
-                                </td>
-                                <td className={classes}>
-                                    <Typography variant="small" color="blue-gray" className="font-normal">
-                                        {`${user.first_name} ${user.last_name}`}
                                     </Typography>
                                 </td>
                                 <td className={classes}>

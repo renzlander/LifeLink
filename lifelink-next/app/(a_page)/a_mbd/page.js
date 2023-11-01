@@ -39,9 +39,9 @@ export default function Home() {
 
   useEffect(() => {
     // Prevent right-click
-    document.addEventListener("contextmenu", (e) => {
-      e.preventDefault();
-    });
+    // document.addEventListener("contextmenu", (e) => {
+    //   e.preventDefault();
+    // });
 
     // Prevent key combinations
     document.addEventListener("keydown", (e) => {
