@@ -1,353 +1,443 @@
-import {
-  MagnifyingGlassIcon,
-} from "@heroicons/react/24/outline";
-import {
-  Card,
-  CardHeader,
-  Typography,
-  Button,
-  CardBody,
-  CardFooter,
-  IconButton,
-  Input,
-  Spinner,
-  Chip,
-} from "@material-tailwind/react";
-import { ViewPopUp } from "./popupView";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { laravelBaseUrl } from "@/app/variables";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import {
+  PencilIcon,
+  UserPlusIcon,
+  MagnifyingGlassIcon,
+  DocumentArrowDownIcon,
+} from "@heroicons/react/24/solid";
+import { Card, CardHeader, Input, Typography, Button, CardBody, CardFooter, Select, Option, Spinner, IconButton   } from "@material-tailwind/react";
+import InputSelect from "@/app/components/InputSelect";
+import { laravelBaseUrl } from "@/app/variables";
+import { parseISO, differenceInYears } from "date-fns";
 
 const TABLE_HEAD = [
-  { label: "Serial No", key: "serial_no" },
-  { label: "Name", key: "name" },
-  { label: "Blood Type", key: "blood_type" },
-  { label: "Email Address", key: "email" },
-  { label: "Mobile", key: "mobile" },
-  { label: "Birthday", key: "dob" },
-  { label: "", key: "tools" },
+    { label: "Dispensed Date", key: "dispensed_date" },
+    { label: "Serial Number", key: "serial_no" },
+    { label: "First Name", key: "first_name" },
+    { label: "Middle Name", key: "middle_name" },
+    { label: "Last Name", key: "last_name" },
+    { label: "Blood Type", key: "blood_type" },
+    { label: "Age", key: "dob" },
+    { label: "Sex", key: "sex" },
+    { label: "Diagnosis", key: "diagnosis" },
+    { label: "Hospital", key: "hospital" },
+    { label: "Payment", key: "payment" },
+    { label: "" },
 ];
-const classes = "p-4 border-b border-blue-gray-50";
+
+const classes = "p-4";
 
 function formatDate(dateString) {
-  const options = { year: "numeric", month: "long", day: "numeric" };
-  const formattedDate = new Date(dateString).toLocaleDateString(
-    undefined,
-    options
-  );
-  return formattedDate;
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    const formattedDate = new Date(dateString).toLocaleDateString(undefined, options);
+    return formattedDate;
 }
 
 export function DispenseTable() {
-  const [userDetails, setUserDetails] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [sortColumn, setSortColumn] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [searchQuery, setSearchQuery] = useState("");
+    const [userDetails, setUserDetails] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [sortColumn, setSortColumn] = useState(null);
+    const [sortOrder, setSortOrder] = useState("asc");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [blood_type, setBlood] = useState("All");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [bloodQty, setBloodQty] = useState();
+    const [selectedRows, setSelectedRows] = useState([]);
+    const [hospitalOptions, setHospitalOptions] = useState([]);
+    const [hospital, setHospital] = useState("All");
+    const [payment, setPayment] = useState("All");
+    const router = useRouter();
 
-  const router = useRouter();
+    const bloodTypes = ["All", "AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
+    const paymentTypes = ["All", "Free", "Discounted"];
 
-  const fetchData = async (page) => {
-    try {
-      const token = getCookie("token");
-      if (!token) {
-        router.push("/login");
-        return;
-      }
-  
-      let response;
-  
-      if (searchQuery) {
-        response = await axios.post(
-          `${laravelBaseUrl}/api/search-user?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
-          {
-            searchInput: searchQuery,
+    const calculateAge = (dateOfBirth) => {
+      const dobDate = parseISO(dateOfBirth);
+      const currentDate = new Date();
+      return differenceInYears(currentDate, dobDate);
+    };
+
+    const dynamicHospitalOptions = [
+      {
+        label: "All",
+        value: "All",
+      },
+      ...hospitalOptions.map((item) => ({
+        label: item.hospital_desc,
+        value: item.hospital_desc,
+      })),
+    ];
+
+    const getHospitalList = async () => {
+      try {
+        const response = await axios.get(`${laravelBaseUrl}/api/get-hospitals`, {
+          headers: {
+            Authorization: `Bearer ${getCookie("token")}`,
           },
+        });
+        if (response.data.status === "success") {
+          setHospitalOptions(response.data.hospitals);
+        }
+      } catch (error) {
+        console.error("Unknown error occurred:", error);
+      }
+    };
+
+    const handleBloodChange = (selectedBlood) => {
+      setBlood(selectedBlood);
+      fetchBloodTypeFilteredData(selectedBlood, hospital, payment, startDate, endDate);
+    };
+    const handlePaymentChange = (selectedPayment) => {
+      setPayment(selectedPayment);
+      fetchBloodTypeFilteredData(blood_type, hospital, selectedPayment, startDate, endDate);
+    };
+    const handleHospital = (selectedHospital) => {
+      setHospital(selectedHospital);
+      fetchBloodTypeFilteredData(blood_type, selectedHospital, payment, startDate, endDate); // Pass the selected remarks here
+    };
+
+    const fetchBloodTypeFilteredData = async (blood_type, hospital, payment, startDate, endDate) => {
+      try {
+        const token = getCookie("token");
+        if (!token) {
+          router.push("/login");
+          return;
+        }
+
+        const response = await axios.post(
+          `${laravelBaseUrl}/api/filter-dispensed-list`,
+          {},
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
-        );
-      } else {
-        response = await axios.get(
-          `${laravelBaseUrl}/api/get-user-details?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
+            params: {
+              blood_type: blood_type,
+              hospital: hospital,
+              payment: payment, // Use the selected payment
+              startDate: startDate,
+              endDate: endDate,
             },
           }
         );
-      }
-  
-      console.log("Response:", response);
 
-      if (response && response.data && response.data.status === "success") {
-        setUserDetails(response.data.data.data);
-        setTotalPages(response.data.data.last_page);
-        setCurrentPage(response.data.data.current_page);
+        console.log(response);
+        if (response.data.status === "success") {
+          setUserDetails(response.data.data.data);
+          setBloodQty(response.data.total_count);
+          setTotalPages(response.data.data.last_page);
+          setCurrentPage(response.data.total_count);
+          setLoading(false);
+        } else {
+          console.error("Error fetching data:", response.data.message);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
         setLoading(false);
-      } else {
-        console.error("Error fetching data:", response.data.message);
-        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setLoading(false);
-    }
-  };
-  
+    };
 
-  useEffect(() => {
-    fetchData(currentPage);
-  }, [router, sortColumn, sortOrder, searchQuery]);
+    useEffect(() => {
+      getHospitalList(); // Fetch hospital options
+    
+      // Initial data fetch with default values
+      fetchBloodTypeFilteredData("All", "All", "All", "", "");
+    }, [router, sortColumn, sortOrder, searchQuery]);
+    
 
-  const handlePageChange = (newPage) => {
-    if (newPage < 1 || newPage > totalPages) {
-      return;
-    }
-
-    setCurrentPage(newPage);
-    fetchData(newPage);
-  };
-
-  const handleSort = (columnKey) => {
-    // If the same column is clicked, toggle the sort order
-    if (sortColumn === columnKey) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortColumn(columnKey);
-      setSortOrder("asc");
-    }
-  };
-
-  const exportUserDetailsAsPDF = async () => {
-    try {
-      const token = getCookie("token");
-      if (!token) {
-        router.push("/login");
+    const handlePageChange = (newPage) => {
+      if (newPage < 1 || newPage > totalPages) {
         return;
       }
+    
+      setCurrentPage(newPage);
+      fetchBloodTypeFilteredData(blood_type, hospital, payment, startDate, endDate, newPage);
+    };
+    
+  
 
-      // Send a request to the PDF export endpoint
-      const response = await axios.get(
-        `${laravelBaseUrl}/api/export-pdf-user-details`,
-        {
+    const handleSort = (columnKey) => {
+      // If the same column is clicked, toggle the sort order
+      if (sortColumn === columnKey) {
+        setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+      } else {
+        setSortColumn(columnKey);
+        setSortOrder("asc");
+      }
+    };
+
+    const exportBloodBagsAsPDF = async () => {
+      try {
+        const token = getCookie("token");
+        if (!token) {
+          router.push("/login");
+          return;
+        }
+
+        // Send a request to the PDF export endpoint
+        const response = await axios.get(`${laravelBaseUrl}/api/export-pdf-collected-bloodbags`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          responseType: "blob", // Set the response type to blob for binary data
-        }
+          responseType: "blob",
+        });
+
+        const pdfBlob = new Blob([response.data], { type: "application/pdf" });
+        const pdfUrl = window.URL.createObjectURL(pdfBlob);
+        window.open(pdfUrl);
+        window.URL.revokeObjectURL(pdfUrl);
+      } catch (error) {
+        console.error("Error exporting PDF:", error);
+      }
+    };
+
+    const sortedBloodBagDetails = userDetails.sort((a, b) => {
+      const columnA = sortColumn === "name" ? `${a.first_name} ${a.last_name}` : a[sortColumn];
+      const columnB = sortColumn === "name" ? `${b.first_name} ${b.last_name}` : b[sortColumn];
+
+      if (sortOrder === "asc") {
+        if (columnA < columnB) return -1;
+        if (columnA > columnB) return 1;
+      } else {
+        if (columnA < columnB) return 1;
+        if (columnA > columnB) return -1;
+      }
+
+      return 0;
+    });
+
+    if (loading) {
+      return (
+        <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
+          <Spinner color="red" className="h-16 w-16" />
+          <p className="mb-[180px] text-gray-600">Loading...</p>
+        </div>
       );
-
-      // Create a Blob object from the response data
-      const pdfBlob = new Blob([response.data], { type: "application/pdf" });
-
-      // Create a URL for the Blob object
-      const pdfUrl = window.URL.createObjectURL(pdfBlob);
-
-      // Open the PDF in a new window or tab
-      window.open(pdfUrl);
-
-      // Clean up by revoking the URL when it's no longer needed
-      window.URL.revokeObjectURL(pdfUrl);
-    } catch (error) {
-      console.error("Error exporting PDF:", error);
-    }
-  };
-
-  const sortedUserDetails = userDetails.sort((a, b) => {
-    const columnA =
-      sortColumn === "name" ? `${a.first_name} ${a.last_name}` : a[sortColumn];
-    const columnB =
-      sortColumn === "name" ? `${b.first_name} ${b.last_name}` : b[sortColumn];
-
-    if (sortOrder === "asc") {
-      if (columnA < columnB) return -1;
-      if (columnA > columnB) return 1;
-    } else {
-      if (columnA < columnB) return 1;
-      if (columnA > columnB) return -1;
     }
 
-    return 0;
-  });
+    const selectedRowClass = "bg-red-100";
+    const handleRowSelection = (blood_bags_id) => {
+      if (selectedRows.includes(blood_bags_id)) {
+        setSelectedRows(selectedRows.filter((id) => id !== blood_bags_id));
+      } else {
+        setSelectedRows([...selectedRows, blood_bags_id]);
+      }
+    };
 
-  const handleUpdateUser = (updatedUserData) => {
-    console.log("Updated user data:", updatedUserData);
-  };
+    console.log(selectedRows);
 
-  if (loading) {
     return (
-      <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
-        <Spinner color="red" className="h-16 w-16" />
-        <p className="mb-[180px] text-gray-600">Loading...</p>
-      </div>
+      <Card className="w-full">
+        <CardBody>
+          <div className="flex items-center justify-between px-4 mb-4">
+            <div>
+              <Typography variant="subtitle1" className="mb-2 flex justify-center font-bold text-red-800">
+                QTY:{bloodQty}
+              </Typography>
+              <Select onChange={handleBloodChange} label="Blood Type" value={blood_type}>
+                {bloodTypes.map((blood) => (
+                  <Option key={blood} value={blood}>
+                    {blood}
+                  </Option>
+                ))}
+              </Select>
+              <Select onChange={handlePaymentChange} label="Payment" value={payment}>
+                {paymentTypes.map((payment) => (
+                  <Option key={payment} value={payment}>
+                    {payment}
+                  </Option>
+                ))}
+              </Select>
+              <InputSelect
+                label="Hospital"
+                containerProps={{ className: "w-[50%]" }}
+                value={hospital}
+                onSelect={handleHospital}
+                options={dynamicHospitalOptions}
+                isSearchable
+                required
+                placeholder="Hospital"
+              />
+            </div>
+            <div>
+              <Typography variant="subtitle1" className="mb-2 flex justify-center font-bold text-red-800">
+                Dispensed Date Filter
+              </Typography>
+              <div className="flex items-center gap-4">
+                <Input
+                  type="date"
+                  label="Start Date"
+                  value={startDate}
+                  onChange={(e) => {
+                    const newStartDate = e.target.value;
+                    setStartDate(newStartDate);
+                    fetchBloodTypeFilteredData(blood_type, newStartDate, endDate);
+                  }}
+                  className=""
+                />
+                <Typography> to </Typography>
+                <Input
+                  type="date"
+                  label="End Date"
+                  value={endDate}
+                  onChange={(e) => {
+                    const newEndDate = e.target.value;
+                    setEndDate(newEndDate);
+                    fetchBloodTypeFilteredData(blood_type, startDate, newEndDate);
+                  }}
+                  className=""
+                />
+              </div>
+            </div>
+          </div>
+          {selectedRows.length > 0 && (
+            <div className="flex items-center px-4 mt-8 mb-4">
+              <Typography variant="h6" className="text-lg mr-4">
+                Selected Rows: {selectedRows.length}
+              </Typography>
+              {/* You may want to implement the MultipleDisposed component here */}
+              {/* Example: <MultipleDisposed variant="contained" color="red" size="sm" selectedRows={selectedRows} refreshData={fetchData} /> */}
+            </div>
+          )}
+          <table className="w-full min-w-max table-auto text-left">
+            <thead>
+              <tr>
+                <th>
+                  <input
+                    type="checkbox"
+                    onChange={() => {
+                      if (selectedRows.length === userDetails.length) {
+                        setSelectedRows([]);
+                      } else {
+                        setSelectedRows(userDetails.map((user) => user.blood_bags_id));
+                      }
+                    }}
+                    checked={userDetails.length > 0 && selectedRows.length === userDetails.length}
+                    className="h-5 w-5 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
+                  />
+                </th>
+                {TABLE_HEAD.map((head) => (
+                  <th
+                    key={head.key}
+                    className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
+                    onClick={() => handleSort(head.key)}
+                  >
+                    <div className="flex items-center">
+                      <Typography variant="small" color="blue-gray" className="font-normal leading-none opacity-70">
+                        {head.label}
+                      </Typography>
+                      {sortColumn === head.key && <span className="ml-2">{sortOrder === "asc" ? "▲" : "▼"}</span>}
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {userDetails.map((user, index) => (
+                <tr key={user.blood_bags_id} className={`${selectedRows.includes(user.blood_bags_id) ? selectedRowClass : ""}`}>
+                  <td>
+                    <input
+                      type="checkbox"
+                      onChange={() => {
+                        if (selectedRows.includes(user.blood_bags_id)) {
+                          setSelectedRows(selectedRows.filter((id) => id !== user.blood_bags_id));
+                        } else {
+                          setSelectedRows([...selectedRows, user.blood_bags_id]);
+                        }
+                      }}
+                      checked={selectedRows.includes(user.blood_bags_id)}
+                      className="h-5 w-5 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
+                    />
+                  </td>
+                  <td className={classes}>
+                    <Typography variant="small" color="blue-gray" className="font-normal">
+                      {formatDate(user.created_at)}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography variant="small" color="blue-gray" className="text-red-600 font-bold">
+                      {user.serial_no}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography variant="small" color="blue-gray" className="font-normal">
+                      {user.first_name}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography variant="small" color="blue-gray" className="font-normal">
+                      {user.middle_name}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography variant="small" color="blue-gray" className="font-normal">
+                      {user.last_name}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography variant="small" color="blue-gray" className="font-normal">
+                      {user.blood_type}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography variant="small" color="blue-gray" className="font-normal">
+                      {calculateAge(user.dob)} {/* Calculate age based on date of birth */}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography variant="small" color="blue-gray" className="font-normal">
+                      {user.sex}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography variant="small" color="blue-gray" className="font-normal">
+                      {user.diagnosis}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography variant="small" color="blue-gray" className="font-normal">
+                      {user.hospital}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography variant="small" color="blue-gray" className="font-normal">
+                      {user.payment}
+                    </Typography>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </CardBody>
+        <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+          <Button variant="outlined" size="sm" disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)}>
+            Previous
+          </Button>
+          <div className="flex items-center gap-2">
+              {Array.from({ length: totalPages }, (_, index) => (
+                  <IconButton key={index} variant={currentPage === index + 1 ? "outlined" : "text"} size="sm" onClick={() => handlePageChange(index + 1)}>
+                      {index + 1}
+                  </IconButton>
+              ))}
+          </div>
+          <Button variant="outlined" size="sm" disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)}>
+            Next
+          </Button>
+        </CardFooter>
+      </Card>
     );
   }
 
-  return (
-    <Card className="h-full w-full mt-4">
-      <CardHeader color="red" className="relative h-16 flex items-center">
-        <Typography variant="h4" color="white" className="ml-4">
-          Dispensed Bloods
-        </Typography>
-      </CardHeader>
-      <CardBody className="overflow-x-auto px-0">
-        <div className="mb-4 ml-4 mr-4 flex justify-end items-center">
-          <div className="flex w-full shrink-0 gap-2 md:w-max">
-            <div className="w-full md:w-72">
-              <Input
-                label="Search"
-                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-                value={searchQuery}
-                onChange={(e) => {
-                  const inputValue = e.target.value;
-                  setSearchQuery(inputValue);
-                  fetchData(inputValue);
-                }}
-              />
-            </div>
-            <Button
-              className="flex items-center gap-3"
-              size="sm"
-              onClick={exportUserDetailsAsPDF}
-            >
-              Export as PDF
-            </Button>
-          </div>
-        </div>
-        <table className="w-full min-w-max table-auto text-left">
-          <thead>
-            <tr>
-              {TABLE_HEAD.map((head) => (
-                <th
-                  key={head.key}
-                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
-                  onClick={() => handleSort(head.key)}
-                >
-                  <div className="flex items-center">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal leading-none opacity-70"
-                    >
-                      {head.label}
-                    </Typography>
-                    {sortColumn === head.key && (
-                      <span className="ml-2">
-                        {sortOrder === "asc" ? "▲" : "▼"}
-                      </span>
-                    )}
-                  </div>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {userDetails.map((user, index) => (
-              <tr key={user.donor_no}>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-bold">
-                    {user.donor_no}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {`${user.first_name} ${user.last_name}`}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {user.blood_type}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {user.email}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {user.mobile}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal capitalize"
-                  >
-                    {formatDate(user.dob)}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <ViewPopUp user={user} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </CardBody>
-      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Button
-          variant="outlined"
-          size="sm"
-          disabled={currentPage === 1}
-          onClick={() => handlePageChange(currentPage - 1)}
-        >
-          Previous
-        </Button>
-        <div className="flex items-center gap-2">
-          {Array.from({ length: totalPages }, (_, index) => (
-            <IconButton
-              key={index}
-              variant={currentPage === index + 1 ? "outlined" : "text"}
-              size="sm"
-              onClick={() => handlePageChange(index + 1)}
-            >
-              {index + 1}
-            </IconButton>
-          ))}
-        </div>
-        <Button
-          variant="outlined"
-          size="sm"
-          disabled={currentPage === totalPages}
-          onClick={() => handlePageChange(currentPage + 1)}
-        >
-          Next
-        </Button>
-      </CardFooter>
-    </Card>
-  );
-}
+  function getCookie(name) {
+    const cookies = document.cookie.split("; ");
+    const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));
+    return cookie ? cookie.split("=")[1] : null;
+  }
 
-function getCookie(name) {
-  const cookies = document.cookie.split("; ");
-  const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));
-  return cookie ? cookie.split("=")[1] : null;
-}
 
