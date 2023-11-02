@@ -37,6 +37,7 @@ export function TemporaryDeferralTable() {
     const [searchQuery, setSearchQuery] = useState("");
 
     const router = useRouter();
+    console.log()
 
     const fetchData = async (page) => {
         try {
@@ -65,6 +66,10 @@ export function TemporaryDeferralTable() {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
+                    params:{
+                        category: category,
+                        remarks: remarks
+                    }
                 });
             }
 
@@ -84,6 +89,7 @@ export function TemporaryDeferralTable() {
             setLoading(false);
         }
     };
+
 
     useEffect(() => {
         fetchData(currentPage);

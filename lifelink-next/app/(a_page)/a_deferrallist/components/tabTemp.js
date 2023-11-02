@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { useRouter } from "next/navigation";
+import InputSelect from "@/app/components/InputSelect";
 
 const TABLE_HEAD = [
     { label: "Donor Number", key: "donor_no" },
@@ -37,8 +38,73 @@ export function TemporaryTable() {
     const [sortColumn, setSortColumn] = useState(null);
     const [sortOrder, setSortOrder] = useState("asc");
     const [searchQuery, setSearchQuery] = useState("");
+    const [category, setCategory] = useState("All");
+    const [remarks, setRemarks] = useState("All");
+    const [temporaryDeferralCategories, setTemporaryDeferralCategories] = useState([]);
 
     const router = useRouter();
+    console.log("temporaryDeferralCategories:", temporaryDeferralCategories);
+
+    const dynamicTemporaryCategories = [
+        {
+            label: "All",
+            value: "All",
+        },
+        ...temporaryDeferralCategories.map((item) => ({
+            label: item.category_desc,
+            value: item.category_desc,
+        })),
+    ];
+
+    const dyanamicRemarksOptions = [
+        {
+            label: "All",
+            value: "All",
+        },
+        ...temporaryDeferralCategories.map((item) => ({
+            label: item.remarks,
+            value: item.remarks,
+        })),
+    ];
+
+    useEffect(() => {
+        const fetchDeferralCategories = async () => {
+            try {
+                const token = getCookie("token");
+                if (!token) {
+                    router.push("/login");
+                    return;
+                }
+
+                const response = await axios.get(`${laravelBaseUrl}/api/get-defferal-categories`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (response.data.status === "success") {
+                    const tempCategories = response.data.tempCategories;
+                    setTemporaryDeferralCategories(tempCategories);
+                } else {
+                    console.error("Failed to fetch deferral categories.");
+                }
+            } catch (error) {
+                console.error("An error occurred while fetching deferral categories:", error);
+            }
+        };
+
+        fetchDeferralCategories();
+    }, []);
+
+    const handleCategorySelect = (selectedValue) => {
+        console.log("handleCategorySelect:", selectedValue);
+        setCategory(selectedValue);
+    };
+
+    const handleRemarksSelect = (selectedValue) => {
+        console.log("handleRemarksSelect:", selectedValue);
+        setRemarks(selectedValue);
+    };
 
     const fetchData = async (page) => {
         try {
@@ -67,6 +133,10 @@ export function TemporaryTable() {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
+                    params: {
+                        category: category,
+                        remarks: remarks,
+                    },
                 });
             }
 
@@ -89,7 +159,7 @@ export function TemporaryTable() {
 
     useEffect(() => {
         fetchData(currentPage);
-    }, [router, sortColumn, sortOrder, searchQuery]);
+    }, [router, sortColumn, sortOrder, searchQuery, category, remarks]);
 
     const handlePageChange = (newPage) => {
         if (newPage < 1 || newPage > totalPages) {
@@ -167,78 +237,84 @@ export function TemporaryTable() {
     }
 
     return (
-        <table className="w-full min-w-max table-auto text-left">
-            <thead>
-                <tr>
-                    {TABLE_HEAD.map((head) => (
-                        <th key={head.key} className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer" onClick={() => handleSort(head.key)}>
-                            <div className="flex items-center">
-                                <Typography variant="small" color="blue-gray" className="font-normal leading-none opacity-70">
-                                    {head.label}
-                                </Typography>
-                                {sortColumn === head.key && <span className="ml-2">{sortOrder === "asc" ? "▲" : "▼"}</span>}
-                            </div>
-                        </th>
-                    ))}
-                </tr>
-            </thead>
-            <tbody>
-                {userDetails.map((user, index) => (
-                    <tr key={user.donor_no}>
-                        <td className={classes}>
-                            <Typography variant="small" color="blue-gray" className="font-bold">
-                                {user.donor_no}
-                            </Typography>
-                        </td>
-                        <td className={classes}>
-                            <Typography variant="small" color="blue-gray" className="font-normal">
-                                {`${user.first_name} ${user.last_name}`}
-                            </Typography>
-                        </td>
-                        <td className={classes}>
-                            <Typography variant="small" color="blue-gray" className="font-normal">
-                                {user.blood_type}
-                            </Typography>
-                        </td>
-                        <td className={classes}>
-                            <Typography variant="small" color="blue-gray" className="font-normal">
-                                {user.email}
-                            </Typography>
-                        </td>
-                        <td className={classes}>
-                            <Typography variant="small" color="blue-gray" className="font-normal">
-                                {user.mobile}
-                            </Typography>
-                        </td>
-                        <td className={classes}>
-                            <Typography variant="small" color="blue-gray" className="font-normal capitalize">
-                                {formatDate(user.dob)}
-                            </Typography>
-                        </td>
-                        <td className={classes}>
-                            <Typography variant="small" color="blue-gray" className="font-normal">
-                                {user.deferred_duration}
-                            </Typography>
-                        </td>
-                        <td className={classes}>
-                            <Typography variant="small" color="blue-gray" className="font-normal">
-                                {user.category_desc}
-                            </Typography>
-                        </td>
-                        <td className={classes}>
-                            <Typography variant="small" color="blue-gray" className="font-normal">
-                                {user.remarks}
-                            </Typography>
-                        </td>
-                        <td className={classes}>
-                            <Typography variant="small" color="blue-gray" className="font-normal">
-                                {formatDate(user.end_date)}
-                            </Typography>
-                        </td>
+        <>
+            <div className="flex flex-row mx-4 px-4 gap-6">
+                <InputSelect label="Category" value={category} onSelect={handleCategorySelect} options={dynamicTemporaryCategories} isSearchable required placeholder="Category" />
+                <InputSelect label="Remarks" value={remarks} onSelect={handleRemarksSelect} options={dyanamicRemarksOptions} isSearchable required placeholder="Remarks" />
+            </div>
+            <table className="w-full min-w-max table-auto text-left">
+                <thead>
+                    <tr>
+                        {TABLE_HEAD.map((head) => (
+                            <th key={head.key} className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer" onClick={() => handleSort(head.key)}>
+                                <div className="flex items-center">
+                                    <Typography variant="small" color="blue-gray" className="font-normal leading-none opacity-70">
+                                        {head.label}
+                                    </Typography>
+                                    {sortColumn === head.key && <span className="ml-2">{sortOrder === "asc" ? "▲" : "▼"}</span>}
+                                </div>
+                            </th>
+                        ))}
                     </tr>
-                ))}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {userDetails.map((user, index) => (
+                        <tr key={user.donor_no}>
+                            <td className={classes}>
+                                <Typography variant="small" color="blue-gray" className="font-bold">
+                                    {user.donor_no}
+                                </Typography>
+                            </td>
+                            <td className={classes}>
+                                <Typography variant="small" color="blue-gray" className="font-normal">
+                                    {`${user.first_name} ${user.last_name}`}
+                                </Typography>
+                            </td>
+                            <td className={classes}>
+                                <Typography variant="small" color="blue-gray" className="font-normal">
+                                    {user.blood_type}
+                                </Typography>
+                            </td>
+                            <td className={classes}>
+                                <Typography variant="small" color="blue-gray" className="font-normal">
+                                    {user.email}
+                                </Typography>
+                            </td>
+                            <td className={classes}>
+                                <Typography variant="small" color="blue-gray" className="font-normal">
+                                    {user.mobile}
+                                </Typography>
+                            </td>
+                            <td className={classes}>
+                                <Typography variant="small" color="blue-gray" className="font-normal capitalize">
+                                    {formatDate(user.dob)}
+                                </Typography>
+                            </td>
+                            <td className={classes}>
+                                <Typography variant="small" color="blue-gray" className="font-normal">
+                                    {user.deferred_duration}
+                                </Typography>
+                            </td>
+                            <td className={classes}>
+                                <Typography variant="small" color="blue-gray" className="font-normal">
+                                    {user.category_desc}
+                                </Typography>
+                            </td>
+                            <td className={classes}>
+                                <Typography variant="small" color="blue-gray" className="font-normal">
+                                    {user.remarks}
+                                </Typography>
+                            </td>
+                            <td className={classes}>
+                                <Typography variant="small" color="blue-gray" className="font-normal">
+                                    {formatDate(user.end_date)}
+                                </Typography>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </>
     );
 }
 

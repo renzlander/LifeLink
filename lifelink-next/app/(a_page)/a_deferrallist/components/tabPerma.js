@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { useRouter } from "next/navigation";
+import InputSelect from "@/app/components/InputSelect";
 
 const TABLE_HEAD = [
     { label: "Donor Number", key: "donor_no" },
@@ -34,8 +35,55 @@ export function PermanentTable() {
     const [sortColumn, setSortColumn] = useState(null);
     const [sortOrder, setSortOrder] = useState("asc");
     const [searchQuery, setSearchQuery] = useState("");
+    const [category, setCategory] = useState("All");
+    const [permanentDeferralCategories, setPermanentDeferralCategories] = useState([]);
+
+
+    const dynamicPermaCategories = [
+        {
+            label: "All",
+            value: "All",
+        },
+        ...permanentDeferralCategories.map((item) => ({
+            label: item.category_desc,
+            value: item.category_desc,
+        })),
+    ];
+    const handleCategorySelect = (selectedValue) => {
+        console.log("handleCategorySelect:", selectedValue);
+        setCategory(selectedValue);
+    };
 
     const router = useRouter();
+    useEffect(() => {
+        const fetchDeferralCategories = async () => {
+            try {
+                const token = getCookie("token");
+                if (!token) {
+                    router.push("/login");
+                    return;
+                }
+
+                const response = await axios.get(`${laravelBaseUrl}/api/get-defferal-categories`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                console.log(response);
+                if (response.data.status === "success") {
+                    const permaCategories = response.data.permaCategories;
+                    setPermanentDeferralCategories(permaCategories);
+                } else {
+                    console.error("Failed to fetch deferral categories.");
+                }
+            } catch (error) {
+                console.error("An error occurred while fetching deferral categories:", error);
+            }
+        };
+
+        fetchDeferralCategories();
+    }, []);
 
     const fetchData = async (page) => {
         try {
@@ -64,6 +112,9 @@ export function PermanentTable() {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
+                    params: {
+                        category: category,
+                    },
                 });
             }
 
@@ -86,7 +137,7 @@ export function PermanentTable() {
 
     useEffect(() => {
         fetchData(currentPage);
-    }, [router, sortColumn, sortOrder, searchQuery]);
+    }, [router, sortColumn, sortOrder, searchQuery, category]);
 
     const handlePageChange = (newPage) => {
         if (newPage < 1 || newPage > totalPages) {
@@ -163,6 +214,10 @@ export function PermanentTable() {
         );
     }
     return (
+        <>
+        <div className="flex flex-row mx-4 px-4 gap-6">
+                <InputSelect label="Category" value={category} onSelect={handleCategorySelect} options={dynamicPermaCategories} isSearchable required placeholder="Category" />
+            </div>
         <table className="w-full min-w-max table-auto text-left">
             <thead>
                 <tr>
@@ -225,6 +280,7 @@ export function PermanentTable() {
                 ))}
             </tbody>
         </table>
+        </>
     );
 }
 
