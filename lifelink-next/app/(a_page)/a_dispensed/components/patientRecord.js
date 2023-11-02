@@ -1,4 +1,4 @@
-import { Card, CardHeader, Typography, CardBody, Input,Button } from "@material-tailwind/react";
+import { Card, CardBody, CardHeader, Typography, Input, Button } from "@material-tailwind/react";
 import React from "react";
 
 function formatDate(dateString) {
@@ -35,10 +35,10 @@ export function PatientRecord({ dispensedRecords, donors }) {
             Dispensed Blood Record
           </Typography>
         </CardHeader>
-        <div className="px-4 py-4">
+        <CardBody>
           <div className="mb-6">
             <div className="mb-4">
-              <table className="table-auto">
+              <table className="w-full table-auto">
                 <tbody>
                   <tr>
                     <td className="pr-2 py-2">
@@ -100,48 +100,47 @@ export function PatientRecord({ dispensedRecords, donors }) {
             </div>
 
             <hr className="border-b border-gray-400 my-6" />
-          {donors && donors.length > 0 && (
-            <>
-              <hr className="border-b border-gray-400 my-6" />
-              <div className="mb-6">
-                <strong>Donors:</strong>
-                <table className="table-auto">
-                  <thead>
-                    <tr>
-                      <th className="pr-2 py-2">Serial Number</th>
-                      <th className="pr-2 py-2">Donor Name</th>
-                      <th className="pr-2 py-2">Blood Type</th>
-                      <th className="pr-2 py-2">Date Donated</th>
-                      <th className="pr-2 py-2">Venue</th>
-                      <th className="pr-2 py-2">Bled By</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {donors.map((donorData, index) => {
-                      const donor = donorData[0]; // Assuming you want the first entry in each donorData array
-                      const dob = donor?.dob ? new Date(donor?.dob) : null;
+            {donors && donors.length > 0 && (
+              <>
+                <hr className="border-b border-gray-400 my-6" />
+                <div className="mb-6">
+                  <strong>Donors:</strong>
+                  <table className="table-auto">
+                    <thead>
+                      <tr>
+                        <th className="pr-2 py-2">Serial Number</th>
+                        <th className="pr-2 py-2">Donor Name</th>
+                        <th className="pr-2 py-2">Blood Type</th>
+                        <th className="pr-2 py-2">Date Donated</th>
+                        <th className="pr-2 py-2">Venue</th>
+                        <th className="pr-2 py-2">Bled By</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {donors.map((donorData, index) => {
+                        const donor = donorData[0]; // Assuming you want the first entry in each donorData array
+                        const dob = donor?.dob ? new Date(donor?.dob) : null;
 
-                      return (
-                        <tr key={index}>
-                          <td className="pr-2 py-2">{donor?.serial_no}</td>
-                          <td className="pr-2 py-2">
-                            {`${donor?.first_name} ${donor?.middle_name} ${donor?.last_name}`}
-                          </td>
-                          <td className="pr-2 py-2">{donor?.blood_type}</td>
-                          <td className="pr-2 py-2">{formatDate(donor?.date_donated)}</td>
-                          <td className="pr-2 py-2">{donor?.venue}</td>
-                          <td className="pr-2 py-2">{donor?.bled_by}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </>
-)}
-
+                        return (
+                          <tr key={index}>
+                            <td className="pr-2 py-2">{donor?.serial_no}</td>
+                            <td className="pr-2 py-2">
+                              {`${donor?.first_name} ${donor?.middle_name} ${donor?.last_name}`}
+                            </td>
+                            <td className="pr-2 py-2">{donor?.blood_type}</td>
+                            <td className="pr-2 py-2">{formatDate(donor?.date_donated)}</td>
+                            <td className="pr-2 py-2">{donor?.venue}</td>
+                            <td className="pr-2 py-2">{donor?.bled_by}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
           </div>
-        </div>
+        </CardBody>
       </Card>
     );
 }

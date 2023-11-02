@@ -236,34 +236,36 @@ export function DispenseTable() {
       <Card className="w-full">
         <CardBody>
           <div className="flex items-center justify-between px-4 mb-4">
-            <div>
+            <div className="">
               <Typography variant="subtitle1" className="mb-2 flex justify-center font-bold text-red-800">
                 QTY:{bloodQty}
               </Typography>
-              <Select onChange={handleBloodChange} label="Blood Type" value={blood_type}>
-                {bloodTypes.map((blood) => (
-                  <Option key={blood} value={blood}>
-                    {blood}
-                  </Option>
-                ))}
-              </Select>
-              <Select onChange={handlePaymentChange} label="Payment" value={payment}>
-                {paymentTypes.map((payment) => (
-                  <Option key={payment} value={payment}>
-                    {payment}
-                  </Option>
-                ))}
-              </Select>
-              <InputSelect
-                label="Hospital"
-                containerProps={{ className: "w-[50%]" }}
-                value={hospital}
-                onSelect={handleHospital}
-                options={dynamicHospitalOptions}
-                isSearchable
-                required
-                placeholder="Hospital"
-              />
+              <div className="flex items-center gap-4">
+                <Select onChange={handleBloodChange} label="Blood Type" value={blood_type}>
+                  {bloodTypes.map((blood) => (
+                    <Option key={blood} value={blood}>
+                      {blood}
+                    </Option>
+                  ))}
+                </Select>
+                <Select onChange={handlePaymentChange} label="Payment" value={payment}>
+                  {paymentTypes.map((payment) => (
+                    <Option key={payment} value={payment}>
+                      {payment}
+                    </Option>
+                  ))}
+                </Select>
+                <InputSelect
+                  label="Hospital"
+                  containerProps={{ className: "w-[50%]" }}
+                  value={hospital}
+                  onSelect={handleHospital}
+                  options={dynamicHospitalOptions}
+                  isSearchable
+                  required
+                  placeholder="Hospital"
+                />
+              </div>
             </div>
             <div>
               <Typography variant="subtitle1" className="mb-2 flex justify-center font-bold text-red-800">
