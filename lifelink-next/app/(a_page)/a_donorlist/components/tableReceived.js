@@ -1,5 +1,11 @@
 import { Card, Typography } from "@material-tailwind/react";
  
+function formatDate(dateString) {
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  const formattedDate = new Date(dateString).toLocaleDateString(undefined, options);
+  return formattedDate;
+}
+
 const TABLE_HEAD = ["Serial No.", "Date Received"];
  
 const TABLE_ROWS = [
@@ -9,7 +15,7 @@ const TABLE_ROWS = [
   },
 ];
  
-export function TableReceived() {
+export function TableReceived({user}) {
   return (
     <Card className="h-56 w-full overflow-y-auto">
       <table className="w-full min-w-max table-auto text-left">
@@ -29,16 +35,16 @@ export function TableReceived() {
           </tr>
         </thead>
         <tbody>
-          {TABLE_ROWS.map(({ serial, date }, index) => (
-            <tr key={serial} className="even:bg-blue-gray-50/50">
+          {user.blood_bags_received.map((bag, index) => (
+            <tr key={index} className={index % 2 === 0 ? "even:bg-blue-gray-50/50" : ""}>
               <td className="p-4">
                 <Typography variant="small" color="blue-gray" className="font-normal">
-                  {serial}
+                  {bag.serial_no}
                 </Typography>
               </td>
               <td className="p-4">
                 <Typography variant="small" color="blue-gray" className="font-normal">
-                  {date}
+                  {formatDate(bag.created_at)}
                 </Typography>
               </td>
             </tr>

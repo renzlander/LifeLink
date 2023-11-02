@@ -75,6 +75,7 @@ export function MoveToDeferral({ user_id, refreshData, temporaryDeferralCategori
     };
 
     const handleRemarksChange = (value) => {
+        console.log("REMARKS:", remarks);
         setRemarks(value);
     };
 
@@ -204,7 +205,7 @@ export function MoveToDeferral({ user_id, refreshData, temporaryDeferralCategori
                     </div>
                     {category && typesDeferral === "1" && (
                         <div className={`relative`}>
-                            <Select label="Remarks" value={selectedCategoryRemarks} onChange={(value) => handleRemarksChange(value)}>
+                            <Select label="Remarks" value={selectedCategoryRemarks} onSelect={handleRemarksChange}>
                                 {selectedCategoryRemarks && (
                                     <Option value={selectedCategoryRemarks}>
                                         {selectedCategoryRemarks}
@@ -215,7 +216,7 @@ export function MoveToDeferral({ user_id, refreshData, temporaryDeferralCategori
                         </div>
                     )}
 
-<div className={`relative`}>
+                        <div className={`relative`}>
                         <Select onChange={handleDonationTypeSelect} label="Donation Type" value={donationType}>
                             {donationTypeOptions.map((option) => (
                                 <Option key={option.value} value={option.value}>

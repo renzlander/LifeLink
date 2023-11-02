@@ -97,7 +97,7 @@ export function ViewPopUp({user}) {
                 <Typography variant="h6">Received Blood</Typography>
               </CardHeader>
               <CardBody>
-                <TableReceived />
+                <TableReceived user={user}/>
               </CardBody>
             </Card>
           </div>
