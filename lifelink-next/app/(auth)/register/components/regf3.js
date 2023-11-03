@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
     Card,
     Input,
@@ -14,6 +14,7 @@ export function RegF3() {
       router.push("./login");
     };
 
+ 
     return (
       <div className=" flex justify-center items-center">
         <Card className="w-full sm:w-96 mt-6" color="transparent" shadow={false}>

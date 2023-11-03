@@ -191,11 +191,11 @@ export function BarCard() {
           setTime(time);
           // Create an object with all barangays and default to zero donors
           const allBarangays = [
-            'Bagbaguin', 'Bignay', 'Bisig', 'Canumay', 'Coloong',
-            'Dalandanan', 'Gen. T. de Leon', 'Karuhatan', 'Lawang Bato', 'Lingunan',
+            'Arkong Bato','Bagbaguin', 'Balangkas', 'Bignay', 'Bisig', 'Canumay East (Canumay)', 'Canumay West (Canumay)', 'Coloong',
+            'Dalandanan', 'Hen. T. de Leon', 'Isla', 'Karuhatan', 'Lawang Bato', 'Lingunan',
             'Mabolo', 'Malanday', 'Malinta', 'Mapulang Lupa', 'Marulas', 'Maysan',
-            'Palasan', 'Parada', 'Paso de Blas', 'Pasolo', 'Poblacion', 'Polo',
-            'Punturin', 'Rincon', 'Tagalag', 'Ugong', 'Veinte Reales'
+            'Palasan', 'Parada', 'Pariancillo Villa','Paso de Blas', 'Pasolo', 'Poblacion', 'Pulo',
+            'Punturin', 'Rincon', 'Tagalag', 'Ugong', 'Veinte Reales', 'Wawang Pulo'
           ];
 
           const updatedDonorCount = allBarangays.map((barangay) => {

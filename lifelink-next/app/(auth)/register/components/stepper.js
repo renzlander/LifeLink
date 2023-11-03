@@ -1,6 +1,6 @@
 import { DocumentIcon, UserCircleIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { Stepper, Step, Button, Typography } from "@material-tailwind/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { RegF1 } from "./regf1";
 import { RegF2 } from "./regf2";
 import { RegF3 } from "./regf3";
@@ -9,7 +9,7 @@ export function RegisterStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [isLastStep, setIsLastStep] = useState(false);
   const [isFirstStep, setIsFirstStep] = useState(true);
-
+  console.log("activeStep",activeStep);
   const handleNextStep = () => {
     if (!isLastStep) {
       setActiveStep((cur) => cur + 1);
@@ -29,6 +29,13 @@ export function RegisterStepper() {
     <RegF2 onNextStep={handleNextStep} />,
     <RegF3 />,
   ];
+
+  useEffect(() => {
+    const user_id = document.cookie.replace(/(?:(?:^|.*;\s*)user_id\s*=\s*([^;]*).*$)|^.*$/, "$1");
+    if (user_id) {
+      setActiveStep(1);
+    }
+  }, []);
 
   return (
     <div className="md:w-1/2 lg:w-7/12 bg-gray-100 rounded-xl p-8">

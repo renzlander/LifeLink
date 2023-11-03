@@ -50,12 +50,6 @@ export function RegF1({ onNextStep }) {
     password_confirmation !== "" &&
     confirmPasswordStyle === "success";
 
-    useEffect(() => {
-      const user_id = document.cookie.replace(/(?:(?:^|.*;\s*)user_id\s*=\s*([^;]*).*$)|^.*$/, "$1");
-      if (user_id) {
-        onNextStep();
-      }
-    }, [onNextStep]);
 
  
 
