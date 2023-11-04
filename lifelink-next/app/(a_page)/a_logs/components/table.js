@@ -94,8 +94,9 @@ export function LogsTable() {
 
     const handleSelectModule = (selectedModule) => {
         setModule(selectedModule);
-        fetchData(currentPage);
+        fetchData(currentPage, selectedModule, startDate, endDate); // Pass the new module value
     };
+    
 
     useEffect(() => {
         fetchData(currentPage);
@@ -130,10 +131,11 @@ export function LogsTable() {
             setSortColumn(columnKey);
             setSortOrder("asc");
         }
-
+    
         // Call the fetchData function to fetch data based on the new sorting criteria
         fetchData(currentPage);
     };
+    
 
     if (loading) {
         return (
@@ -170,7 +172,7 @@ export function LogsTable() {
                                     const newStartDate = e.target.value;
                                     setStartDate(newStartDate);
                                     // Call the fetchData function with the updated start date
-                                    fetchData(currentPage);
+                                    fetchData(currentPage, module, newStartDate, endDate);
                                 }}
                                 className=""
                             />
@@ -183,27 +185,11 @@ export function LogsTable() {
                                     const newEndDate = e.target.value;
                                     setEndDate(newEndDate);
                                     // Call the fetchData function with the updated end date
-                                    fetchData(currentPage);
+                                    fetchData(currentPage, module, startDate, newEndDate);
                                 }}
                                 className=""
                             />
                         </div>
-
-                        {/* <div className="w-full md:w-72">
-                            <Input
-                                label="Search"
-                                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-                                value={searchQuery}
-                                onChange={(e) => {
-                                    const inputValue = e.target.value;
-                                    setSearchQuery(inputValue);
-                                    fetchData(inputValue);
-                                }}
-                            />
-                        </div> */}
-                        {/* <Button className="flex items-center gap-3" size="sm" onClick={exportUserDetailsAsPDF}>
-                            Export as PDF
-                        </Button> */}
                     </div>
                 </div>
                 <table className="w-full min-w-max table-auto text-left">
