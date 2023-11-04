@@ -259,18 +259,20 @@ export function RegF2({onNextStep}) {
                   name={selectedRegion?.regionName}
                   >
                     {regionList?.map((region) => (
-                      <Option
-                        onClick={() => {
-                          setSelectedRegion({
-                            regionName: region?.regDesc,
-                            regCode: region?.regCode,
-                          });
-                        }}
-                        key={region.id} 
-                      >
-                        {region?.regDesc}
-                      </Option>
-                    ))}
+  <Option
+    key={region.id} // Add a unique key prop here
+    onClick={() => {
+      setSelectedRegion({
+        regionName: region?.regDesc,
+        regCode: region?.regCode,
+      });
+    }}
+  >
+    {region?.regDesc}
+  </Option>
+))}
+
+
                 </Select>
                 <Select 
                   label="Province"
@@ -280,19 +282,20 @@ export function RegF2({onNextStep}) {
                   data={provinceList}
                 >
                   {provinceList?.map((province) => (
-                    <Option
-                      onClick={() => {
-                        setSelectedProvince({
-                          provinceName: province?.provDesc,
-                          provCode: province?.provCode,
-                          id: province?.id,
-                        });
-                      }}
-                      key={province.id}
-                    >
-                      {province?.provDesc}
-                    </Option>
-                  ))}
+  <Option
+    key={province.id} // Add a unique key prop here
+    onClick={() => {
+      setSelectedProvince({
+        provinceName: province?.provDesc,
+        provCode: province?.provCode,
+        id: province?.id,
+      });
+    }}
+  >
+    {province?.provDesc}
+  </Option>
+))}
+
                 </Select>
               </div>
               <div className="mb-4 flex grow gap-6">

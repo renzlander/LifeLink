@@ -44,7 +44,8 @@ export default function Home() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
+  
 
   return (
     <div className="flex min-h-screen flex-col py-2 gap-y-3">

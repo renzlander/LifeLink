@@ -33,8 +33,13 @@ import {
 }
 
 export default function CardProfile({userDetails}) {
-  const badgeComponents = [<NoBadge width={250} height={250} />, <BronzeBadge width={250} height={250} />, <SilverBadge width={250} height={250} />, <GoldBadge width={200} height={200} />];
-  const testInt = 3;
+  const badgeComponents = [
+    <NoBadge key="no-badge" width={250} height={250} />,
+    <BronzeBadge key="bronze-badge" width={250} height={250} />,
+    <SilverBadge key="silver-badge" width={250} height={250} />,
+    <GoldBadge key="gold-badge" width={200} height={200} />,
+  ];
+    const testInt = 3;
 
   const selectedBadge = badgeComponents[testInt];
 

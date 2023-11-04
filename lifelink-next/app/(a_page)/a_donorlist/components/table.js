@@ -145,7 +145,8 @@ export function DonorTable() {
 
     useEffect(() => {
         fetchData(currentPage);
-    }, [router, sortColumn, sortOrder, searchQuery]);
+    }, [currentPage, fetchData, router, sortColumn, sortOrder, searchQuery]);
+    
 
     const handlePageChange = (newPage) => {
         if (newPage < 1 || newPage > totalPages) {
@@ -281,7 +282,7 @@ export function DonorTable() {
                     </thead>
                     <tbody>
                         {userDetails.map((user, index) => (
-                            <tr className="border-b">
+                            <tr key={user.donor_no} className="border-b">
                                 <td className={classes}>
                                     <div className="flex items-center gap-3">
                                         <Typography variant="small" color="blue-gray" className="font-bold">
