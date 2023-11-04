@@ -2,15 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Disposed, MultipleDisposed } from "./popup";
 import axios from "axios";
-import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
-import { MagnifyingGlassIcon, DocumentArrowDownIcon } from "@heroicons/react/24/outline";
-import { Card, CardHeader, Input, Typography, Button, CardBody, Chip, CardFooter, Tabs, TabsHeader, Tab, Avatar, IconButton, Tooltip, Spinner, Select, Option } from "@material-tailwind/react";
+import { Card, Input, Typography, Button, CardBody, Checkbox, CardFooter, IconButton, Tooltip, Spinner, Select, Option } from "@material-tailwind/react";
 import { laravelBaseUrl } from "@/app/variables";
 
 const TABLE_HEAD = [
     { label: "Donor Number", key: "donor_no" },
     { label: "Serial Number", key: "serial_no" },
-    { label: "Name", key: "name" },
     { label: "Blood Type", key: "blood_type" },
     { label: "Date Donated", key: "date_donated" },
     { label: "Expiration Date", key: "expiration_date" },
@@ -216,7 +213,7 @@ export function TabExp() {
         );
     }
 
-    const selectedRowClass = "bg-red-100";
+    const selectedRowClass = "bg-gray-400";
     const handleRowSelection = (blood_bags_id) => {
         if (selectedRows.includes(blood_bags_id)) {
             setSelectedRows(selectedRows.filter((id) => id !== blood_bags_id));
@@ -274,18 +271,19 @@ export function TabExp() {
                         </div>
                     </div>
                 </div>
+                {selectedRows.length > 0 && (
                 <div className="flex items-center px-4 mt-8 mb-4">
-                    <Typography variant="subtitle1" className="font-bold text-sm">
-                        Selected Rows: {selectedRows.length}
+                    <Typography variant="h6" className="text-lg mr-4">
+                    Selected Rows: {selectedRows.length}
                     </Typography>
                     <MultipleDisposed variant="contained" color="red" size="sm" className="ml-4" selectedRows={selectedRows} refreshData={fetchData} />
                 </div>
+                )}
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                         <tr>
-                            <th>
-                                <input
-                                    type="checkbox"
+                            <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer">
+                                <Checkbox
                                     onChange={() => {
                                         if (selectedRows.length === userDetails.length) {
                                             setSelectedRows([]);
@@ -294,13 +292,12 @@ export function TabExp() {
                                         }
                                     }}
                                     checked={userDetails.length > 0 && selectedRows.length === userDetails.length}
-                                    className="h-5 w-5 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
                                 />
                             </th>
                             {TABLE_HEAD.map((head) => (
                                 <th key={head.key} className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer" onClick={() => handleSort(head.key)}>
                                     <div className="flex items-center">
-                                        <Typography variant="small" color="blue-gray" className="font-normal leading-none opacity-70">
+                                        <Typography variant="small" color="blue-gray" className="font-normal text-md leading-none opacity-70">
                                             {head.label}
                                         </Typography>
                                         {sortColumn === head.key && <span className="ml-2">{sortOrder === "asc" ? "▲" : "▼"}</span>}
@@ -312,9 +309,8 @@ export function TabExp() {
                     <tbody>
                         {userDetails.map((user, index) => (
                             <tr key={user.blood_bags_id} className={`${selectedRows.includes(user.blood_bags_id) ? selectedRowClass : ""}`}>
-                                <td>
-                                    <input
-                                        type="checkbox"
+                                <td className={classes}>
+                                    <Checkbox
                                         onChange={() => {
                                             if (selectedRows.includes(user.blood_bags_id)) {
                                                 setSelectedRows(selectedRows.filter((id) => id !== user.blood_bags_id));
@@ -323,7 +319,6 @@ export function TabExp() {
                                             }
                                         }}
                                         checked={selectedRows.includes(user.blood_bags_id)}
-                                        className="h-5 w-5 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
                                     />
                                 </td>
                                 <td className={classes}>
@@ -336,11 +331,6 @@ export function TabExp() {
                                 <td className={classes}>
                                     <Typography variant="small" color="blue-gray" className="text-red-600 font-bold">
                                         {user.serial_no}
-                                    </Typography>
-                                </td>
-                                <td className={classes}>
-                                    <Typography variant="small" color="blue-gray" className="font-normal">
-                                        {`${user.first_name} ${user.last_name}`}
                                     </Typography>
                                 </td>
                                 <td className={classes}>

@@ -6,14 +6,18 @@ import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
 import { MagnifyingGlassIcon, DocumentArrowDownIcon } from "@heroicons/react/24/outline";
 import { Card, CardHeader, Input, Typography, Button, CardBody, Chip, CardFooter, Tabs, TabsHeader, Tab, Avatar, IconButton, Tooltip, Spinner, Select, Option } from "@material-tailwind/react";
 import { laravelBaseUrl } from "@/app/variables";
+import InputSelect from "@/app/components/InputSelect";
 
 const TABLE_HEAD = [
     { label: "Donor Number", key: "donor_no" },
     { label: "Serial Number", key: "serial_no" },
-    { label: "Name", key: "name" },
+    { label: "First Name", key: "first_name" },
+    { label: "Middle Name", key: "middle_name" },
+    { label: "Last Name", key: "last_name" },
     { label: "Blood Type", key: "blood_type" },
     { label: "Date Donated", key: "date_donated" },
     { label: "Expiration Date", key: "expiration_date" },
+    { label: "Remarks", key: "remarks" },
     { label: "" },
 ];
 
@@ -38,17 +42,35 @@ export function TabPerma() {
     const [endDate, setEndDate] = useState("");
     const [bloodQty, setBloodQty] = useState();
     const [selectedRows, setSelectedRows] = useState([]);
-
+    const[spoiledOptions, setSpoiledOptions] = useState([]);
+    const [remarks, setRemarks] = useState("All");
     const bloodTypes = ["All", "AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
     const router = useRouter();
 
-    const handleBloodChange = (selectedBlood) => {
-        // console.log("Selected Blood Type:", selectedBlood);
-        setBlood(selectedBlood);
-        fetchBloodTypeFilteredData(selectedBlood, startDate, endDate);
-    };
+    const spoiledDynamicOptions = [
+        {
+          label: "All",
+          value: "All",
+        },
+        ...spoiledOptions.map((item) => ({
+          label: item.spoiled_remarks_desc,
+          value: item.spoiled_remarks_desc,
+        })),
+      ];
+      
 
-    const fetchBloodTypeFilteredData = async (selectedBlood, startDate, endDate) => {
+    const handleBloodChange = (selectedBlood) => {
+        setBlood(selectedBlood);
+        fetchBloodTypeFilteredData(selectedBlood, remarks, startDate, endDate);
+    };
+    
+    const handleRemarks = (selectedRemarks) => {
+        setRemarks(selectedRemarks);
+        fetchBloodTypeFilteredData(blood_type, selectedRemarks, startDate, endDate); // Pass the selected remarks here
+    };
+    
+
+    const fetchBloodTypeFilteredData = async (selectedBlood, remarks, startDate, endDate) => {
         try {
             const token = getCookie("token");
             if (!token) {
@@ -65,6 +87,7 @@ export function TabPerma() {
                     },
                     params: {
                         blood_type: selectedBlood, // Use the selected blood type
+                        remarks:remarks,
                         startDate: startDate,
                         endDate: endDate,
                     },
@@ -87,7 +110,7 @@ export function TabPerma() {
         }
     };
 
-    const fetchData = async (page) => {
+    const fetchUnsafeRemarks = async () => {
         try {
             const token = getCookie("token");
             if (!token) {
@@ -95,47 +118,73 @@ export function TabPerma() {
                 return;
             }
 
-            let response;
+            const response = await axios.get(`${laravelBaseUrl}/api/get-unsafe-remarks`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
 
-            if (searchQuery) {
-                response = await axios.post(
-                    `${laravelBaseUrl}/api/search-collected-bloodbag?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
-                    {
-                        searchInput: searchQuery,
-                    },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
-            } else {
-                response = await axios.get(`${laravelBaseUrl}/api/get-permanent-bloodbags?page=${page}&sort=${sortColumn}&order=${sortOrder}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-            }
-
+            console.log(response);
             if (response.data.status === "success") {
-                console.log(response);
-                setUserDetails(response.data.data.data);
-                setTotalPages(response.data.data.last_page);
-                setCurrentPage(response.data.data.current_page);
-                setBloodQty(response.data.total_count);
-                setLoading(false);
+                setSpoiledOptions(response.data.spoiledRemarks);
+
             } else {
-                console.error("Error fetching data:", response.data.message);
-                setLoading(false);
+                console.error("Oops! Something went wrong.");
             }
         } catch (error) {
-            console.error("Error fetching data:", error);
-            setLoading(false);
+            console.error("Error fetching remarks:", error);
         }
     };
+    // const fetchData = async (page) => {
+    //     try {
+    //         const token = getCookie("token");
+    //         if (!token) {
+    //             router.push("/login");
+    //             return;
+    //         }
+
+    //         let response;
+
+    //         if (searchQuery) {
+    //             response = await axios.post(
+    //                 `${laravelBaseUrl}/api/search-collected-bloodbag?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
+    //                 {
+    //                     searchInput: searchQuery,
+    //                 },
+    //                 {
+    //                     headers: {
+    //                         Authorization: `Bearer ${token}`,
+    //                     },
+    //                 }
+    //             );
+    //         } else {
+    //             response = await axios.get(`${laravelBaseUrl}/api/get-permanent-bloodbags?page=${page}&sort=${sortColumn}&order=${sortOrder}`, {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}`,
+    //                 },
+    //             });
+    //         }
+
+    //         if (response.data.status === "success") {
+    //             console.log(response);
+    //             setUserDetails(response.data.data.data);
+    //             setTotalPages(response.data.data.last_page);
+    //             setCurrentPage(response.data.data.current_page);
+    //             setBloodQty(response.data.total_count);
+    //             setLoading(false);
+    //         } else {
+    //             console.error("Error fetching data:", response.data.message);
+    //             setLoading(false);
+    //         }
+    //     } catch (error) {
+    //         console.error("Error fetching data:", error);
+    //         setLoading(false);
+    //     }
+    // };
 
     useEffect(() => {
-        fetchData(currentPage);
+        fetchBloodTypeFilteredData(blood_type, remarks, startDate, endDate);
+        fetchUnsafeRemarks();
     }, [router, sortColumn, sortOrder, searchQuery]);
 
     const handlePageChange = (newPage) => {
@@ -230,6 +279,16 @@ export function TabPerma() {
                                 </Option>
                             ))}
                         </Select>
+                        <InputSelect
+                            label="Spoiled Remarks"
+                            containerProps={{ className: "w-[50%]" }}
+                            value={remarks} 
+                            onSelect={handleRemarks}
+                            options={spoiledDynamicOptions}
+                            isSearchable 
+                            required 
+                            placeholder="Spoiled Remarks" 
+                        />
                     </div>
                     <div>
                         <Typography variant="subtitle1" className="mb-2 flex justify-center font-bold text-red-800">
@@ -262,12 +321,14 @@ export function TabPerma() {
                         </div>
                     </div>
                 </div>
+                {selectedRows.length > 0 && (
                 <div className="flex items-center px-4 mt-8 mb-4">
-                    <Typography variant="subtitle1" className="font-bold text-sm">
-                        Selected Rows: {selectedRows.length}
+                    <Typography variant="h6" className="text-lg mr-4">
+                    Selected Rows: {selectedRows.length}
                     </Typography>
                     <MultipleDisposed variant="contained" color="red" size="sm" className="ml-4" selectedRows={selectedRows} refreshData={fetchData} />
                 </div>
+                )}
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                         <tr>
@@ -328,7 +389,17 @@ export function TabPerma() {
                                 </td>
                                 <td className={classes}>
                                     <Typography variant="small" color="blue-gray" className="font-normal">
-                                        {`${user.first_name} ${user.last_name}`}
+                                        {user.first_name}
+                                    </Typography>
+                                </td>
+                                <td className={classes}>
+                                    <Typography variant="small" color="blue-gray" className="font-normal">
+                                        {user.middle_name}
+                                    </Typography>
+                                </td>
+                                <td className={classes}>
+                                    <Typography variant="small" color="blue-gray" className="font-normal">
+                                        {user.last_name}
                                     </Typography>
                                 </td>
                                 <td className={classes}>
@@ -347,7 +418,12 @@ export function TabPerma() {
                                     </Typography>
                                 </td>
                                 <td className={classes}>
-                                    <Disposed blood_bags_id={user.blood_bags_id} refreshData={fetchData} />
+                                    <Typography variant="small" color="blue-gray" className="font-normal">
+                                        {user.spoiled_remarks_desc}
+                                    </Typography>
+                                </td>
+                                <td className={classes}>
+                                    <Disposed blood_bags_id={user.blood_bags_id} refreshData={fetchBloodTypeFilteredData} />
                                 </td>
                             </tr>
                         ))}

@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Revert, Dispense } from "./popup";
+import { Revert, Dispense, MultipleDisposed, MultipleDispensed } from "./popup";
 import axios from "axios";
 import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
 import { MagnifyingGlassIcon, DocumentArrowDownIcon } from "@heroicons/react/24/outline";
-import { Card, CardHeader, Input, Typography, Button, CardBody, Chip, CardFooter, Tabs, TabsHeader, Tab, Avatar, IconButton, Tooltip, Spinner, Select, Option } from "@material-tailwind/react";
+import { Card, CardHeader, Checkbox, Input, Typography, Button, CardBody, Chip, CardFooter, Tabs, TabsHeader, Tab, Avatar, IconButton, Tooltip, Spinner, Select, Option } from "@material-tailwind/react";
 import { laravelBaseUrl } from "@/app/variables";
 
 const TABLE_HEAD = [
     { label: "Donor Number", key: "donor_no" },
     { label: "Serial Number", key: "serial_no" },
-    { label: "Name", key: "name" },
     { label: "Blood Type", key: "blood_type" },
     { label: "Date Donated", key: "date_donated" },
     { label: "Expiration Date", key: "expiration_date" },
@@ -39,6 +38,11 @@ export function TabStock() {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [bloodQty, setBloodQty] = useState();
+    const [selectedRows, setSelectedRows] = useState([]);
+    const [user, setUser] = useState([]);
+    const [selectedData, setSelectedData] = useState([]);
+    const [registeredUser, setRegisteredUser] = useState([]);
+    const [hospitalOptions, setHospitalOptions] = useState([]);
 
     const bloodTypes = ["All", "AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
     const router = useRouter();
@@ -48,6 +52,22 @@ export function TabStock() {
         setBlood(selectedBlood);
         fetchBloodTypeFilteredData(selectedBlood, startDate, endDate);
     };
+
+    const getHospitalList = async () => {
+        try {
+            const response = await axios.get(`${laravelBaseUrl}/api/get-hospitals`, {
+                headers: {
+                    Authorization: `Bearer ${getCookie("token")}`,
+                },
+            });
+            if (response.data.status === "success") {
+                setHospitalOptions(response.data.hospitals);
+            }
+        }catch (error) {
+                toast.error("An error occurred while making the request.");
+                console.error("Unknown error occurred:", error);
+            }
+    }
 
     const fetchBloodTypeFilteredData = async (selectedBlood, startDate, endDate) => {
         try {
@@ -85,6 +105,34 @@ export function TabStock() {
         } catch (error) {
             console.error("Error fetching data:", error);
             setLoading(false);
+        }
+    };
+
+    const fetchUserDetails = async () => {
+        try {
+            const token = getCookie("token");
+            if (!token) {
+                router.push("/login");
+                return;
+            }
+
+            const response = await axios.get(`${laravelBaseUrl}/api/registered-users`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            console.log(response);
+
+            if (response.data.status === "success") {
+                setRegisteredUser(response.data.userDetails);
+            } else {
+                // Handle the case when the API request fails
+                console.error("Oops! Something went wrong.");
+            }
+        } catch (error) {
+            console.error("Error fetching bled_by and venues lists:", error);
+            // You can handle the error here, e.g., by displaying a message to the user
         }
     };
 
@@ -144,6 +192,8 @@ export function TabStock() {
 
     useEffect(() => {
         fetchData(currentPage);
+        fetchUserDetails();
+        getHospitalList();
     }, [router, sortColumn, sortOrder, searchQuery]);
 
     const handlePageChange = (newPage) => {
@@ -214,6 +264,40 @@ export function TabStock() {
         );
     }
 
+    const handleRowSelect = (rowId) => {
+        // Check if the rowId is already in the selectedRows array
+        if (selectedRows.includes(rowId)) {
+            // If it's already selected, remove it from the array
+            setSelectedRows(selectedRows.filter((id) => id !== rowId));
+        } else {
+            // If it's not selected, add it to the array
+            setSelectedRows([...selectedRows, rowId]);
+        }
+    };
+
+    const selectedRowClass = "bg-gray-400";
+    const handleRowSelection = (user, blood_bags_id) => {
+        const isSelected = selectedRows.includes(blood_bags_id);
+
+        if (isSelected) {
+            // If the row is already selected, remove it from the array
+            setSelectedRows(selectedRows.filter((id) => id !== blood_bags_id));
+        } else {
+            // If the row is not selected, add it to the array
+            setSelectedRows([...selectedRows, blood_bags_id]);
+        }
+
+        // Check if the user object and blood_bags_id are not already in the selectedData array
+        const selectedDataIndex = selectedData.findIndex((data) => data.blood_bags_id === blood_bags_id);
+        if (isSelected && selectedDataIndex !== -1) {
+            // If the row is deselected and exists in selectedData, remove it
+            setSelectedData(selectedData.filter((data) => data.blood_bags_id !== blood_bags_id));
+        } else if (!isSelected && selectedDataIndex === -1) {
+            // If the row is selected and not in selectedData, add it
+            setSelectedData([...selectedData, { user, blood_bags_id }]);
+        }
+    };
+
     return (
         <Card className="h-full w-full">
             <CardBody className="px-0">
@@ -261,9 +345,33 @@ export function TabStock() {
                         </div>
                     </div>
                 </div>
+                {selectedRows.length > 0 && (
+                    <div className="flex items-center px-4 mt-8 mb-4">
+                        <Typography variant="h6" className="text-lg mr-4">
+                            Selected Rows: {selectedRows.length}
+                        </Typography>
+                        <MultipleDispensed variant="contained" color="red" size="sm" className="ml-4" user={user} selectedData={selectedData} registeredUser={registeredUser} refreshData={fetchData} hospitalOptions={hospitalOptions}/>
+                    </div>
+                )}
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                         <tr>
+                            <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer">
+                                <Checkbox
+                                    onChange={() => {
+                                        if (selectedRows.length === userDetails.length) {
+                                            // Deselect all users
+                                            setSelectedRows([]);
+                                            setUser([]); // Clear the selected users
+                                        } else {
+                                            // Select all users
+                                            setSelectedRows(userDetails.map((user) => user.blood_bags_id));
+                                            setUser(userDetails); // Select all users and update the user state
+                                        }
+                                    }}
+                                    checked={userDetails.length > 0 && selectedRows.length === userDetails.length}
+                                />
+                            </th>
                             {TABLE_HEAD.map((head) => (
                                 <th key={head.key} className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer" onClick={() => handleSort(head.key)}>
                                     <div className="flex items-center">
@@ -278,7 +386,25 @@ export function TabStock() {
                     </thead>
                     <tbody>
                         {userDetails.map((user, index) => (
-                            <tr className="border-b">
+                            <tr key={user.blood_bags_id} className={`${selectedRows.includes(user.blood_bags_id) ? selectedRowClass : ""}`}>
+                                <td className={classes}>
+                                    <Checkbox
+                                        onChange={() => {
+                                            if (selectedRows.includes(user.blood_bags_id)) {
+                                                // Deselect the user
+                                                setSelectedRows(selectedRows.filter((id) => id !== user.blood_bags_id));
+                                                // Remove the user from the user state
+                                                setUser((prevUsers) => prevUsers.filter((selectedUser) => selectedUser.blood_bags_id !== user.blood_bags_id));
+                                            } else {
+                                                // Select the user
+                                                setSelectedRows([...selectedRows, user.blood_bags_id]);
+                                                // Add the user to the user state
+                                                setUser((prevUsers) => [...prevUsers, user]);
+                                            }
+                                        }}
+                                        checked={selectedRows.includes(user.blood_bags_id)}
+                                    />
+                                </td>
                                 <td className={classes}>
                                     <div className="flex items-center gap-3">
                                         <Typography variant="small" color="blue-gray" className="font-bold">
@@ -289,11 +415,6 @@ export function TabStock() {
                                 <td className={classes}>
                                     <Typography variant="small" color="blue-gray" className="text-red-600 font-bold">
                                         {user.serial_no}
-                                    </Typography>
-                                </td>
-                                <td className={classes}>
-                                    <Typography variant="small" color="blue-gray" className="font-normal">
-                                        {`${user.first_name} ${user.last_name}`}
                                     </Typography>
                                 </td>
                                 <td className={classes}>
@@ -326,10 +447,10 @@ export function TabStock() {
                                         />
                                     </div>
                                 </td>
-                                <td className={classes}>
+                                <td className={`${classes} flex items-center gap-3`}>
                                     <Revert serial_no={user.serial_no} refreshData={fetchData} />
 
-                                    <Dispense serial_no={user.serial_no} refreshData={fetchData} />
+                                    <Dispense user={user} blood_bags_id={user.blood_bags_id} refreshData={fetchData} registeredUser={registeredUser} hospitalOptions={hospitalOptions}/>
                                 </td>
                             </tr>
                         ))}

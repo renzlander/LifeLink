@@ -55,7 +55,6 @@ import {
       { icon: GlobeAltIcon, text: "Network", link: './u_network' },
       { icon: TruckIcon, text: "Journey", link: './u_journey' },
       { icon: UserIcon, text: "Profile", link: './u_profile' },
-      { icon: ArrowLeftOnRectangleIcon, text: "Log Out", link: '#', onClick: handleLogout },
     ];
 
     useEffect(() => {
@@ -84,41 +83,56 @@ import {
     }, []);
 
     return (
-      <Card  className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5 bg-gradient-to-r from-red-900 to-red-700">
-        <IconButton variant="text"><Bars3Icon className="h-5 w-5 text-white" /></IconButton >
-        <div className="flex justify-center items-center mb-2 p-4 border-b border-gray-200">
-          <Link href='./u_profile'>
-            <Image src="/patient_icon.png" width={60} height={60} className="mb-4" />
-          </Link>
-          <div className="flex flex-col ml-3 truncate">
-            <Tooltip placement="right-end" content={`${userData ? userData.first_name : ""} ${userData ? userData.last_name : ""}`}>
-              <Typography className="text-gray-100 font-medium text-md truncate overflow-hidden max-w-[8rem]">
-                {userData ? `${userData.first_name} ${userData.last_name}` : "Loading..."}
-              </Typography> 
-            </Tooltip>
-            <Typography className="text-gray-100 font-light text-sm">Donor no: {userData ? userData.donor_no : "Loading..."}</Typography>
-          </div>
-        </div>
-        <List>
-          {menuItems.map((item, index) => (
-            <Link href={item.link} key={index} passHref>
-              <Button
-                variant={'.' + pathName === item.link ? 'gradient': 'text'}
-                color={'.' + pathName === item.link ? 'red' : undefined}
-                className='text-white flex items-center justify-between w-full hover:bg-gray-100 hover:bg-opacity-30'
-                onClick={item.onClick}
-              >
-                <div className="flex items-center gap-4">
-                  {<item.icon className="h-5 w-5" />}
-                  <Typography variant="paragraph" className="normal-case font-medium">
-                    {item.text}
-                  </Typography>
-                </div>
-                {'.' + pathName === item.link ? <ChevronRightIcon className="h-5 w-5" /> : ''}
-              </Button>
+      <Card  className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5 bg-gradient-to-r from-red-900 to-red-700 flex flex-col justify-between">
+        <div>
+          <div className="flex justify-center items-center p-4 my-3">
+            <Link href='./u_profile'>
+              <Image src="/patient_icon.png" width={60} height={60} />
             </Link>
-          ))}
-        </List>
+            <div className="flex flex-col ml-3 truncate">
+              <Tooltip placement="right-end" content={`${userData ? userData.first_name : ""} ${userData ? userData.last_name : ""}`}>
+                <Typography className="text-gray-100 font-medium text-md truncate overflow-hidden max-w-[8rem]">
+                  {userData ? `${userData.first_name} ${userData.last_name}` : "Loading..."}
+                </Typography> 
+              </Tooltip>
+              <Typography className="text-gray-100 font-light text-sm">Donor no: {userData ? userData.donor_no : "Loading..."}</Typography>
+            </div>
+          </div>
+          <hr className="custom-divider mb-4" />
+          <List>
+            {menuItems.map((item, index) => (
+              <Link href={item.link} key={index} passHref>
+                <Button
+                  variant={'.' + pathName === item.link ? 'gradient': 'text'}
+                  color={'.' + pathName === item.link ? 'red' : undefined}
+                  className='text-white flex items-center justify-between w-full hover:bg-gray-100 hover:bg-opacity-30'
+                >
+                  <div className="flex items-center gap-4">
+                    {<item.icon className="h-5 w-5" />}
+                    <Typography variant="paragraph" className="normal-case font-medium">
+                      {item.text}
+                    </Typography>
+                  </div>
+                  {'.' + pathName === item.link ? <ChevronRightIcon className="h-5 w-5" /> : ''}
+                </Button>
+              </Link>
+            ))}
+          </List>
+          <hr className="custom-divider mt-4" />
+        </div>
+        <Button
+          variant="text"
+          color="red"
+          className='text-white flex items-center justify-between w-full hover:bg-gray-100 hover:bg-opacity-30'
+          onClick={handleLogout}
+        >
+          <div className="flex items-center gap-4">
+            <ArrowLeftOnRectangleIcon className="h-5 w-5"/>
+            <Typography variant="paragraph" className="normal-case font-medium">
+              Log Out
+            </Typography>
+          </div>
+        </Button>
       </Card>
     );
   }

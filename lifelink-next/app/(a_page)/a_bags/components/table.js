@@ -1,11 +1,26 @@
-import { PencilIcon } from "@heroicons/react/24/solid";
-import { ArrowDownTrayIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Card, CardHeader, Typography, Button, CardBody, Chip, CardFooter, Avatar, IconButton, Tooltip, Input, Spinner, Select, Option } from "@material-tailwind/react";
-import { RemoveBlood, EditPopUp, MoveToStock } from "./popup";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { 
+    Card, 
+    CardHeader, 
+    Typography, 
+    Button, 
+    CardBody, 
+    Checkbox, 
+    CardFooter, 
+    Avatar, 
+    IconButton, 
+    Tooltip, 
+    Input, 
+    Spinner, 
+    Select, 
+    Option 
+} from "@material-tailwind/react";
+import { RemoveBlood, EditPopUp, MoveToStock, MultipleMoveToStock, Unsafe } from "./popup";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { useRouter } from "next/navigation";
+import InputSelect from "@/app/components/InputSelect";
 
 const TABLE_HEAD = [
     { label: "Donor Number", key: "donor_no" },
@@ -16,9 +31,6 @@ const TABLE_HEAD = [
     { label: "Expiration Date", key: "expiration_date" },
     { label: "Venue", key: "venue" },
     { label: "Bled By", key: "bled_by" },
-    { label: "" },
-    { label: "" },
-    { label: "" },
     { label: "" },
 ];
 
@@ -42,17 +54,40 @@ export function BagsTable() {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [bloodQty, setBloodQty] = useState();
-    const [bledBy, setBledBy] = useState("All");
+    const [selectedRows, setSelectedRows] = useState([]);
+    const [countdown, setCountdown] = useState(0);
+    const [venueOptions, setVenueOptions] = useState([]);
+    const [bledByOptions, setBledByOptions] = useState([]);
     const [venue, setVenue] = useState("All");
+    const [bledBy, setBledBy] = useState("All");    
+    const [reactiveOptions, setReactiveOptions] = useState([]);
+    const [spoiledOptions, setSpoiledOptions] = useState([]);
+
+
 
     const router = useRouter();
-    const bledBys = ["All", "Ryan Jay", "Renz", "Ray", "James"];
     const bloodTypes = ["All", "AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
-    const venues = ["All", "Malinta Valenzuela", "Balubaran Valenzuela"];
+    
+    const dynamicBledByOptions = [
+        { label: "All", value: "All" }, 
+        ...bledByOptions.map((item) => ({
+          label: item.full_name,
+          value: item.full_name,
+        })),
+      ];
+
+    const dynamicVenueOptions = [
+        { label: "All", value: "All" }, 
+        ...venueOptions.map((item) => ({
+          label: item.venues_desc,
+          value: item.venues_desc,
+        })),
+      ];
+      
 
     const handleBloodChange = (selectedBlood) => {
         setBlood(selectedBlood);
-        fetchBloodTypeFilteredData(selectedBlood, startDate, endDate, bledBy, venue); // Pass bledBy and venue here
+        fetchBloodTypeFilteredData(selectedBlood, startDate, endDate, bledBy, venue);
     };
 
     const handleBledByChange = (selectedBledBy) => {
@@ -65,13 +100,59 @@ export function BagsTable() {
         fetchBloodTypeFilteredData(blood_type, startDate, endDate, bledBy, selectedVenue);
     };
 
-    const fetchBloodTypeFilteredData = async (selectedBlood, startDate, endDate, bledBy, venue) => {
-        console.log("selectedBlood:", selectedBlood);
-        console.log("bledBy:", bledBy);
-        console.log("venue:", venue);
-        console.log("startDate:", startDate);
-        console.log("endDate:", endDate);
+    const fetchBledByAndVenueLists = async () => {
+        try {
+            const token = getCookie("token");
+            if (!token) {
+                router.push("/login");
+                return;
+            }
 
+            const response = await axios.get(`${laravelBaseUrl}/api/get-bledby-and-venue`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.data.status === "success") {
+                setVenueOptions(response.data.venue);
+                setBledByOptions(response.data.bledBy);
+
+            } else {
+                console.error("Oops! Something went wrong.");
+            }
+        } catch (error) {
+            console.error("Error fetching bled_by and venues lists:", error);
+        }
+    };
+
+    const fetchUnsafeRemarks = async () => {
+        try {
+            const token = getCookie("token");
+            if (!token) {
+                router.push("/login");
+                return;
+            }
+
+            const response = await axios.get(`${laravelBaseUrl}/api/get-unsafe-remarks`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.data.status === "success") {
+                setReactiveOptions(response.data.reactiveRemarks);
+                setSpoiledOptions(response.data.spoiledRemarks);
+
+            } else {
+                console.error("Oops! Something went wrong.");
+            }
+        } catch (error) {
+            console.error("Error fetching bled_by and venues lists:", error);
+        }
+    };
+
+    const fetchBloodTypeFilteredData = async (selectedBlood, startDate, endDate, bledBy, venue) => {
         try {
             const token = getCookie("token");
             if (!token) {
@@ -92,8 +173,6 @@ export function BagsTable() {
                         endDate: endDate,
                         bledBy: bledBy,
                         venue: venue,
-                        sort: sortColumn, // Add sorting parameters here
-                        sorder: sortOrder,
                     },
                 }
             );
@@ -143,11 +222,12 @@ export function BagsTable() {
                     },
                 });
             }
-
+            console.log('countdown',response.data.data.data[0].countdown);
             if (response.data.status === "success") {
                 setUserDetails(response.data.data.data);
                 setTotalPages(response.data.data.last_page);
                 setCurrentPage(response.data.data.current_page);
+                setCountdown(response.data.data.countdown);
                 setBloodQty(response.data.total_count);
                 setLoading(false);
             } else {
@@ -161,7 +241,10 @@ export function BagsTable() {
     };
 
     useEffect(() => {
+        // fetchBloodTypeFilteredData(blood_type, startDate, endDate, bledBy, venue);
         fetchData(currentPage);
+        fetchBledByAndVenueLists();
+        fetchUnsafeRemarks();
     }, [router, sortColumn, sortOrder, searchQuery]);
 
     const handlePageChange = (newPage) => {
@@ -232,15 +315,24 @@ export function BagsTable() {
         );
     }
 
+    const selectedRowClass = "bg-gray-400";
+    const handleRowSelection = (blood_bags_id) => {
+        if (selectedRows.includes(blood_bags_id)) {
+            setSelectedRows(selectedRows.filter((id) => id !== blood_bags_id));
+        } else {
+            setSelectedRows([...selectedRows, blood_bags_id]);
+        }
+    };
+
     return (
-        <Card className="h-full w-full mt-4">
+        <Card className="w-full">
             <CardHeader color="red" className="relative h-16 flex items-center">
                 <Typography variant="h4" color="white" className="ml-4">
                     Collected Blood Bags
                 </Typography>
             </CardHeader>
-            <CardHeader floated={false} shadow={false} className="rounded-none mt-0 bg-transparent">
-                <div className="flex items-end justify-between px-4 mb-4 my-10">
+            <CardBody className="">
+                <div className="flex items-end justify-between px-4 mb-4 my-5">
                     <div className="flex flex-row items-end gap-6">
                         <div>
                             <Select onChange={handleBloodChange} label="Blood Type" value={blood_type}>
@@ -251,20 +343,10 @@ export function BagsTable() {
                                 ))}
                             </Select>
                         </div>
-                        <Select label="Venue" onChange={handleVenueChange} value={venue}>
-                            {venues.map((ven) => (
-                                <Option key={ven} value={ven}>
-                                    {ven}
-                                </Option>
-                            ))}
-                        </Select>
-                        <Select label="Bled By" onChange={handleBledByChange} value={bledBy}>
-                            {bledBys.map((bledby) => (
-                                <Option key={bledby} value={bledby}>
-                                    {bledby}
-                                </Option>
-                            ))}
-                        </Select>
+                        <InputSelect label="Venue" value={venue} onSelect={handleVenueChange} options={dynamicVenueOptions} isSearchable required placeholder="Venue" />
+   
+                        <InputSelect label="Bled By" value={bledBy} onSelect={handleBledByChange} options={dynamicBledByOptions} isSearchable required placeholder="Venue" />
+
                         <div className="flex flex-col items-center justify-center gap-2">
                             <Typography variant="h6" className="font-bold text-red-800">
                                 Date Donated Filter
@@ -277,7 +359,7 @@ export function BagsTable() {
                                     onChange={(e) => {
                                         const newStartDate = e.target.value;
                                         setStartDate(newStartDate);
-                                        fetchBloodTypeFilteredData(blood_type, startDate, endDate, bledBy, venue);
+                                        fetchBloodTypeFilteredData(blood_type, newStartDate, endDate, bledBy, venue);
                                     }}
                                     className=""
                                 />
@@ -289,7 +371,7 @@ export function BagsTable() {
                                     onChange={(e) => {
                                         const newEndDate = e.target.value;
                                         setEndDate(newEndDate);
-                                        fetchBloodTypeFilteredData(blood_type, startDate, endDate, bledBy, venue);
+                                        fetchBloodTypeFilteredData(blood_type, startDate, newEndDate, bledBy, venue);
                                     }}
                                     className=""
                                 />
@@ -316,11 +398,29 @@ export function BagsTable() {
                         </div>
                     </div>
                 </div>
-            </CardHeader>
-            <CardBody className="overflow-x-auto px-0">
+                {selectedRows.length > 0 && (
+                <div className="flex items-center px-4 mt-8 mb-4">
+                    <Typography variant="h6" className="text-lg mr-4">
+                    Selected Rows: {selectedRows.length}
+                    </Typography>
+                    <MultipleMoveToStock variant="contained" color="red" size="sm" className="ml-4" selectedRows={selectedRows} refreshData={fetchData} />
+                </div>
+                )}
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                         <tr>
+                            <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer">
+                                <Checkbox
+                                    onChange={() => {
+                                        if (selectedRows.length === userDetails.length) {
+                                            setSelectedRows([]);
+                                        } else {
+                                            setSelectedRows(userDetails.map((user) => user.blood_bags_id));
+                                        }
+                                    }}
+                                    checked={userDetails.length > 0 && selectedRows.length === userDetails.length}
+                                />
+                            </th>
                             {TABLE_HEAD.map((head) => (
                                 <th key={head.key} className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer" onClick={() => handleSort(head.key)}>
                                     <div className="flex items-center">
@@ -335,7 +435,19 @@ export function BagsTable() {
                     </thead>
                     <tbody>
                         {userDetails.map((user, index) => (
-                            <tr className="border-b">
+                            <tr key={user.blood_bags_id} className={`${selectedRows.includes(user.blood_bags_id) ? selectedRowClass : ""}`}>
+                                <td className={classes}>
+                                    <Checkbox
+                                        onChange={() => {
+                                            if (selectedRows.includes(user.blood_bags_id)) {
+                                                setSelectedRows(selectedRows.filter((id) => id !== user.blood_bags_id));
+                                            } else {
+                                                setSelectedRows([...selectedRows, user.blood_bags_id]);
+                                            }
+                                        }}
+                                        checked={selectedRows.includes(user.blood_bags_id)}
+                                    />
+                                </td>
                                 <td className={classes}>
                                     <div className="flex items-center gap-3">
                                         <Typography variant="small" color="blue-gray" className="font-bold">
@@ -378,19 +490,11 @@ export function BagsTable() {
                                         {user.bled_by}
                                     </Typography>
                                 </td>
-                                <td className={classes}>
-                                    <Typography variant="small" color="blue-gray" className="font-normal">
-                                        {user.email}
-                                    </Typography>
-                                </td>
-                                <td className={classes}>
-                                    <EditPopUp user={user} countdown={user.countdown} refreshData={fetchData} />
-                                </td>
-                                <td className={classes}>
-                                    <RemoveBlood serial_no={user.serial_no} countdown={user.countdown} refreshData={fetchData} />
-                                </td>
-                                <td className={classes}>
+                                <td className={`${classes} flex items-center justify-around gap-3`}>
+                                    <EditPopUp user={user} countdown={user.countdown} countdownEndDate={user.countdown_end_date} refreshData={fetchData} />
+                                    <RemoveBlood user={user} serial_no={user.serial_no} countdown={user.countdown} countdownEndDate={user.countdown_end_date} refreshData={fetchData} />
                                     <MoveToStock serial_no={user.serial_no} refreshData={fetchData} />
+                                    <Unsafe serial_no={user.serial_no} refreshData={fetchData} reactiveOptions={reactiveOptions} spoiledOptions={spoiledOptions}/>
                                 </td>
                             </tr>
                         ))}

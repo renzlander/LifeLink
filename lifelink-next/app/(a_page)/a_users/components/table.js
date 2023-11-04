@@ -1,15 +1,19 @@
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { Card, CardHeader, Typography, Button, CardBody, CardFooter, IconButton, Input, Spinner } from "@material-tailwind/react";
-import { AddBloodBagPopup, ViewPopUp, EditPopUp } from "./popup";
+import { MagnifyingGlassIcon, BarsArrowUpIcon, BarsArrowDownIcon } from "@heroicons/react/24/outline";
+import { Card, CardHeader, Typography, Button, CardBody, CardFooter, IconButton, Input, Spinner, Chip } from "@material-tailwind/react";
+import { AddBloodBagPopup } from "./popupAdd";
+import { ViewPopUp } from "./popupView";
+import { EditPopUp } from "./popupEdit";
+import { MoveToDeferral } from "./popupMoveToDeferral";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { useRouter } from "next/navigation";
-import { ToastContainer, toast } from "react-toastify";
 
 const TABLE_HEAD = [
     { label: "Donor Number", key: "donor_no" },
-    { label: "Name", key: "name" },
+    { label: "First Name", key: "firstname" },
+    { label: "Middle Name", key: "middlename" },
+    { label: "Last Name", key: "lastname" },
     { label: "Blood Type", key: "blood_type" },
     { label: "Email Address", key: "email" },
     { label: "Mobile", key: "mobile" },
@@ -18,6 +22,8 @@ const TABLE_HEAD = [
     { label: "", key: "actions" },
 ];
 const classes = "p-4";
+const DEFAULT_SORT_COLUMN = "donor_no"; // Set your default sort column key here
+const DEFAULT_SORT_ORDER = "asc";
 
 function formatDate(dateString) {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -30,11 +36,78 @@ export function UsersTable() {
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [sortColumn, setSortColumn] = useState(null);
-    const [sortOrder, setSortOrder] = useState("asc");
+    const [sortColumn, setSortColumn] = useState(DEFAULT_SORT_COLUMN); // Set default sort column
+    const [sortOrder, setSortOrder] = useState(DEFAULT_SORT_ORDER);
     const [searchQuery, setSearchQuery] = useState("");
+    const [bledByOptions, setBledByOptions] = useState([]);
+    const [venueOptions, setVenueOptions] = useState([]);
+    const [temporaryDeferralCategories, setTemporaryDeferralCategories] = useState([]);
+    const [temporaryDeferralRemarks, setTemporaryDeferralRemarks] = useState([]);
+    const [permanentDeferralCategories, setPermanentDeferralCategories] = useState([]);
 
     const router = useRouter();
+
+    useEffect(() => {
+        const fetchDeferralCategories = async () => {
+            try {
+                const token = getCookie("token");
+                if (!token) {
+                    router.push("/login");
+                    return;
+                }
+
+                const response = await axios.get(`${laravelBaseUrl}/api/get-defferal-categories`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (response.data.status === "success") {
+                    const tempCategories = response.data.tempCategories;
+                    const permaCategories = response.data.permaCategories;
+
+                    setTemporaryDeferralCategories(tempCategories);
+                    setPermanentDeferralCategories(permaCategories);
+                } else {
+                    console.error("Failed to fetch deferral categories.");
+                }
+            } catch (error) {
+                console.error("An error occurred while fetching deferral categories:", error);
+            }
+        };
+
+        fetchDeferralCategories();
+    }, []);
+
+    const fetchBledByAndVenueLists = async () => {
+        try {
+            const token = getCookie("token");
+            if (!token) {
+                router.push("/login");
+                return;
+            }
+
+            const response = await axios.get(`${laravelBaseUrl}/api/get-bledby-and-venue`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            console.log(response);
+
+            if (response.data.status === "success") {
+                // Update the state variables with the data from the API response
+                setBledByOptions(response.data.bledBy);
+                setVenueOptions(response.data.venue);
+            } else {
+                // Handle the case when the API request fails
+                console.error("Oops! Something went wrong.");
+            }
+        } catch (error) {
+            console.error("Error fetching bled_by and venues lists:", error);
+            // You can handle the error here, e.g., by displaying a message to the user
+        }
+    };
 
     const fetchData = async (page) => {
         try {
@@ -85,6 +158,7 @@ export function UsersTable() {
 
     useEffect(() => {
         fetchData(currentPage);
+        fetchBledByAndVenueLists();
     }, [router, sortColumn, sortOrder, searchQuery]);
 
     const handlePageChange = (newPage) => {
@@ -202,7 +276,7 @@ export function UsersTable() {
                                         <Typography variant="small" color="blue-gray" className="font-normal leading-none opacity-70">
                                             {head.label}
                                         </Typography>
-                                        {sortColumn === head.key && <span className="ml-2">{sortOrder === "asc" ? "▲" : "▼"}</span>}
+                                        {sortColumn === head.key && <span className="ml-2">{sortOrder === "asc" ? <BarsArrowUpIcon className="h-5 w-5" /> : <BarsArrowDownIcon className="h-5 w-5" />}</span>}
                                     </div>
                                 </th>
                             ))}
@@ -210,7 +284,7 @@ export function UsersTable() {
                     </thead>
                     <tbody>
                         {userDetails.map((user, index) => (
-                            <tr key={user.donor_no}>
+                            <tr key={user.donor_no} className="border-b border-blue-gray-100">
                                 <td className={classes}>
                                     <Typography variant="small" color="blue-gray" className="font-bold">
                                         {user.donor_no}
@@ -219,6 +293,16 @@ export function UsersTable() {
                                 <td className={classes}>
                                     <Typography variant="small" color="blue-gray" className="font-normal">
                                         {`${user.first_name} ${user.last_name}`}
+                                    </Typography>
+                                </td>
+                                 <td className={classes}>
+                                    <Typography variant="small" color="blue-gray" className="font-normal">
+                                        {user.middle_name}
+                                    </Typography>
+                                </td>
+                                <td className={classes}>
+                                    <Typography variant="small" color="blue-gray" className="font-normal">
+                                        {user.last_name}
                                     </Typography>
                                 </td>
                                 <td className={classes}>
@@ -245,7 +329,18 @@ export function UsersTable() {
                                     <ViewPopUp user={user} />
                                     <EditPopUp user={user} onUpdate={handleUpdateUser} refreshData={fetchData} />
                                 </td>
-                                <td className={classes}>{user.remarks !== 0 ? <Button size="small" disabled className="w-2/3">DEFERRED</Button> : <AddBloodBagPopup user_id={user.user_id} />}</td>
+                                <td className={`${classes} mt-1 flex items-center justify-center gap-2`}>
+                                    {user.remarks !== 0 ? (
+                                        <Chip size="lg" value="DEFERRED" color="blue-gray">
+                                            DEFERRED
+                                        </Chip>
+                                    ) : (
+                                        <div className="space-x-2">
+                                            <AddBloodBagPopup user_id={user.user_id} bledByOptions={bledByOptions} venueOptions={venueOptions} />
+                                            <MoveToDeferral user_id={user.user_id} refreshData={fetchData} temporaryDeferralCategories={temporaryDeferralCategories} permanentDeferralCategories={permanentDeferralCategories} venueOptions={venueOptions}/>
+                                        </div>
+                                    )}
+                                </td>
                             </tr>
                         ))}
                     </tbody>

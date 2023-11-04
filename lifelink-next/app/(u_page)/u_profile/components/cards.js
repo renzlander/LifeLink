@@ -18,7 +18,10 @@ import {
     HomeIcon,
     BriefcaseIcon,
  } from "@heroicons/react/24/outline";
-
+ import NoBadge from "@/public/Badges/NoBadge";
+ import BronzeBadge from "@/public/Badges/BronzeBadge";
+ import SilverBadge from "@/public/Badges/SilverBadge";
+ import GoldBadge from "@/public/Badges/GoldBadge";
 
  function formatDate(dateString) {
   const options = { year: "numeric", month: "long", day: "numeric" };
@@ -30,7 +33,11 @@ import {
 }
 
 export default function CardProfile({userDetails}) {
- 
+  const badgeComponents = [<NoBadge width={250} height={250} />, <BronzeBadge width={250} height={250} />, <SilverBadge width={250} height={250} />, <GoldBadge width={200} height={200} />];
+  const testInt = 3;
+
+  const selectedBadge = badgeComponents[testInt];
+
   return (
     <Card className="w-full mt-10">
         <CardHeader 
@@ -49,14 +56,10 @@ export default function CardProfile({userDetails}) {
                 alt="Profile Picture"
                 className="absolute bottom-0 left-0 ml-16 -mb-20 bg-gray-100 border-4 border-gray-100 h-40 w-40"
             />
-            <Tooltip content="Galloneer Badge">
-                <Image 
-                    src="/badge_test.png" 
-                    alt="Badge"
-                    width={160}
-                    height={160}
-                    className="absolute bottom-0 right-0 mr-16 -mb-20"
-                />
+            <Tooltip content="Badge">
+              <div className="absolute -bottom-32 right-5" >
+                {selectedBadge}
+              </div>
             </Tooltip>
         </CardHeader>
         <CardBody className="text-center flex flex-col items-center">

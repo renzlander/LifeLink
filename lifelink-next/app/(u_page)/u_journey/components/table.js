@@ -61,31 +61,29 @@ export function BloodBagTable({ bloodJourney }) {
   // Handle row click event
   function handleRowClick(journey, index) {
     const status = getStatusText(journey);
-
+  
     let activeStepsArray = [];
     if (status === "Collected") {
       activeStepsArray = [0];
     } else if (status === "Laboratory") {
-      activeStepsArray = [0, 1];
+      activeStepsArray = [1];
     } else if (status === "Stored") {
-      activeStepsArray = [0, 1, 2];
+      activeStepsArray = [2];
     }
-
+  
     setActiveSteps(activeStepsArray);
-    setSelectedRowIndex(index); 
-
+    setSelectedRowIndex(index);
   }
 
   return (
-    <div>
-      <JourneyStepper activeSteps={activeSteps} />
+    <div className="flex items-start justify-between gap-4">
       <Card className="h-full w-full mt-10">
         <CardHeader color="red" className="relative h-16 flex items-center">
           <Typography variant="h4" color="white" className="ml-4">
             My Blood Bags
           </Typography>
         </CardHeader>
-        <CardBody className="overflow-scroll px-0">
+        <CardBody className="px-0">
           <table className="w-full min-w-max table-auto text-left">
             <thead>
               <tr>
@@ -149,6 +147,7 @@ export function BloodBagTable({ bloodJourney }) {
           </table>
         </CardBody>
       </Card>
+      <JourneyStepper activeSteps={activeSteps} />
     </div>
   );
 }

@@ -113,7 +113,6 @@ export function HistoryTable() {
     }
   };
 
-
   const sortedBloodBagDetails = userDetails.sort((a, b) => {
   const columnA = sortColumn === 'name' ? `${a.first_name} ${a.last_name}` : a[sortColumn];
   const columnB = sortColumn === 'name' ? `${b.first_name} ${b.last_name}` : b[sortColumn];
@@ -193,14 +192,15 @@ export function HistoryTable() {
            Donation History
           </Typography>
         </CardHeader>
-        <div className="flex flex-row mx-4 mt-4">
-        <ClockIcon className="h-5 w-5 mr-2" />
-          {userData}
-        </div>
         <CardBody className="overflow-x-auto px-0">
-        <div className="mb-4 ml-4 mr-4 flex justify-end items-center">
+        <div className="mb-4 mx-4 flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <ClockIcon className="h-5 w-5" />
+              <Typography className="font-medium text-blue-gray-500">
+                {userData}
+              </Typography>
+            </div>
           <div className="flex w-full shrink-0 gap-2 md:w-max">
-
             <Button
               className="flex items-center gap-3"
               size="sm"

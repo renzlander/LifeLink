@@ -5,6 +5,8 @@ import { PermanentDeferralTable } from "./tablePermanentDeferral";
 import { TemporaryDeferralTable } from "./tableTemporaryDeferral";
 
 export function DeferralTabs() {
+
+    
     const data = [
         {
             label: "Temporary Deferral",

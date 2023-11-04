@@ -1,7 +1,6 @@
-import { PencilIcon } from "@heroicons/react/24/solid";
 import { ArrowDownTrayIcon, EyeIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Card, CardHeader, Typography, Button, CardBody, Chip, CardFooter, Avatar, IconButton, Tooltip, Input, Spinner } from "@material-tailwind/react";
-import { MoveToDeferral, ViewPopUp } from "./popup";
+import { Card, CardHeader, Typography, Button, CardBody, Chip, CardFooter, Avatar, IconButton, Tooltip, Input, Spinner, Select, Option } from "@material-tailwind/react";
+import { ViewPopUp } from "./popup";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
@@ -9,13 +8,16 @@ import { useRouter } from "next/navigation";
 
 const TABLE_HEAD = [
     { label: "Donor Number", key: "donor_no" },
-    { label: "Name", key: "name" },
+    { label: "First Name", key: "first_name" },
+    { label: "Middle Name", key: "middle_name" },
+    { label: "Last", key: "last_name" },
     { label: "Blood Type", key: "blood_type" },
     { label: "Email Address", key: "email" },
     { label: "Mobile", key: "mobile" },
-    { label: "Birthday", key: "dob" },
+    { label: "Last Date Donated", key: "last_donated" },
     { label: "Donate Quantity", key: "donate_qty" },
     { label: "Badge", key: "badge" },
+    { label: "Donor Type", key: "donor Type" },
     { label: "" },
     { label: "" },
 ];
@@ -36,8 +38,65 @@ export function DonorTable() {
     const [sortColumn, setSortColumn] = useState(null);
     const [sortOrder, setSortOrder] = useState("asc");
     const [searchQuery, setSearchQuery] = useState("");
+    const [bloodType, setbloodType] = useState("All");
+    const [donorType, setDonorTypes] = useState("All");
+    const [donorQty, setDonorQty] = useState();
+
+
 
     const router = useRouter();
+    const bloodTypes = ["All", "AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
+    const donorTypes = ["All","First Time", "Regular", "Lapsed", "Galloneer"]
+
+    const handleBloodChange = (selectedBlood) => {
+        setbloodType(selectedBlood);
+        fetchBloodTypeFilteredData(selectedBlood, donorType);
+    };
+
+    const handleDonorTypeChange = (selectedDonorType) => {
+        setDonorTypes(selectedDonorType);
+        fetchBloodTypeFilteredData(bloodType, selectedDonorType);
+    };
+
+    const fetchBloodTypeFilteredData = async (bloodType, donorType) => {
+        console.log('donortype:', donorType)
+
+        try {
+            const token = getCookie("token");
+            if (!token) {
+                router.push("/login");
+                return;
+            }
+
+            const response = await axios.post(
+                `${laravelBaseUrl}/api/filter-donor-list`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    params: {
+                        blood_type: bloodType,
+                        donor_type: donorType,
+                    },
+                }
+            );
+                console.log('flter: ', response);
+            if (response.data.status === "success") {
+                setUserDetails(response.data.data.data);
+                setDonorQty(response.data.total_count);
+                setTotalPages(response.data.data.last_page);
+                setCurrentPage(response.data.total_count);
+                setLoading(false);
+            } else {
+                console.error("Error fetching data:", response.data.message);
+                setLoading(false);
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            setLoading(false);
+        }
+    };
 
     const fetchData = async (page) => {
         try {
@@ -68,7 +127,7 @@ export function DonorTable() {
                     },
                 });
             }
-            console.log(searchQuery);
+            console.log(response);
             if (response.data.status === "success") {
                 setUserDetails(response.data.data.data);
                 setTotalPages(response.data.data.last_page);
@@ -146,10 +205,6 @@ export function DonorTable() {
         return 0;
     });
 
-    // const handleUpdateDonor = (updatedDonorData) => {
-    //   console.log('Updated user data:', updatedUserData);
-    // };
-
     if (loading) {
         return (
             <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
@@ -166,8 +221,29 @@ export function DonorTable() {
                     Donor List
                 </Typography>
             </CardHeader>
-            <CardBody className="overflow-x-auto px-0">
-                <div className="mb-4 ml-4 mr-4 flex justify-end items-center">
+            <div className="flex items-end justify-between px-4 mt-6">
+                <div className="mx-4 flex justify-between items-center w-full">
+                    <div className="flex flex-row items-end gap-6">
+                        <div>
+                            <Select onChange={handleBloodChange} label="Blood Type" value={bloodType}>
+                                {bloodTypes.map((blood) => (
+                                    <Option key={blood} value={blood}>
+                                        {blood}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </div>
+
+                        <div>
+                            <Select onChange={handleDonorTypeChange} label="Donor Types" value={donorType}>
+                                {donorTypes.map((donor) => (
+                                    <Option key={donor} value={donor}>
+                                        {donor}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </div>
+                    </div>
                     <div className="flex w-full shrink-0 gap-2 md:w-max">
                         <div className="w-full md:w-72">
                             <Input
@@ -186,6 +262,8 @@ export function DonorTable() {
                         </Button>
                     </div>
                 </div>
+            </div>
+            <CardBody className="overflow-x-auto px-0">
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                         <tr>
@@ -213,7 +291,17 @@ export function DonorTable() {
                                 </td>
                                 <td className={classes}>
                                     <Typography variant="small" color="blue-gray" className="font-normal">
-                                        {`${user.first_name} ${user.last_name}`}
+                                        {user.first_name}
+                                    </Typography>
+                                </td>
+                                <td className={classes}>
+                                    <Typography variant="small" color="blue-gray" className="font-normal">
+                                        {user.middle_name}
+                                    </Typography>
+                                </td>
+                                <td className={classes}>
+                                    <Typography variant="small" color="blue-gray" className="font-normal">
+                                        {user.last_name}
                                     </Typography>
                                 </td>
                                 <td className={classes}>
@@ -233,7 +321,7 @@ export function DonorTable() {
                                 </td>
                                 <td className={classes}>
                                     <Typography variant="small" color="blue-gray" className="font-normal capitalize">
-                                        {formatDate(user.dob)}
+                                        {formatDate(user.last_donated)}
                                     </Typography>
                                 </td>
                                 <td className={classes}>
@@ -247,10 +335,12 @@ export function DonorTable() {
                                     </Typography>
                                 </td>
                                 <td className={classes}>
-                                    <ViewPopUp user={user} />
+                                    <Typography variant="small" color="blue-gray" className="font-normal capitalize">
+                                        {user.donor_type_desc}
+                                    </Typography>
                                 </td>
                                 <td className={classes}>
-                                    <MoveToDeferral user_id={user.user_id} refreshData={fetchData} />
+                                    <ViewPopUp user={user} />
                                 </td>
                             </tr>
                         ))}

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 
+
 export default function Home() {
   const router = useRouter();
   const [bloodTypes, setBloodTypes] = useState([]);
@@ -49,7 +50,7 @@ export default function Home() {
 
   const bloodListCards = bloodTypes.map((bloodType, index) => {
     const status = availability[index];
-    const legends = legend[index];
+    const legends = legend[index];console.log("Legend values:", legend);
     return <BloodListCard key={index} bloodType={bloodType} availability={status} legend={legends} />;
   });
 
@@ -61,17 +62,14 @@ export default function Home() {
       </div>
     );
   }
-  
 
   return (
-    <div className="flex min-h-screen max-w-full flex-col py-2">
-      <div className='flex flex-col gap-y-3 w-full'>
-        <div className='flex gap-3'>
-          {bloodListCards.slice(0, 4)}
-        </div>
-        <div className='flex gap-3'>
-          {bloodListCards.slice(4, 8)}
-        </div>
+    <div className="bg-gray-300 min-h-screen flex flex-col gap-y-3 py-4">
+      <div className='flex gap-3'>
+        {bloodListCards.slice(0, 4)}
+      </div>
+      <div className='flex gap-3'>
+        {bloodListCards.slice(4, 8)}
       </div>
     </div>
   );

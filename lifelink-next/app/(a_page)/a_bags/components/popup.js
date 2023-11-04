@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, Tooltip, IconButton, Select, Option } from "@material-tailwind/react";
+import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, Tooltip, IconButton, Typography, Chip, Select, Option } from "@material-tailwind/react";
 import { TrashIcon, PencilIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
-import { Typography } from "@mui/material";
 import { EyeIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
+import InputSelect from "@/app/components/InputSelect";
 
 function formatDate(dateString) {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -14,10 +14,13 @@ function formatDate(dateString) {
     return formattedDate;
 }
 
-export function RemoveBlood({ serial_no, handleOpen, countdown, refreshData }) {
+export function RemoveBlood({ serial_no, countdownEndDate, handleOpen, countdown, refreshData }) {
     const [open, setOpen] = useState(false);
     const [generalErrorMessage, setGeneralErrorMessage] = useState("");
     const [timeLeft, setTimeLeft] = useState("");
+    
+    console.log("countdown", countdown);
+    console.log("countdownEndDate", countdownEndDate);
 
     const router = useRouter();
 
@@ -42,7 +45,6 @@ export function RemoveBlood({ serial_no, handleOpen, countdown, refreshData }) {
             if (response.data.status === "success") {
                 refreshData();
                 toast.success("Removed blood bag successfully");
-                console.log("Removed blood bag successfully");
                 setOpen(false);
             } else {
                 console.error("Error removing blood bag:", response.data.message);
@@ -55,13 +57,22 @@ export function RemoveBlood({ serial_no, handleOpen, countdown, refreshData }) {
     return (
         <>
             <Button size="sm" onClick={() => setOpen(true)} className="bg-red-600" disabled={countdown === 0}>
-                Remove
+                Undo
             </Button>
             <Dialog open={open} handler={() => setOpen(false)}>
-                <DialogHeader>Remove Blood Bag</DialogHeader>
-                <DialogBody divider className="flex flex-col gap-4 items-center">
-                    <Typography className="font-bold text-xl text-red-600 text-center">Are you sure you want to remove this blood bag?</Typography>
-                    <Typography className="text-sm text-red-600 font-bold text-center">This blood bag can be remove in {countdown} days</Typography>
+            <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
+                Blood Bag Removal Confirmation
+            </DialogHeader>
+                    <DialogBody divider className="flex flex-col gap-4 items-center">
+                    <Typography className="text-base text-gray-700 text-center">
+                        The 'Undo' option allows you to remove a blood bag that you previously added. Please be aware that this option has a time limit. Once the time has elapsed, you won't be able to reverse this action.
+                    </Typography>
+                    <Typography className="text-base text-gray-700 text-center">
+                        Are you certain you want to proceed with the removal of this blood bag?
+                    </Typography>
+                    <Typography className="text-sm text-gray-700 text-center">
+                        The removal of this blood bag is allowed until <span className="font-bold">{formatDate(countdownEndDate)}</span>.
+                    </Typography>
                 </DialogBody>
                 {generalErrorMessage && (
                     <div className="mt-4 text-center bg-red-100 p-2 rounded-lg">
@@ -72,10 +83,10 @@ export function RemoveBlood({ serial_no, handleOpen, countdown, refreshData }) {
                 )}
                 <DialogFooter className="flex justify-center mt-4">
                     <Button variant="red-cross" onClick={() => setOpen(false)} className="mr-2">
-                        No
+                        Cancel
                     </Button>
                     <Button variant="red-cross" color="red" onClick={handleRemoveBloodBag} disabled={countdown === 0}>
-                        Yes
+                        Confirm Removal
                     </Button>
                 </DialogFooter>
             </Dialog>
@@ -83,7 +94,7 @@ export function RemoveBlood({ serial_no, handleOpen, countdown, refreshData }) {
     );
 }
 
-export function EditPopUp({ user, countdown, refreshData }) {
+export function EditPopUp({ user, countdown, countdownEndDate, refreshData }) {
     const [errorMessage, setErrorMessage] = useState({ serial_no: [], date_donated: [], bled_by: [], venue: [] });
     const [generalErrorMessage, setGeneralErrorMessage] = useState("");
     const [open, setOpen] = useState(false);
@@ -93,24 +104,23 @@ export function EditPopUp({ user, countdown, refreshData }) {
     const [part1, setPart1] = useState("");
     const [part2, setPart2] = useState("");
     const [part3, setPart3] = useState("");
-    const srNumber = `${part1}${part2}${part3}`;
-    console.log("user:", user);
+    const srNumber = `${part1}-${part2}-${part3}`;
     const serialNo = user.serial_no;
-    const serialFormat = serialNo.match(/^(\d{4})(\d{6})(\d{1})$/);
-
+    const serialNoWithoutHyphens = serialNo.replace(/-/g, ''); 
+    const serialFormat = serialNoWithoutHyphens.match(/^(\d{4})(\d{6})(\d{1})$/);
     let firstPart = "";
     let secondPart = "";
     let thirdPart = "";
-
+   console.log|("countdowndddd", countdown);
     if (serialFormat) {
         firstPart = serialFormat[1];
         secondPart = serialFormat[2];
         thirdPart = serialFormat[3];
     }
-
+    // console.log("serialFormat[1]", firstPart);
     useEffect(() => {
         if (user.serial_no) {
-            const serialFormat = user.serial_no.match(/^(\d{4})(\d{6})(\d{1})$/);
+            const serialFormat = serialNoWithoutHyphens.match(/^(\d{4})(\d{6})(\d{1})$/);
             if (serialFormat) {
                 setPart1(serialFormat[1]);
                 setPart2(serialFormat[2]);
@@ -134,7 +144,6 @@ export function EditPopUp({ user, countdown, refreshData }) {
                 date_donated: dateDonated,
                 bled_by: bledBy,
             };
-            console.log("Before Axios POST request");
 
             const response = await axios
                 .put(`${laravelBaseUrl}/api/edit-bloodbag`, data, {
@@ -194,17 +203,19 @@ export function EditPopUp({ user, countdown, refreshData }) {
                 </IconButton>
             </Tooltip>
             <Dialog open={open} handler={() => setOpen(false)}>
-                <DialogHeader className="flex justify-between">
+                <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
                     <div>Edit Blood Bag</div>
-                    <div>
-                        Serial Number:{" "}
-                        <span className="text-red-600">
-                            {part1}-{part2}-{part3}
-                        </span>
-                    </div>
                 </DialogHeader>
-                <Typography className="text-sm text-red-600 font-bold text-center">{countdown === 0 ? "Editing is not available at the moment." : `This blood bag can be edited in ${countdown} days.`}</Typography>
                 <DialogBody divider className="flex flex-col gap-4">
+                    <div className="flex items-center justify-between mb-3">
+                        <Typography variant="h4" className="text-gray-800">
+                            Serial Number:{" "}
+                            <span className="text-red-600">
+                               {user.serial_no}
+                            </span>
+                        </Typography>
+                        <Chip size="sm" value={countdown === 0 ? "Editing is not available at the moment." : `This blood bag can be edited until  ${formatDate(countdownEndDate)}`} />
+                    </div>
                     <div>
                         <div className={`relative flex gap-3 items-center`}>
                             <Input
@@ -311,7 +322,6 @@ export function MoveToStock({ serial_no, handleOpen, refreshData }) {
 
             if (response.data.status === "success") {
                 refreshData();
-                console.log("Blood bag added successfully");
                 toast.success("Blood bag added to inventory successfully");
             } else if (response.data.status === "error") {
                 if (response.data.message) {
@@ -333,9 +343,96 @@ export function MoveToStock({ serial_no, handleOpen, refreshData }) {
                 Move to stock
             </Button>
             <Dialog open={open} handler={() => setOpen(false)}>
-                <DialogHeader>Move Blood Bag to Inventory</DialogHeader>
+            <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
+            Move Blood Bag to Inventory
+            </DialogHeader>
                 <DialogBody divider className="flex flex-col gap-4 items-center">
-                    <Typography className="font-bold text-xl text-red-600 text-center">Are you sure you want to move this blood bag to inventory?</Typography>
+                    <Typography className="text-lg text-center py-4">
+                        Move to Inventory: When the blood bag has completed testing and is ready for storage, it should be recorded in the inventory under the 'Stocks' tab.
+                    </Typography>
+                    <Typography className="font-bold text-xl text-red-600 text-center">
+                        Are you sure you want to move this blood bag to inventory?
+                    </Typography>
+                </DialogBody>
+
+                {generalErrorMessage && (
+                    <div className="mt-4 text-center bg-red-100 p-2 rounded-lg">
+                        <Typography color="red" className="text-sm font-semibold">
+                            {generalErrorMessage}
+                        </Typography>
+                    </div>
+                )}
+
+                <DialogFooter className="flex justify-center mt-4">
+                    <Button variant="red-cross" onClick={() => setOpen(false)} className="mr-2">
+                        No
+                    </Button>
+                    <Button variant="red-cross" color="red" onClick={handleMovetoStock}>
+                        Yes
+                    </Button>
+                </DialogFooter>
+            </Dialog>
+
+        </>
+    );
+}
+
+export function MultipleMoveToStock({ selectedRows, refreshData }) {
+    const [open, setOpen] = useState(false);
+    const [generalErrorMessage, setGeneralErrorMessage] = useState("");
+    const router = useRouter();
+    console.log('dada', selectedRows);
+    const handleDisposeBloodBag = async () => {
+        try {
+            const token = getCookie("token");
+            if (!token) {
+                router.push("/login");
+                return;
+            }
+
+            if (!Array.isArray(selectedRows)) {
+                serial_no = [selectedRows]; // Convert to array
+            }
+
+            const response = await axios
+                .post(
+                    `${laravelBaseUrl}/api/bulk-move-to-inventory`,
+                    {
+                        blood_bags_id: selectedRows,
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                )
+                .catch((error) => {
+                    console.error("Unknown error occurred:", error);
+                });
+
+            if (response.data.status === "success") {
+                refreshData();
+                toast.success("Removed blood bag successfully");
+                setOpen(false);
+            } else {
+                console.error("Error removing blood bag:", response.data.message);
+            }
+        } catch (error) {
+            console.error("Error removing blood bag:", error);
+        }
+    };
+
+    return (
+        <>
+            <Button variant="contained" color="red" size="sm" className="ml-4" onClick={() => setOpen(true)}>
+                Move to Stock
+            </Button>
+            <Dialog open={open} handler={() => setOpen(false)}>
+            <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
+            Move to Stocks
+            </DialogHeader>
+                <DialogBody divider className="flex flex-col gap-4 items-center">
+                    <Typography className="font-bold text-xl text-red-600 text-center">Are you sure you want to move all of this blood bag to stocks?</Typography>
                 </DialogBody>
                 {generalErrorMessage && (
                     <div className="mt-4 text-center bg-red-100 p-2 rounded-lg">
@@ -348,7 +445,7 @@ export function MoveToStock({ serial_no, handleOpen, refreshData }) {
                     <Button variant="red-cross" onClick={() => setOpen(false)} className="mr-2">
                         No
                     </Button>
-                    <Button variant="red-cross" color="red" onClick={handleMovetoStock}>
+                    <Button variant="red-cross" color="red" onClick={handleDisposeBloodBag}>
                         Yes
                     </Button>
                 </DialogFooter>
@@ -356,6 +453,157 @@ export function MoveToStock({ serial_no, handleOpen, refreshData }) {
         </>
     );
 }
+
+export function Unsafe({ serial_no, handleOpen, reactiveOptions, spoiledOptions, refreshData }) {
+    const [open, setOpen] = useState(false);
+    const [generalErrorMessage, setGeneralErrorMessage] = useState("");
+    const [reason, setReason] = useState(null); // To store the selected reason (Reactive or Spoiled)
+    const [remarks, setRemarks] = useState(""); // To store the selected remarks
+
+    const reactiveDynamicOptions = reactiveOptions.map((item) => ({
+        label: item.reactive_remarks_desc,
+        value: item.reactive_remarks_id,
+    }));
+
+    const spoiledDynamicOptions = spoiledOptions.map((item) => ({
+        label: item.spoiled_remarks_desc,
+        value: item.spoiled_remarks_id,
+    }));
+
+    const handleRemarks = (selectedValue) => {
+        setRemarks(selectedValue);
+    }; 
+
+    const handUnsafeBags = async () => {
+        try {
+            const token = getCookie("token");
+            if (!token) {
+                router.push("/login");
+                return;
+            }
+            
+            const response = await axios.post(
+                `${laravelBaseUrl}/api/mark-unsafe`,
+                {
+                    serial_no: serial_no,
+                    reason: reason,
+                    remarks: remarks,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            
+
+            if (response.data.status === "success") {
+                console.log("yehey successss");
+                refreshData();
+                toast.success("Marked as unsafe successfully");
+            } else {
+                console.error("Oops! Something went wrong.");
+            }
+            setOpen(false);
+        } catch (error) {
+            console.error("Error fetching bled_by and venues lists:", error);
+        }
+    };
+
+
+
+
+    return (
+        <>
+            <Button size="sm" onClick={() => setOpen(true)} className="bg-red-600">
+                Mark as Unsafe
+            </Button>
+            <Dialog open={open} handler={() => setOpen(false)}>
+                <DialogHeader className="bg-gradient-to-r from-[#282828] to-[#A00C08] rounded-t-md text-white font-semibold">
+                    Mark as Unsafe
+                </DialogHeader>
+                <DialogBody className="flex flex-col gap-4 items-center text-center">
+                    <div className="text-lg text-gray-700 text-center">
+                        Select a reason:
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <label>
+                            <input
+                                type="radio"
+                                name="reason"
+                                value="Spoiled"
+                                checked={reason === "Reactive"}
+                                onChange={() => setReason("Reactive")}
+                            />{' '}
+                            Reactive
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="reason"
+                                value="Spoiled"
+                                checked={reason === "Spoiled"}
+                                onChange={() => setReason("Spoiled")}
+                            />{' '}
+                            Spoiled
+                        </label>
+                    </div>
+                    {reason && (
+                        <div className="text-lg text-gray-700 text-center">
+                            Select remarks for {reason}:
+                        </div>
+                    )}
+                    {reason === "Reactive" && (
+                        <InputSelect
+                            label="Reactive Remarks"
+                            containerProps={{ className: "w-[50%]" }}
+                            value={remarks} 
+                            onSelect={handleRemarks}
+                            options={reactiveDynamicOptions}
+                            isSearchable 
+                            required 
+                            placeholder="Reactive Remarks" 
+                        />
+                    )}
+                    {reason === "Spoiled" && (
+                        <InputSelect
+                            label="Spoiled Remarks"
+                            containerProps={{ className: "w-[50%]" }}
+                            value={remarks} 
+                            onSelect={handleRemarks}
+                            options={spoiledDynamicOptions}
+                            isSearchable 
+                            required 
+                            placeholder="Spoiled Remarks" 
+                        />
+                    )}
+                </DialogBody>
+                {generalErrorMessage && (
+                    <div className="mt-4 text-center bg-red-100 p-2 rounded-lg">
+                        <Typography color="red" className="text-sm font-semibold">
+                            {generalErrorMessage}
+                        </Typography>
+                    </div>
+                )}
+                <DialogFooter className="flex justify-center mt-4">
+                    <Button variant="red-cross" onClick={() => setOpen(false)} className="mr-2">
+                        No
+                    </Button>
+                    <Button
+                        variant="red-cross"
+                        color="red"
+                        disabled={!reason || !remarks}
+                        onClick={handUnsafeBags}
+                    >
+                        Yes
+                    </Button>
+                </DialogFooter>
+            </Dialog>
+        </>
+    );
+}
+
+
 
 function getCookie(name) {
     const cookies = document.cookie.split("; ");
