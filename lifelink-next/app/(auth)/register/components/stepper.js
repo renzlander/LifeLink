@@ -24,6 +24,11 @@ export function RegisterStepper() {
     }
   };
 
+  const stepsContent = [
+    <RegF1 key="step1" onNextStep={handleNextStep} />,
+    <RegF2 key="step2" onNextStep={handleNextStep} />,
+    <RegF3 key="step3" />,
+  ];
   
 
   useEffect(() => {
