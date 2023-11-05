@@ -24,11 +24,7 @@ export function RegisterStepper() {
     }
   };
 
-  const stepsContent = [
-    <RegF1 onNextStep={handleNextStep} />,
-    <RegF2 onNextStep={handleNextStep} />,
-    <RegF3 />,
-  ];
+  
 
   useEffect(() => {
     const user_id = document.cookie.replace(/(?:(?:^|.*;\s*)user_id\s*=\s*([^;]*).*$)|^.*$/, "$1");
@@ -44,15 +40,16 @@ export function RegisterStepper() {
         isLastStep={(value) => setIsLastStep(value)}
         isFirstStep={(value) => setIsFirstStep(value)}
       >
-        <Step>
-          <UserCircleIcon className="h-5 w-5" />
-        </Step>
-        <Step>
-          <DocumentIcon className="h-5 w-5" />
-        </Step>
-        <Step>
-          <CheckIcon className="h-5 w-5" />
-        </Step>
+        <Step key="userCircleIcon">
+  <UserCircleIcon className="h-5 w-5" />
+</Step>
+<Step key="documentIcon">
+  <DocumentIcon className="h-5 w-5" />
+</Step>
+<Step key="checkIcon">
+  <CheckIcon className="h-5 w-5" />
+</Step>
+
       </Stepper>
       <div className="flex justify-center items-center">
       {stepsContent[activeStep]}

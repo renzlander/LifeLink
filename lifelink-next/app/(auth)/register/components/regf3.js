@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from "react";
 import {
     Card,
-    Input,
     Typography,
     Button,
 } from "@material-tailwind/react";

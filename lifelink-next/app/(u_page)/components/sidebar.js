@@ -15,7 +15,6 @@ import {
     UserIcon,
     ArrowLeftOnRectangleIcon,
     ChevronRightIcon,
-    Bars3Icon,
   } from "@heroicons/react/24/solid";
   import axios from "axios";
   import Image from "next/image";
@@ -50,11 +49,11 @@ import {
     };
 
     const menuItems = [
-      { icon: HomeIcon, text: "Dashboard", link: './u_dashboard' },
-      { icon: ClockIcon, text: "History", link: './u_history' },
-      { icon: GlobeAltIcon, text: "Network", link: './u_network' },
-      { icon: TruckIcon, text: "Journey", link: './u_journey' },
-      { icon: UserIcon, text: "Profile", link: './u_profile' },
+      { icon: HomeIcon, text: "Dashboard", link: './dashboard' },
+      { icon: ClockIcon, text: "History", link: './history' },
+      { icon: GlobeAltIcon, text: "Network", link: './network' },
+      { icon: TruckIcon, text: "Journey", link: './journey' },
+      { icon: UserIcon, text: "Profile", link: './profile' },
     ];
 
     useEffect(() => {
@@ -86,7 +85,7 @@ import {
       <Card  className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5 bg-gradient-to-r from-red-900 to-red-700 flex flex-col justify-between">
         <div>
           <div className="flex justify-center items-center p-4 my-3">
-            <Link href='./u_profile'>
+            <Link href='./profile'>
               <Image src="/patient_icon.png" width={60} height={60} />
             </Link>
             <div className="flex flex-col ml-3 truncate">

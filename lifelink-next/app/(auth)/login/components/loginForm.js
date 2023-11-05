@@ -35,7 +35,7 @@ export function LoginForm() {
         if (response.data.user.isAdmin === 0) {
           document.cookie = `token=${response.data.token}; expires=${new Date(new Date().getTime() + 86400 * 1000).toUTCString()}; path=/`;
           toast.success("Login successful!");
-          router.push("/u_dashboard");
+          router.push("/dashboard");
 
         } else {
           document.cookie = `token=${response.data.token}; expires=${new Date(new Date().getTime() + 86400 * 1000).toUTCString()}; path=/`;
