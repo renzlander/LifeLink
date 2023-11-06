@@ -12,7 +12,7 @@ export default function Home() {
     const router = useRouter();
     const bloodTypes = ["All", "Approved", "Pending", "Disapproved"];
     const [userDetails, setUserDetails] = useState(null);
- 
+    const [latestBloodRequest, setLatestBloodRequest] = useState([]);
 
     useEffect(() => {
       const fetchUserInfo = async () => {
@@ -35,8 +35,29 @@ export default function Home() {
           console.error("Error fetching user information:", error);
         }
       };
+
+      const fetchLatestBloodRequest = async () => {
+        try {
+          const token = getCookie("token");
+          if (!token) {
+            router.push("./login");
+            return;
+          }
+  
+          const response = await axios.get(`${laravelBaseUrl}/api/get-latest-blood-request`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setLatestBloodRequest(response.data.data);
+  
+        } catch (error) {
+          console.error("Error fetching user information:", error);
+        }
+      };
   
       fetchUserInfo();
+      fetchLatestBloodRequest();
     }, []);
   
     return (
@@ -50,8 +71,8 @@ export default function Home() {
                 <div className="flex flex-col min-h-screen">
                     <div className="flex flex-row flex-1 bg-gray-100 rounded-xl shadow-xl">
                         <div className="w-1/4 h-full">
-                            <SideBar />
-                            <MakeRequest userDetails={userDetails}/>
+                            <SideBar latestBloodRequest={latestBloodRequest}/>
+                            <MakeRequest userDetails={userDetails} latestBloodRequest={latestBloodRequest}/>
 
                             <Button variant="gradient" className="w-full my-4">
                                   <span>View Request History</span>
