@@ -100,22 +100,22 @@ export default function Home() {
 
   useEffect(() => {
     if (searchQuery.trim() !== "") {
-      fetchDispenseRecords();
+        fetchDispenseRecords();
     }
-  }, [searchQuery]);
+}, [searchQuery, fetchDispenseRecords]);
 
   return (
     <div className="bg-gray-200 flex min-h-screen flex-col items-center gap-10 py-4 px-12">
       <Card className="w-full">
         <Tabs value={activeTab} className="w-full">
           <TabsHeader>
-              {TABS.map(({ label, value }) => {
-                  return (
-                    <Tab value={value} onClick={() => handleTabChange(value)}>
-                        &nbsp;&nbsp;{label}&nbsp;&nbsp;
-                    </Tab>
-                  );
-              })}
+          {TABS.map(({ label, value }) => {
+              return (
+                <Tab key={value} value={value} onClick={() => handleTabChange(value)}>
+                    &nbsp;&nbsp;{label}&nbsp;&nbsp;
+                </Tab>
+              );
+          })}
           </TabsHeader>
         </Tabs>
       </Card>

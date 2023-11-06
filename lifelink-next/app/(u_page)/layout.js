@@ -47,11 +47,11 @@ export default function UserLayout({ children }) {
   };
 
   const menuItems = [
-    { icon: HomeIcon, text: "Dashboard", link: './u_dashboard' },
-    { icon: ClockIcon, text: "History", link: './u_history' },
-    { icon: GlobeAltIcon, text: "Network", link: './u_network' },
-    { icon: TruckIcon, text: "Journey", link: './u_journey' },
-    { icon: UserIcon, text: "Profile", link: './u_profile' },
+    { icon: HomeIcon, text: "Dashboard", link: './dashboard' },
+    { icon: ClockIcon, text: "History", link: './history' },
+    { icon: GlobeAltIcon, text: "Network", link: './network' },
+    { icon: TruckIcon, text: "Journey", link: './journey' },
+    { icon: UserIcon, text: "Profile", link: './profile' },
   ];
 
   const handleLogout = async () => {

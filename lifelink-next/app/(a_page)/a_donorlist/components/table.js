@@ -43,62 +43,21 @@ export function DonorTable() {
     const [donorQty, setDonorQty] = useState();
 
 
-
     const router = useRouter();
     const bloodTypes = ["All", "AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
     const donorTypes = ["All","First Time", "Regular", "Lapsed", "Galloneer"]
 
     const handleBloodChange = (selectedBlood) => {
         setbloodType(selectedBlood);
-        fetchBloodTypeFilteredData(selectedBlood, donorType);
+        fetchData( selectedBlood, donorType);
     };
 
     const handleDonorTypeChange = (selectedDonorType) => {
         setDonorTypes(selectedDonorType);
-        fetchBloodTypeFilteredData(bloodType, selectedDonorType);
+        fetchData( bloodType, selectedDonorType);
     };
 
-    const fetchBloodTypeFilteredData = async (bloodType, donorType) => {
-        console.log('donortype:', donorType)
-
-        try {
-            const token = getCookie("token");
-            if (!token) {
-                router.push("/login");
-                return;
-            }
-
-            const response = await axios.post(
-                `${laravelBaseUrl}/api/filter-donor-list`,
-                {},
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                    params: {
-                        blood_type: bloodType,
-                        donor_type: donorType,
-                    },
-                }
-            );
-                console.log('flter: ', response);
-            if (response.data.status === "success") {
-                setUserDetails(response.data.data.data);
-                setDonorQty(response.data.total_count);
-                setTotalPages(response.data.data.last_page);
-                setCurrentPage(response.data.total_count);
-                setLoading(false);
-            } else {
-                console.error("Error fetching data:", response.data.message);
-                setLoading(false);
-            }
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            setLoading(false);
-        }
-    };
-
-    const fetchData = async (page) => {
+    const fetchData = async (page,bloodType,donorType) => {
         try {
             const token = getCookie("token");
             if (!token) {
@@ -125,6 +84,10 @@ export function DonorTable() {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
+                    params: {
+                        blood_type: bloodType,
+                        donor_type: donorType,
+                    },
                 });
             }
             console.log(response);
@@ -144,17 +107,20 @@ export function DonorTable() {
     };
 
     useEffect(() => {
-        fetchData(currentPage);
-    }, [router, sortColumn, sortOrder, searchQuery]);
+        fetchData(currentPage, bloodType, donorType); // Include bloodType and donorType here
+    }, [currentPage, router, sortColumn, sortOrder, searchQuery, bloodType, donorType]);
+    
+    
 
     const handlePageChange = (newPage) => {
         if (newPage < 1 || newPage > totalPages) {
             return;
         }
-
+    
         setCurrentPage(newPage);
-        fetchData(newPage);
+        fetchData(newPage, bloodType, donorType); // Include bloodType and donorType here
     };
+    
 
     const handleSort = (columnKey) => {
         // If the same column is clicked, toggle the sort order
@@ -281,7 +247,7 @@ export function DonorTable() {
                     </thead>
                     <tbody>
                         {userDetails.map((user, index) => (
-                            <tr className="border-b">
+                            <tr key={user.donor_no} className="border-b">
                                 <td className={classes}>
                                     <div className="flex items-center gap-3">
                                         <Typography variant="small" color="blue-gray" className="font-bold">

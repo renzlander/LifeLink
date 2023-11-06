@@ -50,12 +50,6 @@ export function RegF1({ onNextStep }) {
     password_confirmation !== "" &&
     confirmPasswordStyle === "success";
 
-    useEffect(() => {
-      const user_id = document.cookie.replace(/(?:(?:^|.*;\s*)user_id\s*=\s*([^;]*).*$)|^.*$/, "$1");
-      if (user_id) {
-        onNextStep();
-      }
-    }, [onNextStep]);
 
  
 
@@ -76,11 +70,11 @@ export function RegF1({ onNextStep }) {
               className={`w-full ${errorMessage.email.length > 0 ? "border-red-500" : ""}`}
             />
 
-            {errorMessage.email.length > 0 && (
-              <div className="error-message text-red-600 text-sm">
-                {errorMessage.email[0]}
-              </div>
-            )}
+{errorMessage.email.length > 0 && (
+  <div key="emailError" className="error-message text-red-600 text-sm">
+    {errorMessage.email[0]}
+  </div>
+)}
         </div>
 
         <div className={`relative ${errorMessage.mobile.length > 0 ? "mb-1" : ""}`}>
@@ -97,11 +91,11 @@ export function RegF1({ onNextStep }) {
             className={`w-full ${errorMessage.mobile.length > 0 ? "border-red-500" : ""}`}
           />
 
-          {errorMessage.mobile.length > 0 && (
-            <div className="error-message text-red-600 text-sm">
-              {errorMessage.mobile[0]}
-            </div>
-          )}
+{errorMessage.mobile.length > 0 && (
+  <div key="mobileError" className="error-message text-red-600 text-sm">
+    {errorMessage.mobile[0]}
+  </div>
+)}
         </div>
 
         <Input

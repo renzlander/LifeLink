@@ -59,53 +59,5 @@ import BloodDropletIcon from "@/public/BloodDroplet";
       </Card>
     );
   
-  }
-
-  
-export function LineCard() {
-  return (
-    <Card className="mt-6 w-1/2">
-      <CardHeader color="red" variant="gradient" className="flex items-center justify-center relative p-6 h-full">
-        <LineChart />
-      </CardHeader>
-      <CardBody>
-        <Typography variant="h5" color="blue-gray" className="mb-2">
-          Bloods Stored
-        </Typography>
-        <Typography>
-          Collected blood bags in past few months
-        </Typography>
-      </CardBody>
-      <CardFooter className="border-t">
-        <Typography>
-          Updated 4 min ago
-        </Typography>
-      </CardFooter>
-    </Card>
-  );
-
-}
-
-export function BarCard() {
-  return (
-    <Card className="mt-6 w-1/2">
-      <CardHeader color="red" variant="gradient" className="flex items-center justify-center relative p-6 h-full">
-        <BarChart />
-      </CardHeader>
-      <CardBody>
-        <Typography variant="h5" color="blue-gray" className="mb-2">
-          Bloods Stored
-        </Typography>
-        <Typography>
-          Collected blood bags in past few months
-        </Typography>
-      </CardBody>
-      <CardFooter className="border-t">
-        <Typography>
-          Updated 4 min ago
-        </Typography>
-      </CardFooter>
-    </Card>
-  );
 
 }

@@ -213,9 +213,10 @@ export function UsersTable() {
     };
 
     const sortedUserDetails = userDetails.sort((a, b) => {
-        const columnA = sortColumn === "name" ? `${a.first_name} ${a.last_name}` : a[sortColumn];
-        const columnB = sortColumn === "name" ? `${b.first_name} ${b.last_name}` : b[sortColumn];
-
+        // Replace 'name' with the correct column name for sorting
+        const columnA = sortColumn === "firstname" ? a.first_name : sortColumn === "middlename" ? a.middle_name : sortColumn === "lastname" ? a.last_name : a[sortColumn];
+        const columnB = sortColumn === "firstname" ? b.first_name : sortColumn === "middlename" ? b.middle_name : sortColumn === "lastname" ? b.last_name : b[sortColumn];
+    
         if (sortOrder === "asc") {
             if (columnA < columnB) return -1;
             if (columnA > columnB) return 1;
@@ -223,9 +224,10 @@ export function UsersTable() {
             if (columnA < columnB) return 1;
             if (columnA > columnB) return -1;
         }
-
+    
         return 0;
     });
+    
 
     const handleUpdateUser = (updatedUserData) => {
         console.log("Updated user data:", updatedUserData);
@@ -292,7 +294,7 @@ export function UsersTable() {
                                 </td>
                                 <td className={classes}>
                                     <Typography variant="small" color="blue-gray" className="font-normal">
-                                        {`${user.first_name} ${user.last_name}`}
+                                    {user.first_name}
                                     </Typography>
                                 </td>
                                  <td className={classes}>

@@ -119,7 +119,7 @@ export function RegF2({onNextStep}) {
         barangay: selectedBarangay?.barangayName,
         postalcode,
       });
-
+      
       if (response.data.status === 'success') {
         document.cookie = 'user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         onNextStep();
@@ -253,90 +253,71 @@ export function RegF2({onNextStep}) {
               </div>
               
               <div className="mb-4 flex grow gap-6">
-                <Select 
-                  label="Region" 
-                  required
-                  name={selectedRegion?.regionName}
-                  >
-                    {regionList?.map((region) => (
-                      <Option
-                        onClick={() => {
-                          setSelectedRegion({
-                            regionName: region?.regDesc,
-                            regCode: region?.regCode,
-                          });
-                        }}
-                        key={region.id} 
-                      >
-                        {region?.regDesc}
-                      </Option>
-                    ))}
-                </Select>
-                <Select 
-                  label="Province"
-                  required
-                  noListMessage="Please select a region first"
-                  name={selectedProvince?.provinceName}
-                  data={provinceList}
-                >
-                  {provinceList?.map((province) => (
-                    <Option
-                      onClick={() => {
-                        setSelectedProvince({
-                          provinceName: province?.provDesc,
-                          provCode: province?.provCode,
-                          id: province?.id,
-                        });
-                      }}
-                      key={province.id}
-                    >
-                      {province?.provDesc}
-                    </Option>
-                  ))}
-                </Select>
+              <Select label="Region" required name={selectedRegion?.regionName}>
+  {regionList?.map((region) => (
+    <Option
+      key={region.id} // Add a unique key prop here
+      onClick={() => {
+        setSelectedRegion({
+          regionName: region?.regDesc,
+          regCode: region?.regCode,
+        });
+      }}
+    >
+      {region?.regDesc}
+    </Option>
+  ))}
+</Select>
+<Select label="Province" required noListMessage="Please select a region first" name={selectedProvince?.provinceName} data={provinceList}>
+  {provinceList?.map((province) => (
+    <Option
+      key={province.id} // Add a unique key prop here
+      onClick={() => {
+        setSelectedProvince({
+          provinceName: province?.provDesc,
+          provCode: province?.provCode,
+          id: province?.id,
+        });
+      }}
+    >
+      {province?.provDesc}
+    </Option>
+  ))}
+</Select>
               </div>
               <div className="mb-4 flex grow gap-6">
-                <Select 
-                  label="Municipality" 
-                  required
-                  name={selectedMunicipality?.municipalityName}
-                  data={municipalityList}
-                >
-                  {municipalityList?.map((municipality) => (
-                    <Option
-                      onClick={() => {
-                        setSelectedMunicipality({
-                          municipalityName: municipality?.citymunDesc,
-                          citymunCode: municipality?.citymunCode,
-                        });
-                      }}
-                      key={`city${municipality?.citymunCode}`}
-                    >
-                      {municipality?.citymunDesc}
-                    </Option>
-                  ))}
-                </Select>
-                <Select 
-                  label="Barangay" 
-                  required
-                  name={selectedBarangay?.barangayName} 
-                  data={barangayList}
-                >
-                  {barangayList
-                    ?.sort((a, b) => a.brgyDesc.localeCompare(b.brgyDesc))
-                    .map((barangay) => (
-                    <Option
-                      onClick={() => {
-                        setSelectedBarangay({
-                          barangayName: barangay?.brgyDesc,
-                        });
-                      }}
-                      key={`brngy${barangay.id}`}
-                    >
-                      {barangay?.brgyDesc}
-                    </Option>
-                  ))}
-                </Select>
+              <Select label="Municipality" required name={selectedMunicipality?.municipalityName} data={municipalityList}>
+  {municipalityList?.map((municipality) => (
+    <Option
+      key={`city${municipality?.citymunCode}`} // Add a unique key prop here
+      onClick={() => {
+        setSelectedMunicipality({
+          municipalityName: municipality?.citymunDesc,
+          citymunCode: municipality?.citymunCode,
+        });
+      }}
+    >
+      {municipality?.citymunDesc}
+    </Option>
+  ))}
+</Select>
+<Select label="Barangay" required name={selectedBarangay?.barangayName} data={barangayList}>
+  {barangayList
+    ?.sort((a, b) => a.brgyDesc.localeCompare(b.brgyDesc))
+    .map((barangay) => (
+      <Option
+        key={`brngy${barangay.id}`} // Add a unique key prop here
+        onClick={() => {
+          setSelectedBarangay({
+            barangayName: barangay?.brgyDesc,
+          });
+        }}
+      >
+        {barangay?.brgyDesc}
+      </Option>
+    ))
+  }
+</Select>
               </div>
               <div className="mb-4 flex grow gap-6">
                 <Input 
