@@ -29,6 +29,7 @@ import {
   IconButton,
   Tooltip,
 } from "@material-tailwind/react";
+import { CreatePost } from './components/popup';
 
 export default function UserLayout({ children }) {
   const theme = useTheme();
@@ -200,6 +201,7 @@ export default function UserLayout({ children }) {
       <Box component="main" sx={{ flexGrow: 1, p: 1 }}>
         <DrawerHeader />
         {children}
+        {"." + pathName === "./u_network" ? <CreatePost /> : ""}
       </Box>
     </Box>
   );

@@ -65,7 +65,7 @@ import {
   
     return (
       <Card className="w-full max-w-md">
-        <Typography variant="h5" color="blue-gray" className="ml-4 mt-4">Mode of Contact</Typography>
+        <Typography variant="h5" color="blue-gray" className="ml-4 mt-4">Modsadadse of Contact</Typography>
         <List className="flex-row">
           {contactMode.map((contactMode) => (
             <ListItem className="p-0" key={contactMode}>

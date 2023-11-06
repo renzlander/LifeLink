@@ -17,7 +17,6 @@ export default function Home() {
             </div>
             <PostCard />
         </div>
-        <CreatePost />
     </div>
   )
 }
