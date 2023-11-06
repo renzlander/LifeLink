@@ -88,8 +88,6 @@ export function MakeRequest({userDetails, latestBloodRequest}) {
     const [errorMessage, setErrorMessage] = useState({ blood_units: [], blood_component_id: [], diagnosis: [], bled_by: [], hospital: [], schedule: [],});
     const [generalErrorMessage, setGeneralErrorMessage] = useState("");
 
-    const canMakeNewRequest = latestBloodRequest.isAccommodated === 0;
-
     const dynamicBloodComponents = bloodComponentOptions.map((item) => ({
         label: item.blood_component_desc,
         value: item.blood_component_id,
@@ -210,12 +208,12 @@ export function MakeRequest({userDetails, latestBloodRequest}) {
           )}
           <CardBody className="p-4">
             <div className="relative flex flex-col gap-3 items-center py-2">
-              <div className={`input-container w-full ${latestBloodRequest.isAccommodated === 0 ? "opacity-40" : ""}`}>
+              <div className={`input-container w-full ${latestBloodRequest?.isAccommodated === 0 ? "opacity-40" : ""}`}>
                 <Input
                   label="No. of Units"
                   maxLength={2}
                   onChange={(e) => setBloodUnits(e.target.value)}
-                  disabled={latestBloodRequest.isAccommodated === 0}
+                  disabled={latestBloodRequest?.isAccommodated === 0}
                 />
                 {errorMessage.blood_units.length > 0 && (
                   <div className="error-message text-red-600 text-sm">
@@ -223,7 +221,7 @@ export function MakeRequest({userDetails, latestBloodRequest}) {
                   </div>
                 )}
               </div>
-              <div className={`input-container w-full ${latestBloodRequest.isAccommodated === 0 ? "opacity-40" : ""}`}>
+              <div className={`input-container w-full ${latestBloodRequest?.isAccommodated === 0 ? "opacity-40" : ""}`}>
                 <InputSelect
                   label="Blood Component Need"
                   value={component}
@@ -233,7 +231,7 @@ export function MakeRequest({userDetails, latestBloodRequest}) {
                   required
                   placeholder="Blood Component Need"
                   onChange={(value) => setComponent(value)}
-                  disabled={latestBloodRequest.isAccommodated === 0}
+                  disabled={latestBloodRequest?.isAccommodated === 0}
                 />
                 {errorMessage.blood_component_id.length > 0 && (
                   <div className="error-message text-red-600 text-sm">
@@ -241,11 +239,11 @@ export function MakeRequest({userDetails, latestBloodRequest}) {
                   </div>
                 )}
               </div>
-              <div className={`input-container w-full ${latestBloodRequest.isAccommodated === 0 ? "opacity-40" : ""}`}>
+              <div className={`input-container w-full ${latestBloodRequest?.isAccommodated === 0 ? "opacity-40" : ""}`}>
                 <Input
                   label="Diagnosis"
                   onChange={(e) => setDiagnosis(e.target.value)}
-                  disabled={latestBloodRequest.isAccommodated === 0}
+                  disabled={latestBloodRequest?.isAccommodated === 0}
                 />
                 {errorMessage.diagnosis.length > 0 && (
                   <div className="error-message text-red-600 text-sm">
@@ -253,11 +251,11 @@ export function MakeRequest({userDetails, latestBloodRequest}) {
                   </div>
                 )}
               </div>
-              <div className={`input-container w-full ${latestBloodRequest.isAccommodated === 0 ? "opacity-40" : ""}`}>
+              <div className={`input-container w-full ${latestBloodRequest?.isAccommodated === 0 ? "opacity-40" : ""}`}>
                 <Input
                   label="Hospital"
                   onChange={(e) => setHospital(e.target.value)}
-                  disabled={latestBloodRequest.isAccommodated === 0}
+                  disabled={latestBloodRequest?.isAccommodated === 0}
                 />
                 {errorMessage.hospital.length > 0 && (
                   <div className="error-message text-red-600 text-sm">
@@ -265,7 +263,7 @@ export function MakeRequest({userDetails, latestBloodRequest}) {
                   </div>
                 )}
               </div>
-              <div className={`input-container w-full ${latestBloodRequest.isAccommodated === 0 ? "opacity-40" : ""}`}>
+              <div className={`input-container w-full ${latestBloodRequest?.isAccommodated === 0 ? "opacity-40" : ""}`}>
                 <DatePicker
                   selected={transfusionSchedule}
                   onChange={handleDateChange}
@@ -275,7 +273,7 @@ export function MakeRequest({userDetails, latestBloodRequest}) {
                   timeCaption="Time"
                   dateFormat="MMMM d, yyyy h:mm aa"
                   placeholderText="Select Date and Time"
-                  disabled={latestBloodRequest.isAccommodated === 0}
+                  disabled={latestBloodRequest?.isAccommodated === 0}
                 />
                 {errorMessage.schedule.length > 0 && (
                   <div className="error-message text-red-600 text-sm">
@@ -288,12 +286,12 @@ export function MakeRequest({userDetails, latestBloodRequest}) {
                 color="red"
                 className="w-full mt-8"
                 onClick={handleMakeRequest}
-                disabled={latestBloodRequest.isAccommodated === 0}
+                disabled={latestBloodRequest?.isAccommodated === 0}
               >
                 <span>Make Request</span>
               </Button>
             </div>
-            {latestBloodRequest.isAccommodated === 0 && (
+            {latestBloodRequest?.isAccommodated === 0 && (
               <div className="mt-4 text-center text-red-600">
                 You cannot make a new blood request while there is a pending request.
               </div>
