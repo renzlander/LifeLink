@@ -27,6 +27,10 @@ export function MaintenanceSwitch() {
     }
   };
 
+  const handleSwitchChange = () => {
+    setIsSwitchOn(!isSwitchOn);
+  };
+
   return (
     <Card id="mainte" className="w-full bg-white p-4">
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -58,6 +62,7 @@ export function MaintenanceSwitch() {
           id="custom-switch-component"
           ripple={false}
           checked={isSwitchOn}
+          onChange={handleSwitchChange}
           className="h-full w-full checked:bg-gray-800"
           containerProps={{
             className: "w-11 h-6",

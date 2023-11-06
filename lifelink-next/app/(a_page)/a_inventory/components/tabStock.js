@@ -299,7 +299,7 @@ export function TabStock() {
     };
 
     return (
-        <Card className="h-full w-full">
+        <Card className="h-full w-full -mb-6">
             <CardBody className="px-0">
                 <div className="flex items-center justify-between px-4 mb-4">
                     <div>

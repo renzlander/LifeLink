@@ -3,8 +3,8 @@ import { MagnifyingGlassIcon, DocumentArrowDownIcon } from "@heroicons/react/24/
 import { Card, CardHeader, Input, Typography, Button, CardBody, CardFooter, Tabs, Tab, TabsHeader, Tooltip, Select, Option } from "@material-tailwind/react";
 import { TabStock } from "./tabStock";
 import { TabExp } from "./tabExpired";
-import { TabTemp } from "./tabTdbb";
-import { TabPerma } from "./tabPdbb";
+import TabRBB from "./tabRbb";
+import TabSBB from "./tabSbb";
 
 const TABS = [
     {
@@ -20,12 +20,12 @@ const TABS = [
     {
         label: "RBB",
         value: "tdbb",
-        tableRender: <TabTemp />,
+        tableRender: <TabRBB />,
     },
     {
         label: "SBB",
         value: "pdbb",
-        tableRender: <TabPerma />,
+        tableRender: <TabSBB />,
     },
 ];
 
@@ -80,7 +80,9 @@ export function InventoryTable() {
                     </div>
                 </div>
             </CardHeader>
-            <CardBody className="overflow-scroll px-0">{TABS.find((tab) => tab.value === activeTab)?.tableRender}</CardBody>
+            <CardBody className="px-0">
+                {TABS.find((tab) => tab.value === activeTab)?.tableRender}
+            </CardBody>
         </Card>
     );
 }

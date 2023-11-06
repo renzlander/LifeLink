@@ -107,23 +107,23 @@ export function LineCard() {
   return (
     <Card className="mt-6 w-1/2">
       <CardHeader color="white" variant="gradient" className="flex items-center justify-center relative p-6 h-full">
-        <LineChart data={monthCounts} /> {/* Pass your data to the LineChart component */}
+        <LineChart data={monthCounts} />
       </CardHeader>
-      <CardBody>
-        <div className="flex flex-row justify-between">
-            <Typography variant="h5" color="blue-gray" className="mb-2">
-              Blood Stocks
-            </Typography>
-            <Select onChange={handleBloodChange} label="Blood Type" value={filterBloodType}>
-              {bloodTypes.map((blood) => (
-                  <Option key={blood} value={blood}>
-                      {blood}
-                  </Option>
-              ))}
+      <CardBody className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <Typography variant="h5" color="blue-gray" className="">
+            Blood Stocks
+          </Typography>
+          <Select onChange={handleBloodChange} label="Blood Type" value={filterBloodType} containerProps={{ className: "w-1/6" }}>
+            {bloodTypes.map((blood) => (
+              <Option key={blood} value={blood}>
+                  {blood}
+              </Option>
+            ))}
           </Select>
         </div>
         <Typography>
-        Blood bags that have undergone thorough testing and are securely stored in the inventory.
+          Blood bags that have undergone thorough testing and are securely stored in the inventory.
         </Typography>
       </CardBody>
       <CardFooter className="border-t">
@@ -253,7 +253,7 @@ export function BarCard() {
       <Typography variant="h5" color="blue-gray" className="mb-2">
           Donors per Barangay
         </Typography>
-        <Select onChange={handleQuarterChange} label="Blood Type" value={filterQuarter}>
+        <Select onChange={handleQuarterChange} label="Blood Type" value={filterQuarter} containerProps={{ className: "w-1/6" }}>
           {quarters.map((quarter) => (
             <Option key={quarter.value} value={quarter.value}>
               {quarter.label}

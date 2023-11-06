@@ -225,8 +225,8 @@ export function TabExp() {
     console.log(selectedRows);
 
     return (
-        <Card className="w-full">
-            <CardBody>
+        <Card className="w-full -mb-6">
+            <CardBody className="px-0">
                 <div className="flex items-center justify-between px-4 mb-4">
                     <div>
                         <Typography variant="subtitle1" className="mb-2 flex justify-center font-bold text-red-800">
