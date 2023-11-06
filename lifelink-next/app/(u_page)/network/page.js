@@ -3,7 +3,7 @@ import React, { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Card, CardHeader, Typography, Button, CardBody, Chip, CardFooter, Avatar, IconButton, Tooltip, Input, Spinner } from "@material-tailwind/react";
-import { PostCard, FilterCheckBox } from "./components/post";
+import { PostCard} from "./components/post";
 import { SideBar, MakeRequest } from "./components/networkSidebar";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
