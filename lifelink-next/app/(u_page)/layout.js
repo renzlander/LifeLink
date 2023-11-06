@@ -21,6 +21,7 @@ import {
   ArrowLeftOnRectangleIcon,
   ChevronRightIcon,
   Bars3Icon,
+  Cog6ToothIcon,
 } from "@heroicons/react/24/solid";
 import {
   Typography,
@@ -52,6 +53,7 @@ export default function UserLayout({ children }) {
     { icon: GlobeAltIcon, text: "Network", link: './network' },
     { icon: TruckIcon, text: "Journey", link: './journey' },
     { icon: UserIcon, text: "Profile", link: './profile' },
+    { icon: Cog6ToothIcon, text: "Settings", link: './Settings' },
   ];
 
   const handleLogout = async () => {
@@ -103,7 +105,7 @@ export default function UserLayout({ children }) {
     <Box sx={{ display: 'flex', backgroundColor: '#e5e7eb', width: '100%' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
-        <Toolbar>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <IconButton
             variant="text"
             onClick={open ? handleDrawerClose : handleDrawerOpen}
@@ -141,17 +143,17 @@ export default function UserLayout({ children }) {
                 )
               }
               <ToastContainer
-        position="bottom-left"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-        />
+                position="bottom-left"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+              />
         </div>
         <hr className='fading_divider_white' />
         <List>
