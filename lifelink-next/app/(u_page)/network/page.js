@@ -58,7 +58,7 @@ export default function Home() {
   
       fetchUserInfo();
       fetchLatestBloodRequest();
-    }, []);
+    }, [latestBloodRequest]);
   
     return (
         <Card className="w-full mt-8">

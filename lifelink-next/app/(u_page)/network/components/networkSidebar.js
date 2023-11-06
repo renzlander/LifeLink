@@ -16,6 +16,10 @@ function formatDateTime(dateTimeString) {
 
 
 export function SideBar({latestBloodRequest}) {
+    useEffect(() => {
+        // Your code that depends on latestBloodRequest
+    }, [latestBloodRequest]); // Include latestBloodRequest as a dependency
+    
     console.log("wewew", latestBloodRequest);
     const chipColor = [
         {color: "green", value: "Granted ", text: "Granted "},
@@ -137,7 +141,13 @@ export function MakeRequest({userDetails, latestBloodRequest}) {
               });
 
           if (response.data.status === "success") {
-              toast.success("Blood request successfully created");
+                setBloodUnits("");
+                setComponent("");
+                setDiagnosis("");
+                setHospital("");
+                setTransfusionSchedule("");
+                window.location.reload();
+                toast.success("Blood request successfully created");
           } else if (response.data.status === "error") {
               if (response.data.message) {
                   setGeneralErrorMessage(response.data.message);
