@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import CssBaseline from '@mui/material/CssBaseline';
 import { DrawerHeader, AppBar, Drawer, } from './components/constants';
-
+import { ToastContainer, toast } from "react-toastify";
 import { useState, useEffect } from "react"; 
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
@@ -139,6 +139,18 @@ export default function UserLayout({ children }) {
                   ''
                 )
               }
+              <ToastContainer
+        position="bottom-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        />
         </div>
         <hr className='fading_divider_white' />
         <List>
