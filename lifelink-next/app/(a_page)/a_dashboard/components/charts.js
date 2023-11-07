@@ -253,7 +253,7 @@ export function BarCard() {
       <Typography variant="h5" color="blue-gray" className="mb-2">
           Donors per Barangay
         </Typography>
-        <Select onChange={handleQuarterChange} label="Blood Type" value={filterQuarter} containerProps={{ className: "w-1/6" }}>
+        <Select onChange={handleQuarterChange} label="Filter by Quarter" value={filterQuarter} containerProps={{ className: "w-1/6" }}>
           {quarters.map((quarter) => (
             <Option key={quarter.value} value={quarter.value}>
               {quarter.label}
