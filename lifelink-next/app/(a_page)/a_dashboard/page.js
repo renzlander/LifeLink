@@ -3,7 +3,7 @@ import * as React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Spinner, Card, CardHeader, CardBody, CardFooter, Typography } from "@material-tailwind/react";
-import { BloodListCard, CountDonorCard } from './components/cards';
+import { BloodListCard, CountDonorCard, BloodQuota } from './components/cards';
 import { LineCard, BarCard } from './components/charts';
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -177,14 +177,17 @@ export default function Home() {
           </CardFooter>
         </Card>
         <div className="col-start-4 col-end-5 w-full">
-          <CountDonorCard
-            donorCount={donorCount}
-            deferralsCount={deferralsCount}
-            dispensedCount={dispensedCount}
-            expiredCount={expiredCount}
-            onMonthChange={handleMonthChange}
-            onYearChange={handleYearChange}
-          />
+          <div className='flex flex-col items-center gap-4'>
+            <CountDonorCard
+              donorCount={donorCount}
+              deferralsCount={deferralsCount}
+              dispensedCount={dispensedCount}
+              expiredCount={expiredCount}
+              onMonthChange={handleMonthChange}
+              onYearChange={handleYearChange}
+            />
+            <BloodQuota />
+          </div>
         </div>
       </div>
       <div className="mt-2 flex gap-4">
