@@ -1,9 +1,4 @@
-import { ClockIcon, PencilIcon } from "@heroicons/react/24/solid";
-import {
-  ArrowDownTrayIcon,
-  MagnifyingGlassIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { ClockIcon, ArrowRightIcon } from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
@@ -23,13 +18,11 @@ import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { useRouter } from "next/navigation";
 
-
 const TABLE_HEAD = [
   { label: "Serial Number", key: "serial_no" },
   { label: "Date", key: "date_donated" },
   { label: "Bled By", key: "bled_by" },
   { label: "Venue", key: "venue" },
-
 ]; 
  
 const classes = "p-4";
@@ -194,20 +187,41 @@ export function HistoryTable() {
         </CardHeader>
         <CardBody className="overflow-x-auto px-0">
         <div className="mb-4 mx-4 flex justify-between items-center">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <ClockIcon className="h-5 w-5" />
               <Typography className="font-medium text-blue-gray-500">
                 {userData}
               </Typography>
+              <ArrowRightIcon className="ml-6 h-5 w-5" />
+              <Typography className="font-medium text-blue-gray-500">
+                Next donation in 43 days
+              </Typography>
             </div>
           <div className="flex w-full shrink-0 gap-2 md:w-max">
-            <Button
-              className="flex items-center gap-3"
-              size="sm"
-              onClick={exportBloodBagsAsPDF}
+            <Tooltip 
+            placement="left"
+            content={
+              <div className="flex flex-col items-center">
+                <Typography variant="small">
+                  Last Exports:
+                </Typography>
+                <Typography variant="small">
+                 - October 20, 2023
+                </Typography>
+                <Typography variant="small">
+                 - October 18, 2023
+                </Typography>
+              </div>
+              }
             >
-              Export as PDF
-            </Button>
+              <Button
+                className="flex items-center gap-3"
+                size="sm"
+                onClick={exportBloodBagsAsPDF}
+              >
+                Export as PDF
+              </Button>
+            </Tooltip>
           </div>
         </div>
         <table className="w-full min-w-max table-auto text-left">

@@ -106,15 +106,15 @@ export function LineCard() {
 
   return (
     <Card className="mt-6 w-1/2">
-      <CardHeader color="white" variant="gradient" className="flex items-center justify-center relative p-6 h-full">
+      <CardHeader color="white" variant="gradient" className="flex items-center justify-center relative p-4 h-full">
         <LineChart data={monthCounts} />
       </CardHeader>
       <CardBody className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <Typography variant="h5" color="blue-gray" className="">
+          <Typography variant="h5" color="blue-gray" className="w-full">
             Blood Stocks
           </Typography>
-          <Select onChange={handleBloodChange} label="Blood Type" value={filterBloodType} containerProps={{ className: "w-1/6" }}>
+          <Select onChange={handleBloodChange} label="Blood Type" value={filterBloodType} containerProps={{ className: "min-w-[50px]" }}>
             {bloodTypes.map((blood) => (
               <Option key={blood} value={blood}>
                   {blood}
@@ -248,19 +248,19 @@ export function BarCard() {
       <CardHeader color="white" variant="gradient" className="flex items-center justify-center relative p-4 h-full">
         <BarChart data={barangayDonorCount} />
       </CardHeader>
-      <CardBody>
-      <div className="flex flex-row justify-between">
-      <Typography variant="h5" color="blue-gray" className="mb-2">
-          Donors per Barangay
-        </Typography>
-        <Select onChange={handleQuarterChange} label="Filter by Quarter" value={filterQuarter} containerProps={{ className: "w-1/6" }}>
-          {quarters.map((quarter) => (
-            <Option key={quarter.value} value={quarter.value}>
-              {quarter.label}
-            </Option>
-          ))}
-        </Select>
-      </div>
+      <CardBody className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <Typography variant="h5" color="blue-gray" className="w-full">
+            Donors per Barangay
+          </Typography>
+          <Select onChange={handleQuarterChange} label="Filter by Quarter" value={filterQuarter} containerProps={{ className: "min-w-[25px]" }}>
+            {quarters.map((quarter) => (
+              <Option key={quarter.value} value={quarter.value}>
+                {quarter.label}
+              </Option>
+            ))}
+          </Select>
+        </div>
         <Typography>
           The number of donors within different barangays in Valenzuela City.
         </Typography>

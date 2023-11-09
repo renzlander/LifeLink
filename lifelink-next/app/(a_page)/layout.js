@@ -56,6 +56,7 @@ export default function AdminLayout({ children }) {
     { href: './a_inventory', text: 'Blood Inventory', icon: <ClipboardDocumentListIcon /> },
     { href: './a_deferrallist', text: 'Deferral List', icon: <InboxStackIcon /> },
     { href: './a_dispensed', text: 'Dispensed Blood', icon: <ArrowUpOnSquareIcon /> },
+    { href: './a_disposed', text: 'Dispensed Blood', icon: <ArrowUpOnSquareIcon /> },
     { href: './a_posts', text: 'Donor Posts', icon: <DocumentPlusIcon /> },
     { href: './a_logs', text: 'Activity Logs', icon: <ClipboardDocumentIcon /> },
     { href: './a_mbd', text: 'MBD Report', icon: <DocumentTextIcon /> },

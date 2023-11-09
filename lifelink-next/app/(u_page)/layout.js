@@ -126,7 +126,7 @@ export default function UserLayout({ children }) {
         </DrawerHeader>
         <hr className='fading_divider_white' />
         <div className="flex justify-center items-center p-4 my-3">
-          <Link href='./u_profile'>
+          <Link href='./profile'>
             <Image src="/patient_icon.png" width={60} height={60} alt='User Profile' />
           </Link>
               {open ? (

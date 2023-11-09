@@ -146,7 +146,7 @@ export default function Home() {
   if (loading) {
     return (
       <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
-          <Skeleton variant="rounded" width={500} height={500} animation="wave" />
+          <Skeleton variant="rounded" width="80%" height={500} animation="wave" />
       </div>
     );
   }

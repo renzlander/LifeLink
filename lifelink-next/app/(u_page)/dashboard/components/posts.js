@@ -4,9 +4,9 @@ import {
   CardBody,
   CardFooter,
   Typography,
-  Chip,
 } from "@material-tailwind/react";
 import Image from "next/image";
+import Link from "next/link";
 
 export function PostsCard() {
 
@@ -48,9 +48,11 @@ return (
       </Card>
     </CardBody>
     <CardFooter className="border-t-2 flex flex-col justify-center items-center p-2">
-      <Typography variant="paragraph" color="blue-gray" className="text-center">
-        View All {">"}
-      </Typography>
+      <Link href="./network">
+        <Typography variant="paragraph" color="blue-gray" className="text-center">
+          View All {">"}
+        </Typography>
+      </Link>
     </CardFooter>
   </Card>
 );
