@@ -23,9 +23,9 @@ export function DonationCard({ donationSummary }) {
                         donationSummary.badge === "none"
                             ? "black"
                             : donationSummary.badge === "bronze"
-                            ? "brown" // Replace with the appropriate color for bronze
+                            ? "brown" 
                             : donationSummary.badge === "silver"
-                            ? "silver" // Replace with the appropriate color for silver
+                            ? "silver" 
                             : donationSummary.badge === "gold"
                             ? "yellow"
                             : ""
