@@ -43,6 +43,7 @@ export default function Home() {
         });
         setLoading(false);
 
+        console.log(response);
         if (response.data && Array.isArray(response.data.blood_bags)) {
           const bloodTypes = response.data.blood_bags.map((bag) => bag.blood_type);
           const availability = response.data.blood_bags.map((bag) => bag.status);
@@ -51,6 +52,13 @@ export default function Home() {
           setBloodTypes(bloodTypes);
           setAvailability(availability);
           setLegend(legend);
+          setUpdatedAt(response.data.latest_created_at)
+          // Extract and set the time portion of the timestamp
+          const fullTimestamp = response.data.latest_created_at;
+          const date = new Date(fullTimestamp);
+          const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+          const time = date.toLocaleTimeString(undefined, options);
+          setUpdatedAtTime(time);
         }
       } catch (error) {
         console.log(error);
