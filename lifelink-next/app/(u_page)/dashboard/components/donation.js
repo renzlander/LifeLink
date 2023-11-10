@@ -53,6 +53,10 @@ export function DonationCard({ donationSummary }) {
                 <Typography variant="paragraph" color="blue-gray" className="mt-4 text-center">
                     Dispensed Bloods: {donationSummary.dispensedBlood}
                 </Typography>
+
+                <Typography variant="paragraph" color="blue-gray" className="mt-4 text-center">
+                    Received Bloods: {donationSummary.receivedBlood}
+                </Typography>
             </CardFooter>
         </Card>
     );
