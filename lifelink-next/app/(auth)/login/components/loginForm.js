@@ -26,20 +26,25 @@ export function LoginForm() {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`${laravelBaseUrl}/api/auth:sanctum/login`, {
+      const response = await toast.promise( axios.post(`${laravelBaseUrl}/api/auth:sanctum/login`, {
         email_or_phone,
         password,
-      });
-
+      }),
+      {
+        pending: 'Logging in...',
+        success: 'Login successful',
+        error: 'Login failed',
+      }
+      );
       if (response.status === 200) {
         if (response.data.user.isAdmin === 0) {
           document.cookie = `token=${response.data.token}; expires=${new Date(new Date().getTime() + 86400 * 1000).toUTCString()}; path=/`;
-          toast.success("Login successful!");
+          // toast.success("Login successful!");
           router.push("/dashboard");
 
         } else {
           document.cookie = `token=${response.data.token}; expires=${new Date(new Date().getTime() + 86400 * 1000).toUTCString()}; path=/`;
-          toast.success("Login successful!");
+          // toast.success("Login successful!");
           router.push("/a_dashboard");
 
         }
