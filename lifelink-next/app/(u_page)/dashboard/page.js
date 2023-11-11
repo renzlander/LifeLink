@@ -24,6 +24,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [updatedAt, setUpdatedAt] = useState("");
   const [updatedAtTime, setUpdatedAtTime] = useState("");
+  const [donationSummary, setDonationSummary] = useState([]);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,6 +43,7 @@ export default function Home() {
         });
         setLoading(false);
 
+        console.log(response);
         if (response.data && Array.isArray(response.data.blood_bags)) {
           const bloodTypes = response.data.blood_bags.map((bag) => bag.blood_type);
           const availability = response.data.blood_bags.map((bag) => bag.status);
@@ -49,6 +52,36 @@ export default function Home() {
           setBloodTypes(bloodTypes);
           setAvailability(availability);
           setLegend(legend);
+          setUpdatedAt(response.data.latest_created_at)
+          // Extract and set the time portion of the timestamp
+          const fullTimestamp = response.data.latest_created_at;
+          const date = new Date(fullTimestamp);
+          const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+          const time = date.toLocaleTimeString(undefined, options);
+          setUpdatedAtTime(time);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const fetchMbdSummary = async () => {
+      try {
+        const token = getCookie("token");
+        if (!token) {
+          router.push("/login");
+          return;
+        }
+
+        const response = await axios.get(`${laravelBaseUrl}/api/get-donation-summary`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setLoading(false);
+       
+        if (response.data.status == "success") {
+          setDonationSummary(response.data);
         }
       } catch (error) {
         console.log(error);
@@ -56,11 +89,12 @@ export default function Home() {
     };
 
     fetchData();
+    fetchMbdSummary();
   }, []);
 
   const bloodListCards = bloodTypes.map((bloodType, index) => {
     const status = availability[index];
-    const legends = legend[index];console.log("Legend values:", legend);
+    const legends = legend[index];
     return <BloodListCard key={index} bloodType={bloodType} availability={status} legend={legends} />;
   });
 
@@ -98,7 +132,7 @@ export default function Home() {
             <Typography className="text-gray-700 text-md font-normal">{formatDate(updatedAt)} {updatedAtTime}</Typography>
           </CardFooter>
         </Card>
-        <DonationCard />
+        <DonationCard donationSummary={donationSummary}/>
       </div>
       <div>
         <PostsCard />

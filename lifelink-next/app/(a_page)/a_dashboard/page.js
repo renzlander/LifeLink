@@ -29,6 +29,8 @@ export default function Home() {
   const [deferralsCount, setDeferralsCount] = useState(0);
   const [dispensedCount, setDispensedCount] = useState(0);
   const [expiredCount, setExpiredCount] = useState(0);
+  const [reactiveCount, setReactiveCount] = useState(0);
+  const [spoiledCount, setSpoiledCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState("All");
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString()); 
@@ -118,6 +120,8 @@ export default function Home() {
           setDeferralsCount(mbdSummary.data.data[0].total_deferrals);
           setDispensedCount(mbdSummary.data.data[0].total_dispensed);
           setExpiredCount(mbdSummary.data.data[0].total_expired);
+          setReactiveCount(mbdSummary.data.data[0].total_reactive);
+          setSpoiledCount(mbdSummary.data.data[0].total_spoiled);
           setLoading(false);
         } else {
           console.error('Error fetching data:', mbdSummary.data.message);
@@ -183,6 +187,8 @@ export default function Home() {
               deferralsCount={deferralsCount}
               dispensedCount={dispensedCount}
               expiredCount={expiredCount}
+              reactiveCount={reactiveCount}
+              spoiledCount={spoiledCount}
               onMonthChange={handleMonthChange}
               onYearChange={handleYearChange}
             />

@@ -90,10 +90,13 @@ export function CountDonorCard({
   deferralsCount,
   dispensedCount,
   expiredCount,
+  spoiledCount,
+  reactiveCount,
   onMonthChange,
   onYearChange,
 }) {
   
+  console.log("spoiledCount:", spoiledCount);
   const [month, setMonth] = useState("All");
   const [year, setYear] = useState(new Date().getFullYear().toString()); 
 
@@ -114,7 +117,7 @@ export function CountDonorCard({
       count: donorCount,
     },
     {
-      label: "Deffered",
+      label: "Deferred",
       count: deferralsCount,
     },
     {
@@ -127,11 +130,11 @@ export function CountDonorCard({
     },
     {
       label: "Spoiled Blood Bag",
-      count: "0",
+      count: spoiledCount,
     },
     {
       label: "Reactive Blood Bag",
-      count: "0",
+      count: reactiveCount,
     },
   ];
 

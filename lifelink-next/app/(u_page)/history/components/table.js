@@ -44,7 +44,7 @@ export function HistoryTable() {
   const [totalPages, setTotalPages] = useState(1);
   const [sortColumn, setSortColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
-  const [userData, setUserData] = useState(null); 
+  const [lastDonation, setLastDonation] = useState([]); 
 
   const router = useRouter();
 
@@ -164,7 +164,7 @@ export function HistoryTable() {
           },
         });
 
-        setUserData(response.data.days_since_last_donation);
+        setLastDonation(response.data);
       } catch (error) {
         console.error("Error fetching user information:", error);
       }
@@ -174,7 +174,12 @@ export function HistoryTable() {
   }, []);
 
   if (loading) {
-    return <p ><Spinner color="red" className="h-16 w-16"/>Loading...</p>;
+    return (
+      <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
+        <Spinner color="red" className="h-16 w-16" />
+        <p className="mb-[180px] text-gray-600">Loading...</p>
+      </div>
+    );
   }
 
 
@@ -190,11 +195,11 @@ export function HistoryTable() {
             <div className="flex items-center gap-1">
               <ClockIcon className="h-5 w-5" />
               <Typography className="font-medium text-blue-gray-500">
-                {userData}
+                {lastDonation.days_since_last_donation}
               </Typography>
-              <ArrowRightIcon className="ml-6 h-5 w-5" />
+              <ArrowRightIcon className="ml-6 mr-6 h-5 w-5" />
               <Typography className="font-medium text-blue-gray-500">
-                Next donation in 43 days
+                Next donation date is {formatDate(lastDonation.nextDonationDate)}
               </Typography>
             </div>
           <div className="flex w-full shrink-0 gap-2 md:w-max">
