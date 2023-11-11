@@ -117,7 +117,7 @@ export function CountDonorCard({
       count: donorCount,
     },
     {
-      label: "Deffered",
+      label: "Deferred",
       count: deferralsCount,
     },
     {

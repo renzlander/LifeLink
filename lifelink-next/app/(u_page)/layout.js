@@ -53,7 +53,7 @@ export default function UserLayout({ children }) {
     { icon: GlobeAltIcon, text: "Network", link: './network' },
     { icon: TruckIcon, text: "Journey", link: './journey' },
     { icon: UserIcon, text: "Profile", link: './profile' },
-    { icon: Cog6ToothIcon, text: "Settings", link: './Settings' },
+    // { icon: Cog6ToothIcon, text: "Settings", link: './Settings' },
   ];
 
   const handleLogout = async () => {

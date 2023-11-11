@@ -39,7 +39,7 @@ export function DonationCard({ donationSummary }) {
                     Need <span className="font-bold mx-1">{donationSummary.donationsNeeded}</span> more Donation/s to unlock
                     <Chip
                         value={donationSummary.nextBadge}
-                        color={donationSummary.nextBadge === "bronze" ? "brown" : donationSummary.nextBadge === "silver" ? "silver" : donationSummary.nextBadge === "gold" ? "yellow" : ""}
+                        color={donationSummary.nextBadge === "bronze" ? "brown" : donationSummary.nextBadge === "silver" ? "#C0C0C0" : donationSummary.nextBadge === "gold" ? "yellow" : ""}
                         variant="gradient"
                         className="text-white mx-2"
                     />{" "}
