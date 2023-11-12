@@ -16,11 +16,8 @@ function formatDateTime(dateTimeString) {
 
 
 export function SideBar({latestBloodRequest}) {
-    useEffect(() => {
-        // Your code that depends on latestBloodRequest
-    }, [latestBloodRequest]); // Include latestBloodRequest as a dependency
+
     
-    console.log("wewew", latestBloodRequest);
     const chipColor = [
         {color: "green", value: "Granted ", text: "Granted "},
         {color: "red", value: "Declined ", text: "Declined "},

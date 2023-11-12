@@ -58,7 +58,7 @@ export default function Home() {
   
       fetchUserInfo();
       fetchLatestBloodRequest();
-    }, [latestBloodRequest]);
+    }, []);
   
     return (
         <Card className="w-full mt-8">
@@ -73,10 +73,9 @@ export default function Home() {
                         <div className="w-1/4 h-full">
                             <SideBar latestBloodRequest={latestBloodRequest}/>
                             <MakeRequest userDetails={userDetails} latestBloodRequest={latestBloodRequest}/>
-
                             <Button variant="gradient" className="w-full my-4">
                                   <span>View Request History</span>
-                          </Button>
+                            </Button>
                         </div>
                         <div className="w-3/4 pl-4 h-full">
                             <PostCard />
