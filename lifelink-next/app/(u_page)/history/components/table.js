@@ -197,7 +197,7 @@ export function HistoryTable() {
               <Typography className="font-medium text-blue-gray-500">
                 {lastDonation.days_since_last_donation}
               </Typography>
-              <ArrowRightIcon className="ml-6 mr-6 h-5 w-5" />
+              <ArrowRightIcon className="ml-6 h-5 w-5" />
               <Typography className="font-medium text-blue-gray-500">
                 Next donation date is {formatDate(lastDonation.nextDonationDate)}
               </Typography>

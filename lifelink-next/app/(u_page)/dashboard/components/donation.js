@@ -21,14 +21,12 @@ export function DonationCard({ donationSummary }) {
                     value={donationSummary.badge === "none" ? "No Badge" : donationSummary.badge === "bronze" ? "Bronze Badge" : donationSummary.badge === "silver" ? "Silver Badge" : donationSummary.badge === "gold" ? "Gold Badge" : ""}
                     color={
                         donationSummary.badge === "none"
-                            ? "black"
-                            : donationSummary.badge === "bronze"
-                            ? "brown" 
-                            : donationSummary.badge === "silver"
-                            ? "silver" 
-                            : donationSummary.badge === "gold"
-                            ? "yellow"
-                            : ""
+                      ? "gray"
+                      : donationSummary.badge === "bronze"
+                      ? "brown" 
+                      : donationSummary.badge === "silver"
+                      ? "blue-gray" 
+                      : "yellow"
                     }
                     variant="gradient"
                     className="text-white"
@@ -38,8 +36,8 @@ export function DonationCard({ donationSummary }) {
                 <Typography variant="paragraph" color="blue-gray" className="mt-4 text-center flex items-center">
                     Need <span className="font-bold mx-1">{donationSummary.donationsNeeded}</span> more Donation/s to unlock
                     <Chip
-                        value={donationSummary.nextBadge}
-                        color={donationSummary.nextBadge === "bronze" ? "brown" : donationSummary.nextBadge === "silver" ? "#C0C0C0" : donationSummary.nextBadge === "gold" ? "yellow" : ""}
+                        value={`${donationSummary.nextBadge} Badge`}
+                        color={donationSummary.nextBadge === "bronze" ? "brown" : donationSummary.nextBadge === "silver" ? "blue-gray" : "yellow"}
                         variant="gradient"
                         className="text-white mx-2"
                     />{" "}
@@ -55,7 +53,7 @@ export function DonationCard({ donationSummary }) {
                 </Typography>
 
                 <Typography variant="paragraph" color="blue-gray" className="mt-4 text-center">
-                    Received Bloods: {donationSummary.receivedBlood}
+                    Received Bloods: {donationSummary.dispensedBlood}
                 </Typography>
             </CardFooter>
         </Card>
