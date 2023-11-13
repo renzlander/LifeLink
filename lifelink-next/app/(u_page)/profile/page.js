@@ -34,6 +34,38 @@ export default function Home() {
   const [userDetails, setUserDetails] = useState({});
   const [donationSummary, setDonationSummary] = useState([]);
   const [lastDonation, setLastDonation] = useState([]); 
+  const [achievement, setachievement] = useState([]);
+
+  const fetchAchievements = async (page) => {
+    try {
+      const token = getCookie("token");
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+
+      const response = await axios.get(
+        `${laravelBaseUrl}/api/get-achievements`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log(response);
+      if (response.data.status === "success") {
+        setachievement(response.data); // Set the fetched data in state
+        setLoading(false);
+      } else {
+        console.error("Error fetching data:", response.data.message);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false);
+    }
+  };
 
   const fetchData = async (page) => {
     try {
@@ -113,6 +145,7 @@ export default function Home() {
     fetchData();
     fetchDonorSummary();
     fetchUserInfo();
+    fetchAchievements();
   }, []);
   
   const TABS = [
@@ -126,7 +159,7 @@ export default function Home() {
       label: "Achievements",
       value: "achieve",
       icon: Square3Stack3DIcon,
-      content: <TabAchieve userDetails={userDetails} donationSummary={donationSummary} />,
+      content: <TabAchieve userDetails={userDetails} donationSummary={donationSummary} achievement={achievement}/>,
     },
     {
       label: "Profile Settings",
