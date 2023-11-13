@@ -4,7 +4,8 @@ import { Stepper, Step } from "@material-tailwind/react";
 import { 
   ArchiveBoxArrowDownIcon, 
   BeakerIcon, 
-  UserIcon } from "@heroicons/react/24/outline";
+  ArchiveBoxIcon 
+} from "@heroicons/react/24/outline";
 import CollectedIcon from "./icons";
 
 export function JourneyStepper({ activeSteps }) {

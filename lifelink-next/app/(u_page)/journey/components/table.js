@@ -1,9 +1,4 @@
 import {
-  ArrowDownTrayIcon,
-  MagnifyingGlassIcon,
-  EyeIcon,
-} from "@heroicons/react/24/outline";
-import {
   Card,
   CardHeader,
   Typography,
@@ -12,15 +7,13 @@ import {
 } from "@material-tailwind/react";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; 
-import { JourneyStepper } from "./stepper";
+import { JourneyTimeline } from "./Timeline";
 
 const TABLE_HEAD = [
   { label: "Serial Number", key: "serial_no" },
   { label: "Date Donated", key: "date_donated" },
   { label: "Status", key: "status" },
 ];
-
-const classes = "p-4";
 
 function formatDate(dateString) {
   const options = { year: "numeric", month: "long", day: "numeric" };
@@ -76,8 +69,8 @@ export function BloodBagTable({ bloodJourney }) {
   }
 
   return (
-    <div className="flex items-start justify-between gap-4">
-      <Card className="h-full w-full mt-10">
+    <div className="flex md:flex-row flex-col items-start justify-between gap-4 min-h-screen">
+      <Card className="h-full md:w-1/2 w-full mt-10">
         <CardHeader color="red" className="relative h-16 flex items-center">
           <Typography variant="h4" color="white" className="ml-4">
             My Blood Bags
@@ -147,7 +140,7 @@ export function BloodBagTable({ bloodJourney }) {
           </table>
         </CardBody>
       </Card>
-      <JourneyStepper activeSteps={activeSteps} />
+      <JourneyTimeline activeSteps={activeSteps} />
     </div>
   );
 }

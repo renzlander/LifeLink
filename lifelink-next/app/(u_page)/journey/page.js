@@ -58,12 +58,7 @@ export default function Home() {
   }
   return (
     <div className="flex min-h-screen flex-col py-2">
-
-        <>
-          {/* <JourneyStepper bloodJourney={bloodJourney} /> */}
-          <BloodBagTable bloodJourney={bloodJourney}/>
-        </>
-      
+      <BloodBagTable bloodJourney={bloodJourney}/>
     </div>
   );
 }
