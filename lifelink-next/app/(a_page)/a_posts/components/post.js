@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardHeader, CardBody, Checkbox, Typography, List, ListItem, ListItemPrefix, Avatar, Chip, Accordion, AccordionHeader, AccordionBody, Textarea, Input, Button, Select, Option } from "@material-tailwind/react";
-import { ApprovePost, DisapprovePost, SearchDonor } from "./popup";
+import { MarkAccomodated, MarkDeclined, SearchDonor } from "./popup";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import InputSelect from "@/app/components/InputSelect";
@@ -27,8 +27,9 @@ export function PostCard() {
     const [open, setOpen] = React.useState(0);
     const [bloodRequests, setLatestBloodRequests] = useState([]);
     const [openAccordions, setOpenAccordions] = React.useState([]);
+    const [InterestedDonor, setInterestedDonor] = useState([]);
 
-    console.log("asdsa", bloodRequests);
+
     const handleOpen = (value) => setOpen(open === value ? 0 : value);
     const chipColor = [
         { color: "gray", value: "Pending", text: "Pending" },
@@ -36,31 +37,8 @@ export function PostCard() {
         { color: "red", value: "Declined", text: "Declined" },
     ];
 
-    const TABLE_HEAD = ["Name", "Address", "Email", "Mobile Number"];
-
-    const TABLE_ROWS = [
-        {
-            name: "Ryan Jay Dela Peña Antonio",
-            address: "1209 Tutut St. Malinta Valenzuela City",
-            email: "ryanjayantonio304@gmail.com",
-            mobile: "09683104353",
-        },
-        {
-            name: "Ryan Jay Dela Peña Antonio",
-            address: "1209 Tutut St. Malinta Valenzuela City",
-            email: "ryanjayantonio304@gmail.com",
-            mobile: "09683104353",
-        },
-        {
-            name: "Ryan Jay Dela Peña Antonio",
-            address: "1209 Tutut St. Malinta Valenzuela City",
-            email: "ryanjayantonio304@gmail.com",
-            mobile: "09683104353",
-        },
-    ];
-
-    useEffect(() => {
-        const fetchBloodRequest = async () => {
+    const TABLE_HEAD = ["Name", "Blood Type", "Email", "Mobile Number"];
+    const fetchBloodRequest = async () => {
             try {
                 const token = getCookie("token");
                 if (!token) {
@@ -74,114 +52,162 @@ export function PostCard() {
                     },
                 });
 
-                console.log(response);
                 setLatestBloodRequests(response.data.data);
             } catch (error) {
                 console.error("Error fetching user information:", error);
             }
         };
 
+    useEffect(() => {
+
+
+        const fetchInterestedDonor = async () => {
+            try {
+              const token = getCookie("token");
+              if (!token) {
+                router.push("./login");
+                return;
+              }
+      
+              const response = await axios.get(`${laravelBaseUrl}/api/get-interested-donor`, {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
+              setInterestedDonor(response.data.data);
+              setLoading(false);
+    
+            } catch (error) {
+              console.error("Error fetching user information:", error);
+            }
+          };
+
         fetchBloodRequest();
+        fetchInterestedDonor();
     }, []);
 
-    const handleAccordionOpen = (index) => {
-        const updatedOpenAccordions = [...openAccordions];
-        updatedOpenAccordions[index] = !openAccordions[index];
+    const handleAccordionOpen = (bloodRequestId) => {
+        const updatedOpenAccordions = { ...openAccordions };
+        updatedOpenAccordions[bloodRequestId] = updatedOpenAccordions[bloodRequestId] === 0 ? 1 : 0;
         setOpenAccordions(updatedOpenAccordions);
     };
 
-    const renderBloodRequests = () => {
-        return bloodRequests.map((request, index) => (
-            <div key={index} className="flex items-start">
-                <Card shadow={false} className="p-4 w-full shadow-md relative rounded-tr-none">
-                    <CardHeader color="transparent" floated={false} shadow={false} className="mx-0 flex items-center gap-4 pt-0 pb-8">
-                        <Avatar size="lg" variant="circular" src="/next.svg" />
-                        <div className="flex w-full justify-between gap-0.5">
-                            <div className="flex flex-col">
-                                <Typography variant="h5" color="blue-gray">
-                                    {`${request.first_name} ${request.middle_name} ${request.last_name}`}
-                                </Typography>
-                                <Typography color="blue-gray">{formatDateTime(request.created_at)}</Typography>
-                            </div>
-                            <div className="flex flex-col">
-                                <Chip variant="ghost" color={chipColor[request.isAccommodated].color} value={chipColor[request.isAccommodated].text}>
-                                    {chipColor[request.isAccommodated].text}
-                                </Chip>
-                                <Typography color="blue-gray">{`Request ID: ${request.request_id_number}`}</Typography>
-                            </div>
-                        </div>
-                    </CardHeader>
-                    <CardBody className="mb-6 p-0">
-                        <Typography>{`Email: ${request.email}`}</Typography>
-                        <Typography>{`Mobile: ${request.mobile}`}</Typography>
-                        <Typography>{`Blood Type: ${request.blood_type}`}</Typography>
-                        <Typography>{`Number of Units Needed: ${request.blood_units}`}</Typography>
-                        <Typography>{`Blood Component Need: ${request.blood_component_desc}`}</Typography>
-                        <Typography>{`Diagnosis: ${request.diagnosis}`}</Typography>
-                        <Typography>{`Hospital: ${request.hospital}`}</Typography>
-                        <Typography>{`Schedule: ${formatDateTime(request.schedule)}`}</Typography>
-                        <Accordion open={openAccordions[index]} icon={<Icon id={1} open={openAccordions[index]} />}>
-                            <AccordionHeader onClick={() => handleAccordionOpen(index)}>Total Interested Donors: 3</AccordionHeader>
-                            <AccordionBody>
-                                <table className="w-full min-w-max table-auto text-left">
-                                    <thead>
-                                        <tr>
-                                            {TABLE_HEAD.map((head) => (
-                                                <th key={head} className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
-                                                    <Typography variant="small" color="blue-gray" className="font-normal leading-none opacity-70">
-                                                        {head}
-                                                    </Typography>
-                                                </th>
-                                            ))}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {TABLE_ROWS.map(({ name, address, email, mobile }, rowIndex) => (
-                                            <tr key={rowIndex} className={rowIndex % 2 === 0 ? "even:bg-blue-gray-50/50" : ""}>
-                                                <td className="p-4">
-                                                    <Typography variant="small" color="blue-gray" className="font-bold">
-                                                        {name}
-                                                    </Typography>
-                                                </td>
-                                                <td className="p-4">
-                                                    <Typography variant="small" color="blue-gray" className="font-normal">
-                                                        {address}
-                                                    </Typography>
-                                                </td>
-                                                <td className="p-4">
-                                                    <Typography variant="small" color="blue-gray" className="font-normal">
-                                                        {email}
-                                                    </Typography>
-                                                </td>
-                                                <td className="p-4">
-                                                    <Typography variant="small" color="blue-gray" className="font-normal">
-                                                        {mobile}
-                                                    </Typography>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </AccordionBody>
-                        </Accordion>
-                    </CardBody>
-                </Card>
-                <div className="flex flex-col items-start gap-5">
-                    <SearchDonor />
-                    <ApprovePost />
-                    <DisapprovePost />
-                </div>
-            </div>
-        ));
+    const renderAccordion = (bloodRequestId) => {
+        const interestedDonorsForRequest = InterestedDonor.filter((donor) => donor.blood_request_id === bloodRequestId);
+
+        return (
+            <Accordion open={openAccordions[bloodRequestId]} icon={<Icon id={1} open={openAccordions[bloodRequestId]} />}>
+                <AccordionHeader onClick={() => handleAccordionOpen(bloodRequestId)}>
+                    Total Interested Donors: {interestedDonorsForRequest.length}
+                </AccordionHeader>
+                <AccordionBody>
+                    {interestedDonorsForRequest.length === 0 ? (
+                        <p>No interested donors at the moment.</p>
+                    ) : (
+                        <table className="w-full min-w-max table-auto text-left">
+                            <thead>
+                                <tr>
+                                    {TABLE_HEAD.map((head) => (
+                                        <th key={head} className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                                            <Typography variant="small" color="blue-gray" className="font-normal leading-none opacity-70">
+                                                {head}
+                                            </Typography>
+                                        </th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {interestedDonorsForRequest.map(({ first_name, middle_name, last_name, blood_type, email, mobile }, rowIndex) => (
+                                    <tr key={rowIndex} className={rowIndex % 2 === 0 ? "even:bg-blue-gray-50/50" : ""}>
+                                        <td className="p-4">
+                                            <Typography variant="small" color="blue-gray" className="font-bold">
+                                                {first_name}, {middle_name} {last_name}
+                                            </Typography>
+                                        </td>
+                                        <td className="p-4">
+                                            <Typography variant="small" color="blue-gray" className="font-normal">
+                                                {blood_type}
+                                            </Typography>
+                                        </td>
+                                        <td className="p-4">
+                                            <Typography variant="small" color="blue-gray" className="font-normal">
+                                                {email}
+                                            </Typography>
+                                        </td>
+                                        <td className="p-4">
+                                            <Typography variant="small" color="blue-gray" className="font-normal">
+                                                {mobile}
+                                            </Typography>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
+                </AccordionBody>
+            </Accordion>
+        );
     };
 
+    const renderBloodRequests = () => {
+        if (!bloodRequests.length) {
+            return <p>No blood requests available.</p>;
+        }
+    
+        return bloodRequests.map((request, index) => {
+            const { isAccommodated } = request;
+    
+            return (
+                <div key={index} className="flex items-start">
+                    <Card shadow={false} className="m-4 p-4 w-full shadow-md relative rounded-tr-none">
+                        <CardHeader color="transparent" floated={false} shadow={false} className="mx-0 flex items-center gap-4 pt-0 pb-8">
+                            <Avatar size="lg" variant="circular" src="/next.svg" />
+                            <div className="flex w-full justify-between gap-0.5">
+                                <div className="flex flex-col">
+                                    <Typography variant="h5" color="blue-gray">
+                                        {`${request.first_name} ${request.middle_name} ${request.last_name}`}
+                                    </Typography>
+                                    <Typography color="blue-gray">{formatDateTime(request.created_at)}</Typography>
+                                </div>
+                                <div className="flex flex-col">
+                                    <Chip variant="ghost" color={chipColor[isAccommodated].color} value={chipColor[isAccommodated].text}>
+                                        {chipColor[isAccommodated].text}
+                                    </Chip>
+                                    <Typography color="blue-gray">{`Request ID: ${request.request_id_number}`}</Typography>
+                                </div>
+                            </div>
+                        </CardHeader>
+                        <CardBody className="mb-6 p-0">
+                            <Typography>{`Email: ${request.email}`}</Typography>
+                            <Typography>{`Mobile: ${request.mobile}`}</Typography>
+                            <Typography>{`Blood Type: ${request.blood_type}`}</Typography>
+                            <Typography>{`Number of Units Needed: ${request.blood_units}`}</Typography>
+                            <Typography>{`Blood Component Need: ${request.blood_component_desc}`}</Typography>
+                            <Typography>{`Diagnosis: ${request.diagnosis}`}</Typography>
+                            <Typography>{`Hospital: ${request.hospital}`}</Typography>
+                            <Typography>{`Schedule: ${formatDateTime(request.schedule)}`}</Typography>
+                            {renderAccordion(request.blood_request_id)}
+                        </CardBody>
+                    </Card>
+                    <div className="flex flex-col items-start gap-5">
+                        {isAccommodated === 0 && (
+                            <>
+                                <MarkAccomodated bloodRequestId={request.blood_request_id} fetchBloodRequest={fetchBloodRequest} />
+                                <MarkDeclined bloodRequestId={request.blood_request_id} fetchBloodRequest={fetchBloodRequest}/>
+                            </>
+                        )}
+                    </div>
+                </div>
+            );
+        });
+    };
+    
+
     return (
-        <>
-            <div className="w-full mb-6 px-8">
-                <FilterCheckBox />
-            </div>
+        <div className="container mx-auto my-8">
+            <FilterCheckBox />
             {renderBloodRequests()}
-        </>
+        </div>
     );
 }
 
@@ -237,7 +263,6 @@ export function CreatePost() {
 
     const handleBodyChange = (e) => {
         setBody(e.target.value);
-        console.log("Body updated:", e.target.value);
     };
 
     const handleDateChange = (date) => {
@@ -259,7 +284,6 @@ export function CreatePost() {
                     },
                 });
 
-                console.log(response);
                 setRequestIdOptions(response.data.data);
             } catch (error) {
                 console.error("Error fetching user information:", error);

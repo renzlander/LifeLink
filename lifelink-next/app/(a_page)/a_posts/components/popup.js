@@ -9,6 +9,9 @@ import {
 } from "@material-tailwind/react";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { laravelBaseUrl } from "@/app/variables";
 
 export function SearchDonor() {
   const [open, setOpen] = React.useState(false);
@@ -42,8 +45,48 @@ export function SearchDonor() {
     </>
   );
 }
-export function ApprovePost() {
+export function MarkAccomodated({bloodRequestId, fetchBloodRequest}) {
   const [open, setOpen] = React.useState(false);
+
+  const MarkAccomodated = async () => {
+    try {
+        const token = getCookie("token");
+        if (!token) {
+            router.push("./login");
+            return;
+        }
+
+
+        const response = await axios.post(
+            `${laravelBaseUrl}/api/mark-as-accomodated`,
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                params: {
+                    blood_request_id: bloodRequestId,
+                },
+            }
+        );
+
+        if (response.data.status === "success") {
+            toast.success("Blood request mark as accomodated successfully");
+            fetchBloodRequest();
+            setOpen(false);
+        } else if (response.data.status === "error") {
+            if (response.data.message) {
+                setGeneralErrorMessage(response.data.message);
+                toast.error("Opps! Something went wrong.");
+            } else {
+                console.error("Unknown error occurred:", response.data);
+            }
+        }
+    } catch (error) {
+        toast.error("Opps! Something went wrong.");
+        console.error("Error fetching user information:", error);
+    }
+};
  
   const handleOpen = () => setOpen(!open);
  
@@ -66,7 +109,7 @@ export function ApprovePost() {
           >
             <span>Cancel</span>
           </Button>
-          <Button variant="gradient" color="green" onClick={handleOpen}>
+          <Button variant="gradient" color="green" onClick={MarkAccomodated}>
             <span>Confirm</span>
           </Button>
         </DialogFooter>
@@ -74,11 +117,51 @@ export function ApprovePost() {
     </>
   );
 }
-export function DisapprovePost() {
+
+export function MarkDeclined({bloodRequestId, fetchBloodRequest}) {
   const [open, setOpen] = React.useState(false);
  
   const handleOpen = () => setOpen(!open);
- 
+  const MarkDeclined = async () => {
+    try {
+          const token = getCookie("token");
+          if (!token) {
+              router.push("./login");
+              return;
+          }
+
+
+          const response = await axios.post(
+              `${laravelBaseUrl}/api/mark-as-declined`,
+              {},
+              {
+                  headers: {
+                      Authorization: `Bearer ${token}`,
+                  },
+                  params: {
+                      blood_request_id: bloodRequestId,
+                  },
+              }
+          );
+
+          if (response.data.status === "success") {
+              toast.success("Blood request mark as declined successfully");
+              fetchBloodRequest();
+              setOpen(false);
+          } else if (response.data.status === "error") {
+              if (response.data.message) {
+                  setGeneralErrorMessage(response.data.message);
+                  toast.error("Opps! Something went wrong.");
+              } else {
+                  console.error("Unknown error occurred:", response.data);
+              }
+          }
+      } catch (error) {
+          toast.error("Opps! Something went wrong.");
+          console.error("Error fetching user information:", error);
+      }
+  };
+  
   return (
     <>
       <IconButton color="red" variant="gradient" className="rounded-l-none" onClick={handleOpen}>
@@ -98,11 +181,17 @@ export function DisapprovePost() {
           >
             <span>Cancel</span>
           </Button>
-          <Button variant="gradient" color="green" onClick={handleOpen}>
+          <Button variant="gradient" color="green" onClick={MarkDeclined}>
             <span>Confirm</span>
           </Button>
         </DialogFooter>
       </Dialog>
     </>
   );
+}
+
+function getCookie(name) {
+  const cookies = document.cookie.split("; ");
+  const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));
+  return cookie ? cookie.split("=")[1] : null;
 }

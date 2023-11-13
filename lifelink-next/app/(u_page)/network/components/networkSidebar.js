@@ -17,7 +17,6 @@ function formatDateTime(dateTimeString) {
 
 export function SideBar({latestBloodRequest}) {
 
-    
     const chipColor = [
         {color: "green", value: "Granted ", text: "Granted "},
         {color: "red", value: "Declined ", text: "Declined "},

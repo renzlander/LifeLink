@@ -81,7 +81,7 @@ export default function Home() {
                 <div className="flex flex-col min-h-screen">
                     <div className="flex flex-row flex-1 bg-gray-100 rounded-xl shadow-xl">
                         <div className="w-1/4 h-full">
-                            <SideBar latestBloodRequest={latestBloodRequest}/>
+                            <SideBar latestBloodRequest={latestBloodRequest} />
                             <MakeRequest userDetails={userDetails} latestBloodRequest={latestBloodRequest}/>
                             <Button variant="gradient" className="w-full my-4">
                                   <span>View Request History</span>
