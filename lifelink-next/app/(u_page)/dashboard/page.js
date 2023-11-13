@@ -25,7 +25,7 @@ export default function Home() {
   const [updatedAt, setUpdatedAt] = useState("");
   const [updatedAtTime, setUpdatedAtTime] = useState("");
   const [donationSummary, setDonationSummary] = useState([]);
-
+  const [recentPost, setRecentPost] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,6 +65,29 @@ export default function Home() {
       }
     };
 
+    const fetchRecentPost = async () => {
+      try {
+        const token = getCookie("token");
+        if (!token) {
+          router.push("/login");
+          return;
+        }
+
+        const response = await axios.get(`${laravelBaseUrl}/api/get-recent-post`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+       
+        if (response.data.status == "success") {
+          setRecentPost(response.data.data);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     const fetchMbdSummary = async () => {
       try {
         const token = getCookie("token");
@@ -90,6 +113,7 @@ export default function Home() {
 
     fetchData();
     fetchMbdSummary();
+    fetchRecentPost();
   }, []);
 
   const bloodListCards = bloodTypes.map((bloodType, index) => {
@@ -135,7 +159,7 @@ export default function Home() {
         <DonationCard donationSummary={donationSummary}/>
       </div>
       <div>
-        <PostsCard />
+        <PostsCard recentPost={recentPost}/>
       </div>
     </div>
   );

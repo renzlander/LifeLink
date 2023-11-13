@@ -8,7 +8,19 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 
-export function PostsCard() {
+const formatDate = (donationDate) => {
+  const formattedDate = new Date(donationDate).toLocaleString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+  });
+
+  return formattedDate;
+};
+export function PostsCard({recentPost}) {
 
 return (
   <Card className="mt-6 w-full bg-gray-100">
@@ -27,22 +39,23 @@ return (
                   Valenzuela City Philippines Red Cross
                 </Typography>
                 <Typography variant="paragraph" color="blue-gray">
-                  April 08, 2023 - 10:23 PM
+                  Posted on:{formatDate(recentPost.created_at)}
                 </Typography>
               </div>
             </div>
           <div>
             <Typography variant="paragraph" color="blue-gray">
-              Valenzuela City Philippines Red Cross
+              Donation Date: {formatDate(recentPost.donation_date)}
             </Typography>
             <Typography variant="paragraph" color="blue-gray">
-              April 08, 2023 - 10:23 PM
+              Venue: {recentPost.venue}
             </Typography>
           </div>
         </CardHeader>
         <CardBody>
-          <Typography variant="small" color="blue-gray">
-            "We are currently seeking donations of O+ and A+ blood because it's not available at our facility. The blood donation event will take place at Alert Center Valenzuela City on November 16, 2023. Your generous donation can help save lives in our community. We kindly request donors to come forward and support this important cause. Your contribution can make a significant difference in the lives of those in need. We appreciate your willingness to help."
+          <Typography color="blue-gray">Blood Type Need : <span>{recentPost.blood_needs}</span></Typography>
+          <Typography variant="small" color="blue-gray" className="mt-2">
+            {recentPost.body}
           </Typography>
         </CardBody>
       </Card>

@@ -20,9 +20,7 @@ import {
   const formattedDate = new Date(dateString).toLocaleDateString(undefined, options);
   return formattedDate;
 }
-export function TabAchieve({ userDetails, donationSummary, achievement }) {
-
-  console.log("achievement", achievement);
+export function TabAchieve({ achievement }) {
 
   const renderBadge = (badgeType, dateAchieved) => {
     if (dateAchieved) {
@@ -48,6 +46,9 @@ export function TabAchieve({ userDetails, donationSummary, achievement }) {
 
     return null;
   };
+
+  const allBadgesNull = !achievement.bronzeBadge && !achievement.silverBadge && !achievement.goldBadge;
+
   return (
     <Card>
       <CardBody className="grid grid-cols-1 gap-4 gap-y-4">
@@ -56,9 +57,15 @@ export function TabAchieve({ userDetails, donationSummary, achievement }) {
             Badge Collections
           </Typography>
           <div className="flex items-center gap-4 overflow-x-auto pb-6">
-            {renderBadge('Bronze', achievement.bronzeBadge)}
-            {renderBadge('Silver', achievement.silverBadge)}
-            {renderBadge('Gold', achievement.goldBadge)}
+            {allBadgesNull ? (
+              <Typography>No badges achieved yet.</Typography>
+            ) : (
+              <>
+                {renderBadge('Bronze', achievement.bronzeBadge)}
+                {renderBadge('Silver', achievement.silverBadge)}
+                {renderBadge('Gold', achievement.goldBadge)}
+              </>
+            )}
           </div>
         </div>
       </CardBody>

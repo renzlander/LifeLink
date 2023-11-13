@@ -1,7 +1,7 @@
 'use client'
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Typography } from "@material-tailwind/react";
+import { Typography,   Spinner, } from "@material-tailwind/react";
 import { JourneyStepper } from './components/stepper';
 import { BloodBagTable } from './components/table';
 import axios from "axios"; 
@@ -48,16 +48,22 @@ export default function Home() {
     fetchData();
   }, []);
 
+  if (loading) {
+    return (
+      <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
+        <Spinner color="red" className="h-16 w-16" />
+        <p className="mb-[180px] text-gray-600">Loading...</p>
+      </div>
+    );
+  }
   return (
     <div className="flex min-h-screen flex-col py-2">
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
+
         <>
           {/* <JourneyStepper bloodJourney={bloodJourney} /> */}
           <BloodBagTable bloodJourney={bloodJourney}/>
         </>
-      )}
+      
     </div>
   );
 }

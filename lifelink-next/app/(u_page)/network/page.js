@@ -13,6 +13,7 @@ export default function Home() {
     const bloodTypes = ["All", "Approved", "Pending", "Disapproved"];
     const [userDetails, setUserDetails] = useState(null);
     const [latestBloodRequest, setLatestBloodRequest] = useState([]);
+    const [loading, setLoading] = useState(true); 
 
     useEffect(() => {
       const fetchUserInfo = async () => {
@@ -30,7 +31,7 @@ export default function Home() {
           });
           
           setUserDetails(response.data.data);
-  
+          setLoading(false);
         } catch (error) {
           console.error("Error fetching user information:", error);
         }
@@ -50,7 +51,8 @@ export default function Home() {
             },
           });
           setLatestBloodRequest(response.data.data);
-  
+          setLoading(false);
+
         } catch (error) {
           console.error("Error fetching user information:", error);
         }
@@ -60,6 +62,14 @@ export default function Home() {
       fetchLatestBloodRequest();
     }, []);
   
+    if (loading) {
+    return (
+      <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
+        <Spinner color="red" className="h-16 w-16" />
+        <p className="mb-[180px] text-gray-600">Loading...</p>
+      </div>
+    );
+  }
     return (
         <Card className="w-full mt-8">
             <CardHeader color="red" className="relative h-16 flex items-center">
