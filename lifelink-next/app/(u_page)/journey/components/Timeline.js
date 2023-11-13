@@ -17,21 +17,18 @@ const timelineData = [
     icon: ArchiveBoxArrowDownIcon,
     label: "COLLECTED",
     desc: "Blood bag has been collected and is ready for Laboratory Testing.",
-    date: "22 DEC 7:20 PM",
     gif: "/blood_transfuse.gif",
   },
   {
     icon: BeakerIcon,
     label: "LABORATORY",
     desc: "The blood is under testing in the laboratory.",
-    date: "21 DEC 11 PM",
     gif: "/blood_test.gif",
   },
   {
     icon: ArchiveBoxIcon,
     label: "STORED",
     desc: "Blood bag has been stored in the Blood Bank.",
-    date: "20 DEC 2:20 AM",
     gif: "/blood_transfuse.gif",
   },
 ];

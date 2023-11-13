@@ -198,6 +198,87 @@ import {
   
 }
 
+export function CancelRequest({}){
+    const [open, setOpen] = useState(false);
+    const [generalErrorMessage, setGeneralErrorMessage] = useState("");
+
+    const handleCancelRequest = async () => {
+      try {
+          const token = getCookie("token");
+          if (!token) {
+              router.push("/login");
+              return;
+          }
+
+          const response = await axios
+              .get(`${laravelBaseUrl}/api/cancel-request-blood`, {
+                  headers: {
+                      Authorization: `Bearer ${token}`,
+                  },
+              })
+              .catch((error) => {
+                  console.error("Unknown error occurred:", error);
+                  if (error.response && error.response.data && error.response.data.errors) {
+                    toast.error("Opps! Something went wrong.");
+                  } else {
+                    setGeneralErrorMessage(error.response.data.message);
+                  }
+              });
+
+          if (response.data.status === "success") {
+                toast.success("Blood request cancelled successfully");
+                window.location.reload();
+                setOpen(false);
+          } else if (response.data.status === "error") {
+              if (response.data.message) {
+                  setGeneralErrorMessage(response.data.message);
+              } else {
+                  console.error("Unknown error occurred:", response.data);
+              }
+          }
+
+      } catch (error) {
+          toast.error(error);
+          console.error("Unknown error occurred:", error);
+      }
+  };
+
+    return (
+      <>
+          <Button color="red" variant="gradient" className="w-full mt-2" onClick={() => setOpen(true)}>
+              <span>Cancel Request</span>
+          </Button>
+          <Dialog open={open} handler={() => setOpen(false)}>
+              <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">Confirmation of Cancellation</DialogHeader>
+              {generalErrorMessage && (
+            <div className="mt-2 text-center bg-red-100 p-2 rounded-lg">
+              <Typography color="red" className="text-sm font-semibold">
+                {generalErrorMessage}
+              </Typography>
+            </div>
+          )}
+              <DialogBody divider className="flex flex-col gap-4 items-center">
+                <Typography className="text-sm text-blue-gray-500 text-center">
+                    Note: By canceling your blood request, you are indicating that you no longer need blood. The cancellation of request will no longer be available after 24 hours.
+                </Typography>
+                <Typography className="font-semibold text-sm text-red-600 text-center">Are you sure you would like to cancel your last blood request?</Typography>
+            </DialogBody>
+              
+              <DialogFooter className="flex justify-center mt-4">
+                  <Button variant="red-cross" onClick={() => setOpen(false)} className="mr-2">
+                      No
+                  </Button>
+                  <Button variant="red-cross" color="red" onClick={handleCancelRequest}>
+                      Confirm
+                  </Button>
+              </DialogFooter>
+          </Dialog>
+      </>
+  );
+
+
+  }
+
 function getCookie(name) {
   const cookies = document.cookie.split("; ");
   const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));

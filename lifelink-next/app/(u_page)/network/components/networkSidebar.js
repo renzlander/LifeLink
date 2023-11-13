@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 import { ToastContainer, toast } from "react-toastify";
+import { CancelRequest } from "./popup";
 
 function formatDateTime(dateTimeString) {
     const options = { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" };
@@ -156,7 +157,7 @@ export function MakeRequest({userDetails, latestBloodRequest}) {
           toast.error(error);
           console.error("Unknown error occurred:", error);
       }
-  };
+    };
 
     const handleComponentSelect = (selectedValue) => {
         setComponent(selectedValue);
@@ -210,6 +211,11 @@ export function MakeRequest({userDetails, latestBloodRequest}) {
               <Typography color="red" className="text-sm font-semibold">
                 {generalErrorMessage}
               </Typography>
+            </div>
+          )}
+          {latestBloodRequest?.isAccommodated === 0 && (
+            <div className="mt-4 text-center text-red-600">
+              You cannot make a new blood request while there is a pending request.
             </div>
           )}
           <CardBody className="p-4">
@@ -289,19 +295,15 @@ export function MakeRequest({userDetails, latestBloodRequest}) {
               </div>
               <Button
                 variant="gradient"
-                color="red"
+                color="blue-gray"
                 className="w-full mt-8"
                 onClick={handleMakeRequest}
                 disabled={latestBloodRequest?.isAccommodated === 0}
               >
                 <span>Make Request</span>
               </Button>
+              <CancelRequest />
             </div>
-            {latestBloodRequest?.isAccommodated === 0 && (
-              <div className="mt-4 text-center text-red-600">
-                You cannot make a new blood request while there is a pending request.
-              </div>
-            )}
           </CardBody>
         </Card>
       );
