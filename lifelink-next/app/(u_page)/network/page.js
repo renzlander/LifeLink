@@ -2,98 +2,67 @@
 import React, { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Card, CardHeader, Typography, Button, CardBody, Chip, CardFooter, Avatar, IconButton, Tooltip, Input, Spinner } from "@material-tailwind/react";
-import { PostCard} from "./components/post";
-import { SideBar, MakeRequest } from "./components/networkSidebar";
+import { Card, CardHeader, Typography, Button, CardBody, Tabs, Tab, TabsHeader, Tooltip, Input, Spinner } from "@material-tailwind/react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
+import Request from "./components/requestTab";
+import History from "./components/historyTab";
+
+
+const TABS = [
+  {
+      label: "Blood Request/Donor Interest",
+      value: "request",
+      tableRender: <Request />,
+  },
+  {
+      label: "Blood Request History",
+      value: "history",
+      tableRender: <History />,
+  }
+];
 
 export default function Home() {
     const router = useRouter();
-    const bloodTypes = ["All", "Approved", "Pending", "Disapproved"];
-    const [userDetails, setUserDetails] = useState(null);
-    const [latestBloodRequest, setLatestBloodRequest] = useState([]);
-    const [loading, setLoading] = useState(true); 
+    const [activeTab, setActiveTab] = useState(TABS[0].value);
 
-    useEffect(() => {
-      const fetchUserInfo = async () => {
-        try {
-          const token = getCookie("token");
-          if (!token) {
-            router.push("./login");
-            return;
-          }
-  
-          const response = await axios.get(`${laravelBaseUrl}/api/me`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          
-          setUserDetails(response.data.data);
-          setLoading(false);
-        } catch (error) {
-          console.error("Error fetching user information:", error);
-        }
-      };
+    const handleTabChange = (tabValue) => {
+      setActiveTab(tabValue);
+  };
 
-      const fetchLatestBloodRequest = async () => {
-        try {
-          const token = getCookie("token");
-          if (!token) {
-            router.push("./login");
-            return;
-          }
-  
-          const response = await axios.get(`${laravelBaseUrl}/api/get-latest-blood-request`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          setLatestBloodRequest(response.data.data);
-          setLoading(false);
-
-        } catch (error) {
-          console.error("Error fetching user information:", error);
-        }
-      };
-  
-      fetchUserInfo();
-      fetchLatestBloodRequest();
-    }, []);
-  
-    if (loading) {
-    return (
-      <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
-        <Spinner color="red" className="h-16 w-16" />
-        <p className="mb-[180px] text-gray-600">Loading...</p>
-      </div>
-    );
-  }
-    return (
-        <Card className="w-full mt-8">
-            <CardHeader color="red" className="relative h-16 flex items-center">
-                <Typography variant="h4" color="white" className="ml-4">
-                    Blood Network
-                </Typography>
-            </CardHeader>
-            <CardBody className="overflow-x-auto px-4">
-                <div className="flex flex-col min-h-screen">
-                    <div className="flex flex-row flex-1 bg-gray-100 rounded-xl shadow-xl">
-                        <div className="w-1/4 h-full">
-                            <SideBar latestBloodRequest={latestBloodRequest} />
-                            <MakeRequest userDetails={userDetails} latestBloodRequest={latestBloodRequest}/>
-                            <Button variant="gradient" className="w-full my-4">
-                                  <span>View Request History</span>
-                            </Button>
-                        </div>
-                        <div className="w-3/4 pl-4 h-full">
-                            <PostCard />
-                        </div>
-                    </div>
-                </div>
-            </CardBody>
-        </Card>
+  return (
+    <Card className="w-full mt-8">
+    <CardHeader color="red" className="relative h-16 flex items-center">
+    <Typography variant="h4" color="white" className="ml-4">
+    Blood Network
+    </Typography>
+    </CardHeader>
+    <Tabs value={activeTab} className="w-1/3 p-4 mx-4 mt-4">
+    <TabsHeader className="justify-content: space-between">
+    {TABS.map(({ label, value }) => {
+    let tooltipText = "";
+    
+            if (value === "request") {
+              tooltipText = "Blood Request/Donor Interest";
+            } else if (value === "history") {
+              tooltipText = "Blood Request History";
+            }
+    
+            return (
+              <Tooltip key={value} content={tooltipText}>
+                <Tab value={value} onClick={() => handleTabChange(value)}>
+                  &nbsp;&nbsp;{label}&nbsp;&nbsp;
+                </Tab>
+              </Tooltip>
+            );
+          })}
+        </TabsHeader>
+      </Tabs>
+    
+      <CardBody className="overflow-x-auto px-4">
+        {TABS.find((tab) => tab.value === activeTab)?.tableRender}
+      </CardBody>
+    </Card>
     );
 }
 

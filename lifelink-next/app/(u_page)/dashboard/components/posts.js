@@ -21,7 +21,29 @@ const formatDate = (donationDate) => {
   return formattedDate;
 };
 export function PostsCard({recentPost}) {
-
+  if (!recentPost) {
+    return (
+      <Card className="mt-6 w-full bg-gray-100">
+        <CardHeader color="gray" variant="gradient" className="h-16 flex items-center mb-2">
+          <Typography variant="h5" color="white" className="ml-4">
+            Recent Posts
+          </Typography>
+        </CardHeader>
+        <CardBody className="w-full flex flex-col items-center gap-4">
+          <Typography variant="paragraph" color="blue-gray" className="text-center">
+            Valenzuela City Philippine Red Cross available has no recent posts .
+          </Typography>
+        </CardBody>
+        <CardFooter className="border-t-2 flex flex-col justify-center items-center p-2">
+          <Link href="./network">
+            <Typography variant="paragraph" color="blue-gray" className="text-center">
+              View All {">"}
+            </Typography>
+          </Link>
+        </CardFooter>
+      </Card>
+    );
+  }
 return (
   <Card className="mt-6 w-full bg-gray-100">
     <CardHeader color='gray' variant='gradient' className="h-16 flex items-center mb-2">
