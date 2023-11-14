@@ -145,7 +145,7 @@ export function TabInfo({ userDetails, donationSummary, lastDonation }) {
                 Dispensed Bloods: <span className="font-normal ml-3">{donationSummary.dispensedBlood}</span>
               </Typography>
               <Typography variant="small" className="font-semibold text-base text-blue-gray-700">
-                Received Bloods: <span className="font-normal ml-3">{donationSummary.dispensedBlood}</span>
+                Received Bloods: <span className="font-normal ml-3">{donationSummary.receivedBlood}</span>
               </Typography>
             </div>
           </div>
