@@ -139,6 +139,7 @@ export function RegF2({onNextStep}) {
 
   const isFormValid =
   first_name !== "" &&
+  middle_name !== "" &&
   last_name !== "" &&
   occupation !== "" &&
   street !== "" &&
@@ -183,6 +184,7 @@ export function RegF2({onNextStep}) {
                 <Input 
                   size="lg"
                   label="Middle Name"
+                  required
                   value={middle_name}
                   onChange={(e) => {
                     const newValue = e.target.value;
