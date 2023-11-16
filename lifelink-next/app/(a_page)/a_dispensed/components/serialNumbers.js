@@ -41,7 +41,7 @@ export function SerialNumbers({ dispensedSerialNumbers, onSearch }) {
             Dispensed Blood Finder
         </Typography>
       </CardHeader>
-      <div className=" mt-6 mx-4 flex justify-end items-center">
+      <div className="mt-6 mx-4 flex justify-end items-center">
         <div className="flex w-full md:w-max">
           <div className="w-full md:w-72">
             <Input
@@ -54,7 +54,7 @@ export function SerialNumbers({ dispensedSerialNumbers, onSearch }) {
           </div>
         </div>
       </div>
-      <CardBody className="overflow-y-auto px-0">
+      <CardBody className="px-0">
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>

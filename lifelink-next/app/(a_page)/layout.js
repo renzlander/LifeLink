@@ -29,6 +29,7 @@ import {
 import {
   IconButton,
 } from "@material-tailwind/react";
+import { CreatePost } from './a_posts/components/CreatePost';
 import { DrawerHeader, AppBar, Drawer, } from './components/constants';
 import UserPopover from './components/popover';
 import Image from 'next/image';
@@ -125,6 +126,13 @@ export default function AdminLayout({ children }) {
       <Box component="main" sx={{ flexGrow: 1, backgroundColor: '#e5e7eb' }}>
         <DrawerHeader />
         {children}
+
+        {'.' + pathName === './a_posts' ? (
+          <div className='fixed bottom-10 right-10'>
+          <CreatePost />
+          </div>
+        ) : ''}
+
       </Box>
     </Box>
   );

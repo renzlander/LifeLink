@@ -190,46 +190,44 @@ export function HistoryTable() {
            Donation History
           </Typography>
         </CardHeader>
-        <CardBody className="overflow-x-auto px-0">
-        <div className="mb-4 mx-4 flex justify-between items-center">
-            <div className="flex items-center gap-1">
-              <ClockIcon className="h-5 w-5" />
-              <Typography className="font-medium text-blue-gray-500">
-                {lastDonation.days_since_last_donation}
+        <CardBody className="px-0">
+        <div className="px-4 pb-4 flex justify-between items-center w-full">
+          <div className="flex items-center gap-1">
+            <ClockIcon className="h-5 w-5" />
+            <Typography className="font-medium text-blue-gray-500">
+              {lastDonation.days_since_last_donation}
+            </Typography>
+            <ArrowRightIcon className="ml-6 h-5 w-5" />
+            <Typography className="font-medium text-blue-gray-500">
+              Next donation date is {formatDate(lastDonation.nextDonationDate)}
+            </Typography>
+          </div>
+          <Tooltip 
+          placement="left"
+          content={
+            <div className="flex flex-col items-center">
+              <Typography variant="small">
+                Last Exports:
               </Typography>
-              <ArrowRightIcon className="ml-6 h-5 w-5" />
-              <Typography className="font-medium text-blue-gray-500">
-                Next donation date is {formatDate(lastDonation.nextDonationDate)}
+              <Typography variant="small">
+              - October 20, 2023
+              </Typography>
+              <Typography variant="small">
+              - October 18, 2023
               </Typography>
             </div>
-          <div className="flex w-full shrink-0 gap-2 md:w-max">
-            <Tooltip 
-            placement="left"
-            content={
-              <div className="flex flex-col items-center">
-                <Typography variant="small">
-                  Last Exports:
-                </Typography>
-                <Typography variant="small">
-                 - October 20, 2023
-                </Typography>
-                <Typography variant="small">
-                 - October 18, 2023
-                </Typography>
-              </div>
-              }
+            }
+          >
+            <Button
+              className="flex items-center gap-3"
+              size="sm"
+              onClick={exportBloodBagsAsPDF}
             >
-              <Button
-                className="flex items-center gap-3"
-                size="sm"
-                onClick={exportBloodBagsAsPDF}
-              >
-                Export as PDF
-              </Button>
-            </Tooltip>
-          </div>
+              Export as PDF
+            </Button>
+          </Tooltip>
         </div>
-        <table className="w-full min-w-max table-auto text-left">
+        <table className="w-full table-auto text-left">
           <thead>
             <tr>
               {TABLE_HEAD.map((head) => (
