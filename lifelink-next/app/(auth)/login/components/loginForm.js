@@ -53,6 +53,12 @@ export function LoginForm() {
         toast.error(response.data.response.data.msg);
       }
     } catch (error) {
+      if (error.response.data.user_id) {
+        document.cookie = `user_id=${error.response.data.user_id}; secure; SameSite=Strict`;
+        setTimeout(() => {
+          router.push("/register");
+        }, 2000); 
+      }
       setErrorMessage(error.response.data.msg);
       toast.error(error.response.data.msg);
     }
