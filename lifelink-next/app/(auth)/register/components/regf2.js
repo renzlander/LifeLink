@@ -159,7 +159,7 @@ export function RegF2({onNextStep}) {
               Enter your personal details
           </Typography>
           <Typography variant="paragraph" className="mt-2" color="blue-gray">
-              Some details will not be displayed in your profile.
+              This is what the Red Cross needs for your blood donation activities.
           </Typography>
 
           <form 

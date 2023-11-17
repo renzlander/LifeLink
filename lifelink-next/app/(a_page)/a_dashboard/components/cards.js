@@ -223,27 +223,32 @@ export function CountDonorCard({
   );
 }
 
-export function BloodQuota() {
+export function BloodQuota({ quota }) {
+  
   const TABLE_ROWS = [
     {
       label: "Daily",
-      count: "0/20",
+      count: quota.totalBloodBagsToday,
+      date: quota.dateToday,
     },
     {
       label: "Weekly",
-      count: "0/140",
+      count: quota.totalBloodBagsThisWeek,
+      date: quota.dateThisWeek,
     },
     {
       label: "Monthly",
-      count: "0/560",
+      count: quota.totalBloodBagsThisMonth,
+      date: quota.dateThisMonth,
     },
     {
       label: "Quarterly",
-      count: "0/1,680",
+      count: quota.totalBloodBagsThisQuarter,
+      date: quota.dateThisQuarter,
     },
   ];
 
-  return(
+  return (
     <Card className="mt-6 w-full">
       <CardHeader color="gray" variant="gradient" className="h-12 flex items-center mb-4">
         <Typography variant="h4" color="white" className="ml-4">
@@ -251,36 +256,45 @@ export function BloodQuota() {
         </Typography>
       </CardHeader>
       <CardBody className="p-0">
-      <table className="w-full min-w-max table-auto text-left">
-        <tbody>
-          {TABLE_ROWS.map(({ label, count }, index) => {
-            const isLast = index === TABLE_ROWS.length - 1;
-            const classes = isLast ? "py-2 px-4" : "py-2 px-4 border-b border-blue-gray-50";
- 
-            return (
-              <tr key={label}>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    className="font-normal text-blue-gray-500"
-                  >
-                    {label}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    className="font-normal text-blue-gray-500"
-                  >
-                    {count}
-                  </Typography>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+        <table className="w-full min-w-max table-auto text-left">
+          <tbody>
+            {TABLE_ROWS.map(({ label, count, date }, index) => {
+              const isLast = index === TABLE_ROWS.length - 1;
+              const classes = isLast ? "py-2 px-4" : "py-2 px-4 border-b border-blue-gray-50";
+
+              return (
+                <tr key={label}>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      className="font-normal text-blue-gray-500"
+                    >
+                      {label}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      className="font-normal text-blue-gray-500"
+                    >
+                      {count} Blood Bags
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      className="font-normal text-blue-gray-500"
+                    >
+                      {date}
+                    </Typography>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </CardBody>
     </Card>
   );
 }
+

@@ -36,6 +36,7 @@ export default function Home() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString()); 
   const [updatedAt, setUpdatedAt] = useState("");
   const [updatedAtTime, setUpdatedAtTime] = useState("");
+  const [quota, setQuota] = useState([]);
   const handleMonthChange = (selectedMonth) => {
     setSelectedMonth(selectedMonth);
   };
@@ -132,8 +133,35 @@ export default function Home() {
       }
     };
 
+    const fetchQuota = async () => {
+      try {
+        const token = getCookie('token');
+        if (!token) {
+          router.push('/login');
+          return;
+        }
+
+        const response = await axios.get(`${laravelBaseUrl}/api/dashboard-get-quota`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+        setLoading(false);
+        if (response.data.status === 'success') {
+          setQuota(response.data)
+          setLoading(false);
+        } else {
+          console.error('Error fetching data:', mbdSummary.data.message);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     fetchMBDSummary();
     fetchData();
+    fetchQuota();
   }, [selectedMonth, selectedYear]);
 
   const bloodListCards = bloodTypes.map((bloodType, index) => (
@@ -192,7 +220,7 @@ export default function Home() {
               onMonthChange={handleMonthChange}
               onYearChange={handleYearChange}
             />
-            <BloodQuota />
+            <BloodQuota quota={quota}/>
           </div>
         </div>
       </div>
