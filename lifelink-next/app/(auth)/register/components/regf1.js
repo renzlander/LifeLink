@@ -1,4 +1,4 @@
-import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import { Card, Input, Button, Typography, Spinner } from "@material-tailwind/react";
 import PasswordChecklist from "react-password-checklist";
 import React, { useState, useEffect } from "react";
 import { laravelBaseUrl } from "@/app/variables";
