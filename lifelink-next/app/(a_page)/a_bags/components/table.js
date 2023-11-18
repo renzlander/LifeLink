@@ -222,7 +222,6 @@ export function BagsTable() {
                     },
                 });
             }
-            console.log('countdown',response.data.data.data[0].countdown);
             if (response.data.status === "success") {
                 setUserDetails(response.data.data.data);
                 setTotalPages(response.data.data.last_page);
@@ -273,13 +272,20 @@ export function BagsTable() {
                 router.push("/login");
                 return;
             }
-
+            console.log(blood_type,startDate, endDate, bledBy, venue)
             // Send a request to the PDF export endpoint
             const response = await axios.get(`${laravelBaseUrl}/api/export-pdf-collected-bloodbags`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
                 responseType: "blob",
+                params: {
+                    blood_type: blood_type,
+                    startDate: startDate,
+                    endDate: endDate,
+                    bledBy: bledBy,
+                    venue: venue,
+                },
             });
 
             const pdfBlob = new Blob([response.data], { type: "application/pdf" });

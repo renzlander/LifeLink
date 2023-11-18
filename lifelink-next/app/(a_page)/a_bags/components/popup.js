@@ -19,9 +19,9 @@ export function RemoveBlood({ serial_no, countdownEndDate, handleOpen, countdown
     const [generalErrorMessage, setGeneralErrorMessage] = useState("");
     const [timeLeft, setTimeLeft] = useState("");
     
-    console.log("countdown", countdown);
-    console.log("countdownEndDate", countdownEndDate);
-
+    const formattedEndDate = countdownEndDate; // Replace with your actual date string
+    const countdownEnd = new Date(formattedEndDate);
+    
     const router = useRouter();
 
     const handleRemoveBloodBag = async () => {
@@ -56,7 +56,7 @@ export function RemoveBlood({ serial_no, countdownEndDate, handleOpen, countdown
 
     return (
         <>
-            <Button size="sm" onClick={() => setOpen(true)} className="bg-red-600" disabled={countdown === 0}>
+            <Button size="sm" onClick={() => setOpen(true)} className="bg-red-600" disabled={countdownEnd < new Date()}>
                 Undo
             </Button>
             <Dialog open={open} handler={() => setOpen(false)}>
@@ -85,7 +85,7 @@ export function RemoveBlood({ serial_no, countdownEndDate, handleOpen, countdown
                     <Button variant="red-cross" onClick={() => setOpen(false)} className="mr-2">
                         Cancel
                     </Button>
-                    <Button variant="red-cross" color="red" onClick={handleRemoveBloodBag} disabled={countdown === 0}>
+                    <Button variant="red-cross" color="red" onClick={handleRemoveBloodBag} disabled={countdownEnd < new Date()}>
                         Confirm Removal
                     </Button>
                 </DialogFooter>
@@ -108,6 +108,8 @@ export function EditPopUp({ user, countdown, countdownEndDate, refreshData }) {
     const serialNo = user.serial_no;
     const serialNoWithoutHyphens = serialNo.replace(/-/g, ''); 
     const serialFormat = serialNoWithoutHyphens.match(/^(\d{4})(\d{6})(\d{1})$/);
+    const formattedEndDate = countdownEndDate; // Replace with your actual date string
+    const countdownEnd = new Date(formattedEndDate);
     let firstPart = "";
     let secondPart = "";
     let thirdPart = "";
@@ -198,7 +200,7 @@ export function EditPopUp({ user, countdown, countdownEndDate, refreshData }) {
     return (
         <>
             <Tooltip content="Edit Serial Number">
-                <IconButton variant="text" onClick={() => setOpen(true)} disabled={countdown === 0}>
+                <IconButton variant="text" onClick={() => setOpen(true)} disabled={countdownEnd < new Date()}>
                     <PencilIcon className="h-4 w-4" />
                 </IconButton>
             </Tooltip>
@@ -283,7 +285,7 @@ export function EditPopUp({ user, countdown, countdownEndDate, refreshData }) {
                     <Button variant="gradient" onClick={() => setOpen(false)} className="mr-1">
                         <span>Cancel</span>
                     </Button>
-                    <Button variant="gradient" color="red" onClick={handleEditSerialNumber} disabled={countdown === 0}>
+                    <Button variant="gradient" color="red" onClick={handleEditSerialNumber} disabled={countdownEnd < new Date()}>
                         <span>Done</span>
                     </Button>
                 </DialogFooter>

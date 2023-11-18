@@ -64,7 +64,6 @@ export function TabStock() {
                 setHospitalOptions(response.data.hospitals);
             }
         }catch (error) {
-                toast.error("An error occurred while making the request.");
                 console.error("Unknown error occurred:", error);
             }
     }

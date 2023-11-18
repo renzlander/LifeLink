@@ -90,7 +90,6 @@ export function DonorTable() {
                     },
                 });
             }
-            console.log(response);
             if (response.data.status === "success") {
                 setUserDetails(response.data.data.data);
                 setTotalPages(response.data.data.last_page);
@@ -151,7 +150,6 @@ export function DonorTable() {
                 },
             });
             
-            console.log(response);
 
             const pdfBlob = new Blob([response.data], { type: "application/pdf" });
             const pdfUrl = window.URL.createObjectURL(pdfBlob);
