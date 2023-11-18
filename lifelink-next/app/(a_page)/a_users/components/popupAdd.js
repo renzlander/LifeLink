@@ -27,6 +27,30 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
     const inputRef3 = useRef(null);
     const srNumber = `${part1}-${part2}-${part3}`;
 
+    const validateSerialNumber = () => {
+        let valid = true;
+        const errors = { serial_no: [], date_donated: [], bled_by: [], venue: [], donationType: [] };
+
+        if (part1.length !== 4) {
+            errors.serial_no.push("All fields for serial numbers must be complete.");
+            valid = false;
+        }
+
+        if (part2.length !== 6) {
+            errors.serial_no.push("All fields for serial numbers must be complete.");
+            valid = false;
+        }
+
+        if (part3.length !== 1) {
+            errors.serial_no.push("All fields for serial numbers must be complete.");
+            valid = false;
+        }
+
+        setErrorMessage(errors);
+
+        return valid;
+    };
+
     const handleBledBySelect = (selectedValue) => {
         setBledBy(selectedValue);
     };
@@ -50,7 +74,7 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
     }));
 
     const donationTypeOptions = [
-        { label: "Non-Patient Blood Donation", value: "1" },
+        { label: "Voluntary Blood Donation", value: "1" },
         { label: "Direct Patient Blood Donation", value: "2" },
     ];
     
@@ -62,8 +86,10 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
                 router.push("/login");
                 return;
             }
-            console.log("donationType:", donationType)
-
+            const isSerialNumberValid = validateSerialNumber();
+            if (!isSerialNumberValid) {
+                return; // Stop execution if serial number is not valid
+            }
             // Prepare data for the POST request
             const data = {
                 user_id,

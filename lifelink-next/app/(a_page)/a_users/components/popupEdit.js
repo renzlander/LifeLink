@@ -78,6 +78,11 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
         setSelectedBarangay(editedUser.barangay);
     }, [editedUser]);
 
+    const validateEmail = (email) => {
+        // Simple email validation using a regular expression
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
     const handleEditUser = async () => {
         try {
             // Prepare data for the PUT request
@@ -94,6 +99,13 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
             if (!token) {
                 router.push("/login");
                 return;
+            }
+
+            const isEmailValid = validateEmail(editedUser.email);
+
+            if (!isEmailValid) {
+                setErrorMessage({ ...errorMessage, email: ["Invalid email address."] });
+                return; // Stop execution if email is not valid
             }
             // Send PUT request to update-user API
             const response = await axios.put(`${laravelBaseUrl}/api/edit-user-details`, data, {

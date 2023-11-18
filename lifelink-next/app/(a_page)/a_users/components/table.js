@@ -16,12 +16,13 @@ const TABLE_HEAD = [
     { label: "Email Address", key: "email" },
     { label: "Mobile", key: "mobile" },
     { label: "Birthday", key: "dob" },
+    { label: "Last Date Donated", key: "datedonated" },
     { label: "", key: "tools" },
     { label: "", key: "actions" },
 ];
 const classes = "p-4";
-const DEFAULT_SORT_COLUMN = "donor_no"; // Set your default sort column key here
-const DEFAULT_SORT_ORDER = "asc";
+const DEFAULT_SORT_COLUMN = null; // Set your default sort column key here
+const DEFAULT_SORT_ORDER = null; // Set default sort order to null
 
 function formatDate(dateString) {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -42,7 +43,7 @@ export function UsersTable() {
     const [temporaryDeferralCategories, setTemporaryDeferralCategories] = useState([]);
     const [temporaryDeferralRemarks, setTemporaryDeferralRemarks] = useState([]);
     const [permanentDeferralCategories, setPermanentDeferralCategories] = useState([]);
-
+    const pagesToShow = 8;
     const router = useRouter();
 
     useEffect(() => {
@@ -226,6 +227,18 @@ export function UsersTable() {
         return 0;
     });
     
+    const getPageNumbers = () => {
+        const halfPagesToShow = Math.floor(pagesToShow / 2);
+        let startPage = Math.max(1, currentPage - halfPagesToShow);
+        let endPage = startPage + pagesToShow - 1;
+
+        if (endPage > totalPages) {
+            endPage = totalPages;
+            startPage = Math.max(1, endPage - pagesToShow + 1);
+        }
+
+        return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+    };
 
     const handleUpdateUser = (updatedUserData) => {
         console.log("Updated user data:", updatedUserData);
@@ -316,6 +329,11 @@ export function UsersTable() {
                                     </Typography>
                                 </td>
                                 <td className={classes}>
+                                <Typography variant="small" color="blue-gray" className="font-normal capitalize">
+                                    {user.latest_date_donated ? formatDate(user.latest_date_donated) : "Not yet donated"}
+                                </Typography>
+                                </td>
+                                <td className={classes}>
                                     <ViewPopUp user={user} />
                                     <EditPopUp user={user} onUpdate={handleUpdateUser} refreshData={fetchData} />
                                 </td>
@@ -337,20 +355,21 @@ export function UsersTable() {
                 </table>
             </CardBody>
             <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-                <Button variant="outlined" size="sm" disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)}>
-                    Previous
-                </Button>
-                <div className="flex items-center gap-2">
-                    {Array.from({ length: totalPages }, (_, index) => (
-                        <IconButton key={index} variant={currentPage === index + 1 ? "outlined" : "text"} size="sm" onClick={() => handlePageChange(index + 1)}>
-                            {index + 1}
-                        </IconButton>
-                    ))}
-                </div>
-                <Button variant="outlined" size="sm" disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)}>
-                    Next
-                </Button>
-            </CardFooter>
+    <Button variant="outlined" size="sm" disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)}>
+        Previous
+    </Button>
+    <div className="flex items-center gap-2">
+        {getPageNumbers().map((page) => (
+            <IconButton key={page} variant={currentPage === page ? "outlined" : "text"} size="sm" onClick={() => handlePageChange(page)}>
+                {page}
+            </IconButton>
+        ))}
+    </div>
+    <Button variant="outlined" size="sm" disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)}>
+        Next
+    </Button>
+</CardFooter>
+
         </Card>
     );
 }
