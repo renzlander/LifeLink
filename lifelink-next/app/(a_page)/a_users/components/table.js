@@ -3,6 +3,7 @@ import { Card, CardHeader, Typography, Button, CardBody, CardFooter, IconButton,
 import { AddBloodBagPopup } from "./popupAdd";
 import { ViewPopUp } from "./popupView";
 import { EditPopUp } from "./popupEdit";
+import { AddUsers } from "./popupAddUser";
 import { MoveToDeferral } from "./popupMoveToDeferral";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -261,7 +262,10 @@ export function UsersTable() {
                 </Typography>
             </CardHeader>
             <CardBody className="overflow-x-auto px-0">
-                <div className="mb-4 ml-4 mr-4 flex justify-end items-center">
+                <div className="mb-4 ml-4 mr-4 flex justify-between items-center">
+                    <div>
+                        <AddUsers refreshData={fetchData}/>
+                    </div>
                     <div className="flex w-full shrink-0 gap-2 md:w-max">
                         <div className="w-full md:w-72">
                             <Input
