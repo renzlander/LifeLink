@@ -35,7 +35,6 @@ function formatDate(dateString) {
   );
   return formattedDate;
 }
-
  
 export function HistoryTable() {
   const [userDetails, setUserDetails] = useState([]);
@@ -85,7 +84,6 @@ export function HistoryTable() {
   useEffect(() => {
     fetchData(currentPage);
   }, [router, sortColumn, sortOrder]);
-
 
   const handlePageChange = (newPage) => {
     if (newPage < 1 || newPage > totalPages) {
@@ -181,7 +179,6 @@ export function HistoryTable() {
       </div>
     );
   }
-
 
   return (
     <Card className="h-full w-full mt-8">

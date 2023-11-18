@@ -31,38 +31,40 @@ export default function Home() {
   };
 
   return (
-    <Card className="w-full mt-8">
-    <CardHeader color="red" className="relative h-16 flex items-center">
-    <Typography variant="h4" color="white" className="ml-4">
-    Blood Network
-    </Typography>
-    </CardHeader>
-    <Tabs value={activeTab} className="w-1/3 p-4 mx-4 mt-4">
-    <TabsHeader className="justify-content: space-between">
-    {TABS.map(({ label, value }) => {
-    let tooltipText = "";
-    
-            if (value === "request") {
-              tooltipText = "Blood Request/Donor Interest";
-            } else if (value === "history") {
-              tooltipText = "Blood Request History";
-            }
-    
-            return (
-              <Tooltip key={value} content={tooltipText}>
-                <Tab value={value} onClick={() => handleTabChange(value)}>
-                  &nbsp;&nbsp;{label}&nbsp;&nbsp;
-                </Tab>
-              </Tooltip>
-            );
-          })}
-        </TabsHeader>
-      </Tabs>
-    
-      <CardBody className="overflow-x-auto px-4">
-        {TABS.find((tab) => tab.value === activeTab)?.tableRender}
-      </CardBody>
-    </Card>
+    <div className="bg-gray-300 min-h-screen flex flex-col gap-y-3 py-4">
+      <Card className="w-full mt-8">
+        <CardHeader color="red" className="relative h-16 flex items-center">
+          <Typography variant="h4" color="white" className="ml-4">
+            Blood Network
+          </Typography>
+        </CardHeader>
+        <Tabs value={activeTab} className="md:w-1/3 w-full p-4 mx-4 mt-4">
+          <TabsHeader className="justify-content: space-between">
+              {TABS.map(({ label, value }) => {
+                let tooltipText = "";
+          
+                if (value === "request") {
+                  tooltipText = "Blood Request/Donor Interest";
+                } else if (value === "history") {
+                  tooltipText = "Blood Request History";
+                }
+          
+                return (
+                  <Tooltip key={value} content={tooltipText}>
+                    <Tab value={value} onClick={() => handleTabChange(value)}>
+                      &nbsp;&nbsp;{label}&nbsp;&nbsp;
+                    </Tab>
+                  </Tooltip>
+                );
+              })}
+            </TabsHeader>
+          </Tabs>
+      
+        <CardBody className="overflow-x-auto px-0">
+          {TABS.find((tab) => tab.value === activeTab)?.tableRender}
+        </CardBody>
+      </Card>
+    </div>
     );
 }
 

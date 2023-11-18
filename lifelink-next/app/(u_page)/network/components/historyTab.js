@@ -15,6 +15,8 @@ function formatDateTime(dateTimeString) {
   const formattedDateTime = new Date(dateTimeString).toLocaleDateString(undefined, options);
   return formattedDateTime;
 }
+const TABLE_HEAD = ["Request ID", "Date Requested", "Blood Type", "Units Requested", "Blood Components", "Status"]; 
+
 export default function History() {
   const [myRequests, setMyRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -46,49 +48,113 @@ export default function History() {
   }, []);
 
   return (
-    <Card className="w-full">
-      <CardBody className="h-screen">
-        <div className="mb-8">
-          <Typography variant="subtitle2" className="font-bold text-lg mb-4">
-            Blood Request History
-          </Typography>
-          <div className="overflow-x-auto">
-            {myRequests.length > 0 ? ( // Check if there are records
-              <table className="w-full text-left border-collapse table-auto">
-                <thead>
-                  <tr>
-                    <th className="px-4 py-2">Request ID</th>
-                    <th className="px-4 py-2">Date Requested</th>
-                    <th className="px-4 py-2">Blood Type</th>
-                    <th className="px-4 py-2">Units Requested</th>
-                    <th className="px-4 py-2">Blood Components</th>
-                    <th className="px-4 py-2">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {myRequests.map((request) => (
-                    <tr key={request.blood_request_id} className="bg-gray-100 hover:bg-gray-200">
-                      <td className="px-4 py-2">{request.request_id_number}</td>
-                      <td className="px-4 py-2">{formatDateTime(request.created_at)}</td>
-                      <td className="px-4 py-2">{request.blood_type}</td>
-                      <td className="px-4 py-2">{request.blood_units}</td>
-                      <td className="px-4 py-2">{request.blood_component_desc}</td>
-                      <td className={`px-4 py-2 ${getStatusStyle(request)}`}>
+    <div className="mb-8">
+      <Typography variant="subtitle2" className="font-bold text-lg mb-4 ml-4">
+        Blood Request History
+      </Typography>
+      <div className="overflow-x-auto">
+        {myRequests.length > 0 ? ( // Check if there are records
+          <table className="w-full table-auto text-left">
+            <thead>
+              <tr>
+                {TABLE_HEAD.map((head, index) => (
+                  <th
+                    key={index}
+                    className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
+                  >
+                    <div className="flex items-center">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal leading-none opacity-70"
+                      >
+                        {head}
+                      </Typography>
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {myRequests.map((request) => (
+                <tr key={request.blood_request_id} className="bg-gray-100 hover:bg-gray-200">
+                  <td className="p-4">
+                    <div className="flex items-center gap-3">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-bold"
+                      >
+                        {request.request_id_number}
+                      </Typography>
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <div className="flex items-center gap-3">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {formatDateTime(request.created_at)}
+                      </Typography>
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <div className="flex items-center gap-3">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {request.blood_type}
+                      </Typography>
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <div className="flex items-center gap-3">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {request.blood_units}
+                      </Typography>
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <div className="flex items-center gap-3">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {request.blood_component_desc}
+                      </Typography>
+                    </div>
+                  </td>
+                  <td className={`p-4 ${getStatusStyle(request)}`}>
+                    <div className="flex items-center gap-3">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
                         {getStatusText(request)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <Typography variant="body2" className="text-gray-600">
-                No blood request records found.
-              </Typography>
-            )}
-          </div>
-        </div>
-      </CardBody>
-    </Card>
+                      </Typography>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <Typography variant="h6" className="text-gray-600">
+            No blood request records found.
+          </Typography>
+        )}
+      </div>
+    </div>
   );
 }
 
