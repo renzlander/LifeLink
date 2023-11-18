@@ -13,7 +13,8 @@ import {
 import InputSelect from "@/app/components/InputSelect";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
- 
+import { toast } from "react-toastify";
+
 export function CreatePost() {
   const [open, setOpen] = useState(false);
  

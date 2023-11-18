@@ -26,7 +26,6 @@ export function LineCard() {
   const router = useRouter();
 
   const handleBloodChange = (selectedBlood) => {
-      console.log("Selected Blood Type:", selectedBlood);
       setFilterBloodType(selectedBlood);
   };
 
@@ -38,9 +37,6 @@ export function LineCard() {
           router.push("/login");
           return;
         }
-
-        console.log(filterBloodType);
-
   
         const response = await axios.post(
           `${laravelBaseUrl}/api/dashboard-count-bloodbag-per-month`,
@@ -153,7 +149,6 @@ export function BarCard() {
   ];
 
   const handleQuarterChange = (selectedQuarter) => {
-      console.log("Selected Quarter:", selectedQuarter);
       setFilterQuarter(selectedQuarter);
   };
 
@@ -179,8 +174,6 @@ export function BarCard() {
           }
         );
         
-
-        console.log(response);
         if (response.data.status === "success") {
           const donorCounts = response.data.donors_per_barangay;
           const lastUpdate = response.data.latest_date;
