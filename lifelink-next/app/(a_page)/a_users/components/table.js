@@ -93,7 +93,6 @@ export function UsersTable() {
                 },
             });
 
-            console.log(response);
 
             if (response.data.status === "success") {
                 // Update the state variables with the data from the API response
@@ -139,7 +138,6 @@ export function UsersTable() {
                 });
             }
 
-            console.log("Response:", response);
 
             if (response && response.data && response.data.status === "success") {
                 setUserDetails(response.data.data.data);
@@ -242,7 +240,6 @@ export function UsersTable() {
     };
 
     const handleUpdateUser = (updatedUserData) => {
-        console.log("Updated user data:", updatedUserData);
     };
 
     if (loading) {

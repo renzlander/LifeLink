@@ -41,7 +41,7 @@ export function DonorTable() {
     const [bloodType, setbloodType] = useState("All");
     const [donorType, setDonorTypes] = useState("All");
     const [donorQty, setDonorQty] = useState();
-
+    const pagesToShow = 8;
 
     const router = useRouter();
     const bloodTypes = ["All", "AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
@@ -144,8 +144,14 @@ export function DonorTable() {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
-                responseType: "blob", // Set the response type to blob for binary data
+                responseType: "blob",
+                params: {
+                    bloodType: bloodType,
+                    donorType: donorType,
+                },
             });
+            
+            console.log(response);
 
             const pdfBlob = new Blob([response.data], { type: "application/pdf" });
             const pdfUrl = window.URL.createObjectURL(pdfBlob);
@@ -170,6 +176,19 @@ export function DonorTable() {
 
         return 0;
     });
+
+    const getPageNumbers = () => {
+        const halfPagesToShow = Math.floor(pagesToShow / 2);
+        let startPage = Math.max(1, currentPage - halfPagesToShow);
+        let endPage = startPage + pagesToShow - 1;
+
+        if (endPage > totalPages) {
+            endPage = totalPages;
+            startPage = Math.max(1, endPage - pagesToShow + 1);
+        }
+
+        return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+    };
 
     if (loading) {
         return (
@@ -314,20 +333,20 @@ export function DonorTable() {
                 </table>
             </CardBody>
             <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-                <Button variant="outlined" size="sm" disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)}>
-                    Previous
-                </Button>
-                <div className="flex items-center gap-2">
-                    {Array.from({ length: totalPages }, (_, index) => (
-                        <IconButton key={index} variant={currentPage === index + 1 ? "outlined" : "text"} size="sm" onClick={() => handlePageChange(index + 1)}>
-                            {index + 1}
-                        </IconButton>
-                    ))}
-                </div>
-                <Button variant="outlined" size="sm" disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)}>
-                    Next
-                </Button>
-            </CardFooter>
+    <Button variant="outlined" size="sm" disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)}>
+        Previous
+    </Button>
+    <div className="flex items-center gap-2">
+        {getPageNumbers().map((page) => (
+            <IconButton key={page} variant={currentPage === page ? "outlined" : "text"} size="sm" onClick={() => handlePageChange(page)}>
+                {page}
+            </IconButton>
+        ))}
+    </div>
+    <Button variant="outlined" size="sm" disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)}>
+        Next
+    </Button>
+</CardFooter>
         </Card>
     );
 }

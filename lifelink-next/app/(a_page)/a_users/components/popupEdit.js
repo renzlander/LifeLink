@@ -46,7 +46,6 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
     useEffect(() => {
         if (selectedRegion?.regCode) {
             axios.post(`${laravelBaseUrl}/api/address/get-provinces?regCode=${selectedRegion?.regCode}`).then((data) => {
-                console.log(data.data);
                 setProvinceList(data.data);
             });
         }
@@ -55,7 +54,6 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
     useEffect(() => {
         if (selectedProvince?.provCode) {
             axios.post(`${laravelBaseUrl}/api/address/get-municipalities?provCode=${selectedProvince?.provCode}`).then((data) => {
-                console.log(data.data);
                 setMunicipalityList(data.data);
             });
         }
@@ -64,7 +62,6 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
     useEffect(() => {
         if (selectedMunicipality?.citymunCode) {
             axios.post(`${laravelBaseUrl}/api/address/get-barangays?citymunCode=${selectedMunicipality?.citymunCode}`).then((data) => {
-                console.log(data.data);
                 setBarangayList(data.data);
             });
         }

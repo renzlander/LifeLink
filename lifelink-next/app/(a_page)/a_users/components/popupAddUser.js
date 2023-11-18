@@ -49,7 +49,6 @@ export function AddUsers({ refreshData }) {
 
     useEffect(() => {
         axios.get(`${laravelBaseUrl}/api/address/get-regions`).then((data) => {
-            console.log(data.data);
             setRegionList(data.data);
         });
     }, []);
@@ -57,7 +56,6 @@ export function AddUsers({ refreshData }) {
     useEffect(() => {
         if (selectedRegion?.regCode) {
             axios.post(`${laravelBaseUrl}/api/address/get-provinces?regCode=${selectedRegion?.regCode}`).then((data) => {
-                console.log(data.data);
                 setProvinceList(data.data);
             });
         }
@@ -66,7 +64,6 @@ export function AddUsers({ refreshData }) {
     useEffect(() => {
         if (selectedProvince?.provCode) {
             axios.post(`${laravelBaseUrl}/api/address/get-municipalities?provCode=${selectedProvince?.provCode}`).then((data) => {
-                console.log(data.data);
                 setMunicipalityList(data.data);
             });
         }
@@ -75,7 +72,6 @@ export function AddUsers({ refreshData }) {
     useEffect(() => {
         if (selectedMunicipality?.citymunCode) {
             axios.post(`${laravelBaseUrl}/api/address/get-barangays?citymunCode=${selectedMunicipality?.citymunCode}`).then((data) => {
-                console.log(data.data);
                 setBarangayList(data.data);
             });
         }
@@ -91,7 +87,6 @@ export function AddUsers({ refreshData }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("sex", sex);
         try {
             setIsSubmitting(true);
 
@@ -127,13 +122,11 @@ export function AddUsers({ refreshData }) {
                     },
                 }
             );
-            console.log(response);
             if (response.data.status === "success") {
                 toast.success(response.data.message);
                 setOpen(false);
                 refreshData();
             }
-            console.log(response);
         } catch (error) {
             if (error.response && error.response.data && error.response.data.errors) {
                 const { errors } = error.response.data;

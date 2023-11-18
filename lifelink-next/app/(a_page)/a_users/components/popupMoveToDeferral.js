@@ -28,8 +28,6 @@ export function MoveToDeferral({ user_id, refreshData, temporaryDeferralCategori
     };
 
     const handleDonationTypeSelect = (selectedValue) => {
-        console.log("selectedValue:", selectedValue);
-
         setDonationType(selectedValue);
     };
 
@@ -75,7 +73,6 @@ export function MoveToDeferral({ user_id, refreshData, temporaryDeferralCategori
     };
 
     const handleRemarksChange = (value) => {
-        console.log("REMARKS:", remarks);
         setRemarks(value);
     };
 
@@ -99,11 +96,6 @@ export function MoveToDeferral({ user_id, refreshData, temporaryDeferralCategori
                 date_deferred: dateDeferred,
                 donation_type: donationType,
             };
-            console.log(user_id);
-            console.log('deferral_type_id',typesDeferral);
-            console.log(category);
-            console.log(remarks);
-            console.log(duration);
             const response = await axios.post(`${laravelBaseUrl}/api/move-to-defferal`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`,
