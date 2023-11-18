@@ -11,9 +11,7 @@ import { useRouter } from "next/navigation";
 
 const TABLE_HEAD = [
     { label: "Donor Number", key: "donor_no" },
-    { label: "First Name", key: "firstname" },
-    { label: "Middle Name", key: "middlename" },
-    { label: "Last Name", key: "lastname" },
+    { label: "Full Name", key: "fullname" },
     { label: "Blood Type", key: "blood_type" },
     { label: "Email Address", key: "email" },
     { label: "Mobile", key: "mobile" },
@@ -214,8 +212,8 @@ export function UsersTable() {
 
     const sortedUserDetails = userDetails.sort((a, b) => {
         // Replace 'name' with the correct column name for sorting
-        const columnA = sortColumn === "firstname" ? a.first_name : sortColumn === "middlename" ? a.middle_name : sortColumn === "lastname" ? a.last_name : a[sortColumn];
-        const columnB = sortColumn === "firstname" ? b.first_name : sortColumn === "middlename" ? b.middle_name : sortColumn === "lastname" ? b.last_name : b[sortColumn];
+        const columnA = sortColumn === "fullname" ? a.first_name : sortColumn === "middlename" ? a.middle_name : sortColumn === "lastname" ? a.last_name : a[sortColumn];
+        const columnB = sortColumn === "fullname" ? b.first_name : sortColumn === "middlename" ? b.middle_name : sortColumn === "lastname" ? b.last_name : b[sortColumn];
     
         if (sortOrder === "asc") {
             if (columnA < columnB) return -1;
@@ -294,17 +292,7 @@ export function UsersTable() {
                                 </td>
                                 <td className={classes}>
                                     <Typography variant="small" color="blue-gray" className="font-normal">
-                                    {user.first_name}
-                                    </Typography>
-                                </td>
-                                 <td className={classes}>
-                                    <Typography variant="small" color="blue-gray" className="font-normal">
-                                        {user.middle_name}
-                                    </Typography>
-                                </td>
-                                <td className={classes}>
-                                    <Typography variant="small" color="blue-gray" className="font-normal">
-                                        {user.last_name}
+                                    {user.first_name} {user.middle_name} {user.last_name}
                                     </Typography>
                                 </td>
                                 <td className={classes}>

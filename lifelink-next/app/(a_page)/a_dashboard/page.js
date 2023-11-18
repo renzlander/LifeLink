@@ -113,8 +113,6 @@ export default function Home() {
           },
         });
         setLoading(false);
-        console.log(selectedMonth);
-        console.log(selectedYear);
 
         if (mbdSummary.data.status === 'success') {
           setDonorCount(mbdSummary.data.data[0].total_donors);

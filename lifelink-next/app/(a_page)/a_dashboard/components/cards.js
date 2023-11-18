@@ -96,7 +96,6 @@ export function CountDonorCard({
   onYearChange,
 }) {
   
-  console.log("spoiledCount:", spoiledCount);
   const [month, setMonth] = useState("All");
   const [year, setYear] = useState(new Date().getFullYear().toString()); 
 
