@@ -18,7 +18,6 @@ const formatDate = (donationDate) => {
     return formattedDate;
 };
 
-
 export function PostCard() {
     const [adminPosts, setAdminPosts] = useState([]);
     const [interestedBloodRequests, setInterestedBloodRequests] = useState([]);
@@ -112,7 +111,7 @@ export function PostCard() {
 
     return (
         <>
-            <div className="ml-4 mb-4 p-4 bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white rounded-lg">
+            <div className="w-full mb-4 p-4 bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white rounded-lg">
                 {mySchedule ? (
                     <>
                         <Typography variant="h6" color="white">
@@ -139,11 +138,10 @@ export function PostCard() {
                 )}
             </div>
 
-
             {adminPosts.map((post) => (
-                <Card key={post.blood_request_id} shadow={false} className="p-4 m-4 w-full shadow-md">
+                <Card key={post.blood_request_id} shadow={false} className="p-4 w-full shadow-md">
                     <CardHeader color="transparent" floated={false} shadow={false} className="mx-0 flex items-center gap-4 pt-0 pb-8">
-                        <Avatar size="lg" variant="circular" src="/next.svg" />
+                        <Avatar size="md" variant="circular" src="/prc_logo.png" />
                         <div className="flex w-full justify-between gap-0.5">
                             <div className="flex flex-col">
                                 <Typography variant="h5" color="blue-gray">
@@ -158,18 +156,17 @@ export function PostCard() {
                         </div>
                     </CardHeader>
                     <CardBody className="mb-2 p-0">
-                        <Typography color="blue-gray">Blood Type Need : <span>{post.blood_needs}</span></Typography>
-                        <Typography className="mt-2">
+                        <Typography variant="h6" color="blue-gray">Blood Type Need : <span>{post.blood_needs}</span></Typography>
+                        <Typography color="blue-gray" className="mt-2">
                             {post.body}
                         </Typography>
-    
                         {isInterested(post.blood_request_id) ? (
-                                <Button disabled color="green" variant="gradient" className="w-1/8 mt-4">
-                                    <span className="flex items-center">
-                                        Already Interested
-                                        <CheckIcon className="h-5 w-5 ml-2" />
-                                    </span>
-                                </Button>
+                            <Button disabled color="green" variant="gradient" className="w-1/8 mt-4">
+                                <span className="flex items-center">
+                                    Already Interested
+                                    <CheckIcon className="h-5 w-5 ml-2" />
+                                </span>
+                            </Button>
                         ) : (
                             <Interested
                                 requestId={post.blood_request_id}
@@ -185,7 +182,6 @@ export function PostCard() {
     );
     
 }
-
 
 export function FilterCheckBox() {
     const filters = ["Approved", "Pending", "Disapproved"];
