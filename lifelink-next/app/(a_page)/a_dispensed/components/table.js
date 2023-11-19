@@ -145,7 +145,7 @@ export function DispenseTable() {
             }
 
             let response;
-
+  
             const params = {
                 page: page,
                 sort: sortColumn,
