@@ -27,12 +27,12 @@ export function TabAchieve({ achievement }) {
       return (
         <Card className="bg-gray-100">
           <CardBody className="flex flex-col items-center justify-center gap-4 p-6">
-            {badgeType === 'Bronze' && <BronzeBadge width={200} height={200} />}
-            {badgeType === 'Silver' && <SilverBadge width={200} height={200} />}
-            {badgeType === 'Gold' && <GoldBadge width={200} height={200} />}
+            {/* Assuming you have an appropriate badge component */}
+            {/* Replace BronzeBadge with the actual badge component */}
+            <BronzeBadge width={200} height={200} />
             <Chip
               value={`${badgeType} Badge`}
-              color={badgeType === "Bronze" ? "brown" : badgeType === "Silver" ? "blue-gray" : "yellow"}
+              color="brown"
               variant="gradient"
               className="text-white"
             />
