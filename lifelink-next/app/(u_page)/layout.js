@@ -30,7 +30,7 @@ import {
   IconButton,
   Tooltip,
 } from "@material-tailwind/react";
-import { CreatePost } from './components/popup';
+import { CreateRequest } from './network/components/CreateRequest';
 
 export default function UserLayout({ children }) {
   const theme = useTheme();
@@ -215,7 +215,9 @@ export default function UserLayout({ children }) {
       <Box component="main" sx={{ flexGrow: 1, p: 1 }}>
         <DrawerHeader />
         {children}
-        {"." + pathName === "./u_network" ? <CreatePost /> : ""}
+        <div  className="fixed bottom-10 right-10">
+          {"." + pathName === "./network" ? <CreateRequest /> : ""}
+        </div>
       </Box>
     </Box>
   );
