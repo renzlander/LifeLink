@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Disposed, MultipleDisposed } from "./popup";
 import axios from "axios";
-import { Card, Input, Typography, Button, CardBody, Checkbox, CardFooter, IconButton, Tooltip, Spinner, Select, Option } from "@material-tailwind/react";
+import { Card, Input, Typography, Button, CardBody, Checkbox, CardFooter, IconButton, Tooltip, Spinner, Select, Option   } from "@material-tailwind/react";
+import { MagnifyingGlassIcon, DocumentArrowDownIcon } from "@heroicons/react/24/outline";
 import { laravelBaseUrl } from "@/app/variables";
 
 const TABLE_HEAD = [
@@ -95,7 +96,7 @@ export function TabExp() {
 
             if (searchQuery) {
                 response = await axios.post(
-                    `${laravelBaseUrl}/api/search-collected-bloodbag?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
+                    `${laravelBaseUrl}/api/search-expired-blood?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
                     {
                         searchInput: searchQuery,
                     },
@@ -162,11 +163,16 @@ export function TabExp() {
             }
 
             // Send a request to the PDF export endpoint
-            const response = await axios.get(`${laravelBaseUrl}/api/export-pdf-collected-bloodbags`, {
+            const response = await axios.get(`${laravelBaseUrl}/api/export-expired-blood`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
                 responseType: "blob",
+                params: {
+                    blood_type: blood_type,
+                    startDate: startDate,
+                    endDate: endDate,
+                },
             });
 
             const pdfBlob = new Blob([response.data], { type: "application/pdf" });
@@ -268,6 +274,23 @@ export function TabExp() {
                                 }}
                                 className=""
                             />
+                        </div>
+                    </div>
+                    <div>
+                        <Typography variant="subtitle1" className="mb-2 flex justify-center font-bold text-red-800" >
+                            {/* Other Tools  */}
+                        </Typography>
+                        <div className="flex items-center gap-3 pt-6">
+                            <div className="flex items-center gap-3 w-full md:w-72">
+                                <Input label="Search" icon={<MagnifyingGlassIcon className="h-5 w-5" />} value={searchQuery}  onChange={(e) => {
+                                    const inputValue = e.target.value;
+                                    setSearchQuery(inputValue);
+                                    fetchData(inputValue);
+                                }}/>
+                            </div>
+                            <Button className="flex items-center gap-3"  onClick={exportBloodBagsAsPDF}>
+                                <DocumentArrowDownIcon className="h-4 w-4" /> Export to PDF
+                            </Button>
                         </div>
                     </div>
                 </div>
