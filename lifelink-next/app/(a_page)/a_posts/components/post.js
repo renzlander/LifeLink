@@ -22,12 +22,6 @@ function Icon({ id, open }) {
   );
 }
 
-function getCookie(name) {
-  const cookies = document.cookie.split("; ");
-  const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));
-  return cookie ? cookie.split("=")[1] : null;
-}
-
 function formatDateTime(dateTimeString) {
   const options = { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" };
   const formattedDateTime = new Date(dateTimeString).toLocaleDateString(undefined, options);
@@ -38,11 +32,11 @@ export function PostCard({ bloodRequests, fetchBloodRequest }) {
   const chipColor = [
     { color: "gray", value: "Pending", text: "Pending" },
     { color: "green", value: "Accommodated", text: "Accommodated" },
-    { color: "red", value: "Declined", text: "Declined" },
+    { color: "red", value: "Declined", text: "Reffered" },
   ];
 
-  const [openAccordions, setOpenAccordions] = useState([]);
-  const [interestedDonor, setInterestedDonor] = useState([]);
+  const [openAccordions, setOpenAccordions] = useState({});
+  const [interestedDonor, setInterestedDonor] = useState({});
   const [loading, setLoading] = useState(true); // Assuming you want to show a loading state
   const router = useRouter();
 
@@ -60,7 +54,18 @@ export function PostCard({ bloodRequests, fetchBloodRequest }) {
             Authorization: `Bearer ${token}`,
           },
         });
-        setInterestedDonor(response.data.data);
+
+        // Organize interested donors by blood_request_id
+        const interestedDonorsMap = {};
+        response.data.data.forEach((donor) => {
+          const bloodRequestId = donor.blood_request_id;
+          if (!interestedDonorsMap[bloodRequestId]) {
+            interestedDonorsMap[bloodRequestId] = [];
+          }
+          interestedDonorsMap[bloodRequestId].push(donor);
+        });
+
+        setInterestedDonor(interestedDonorsMap);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching user information:", error);
@@ -73,14 +78,77 @@ export function PostCard({ bloodRequests, fetchBloodRequest }) {
   const handleAccordionOpen = (bloodRequestId) => {
     setOpenAccordions((prevOpenAccordions) => ({
       ...prevOpenAccordions,
-      [bloodRequestId]: prevOpenAccordions[bloodRequestId] === 0 ? 1 : 0,
+      [bloodRequestId]: !prevOpenAccordions[bloodRequestId],
     }));
+  };
+
+  const renderAccordion = (bloodRequestId) => {
+    // Handle the case where interestedDonor[bloodRequestId] is undefined
+    const interestedDonorsForRequest = interestedDonor[bloodRequestId] || [];
+
+    return (
+      <Accordion
+        className="rounded-lg border border-blue-gray-100 px-4"
+        open={openAccordions[bloodRequestId]}
+        icon={<Icon id={1} open={openAccordions[bloodRequestId]} />}
+      >
+        <AccordionHeader onClick={() => handleAccordionOpen(bloodRequestId)}>
+          Total Interested Donors: {interestedDonorsForRequest.length}
+        </AccordionHeader>
+        <AccordionBody>
+          {interestedDonorsForRequest.length === 0 ? (
+            <p>No interested donors at the moment.</p>
+          ) : (
+            <table className="w-full min-w-max table-auto text-left">
+              <thead>
+                <tr>
+                  {TABLE_HEAD.map((head) => (
+                    <th key={head} className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                      <Typography variant="small" color="blue-gray" className="font-normal leading-none opacity-70">
+                        {head}
+                      </Typography>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {interestedDonorsForRequest.map(({ first_name, middle_name, last_name, blood_type, email, mobile }, rowIndex) => (
+                  <tr key={rowIndex} className={rowIndex % 2 === 0 ? "even:bg-blue-gray-50/50" : ""}>
+                    <td className="p-4">
+                      <Typography variant="small" color="blue-gray" className="font-bold">
+                        {`${first_name}, ${middle_name} ${last_name}`}
+                      </Typography>
+                    </td>
+                    <td className="p-4">
+                      <Typography variant="small" color="blue-gray" className="font-normal">
+                        {blood_type}
+                      </Typography>
+                    </td>
+                    <td className="p-4">
+                      <Typography variant="small" color="blue-gray" className="font-normal">
+                        {email}
+                      </Typography>
+                    </td>
+                    <td className="p-4">
+                      <Typography variant="small" color="blue-gray" className="font-normal">
+                        {mobile}
+                      </Typography>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </AccordionBody>
+      </Accordion>
+    );
   };
 
   return (
     <>
       {bloodRequests.map((request, index) => {
-        const isAccommodated = request.isAccommodated || 0; // Assuming that isAccommodated is a boolean property
+        const isAccommodated = request.isAccommodated || 0;
+        const interestedDonorsForRequest = interestedDonor[request.blood_request_id] || [];
 
         return (
           <div key={index} className="flex items-start justify-center w-full relative px-16">
@@ -120,61 +188,7 @@ export function PostCard({ bloodRequests, fetchBloodRequest }) {
                 </div>
               </CardBody>
               <CardFooter className="px-0">
-                <Accordion
-                  className="rounded-lg border border-blue-gray-100 px-4"
-                  key={request.blood_request_id}
-                  open={openAccordions[request.blood_request_id]}
-                  icon={<Icon id={1} open={openAccordions[request.blood_request_id]} />}
-                >
-                  <AccordionHeader onClick={() => handleAccordionOpen(request.blood_request_id)}>
-                    Total Interested Donors: {interestedDonor.length}
-                  </AccordionHeader>
-                  <AccordionBody>
-                    {interestedDonor.length === 0 ? (
-                      <p>No interested donors at the moment.</p>
-                    ) : (
-                      <table className="w-full min-w-max table-auto text-left">
-                        <thead>
-                          <tr>
-                            {TABLE_HEAD.map((head) => (
-                              <th key={head} className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
-                                <Typography variant="small" color="blue-gray" className="font-normal leading-none opacity-70">
-                                  {head}
-                                </Typography>
-                              </th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {interestedDonor.map(({ first_name, middle_name, last_name, blood_type, email, mobile }, rowIndex) => (
-                            <tr key={rowIndex} className={rowIndex % 2 === 0 ? "even:bg-blue-gray-50/50" : ""}>
-                              <td className="p-4">
-                                <Typography variant="small" color="blue-gray" className="font-bold">
-                                  {`${first_name}, ${middle_name} ${last_name}`}
-                                </Typography>
-                              </td>
-                              <td className="p-4">
-                                <Typography variant="small" color="blue-gray" className="font-normal">
-                                  {blood_type}
-                                </Typography>
-                              </td>
-                              <td className="p-4">
-                                <Typography variant="small" color="blue-gray" className="font-normal">
-                                  {email}
-                                </Typography>
-                              </td>
-                              <td className="p-4">
-                                <Typography variant="small" color="blue-gray" className="font-normal">
-                                  {mobile}
-                                </Typography>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    )}
-                  </AccordionBody>
-                </Accordion>
+                {renderAccordion(request.blood_request_id)}
               </CardFooter>
             </Card>
             <div className="absolute top-0 right-6 flex flex-col items-start gap-5">
@@ -190,4 +204,10 @@ export function PostCard({ bloodRequests, fetchBloodRequest }) {
       })}
     </>
   );
+}
+
+function getCookie(name) {
+  const cookies = document.cookie.split("; ");
+  const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));
+  return cookie ? cookie.split("=")[1] : null;
 }

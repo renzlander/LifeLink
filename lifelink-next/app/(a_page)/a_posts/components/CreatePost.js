@@ -1,173 +1,172 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
-  Input,
-  Select,
-  Option,
-  Textarea,
-} from "@material-tailwind/react";
+import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, Select, Option, Textarea, Typography } from "@material-tailwind/react";
 import InputSelect from "@/app/components/InputSelect";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { toast } from "react-toastify";
+import { format } from "date-fns";
 
 export function CreatePost() {
-  const [open, setOpen] = useState(false);
- 
-  const handleOpen = () => setOpen(!open);
- 
-  const [requestIdNumber, setRequestIdNumber] = useState("");
-  const [venue, setVenue] = useState("");
-  const [donationDate, setDonationDate] = useState("");
-  const [body, setBody] = useState("");
-  const [bloodType, setBloodType] = useState("");
-  const [requestIdOptions, setRequestIdOptions] = useState([]);
+    const [open, setOpen] = useState(false);
 
-  const bloodTypesOptions = ["All", "AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
+    const handleOpen = () => setOpen(!open);
+    const [generalErrorMessage, setGeneralErrorMessage] = useState("");
+    const [requestIdNumber, setRequestIdNumber] = useState("");
+    const [venue, setVenue] = useState("");
+    const [donationDate, setDonationDate] = useState("");
+    const [donationTime, setDonationTime] = useState("");
+    const [body, setBody] = useState("");
+    const [bloodType, setBloodType] = useState("");
+    const [requestIdOptions, setRequestIdOptions] = useState([]);
 
-  const handleBodyChange = (e) => {
-      setBody(e.target.value);
-  };
+    const bloodTypesOptions = ["All", "AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
 
-  const handleDateChange = (date) => {
-      setDonationDate(date);
-  };
+    const handleBodyChange = (e) => {
+        setBody(e.target.value);
+    };
 
-  useEffect(() => {
-      const fetchAllRequestIds = async () => {
-          try {
-              const token = getCookie("token");
-              if (!token) {
-                  router.push("./login");
-                  return;
-              }
+    const handleDateChange = (e) => {
+        // Assuming e.target.value is in the format YYYY-MM-DD
+        setDonationDate(format(new Date(e.target.value), "yyyy-MM-dd"));
+    };
 
-              const response = await axios.get(`${laravelBaseUrl}/api/get-request-id`, {
-                  headers: {
-                      Authorization: `Bearer ${token}`,
-                  },
-              });
+    const handleTimeChange = (e) => {
+        setDonationTime(e.target.value);
+    };
 
-              setRequestIdOptions(response.data.data);
-          } catch (error) {
-              console.error("Error fetching user information:", error);
-          }
-      };
+    useEffect(() => {
+        const fetchAllRequestIds = async () => {
+            try {
+                const token = getCookie("token");
+                if (!token) {
+                    router.push("./login");
+                    return;
+                }
 
-      fetchAllRequestIds();
-  }, []);
+                const response = await axios.get(`${laravelBaseUrl}/api/get-request-id`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
 
-  const createPost = async () => {
-      try {
-          const token = getCookie("token");
-          if (!token) {
-              router.push("./login");
-              return;
-          }
+                setRequestIdOptions(response.data.data);
+            } catch (error) {
+                console.error("Error fetching user information:", error);
+            }
+        };
 
-          const formattedDonationDate = format(donationDate, 'yyyy-MM-dd HH:mm:ss');
+        fetchAllRequestIds();
+    }, []);
 
-          const response = await axios.post(
-              `${laravelBaseUrl}/api/create-network-post`,
-              {},
-              {
-                  headers: {
-                      Authorization: `Bearer ${token}`,
-                  },
-                  params: {
-                      blood_request_id: requestIdNumber,
-                      venue: venue,
-                      donation_date: formattedDonationDate,
-                      body: body,
-                      blood_needs: bloodType,
-                  },
-              }
-          );
+    const createPost = async () => {
+        try {
+            const token = getCookie("token");
+            if (!token) {
+                router.push("./login");
+                return;
+            }
 
-          if (response.data.status === "success") {
-              toast.success("Blood bag added successfully");
-          } else if (response.data.status === "error") {
-              if (response.data.message) {
-                  setGeneralErrorMessage(response.data.message);
-                  toast.error("Opps! Something went wrong.");
-              } else {
-                  console.error("Unknown error occurred:", response.data);
-              }
-          }
-      } catch (error) {
-          toast.error("Opps! Something went wrong.");
-          console.error("Error fetching user information:", error);
-      }
-  };
+            const formattedDonationDateTime = format(new Date(`${donationDate} ${donationTime}`), "yyyy-MM-dd HH:mm:ss");
+            console.log(formattedDonationDateTime);
 
-  const dynamicRequestIdOptions = requestIdOptions.map((item) => ({
-      label: item.request_id_number.toString(),
-      value: item.blood_request_id.toString(),
-  }));
+            const response = await axios.post(
+                `${laravelBaseUrl}/api/create-network-post`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    params: {
+                        blood_request_id: requestIdNumber,
+                        venue: venue,
+                        donation_date: formattedDonationDateTime,
+                        body: body,
+                        blood_needs: bloodType,
+                    },
+                }
+            );
 
-  const handleRequestIdChange = (selectedValue) => {
-      setRequestIdNumber(selectedValue);
-  };
+            console.log(response);      
+            if (response.data.status === "success") {
+                toast.success("Post created successfully");
+                setOpen(false);
+            } else if (response.data.status === "error") {
+                setGeneralErrorMessage(response.data.message);
+                console.log(response);
+                toast.error("Opps! Something went wrong.");
+            }
+        } catch (error) {
+            toast.error("Opps! Something went wrong.");
+            setGeneralErrorMessage(error.response.data.message);
+            console.error("Error fetching user information:", error);
+        }
+    };
 
-  const handleBloodChange = (selectedBlood) => {
-      setBloodType(selectedBlood);
-  };
+    const dynamicRequestIdOptions = requestIdOptions.map((item) => ({
+        label: item.request_id_number.toString(),
+        value: item.blood_request_id.toString(),
+    }));
 
-  return (
-    <>
-      <Button onClick={handleOpen} variant="gradient" className="rounded-full">
-        Create Post
-      </Button>
-      <Dialog open={open} handler={handleOpen}>
-        <DialogHeader>Create Post</DialogHeader>
-        <DialogBody className="grid gap-5">
-          <InputSelect label="Blood Request ID" 
-            value={requestIdNumber} 
-            onSelect={handleRequestIdChange} 
-            options={dynamicRequestIdOptions} 
-            isSearchable 
-            required 
-            placeholder="Hospital" 
-          />
-          
-          <Input label="Venue" onChange={(e) => setVenue(e.target.value)} />
+    const handleRequestIdChange = (selectedValue) => {
+        setRequestIdNumber(selectedValue);
+    };
 
-          <div className="flex md:flex-nowrap flex-wrap items-center justify-between w-full gap-3">
-            <Input label="Date" type="date" />
+    const handleBloodChange = (selectedBlood) => {
+        setBloodType(selectedBlood);
+    };
 
-            <Input label="Time" type="time" />
+    return (
+        <>
+            <Button onClick={handleOpen} variant="gradient" className="rounded-full">
+                Create Post
+            </Button>
+            <Dialog open={open} handler={handleOpen}>
+                <DialogHeader>Create Post</DialogHeader>
+                {generalErrorMessage && (
+            <div className="mt-2 text-center bg-red-100 p-2 rounded-lg">
+              <Typography color="red" className="text-sm font-semibold">
+                {generalErrorMessage}
+              </Typography>
+            </div>
+          )}
+                <DialogBody className="grid gap-5">
+                    <InputSelect label="Blood Request ID" value={requestIdNumber} onSelect={handleRequestIdChange} options={dynamicRequestIdOptions} isSearchable required placeholder="Hospital" />
 
-            <Select onChange={handleBloodChange} label="Blood Type" value={bloodType}>
-                {bloodTypesOptions.map((blood) => (
-                    <Option key={blood} value={blood}>
-                        {blood}
-                    </Option>
-                ))}
-            </Select>
-          </div>
+                    <Input label="Venue" onChange={(e) => setVenue(e.target.value)} />
 
-          <Textarea size="lg" label="Textarea Large" onChange={handleBodyChange} />
-        </DialogBody>
-        <DialogFooter>
-          <Button
-            variant="text"
-            color="red"
-            onClick={handleOpen}
-            className="mr-1"
-          >
-            <span>Cancel</span>
-          </Button>
-          <Button variant="gradient" color="blue" onClick={createPost}>
-            <span>Publish Post</span>
-          </Button>
-        </DialogFooter>
-      </Dialog>
-    </>
-  );
+                    <div className="flex md:flex-nowrap flex-wrap items-center justify-between w-full gap-3">
+                        <Input
+                            label="Date"
+                            type="date"
+                            onChange={handleDateChange}
+                            value={donationDate}
+                            min={format(new Date(), "yyyy-MM-dd")} // Set the minimum date to the current date
+                        />
+
+                        <Input label="Time" type="time" onChange={handleTimeChange} value={donationTime} />
+
+                        <Select onChange={handleBloodChange} label="Blood Type" value={bloodType}>
+                            {bloodTypesOptions.map((blood) => (
+                                <Option key={blood} value={blood}>
+                                    {blood}
+                                </Option>
+                            ))}
+                        </Select>
+                    </div>
+
+                    <Textarea size="lg" label="Textarea Large" onChange={handleBodyChange} />
+                </DialogBody>
+                <DialogFooter>
+                    <Button variant="text" color="red" onClick={handleOpen} className="mr-1">
+                        <span>Cancel</span>
+                    </Button>
+                    <Button variant="gradient" color="blue" onClick={createPost}>
+                        <span>Publish Post</span>
+                    </Button>
+                </DialogFooter>
+            </Dialog>
+        </>
+    );
 }
 
 function getCookie(name) {
