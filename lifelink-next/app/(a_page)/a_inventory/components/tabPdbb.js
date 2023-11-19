@@ -135,52 +135,52 @@ export function TabPerma() {
             console.error("Error fetching remarks:", error);
         }
     };
-    // const fetchData = async (page) => {
-    //     try {
-    //         const token = getCookie("token");
-    //         if (!token) {
-    //             router.push("/login");
-    //             return;
-    //         }
+    const fetchData = async (page) => {
+        try {
+            const token = getCookie("token");
+            if (!token) {
+                router.push("/login");
+                return;
+            }
 
-    //         let response;
+            let response;
 
-    //         if (searchQuery) {
-    //             response = await axios.post(
-    //                 `${laravelBaseUrl}/api/search-collected-bloodbag?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
-    //                 {
-    //                     searchInput: searchQuery,
-    //                 },
-    //                 {
-    //                     headers: {
-    //                         Authorization: `Bearer ${token}`,
-    //                     },
-    //                 }
-    //             );
-    //         } else {
-    //             response = await axios.get(`${laravelBaseUrl}/api/get-permanent-bloodbags?page=${page}&sort=${sortColumn}&order=${sortOrder}`, {
-    //                 headers: {
-    //                     Authorization: `Bearer ${token}`,
-    //                 },
-    //             });
-    //         }
+            if (searchQuery) {
+                response = await axios.post(
+                    `${laravelBaseUrl}/api/search-sbb?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
+                    {
+                        searchInput: searchQuery,
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+            } else {
+                response = await axios.get(`${laravelBaseUrl}/api/get-permanent-bloodbags?page=${page}&sort=${sortColumn}&order=${sortOrder}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+            }
 
-    //         if (response.data.status === "success") {
-    //             console.log(response);
-    //             setUserDetails(response.data.data.data);
-    //             setTotalPages(response.data.data.last_page);
-    //             setCurrentPage(response.data.data.current_page);
-    //             setBloodQty(response.data.total_count);
-    //             setLoading(false);
-    //         } else {
-    //             console.error("Error fetching data:", response.data.message);
-    //             setLoading(false);
-    //         }
-    //     } catch (error) {
-    //         console.error("Error fetching data:", error);
-    //         setLoading(false);
-    //     }
-    // };
+            if (response.data.status === "success") {
+                console.log(response);
+                setUserDetails(response.data.data.data);
+                setTotalPages(response.data.data.last_page);
+                setCurrentPage(response.data.data.current_page);
+                setBloodQty(response.data.total_count);
+                setLoading(false);
+            } else {
+                console.error("Error fetching data:", response.data.message);
+                setLoading(false);
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         fetchBloodTypeFilteredData(blood_type, remarks, startDate, endDate);
@@ -215,11 +215,17 @@ export function TabPerma() {
             }
 
             // Send a request to the PDF export endpoint
-            const response = await axios.get(`${laravelBaseUrl}/api/export-pdf-collected-bloodbags`, {
+            const response = await axios.get(`${laravelBaseUrl}/api/export-sbb`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
                 responseType: "blob",
+                params: {
+                    blood_type: blood_type,
+                    remarks: remarks,
+                    startDate: startDate,
+                    endDate: endDate,
+                },
             });
 
             const pdfBlob = new Blob([response.data], { type: "application/pdf" });
@@ -320,6 +326,23 @@ export function TabPerma() {
                                 }}
                                 className=""
                             />
+                        </div>
+                    </div>
+                    <div>
+                        <Typography variant="subtitle1" className="mb-2 flex justify-center font-bold text-red-800" >
+                            {/* Other Tools  */}
+                        </Typography>
+                        <div className="flex items-center gap-3 pt-6">
+                            <div className="flex items-center gap-3 w-full md:w-72">
+                                <Input label="Search" icon={<MagnifyingGlassIcon className="h-5 w-5" />} value={searchQuery}  onChange={(e) => {
+                                    const inputValue = e.target.value;
+                                    setSearchQuery(inputValue);
+                                    fetchData(inputValue);
+                                }}/>
+                            </div>
+                            <Button className="flex items-center gap-3"  onClick={exportBloodBagsAsPDF}>
+                                <DocumentArrowDownIcon className="h-4 w-4" /> Export to PDF
+                            </Button>
                         </div>
                     </div>
                 </div>

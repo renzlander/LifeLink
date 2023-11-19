@@ -108,6 +108,60 @@ export function TabTemp() {
             setLoading(false);
         }
     };
+
+    const fetchData = async (page = "") => {
+        try {
+            const token = getCookie("token");
+            if (!token) {
+                router.push("/login");
+                return;
+            }
+
+            let response;
+
+            const params = {
+                page: page,
+                sort: sortColumn,
+                order: sortOrder,
+            };
+
+            if (searchQuery) {
+                response = await axios.post(
+                    `${laravelBaseUrl}/api/search-rbb`,
+                    {
+                        searchInput: searchQuery,
+                        ...params,
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+            } else {
+                response = await axios.get(`${laravelBaseUrl}/api/get-deferral-bloodbags`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    params: params,
+                });
+            }
+
+            if (response.data.status === "success") {
+                setUserDetails(response.data.data.data);
+                setTotalPages(response.data.data.last_page);
+                setCurrentPage(response.data.data.current_page);
+                setBloodQty(response.data.total_count);
+                setLoading(false);
+            } else {
+                console.error("Error fetching data:", response.data.message);
+                setLoading(false);
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            setLoading(false);
+        }
+    };
     const fetchUnsafeRemarks = async () => {
         try {
             const token = getCookie("token");
@@ -167,11 +221,17 @@ export function TabTemp() {
             }
 
             // Send a request to the PDF export endpoint
-            const response = await axios.get(`${laravelBaseUrl}/api/export-pdf-collected-bloodbags`, {
+            const response = await axios.get(`${laravelBaseUrl}/api/export-rbb`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
                 responseType: "blob",
+                params: {
+                    blood_type: blood_type,
+                    remarks: remarks,
+                    startDate: startDate,
+                    endDate: endDate,
+                },
             });
 
             const pdfBlob = new Blob([response.data], { type: "application/pdf" });
@@ -223,7 +283,7 @@ export function TabTemp() {
             <CardBody>
                 <div className="flex items-center justify-between px-4 mb-4">
                     <div>
-                        <Typography variant="subtitle1" className="mb-2 text-left font-bold text-red-800">
+                        <Typography variant="subtitle1" className="mb-2 justify-center font-bold text-red-800">
                             QTY:{bloodQty}
                         </Typography>
                         <div className="flex items-center justify-between gap-4">
@@ -248,7 +308,7 @@ export function TabTemp() {
                     </div>
                     <div>
                         <Typography variant="subtitle1" className="mb-2 flex justify-center font-bold text-red-800">
-                            Expiration Date Filter
+                            Date Donated Filter
                         </Typography>
                         <div className="flex items-center gap-4">
                             <Input
@@ -258,7 +318,7 @@ export function TabTemp() {
                                 onChange={(e) => {
                                     const newStartDate = e.target.value;
                                     setStartDate(newStartDate);
-                                    fetchBloodTypeFilteredData(blood_type, newStartDate, endDate);
+                                    fetchBloodTypeFilteredData(blood_type, remarks, newStartDate, endDate);
                                 }}
                                 className=""
                             />
@@ -270,10 +330,27 @@ export function TabTemp() {
                                 onChange={(e) => {
                                     const newEndDate = e.target.value;
                                     setEndDate(newEndDate);
-                                    fetchBloodTypeFilteredData(blood_type, startDate, newEndDate);
+                                    fetchBloodTypeFilteredData(blood_type, remarks, startDate, newEndDate);
                                 }}
                                 className=""
                             />
+                        </div>
+                    </div>
+                    <div>
+                        <Typography variant="subtitle1" className="mb-2 flex justify-center font-bold text-red-800" >
+                            {/* Other Tools  */}
+                        </Typography>
+                        <div className="flex items-center gap-3 pt-6">
+                            <div className="flex items-center gap-3 w-full md:w-72">
+                                <Input label="Search" icon={<MagnifyingGlassIcon className="h-5 w-5" />} value={searchQuery}  onChange={(e) => {
+                                    const inputValue = e.target.value;
+                                    setSearchQuery(inputValue);
+                                    fetchData(inputValue);
+                                }}/>
+                            </div>
+                            <Button className="flex items-center gap-3"  onClick={exportBloodBagsAsPDF}>
+                                <DocumentArrowDownIcon className="h-4 w-4" /> Export to PDF
+                            </Button>
                         </div>
                     </div>
                 </div>
