@@ -55,6 +55,7 @@ export function RegF1({ onNextStep }) {
     password_confirmation !== "" &&
     confirmPasswordStyle === "success";
 
+    
   return (
     <Card className="mt-6 flex justify-center items-center" color="transparent" shadow={false}>
       <Typography variant="h4" className="mt-2" color="blue-gray">

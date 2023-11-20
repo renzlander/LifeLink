@@ -28,7 +28,7 @@ export function MaintenanceSwitch() {
   };
 
   const handleSwitchChange = () => {
-    setIsSwitchOn(!isSwitchOn);
+    setConfirmationOpen(true); // Show confirmation when the switch is changed
   };
 
   return (
@@ -80,6 +80,8 @@ export function Confirmation({ isOpen, handleConfirmation }) {
   const handleClose = (confirmed) => {
     handleConfirmation(confirmed);
   };
+
+  
 
   return (
     <Dialog open={isOpen} handler={handleClose}>
