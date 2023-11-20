@@ -71,16 +71,8 @@ export default function Request() {
   }
 
   return (
-    <div className="flex flex-col">
-      <div className="flex flex-row flex-1">
-        <div className="w-1/4">
-          <SideBar latestBloodRequest={latestBloodRequest} />
-          <MakeRequest userDetails={userDetails} latestBloodRequest={latestBloodRequest} />
-        </div>
-        <div className="w-3/4 pl-4 h-full">
-          <PostCard />
-        </div>
-      </div>
+    <div className="w-full p-4 flex flex-col items-start justify-center gap-4">
+        <PostCard />
     </div>
   );
 }
