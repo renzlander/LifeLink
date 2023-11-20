@@ -14,6 +14,7 @@ import Image from 'next/image';
 import React, { useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import { RegisterStepper } from "./components/stepper";
+import { ToastContainer, toast  } from 'react-toastify';
 
 export default function RegisterPage() {
   useEffect(() => {
@@ -24,7 +25,6 @@ export default function RegisterPage() {
     <main className="flex min-h-screen flex-col items-center justify-between py-12">
 
       <RegisterStepper/>
-
     </main>
   )
 }

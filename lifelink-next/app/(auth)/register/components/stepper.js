@@ -1,9 +1,10 @@
-import { DocumentIcon, UserCircleIcon, CheckIcon } from "@heroicons/react/24/outline";
+import { DocumentIcon, UserCircleIcon, CheckIcon, EnvelopeIcon   } from "@heroicons/react/24/outline";
 import { Stepper, Step, Button, Typography } from "@material-tailwind/react";
 import React, { useState, useEffect } from "react";
 import { RegF1 } from "./regf1";
 import { RegF2 } from "./regf2";
 import { RegF3 } from "./regf3";
+import { RegF4 } from "./regf4";
 
 export function RegisterStepper() {
   const [activeStep, setActiveStep] = useState(0);
@@ -28,6 +29,7 @@ export function RegisterStepper() {
     <RegF1 key="step1" onNextStep={handleNextStep} />,
     <RegF2 key="step2" onNextStep={handleNextStep} />,
     <RegF3 key="step3" />,
+    <RegF4 key="step4" />,
   ];
   
 
@@ -46,29 +48,23 @@ export function RegisterStepper() {
         isFirstStep={(value) => setIsFirstStep(value)}
       >
         <Step key="userCircleIcon">
-  <UserCircleIcon className="h-5 w-5" />
-</Step>
-<Step key="documentIcon">
-  <DocumentIcon className="h-5 w-5" />
-</Step>
-<Step key="checkIcon">
-  <CheckIcon className="h-5 w-5" />
-</Step>
-
+          <UserCircleIcon className="h-5 w-5" />
+        </Step>
+        <Step key="documentIcon">
+          <DocumentIcon className="h-5 w-5" />
+        </Step>
+        <Step key="checkIcon">
+          <EnvelopeIcon  className="h-5 w-5" />
+        </Step>
+        <Step key="checkIcon">
+          {/* Add your custom icon component here */}
+          <CheckIcon className="h-5 w-5" />
+        </Step>
       </Stepper>
       <div className="flex justify-center items-center">
-      {stepsContent[activeStep]}
+        {stepsContent[activeStep]}
       </div>
-      {/* <div className="mt-8 flex justify-between">
-        <Button onClick={handlePrev} disabled={isFirstStep}>
-          Previous
-        </Button>
-        {isLastStep ? (
-          <Button onClick={logIn}>Finish</Button>
-        ) : (
-          <Button onClick={handleNextStep}>Next</Button>
-        )}
-      </div> */}
     </div>
   );
+  
 }

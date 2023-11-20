@@ -14,7 +14,7 @@ const TABLE_HEAD = [
     { label: "Region", key: "region" },
     { label: "City", key: "city" },
     { label: "Postal", key: "postal" },
-    { label: "Date", key: "created_at" },
+    { label: "Date and Time", key: "created_at" },
 ];
 
 const classes = "p-4";
@@ -26,11 +26,12 @@ const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Month is 0
 const day = String(currentDate.getDate()).padStart(2, "0");
 const formattedCurrentDate = `${year}-${month}-${day}`;
 
-function formatDate(dateString) {
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    const formattedDate = new Date(dateString).toLocaleDateString(undefined, options);
-    return formattedDate;
+function formatDateTime(dateTimeString) {
+    const options = { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" };
+    const formattedDateTime = new Date(dateTimeString).toLocaleDateString(undefined, options);
+    return formattedDateTime;
 }
+
 export function LogsTable() {
     const [activityLogs, setActivityLogs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -42,7 +43,7 @@ export function LogsTable() {
     const [module, setModule] = useState("All");
     const [startDate, setStartDate] = useState(formattedCurrentDate);
     const [endDate, setEndDate] = useState(formattedCurrentDate);
-    const modules = ["All", "Collected Blood Bags", "Inventory", "User List", "Donor List", "Deferral List", "Dispensed Blood", "Donor Post", "MBD Report"];
+    const modules = ["All", "Collected Blood Bags", "Inventory", "User List", "Donor List", "Deferral List", "Disposed Blood Bags", "Dispensed Blood", "Donor Post", "MBD Report"];
 
     const router = useRouter();
     const pagesToShow = 8; // Number of pagination numbers to display
@@ -252,7 +253,7 @@ export function LogsTable() {
                                 </td>
                                 <td className={classes}>
                                     <Typography variant="small" color="blue-gray" className="font-normal">
-                                        {formatDate(log.created_at)}
+                                        {formatDateTime(log.created_at)}
                                     </Typography>
                                 </td>
                             </tr>

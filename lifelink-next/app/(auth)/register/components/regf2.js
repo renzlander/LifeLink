@@ -113,7 +113,7 @@ export function RegF2({ onNextStep }) {
       });
       
       if (response.data.status === 'success') {
-        document.cookie = 'user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        //document.cookie = 'user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         onNextStep();
       }
       console.log(response);
@@ -145,6 +145,33 @@ export function RegF2({ onNextStep }) {
     selectedBarangay.barangayName !== "Barangay" &&
     dob !== "";
 
+    useEffect(() => {
+
+      const user_id = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('user_id='))
+    .split('=')[1];
+    const checkIfVerified = async () => {
+      try {
+        const response = await axios.post(
+          `${laravelBaseUrl}/api/check-user-details`,
+          {
+            user_id: user_id,
+          }
+        );
+          if (response.data.status == 'success') {
+             onNextStep();
+        } else {
+          
+        }
+      } catch (error) {
+        console.error('Error checking verification status:', error);
+      }
+    };
+    
+      checkIfVerified(); 
+    }, []);
+    
   return (
     <Card className='mt-6 flex justify-center items-center' color="transparent" shadow={false}>
       <Typography variant="h4" className="mt-2" color="blue-gray">
