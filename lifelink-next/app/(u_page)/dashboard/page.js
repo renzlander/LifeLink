@@ -132,7 +132,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col gap-y-3 py-4">
+    <div className="flex flex-col gap-y-3 py-4 w-full">
       <div className='flex 3xl:flex-row flex-col justify-between gap-4 w-full'>
         <Card className="mt-6 w-full bg-gray-100">
           <CardHeader color='gray' variant='gradient' className="h-16 flex items-center mb-4">
@@ -140,11 +140,11 @@ export default function Home() {
               Blood Stock
             </Typography>
           </CardHeader>
-          <CardBody className='w-full flex xl:flex-col flex-row items-center justify-center gap-10'>
-            <div className="flex xl:flex-row flex-col 3xl:gap-16 xl:gap-3 gap-10">
+          <CardBody className='w-full flex 2xl:flex-col flex-row items-center justify-start gap-10 overflow-x-auto'>
+            <div className="flex 2xl:flex-row flex-col 3xl:gap-16 2xl:gap-3 gap-10">
               {bloodListCards.slice(0, 4)}
             </div>
-            <div className="flex xl:flex-row flex-col 3xl:gap-16 xl:gap-3 gap-10">
+            <div className="flex xl:flex-row flex-col 3xl:gap-16 2xl:gap-3 gap-10">
               {bloodListCards.slice(4, 8)}
             </div>
           </CardBody>

@@ -4,6 +4,7 @@ import {
   Typography,
   Button,
   CardBody,
+  CardFooter,
 } from "@material-tailwind/react";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; 
@@ -69,14 +70,14 @@ export function BloodBagTable({ bloodJourney }) {
   }
 
   return (
-    <div className="w-full min-h-screen flex xl:flex-row flex-col items-start justify-between gap-4 py-4">
-      <Card className="xl:w-1/2 w-full mt-6">
+    <div className="w-full min-h-screen flex 2xl:flex-row flex-col items-start justify-between gap-4 py-4">
+      <Card className="2xl:w-1/2 w-full mt-6">
         <CardHeader color="red" className="relative h-16 flex items-center">
           <Typography variant="h4" color="white" className="ml-4">
             My Blood Bags
           </Typography>
         </CardHeader>
-        <CardBody className="px-0">
+        <CardBody className="px-0 overflow-x-auto">
           <table className="w-full min-w-max table-auto text-left">
             <thead>
               <tr>
@@ -139,6 +140,8 @@ export function BloodBagTable({ bloodJourney }) {
             </tbody>
           </table>
         </CardBody>
+        <CardFooter>
+        </CardFooter>
       </Card>
       <JourneyTimeline activeSteps={activeSteps} />
     </div>

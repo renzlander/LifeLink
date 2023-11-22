@@ -10,12 +10,12 @@ import History from "./components/historyTab";
 
 const TABS = [
   {
-      label: "Blood Request/Donor Interest",
+      label: "Created Posts",
       value: "request",
       tableRender: <Request />,
   },
   {
-      label: "Blood Request History",
+      label: "Blood Requests",
       value: "history",
       tableRender: <History />,
   }
@@ -37,15 +37,15 @@ export default function Home() {
             Blood Network
           </Typography>
         </CardHeader>
-        <Tabs value={activeTab} className="w-full p-4 mx-4 mt-4">
+        <Tabs value={activeTab} className="w-full p-4 2xl:mx-4 mt-4">
           <TabsHeader className="justify-content: space-between">
             {TABS.map(({ label, value }) => {
               let tooltipText = "";
         
               if (value === "request") {
-                tooltipText = "Blood Request/Donor Interest";
+                tooltipText = "Blood Donor Requests";
               } else if (value === "history") {
-                tooltipText = "Blood Request History";
+                tooltipText = "Blood Request Made";
               }
         
               return (

@@ -17,6 +17,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
 import { useRouter } from "next/navigation";
+import PDFIcon from "@/public/pdf_icon";
 
 const TABLE_HEAD = [
   { label: "Serial Number", key: "serial_no" },
@@ -188,35 +189,39 @@ export function HistoryTable() {
           </Typography>
         </CardHeader>
         <CardBody className="px-0">
-        <div className="px-4 pb-4 flex justify-between items-center w-full">
-          <div className="flex items-center gap-1">
-            <ClockIcon className="h-5 w-5" />
-            <Typography className="font-medium text-blue-gray-500">
-              {lastDonation.days_since_last_donation}
-            </Typography>
-            <ArrowRightIcon className="ml-6 h-5 w-5" />
-            <Typography className="font-medium text-blue-gray-500">
-              Next donation date is {formatDate(lastDonation.nextDonationDate)}
-            </Typography>
-          </div>
-          <Tooltip 
-          placement="left"
-          content={
-            <div className="flex flex-col items-center">
-              <Typography variant="small">
-                Last Exports:
-              </Typography>
-              <Typography variant="small">
-              - October 20, 2023
-              </Typography>
-              <Typography variant="small">
-              - October 18, 2023
+        <div className="px-4 pb-4 flex 2xl:flex-row flex-col justify-between items-center gap-3 w-full">
+          <div className="flex 2xl:flex-row flex-col items-center gap-3">
+            <div className="flex place-items-center justify-between gap-2">
+              <ClockIcon className="h-5 w-5" />
+              <Typography className="font-medium text-blue-gray-500">
+                {lastDonation.days_since_last_donation}
               </Typography>
             </div>
-            }
+            <div className="flex place-items-center justify-between gap-2">
+              <ArrowRightIcon className="ml-6 h-5 w-5" />
+              <Typography className="font-medium text-blue-gray-500">
+                Next donation is {formatDate(lastDonation.nextDonationDate)}
+              </Typography>
+            </div>
+          </div>
+          <Tooltip 
+            placement="left"
+            content={
+              <div className="flex flex-col items-center">
+                <Typography variant="small">
+                  Last Exports:
+                </Typography>
+                <Typography variant="small">
+                - October 20, 2023
+                </Typography>
+                <Typography variant="small">
+                - October 18, 2023
+                </Typography>
+              </div>
+              }
           >
             <Button
-              className="flex items-center gap-3"
+              className="flex items-center justify-between gap-3"
               size="sm"
               onClick={exportBloodBagsAsPDF}
             >
@@ -224,78 +229,80 @@ export function HistoryTable() {
             </Button>
           </Tooltip>
         </div>
-        <table className="w-full table-auto text-left">
-          <thead>
-            <tr>
-              {TABLE_HEAD.map((head) => (
-                <th
-                  key={head.key}
-                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
-                  onClick={() => handleSort(head.key)} 
-                >
-                  <div className="flex items-center">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal leading-none opacity-70"
-                    >
-                      {head.label}
-                    </Typography>
-                    {sortColumn === head.key && (
-                      <span className="ml-2">
-                        {sortOrder === "asc" ? "▲" : "▼"}
-                      </span>
-                    )}
-                  </div>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {userDetails.map((user, index) => (
-              <tr key={user.donor_no} className="border-b">
-                <td className={classes}>
-                  <div className="flex items-center gap-3">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-bold"
-                    >
-                      {user.serial_number}
-                    </Typography>
-                  </div>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
+        <div className="w-full overflow-x-auto">
+          <table className="w-full table-auto text-left">
+            <thead>
+              <tr>
+                {TABLE_HEAD.map((head) => (
+                  <th
+                    key={head.key}
+                    className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
+                    onClick={() => handleSort(head.key)} 
                   >
-                    {formatDate(user.date)}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {user.bled_by}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {user.venue}
-                  </Typography>
-                </td>
+                    <div className="flex items-center">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal leading-none opacity-70"
+                      >
+                        {head.label}
+                      </Typography>
+                      {sortColumn === head.key && (
+                        <span className="ml-2">
+                          {sortOrder === "asc" ? "▲" : "▼"}
+                        </span>
+                      )}
+                    </div>
+                  </th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {userDetails.map((user, index) => (
+                <tr key={user.donor_no} className="border-b">
+                  <td className={classes}>
+                    <div className="flex items-center gap-3">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-bold"
+                      >
+                        {user.serial_number}
+                      </Typography>
+                    </div>
+                  </td>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {formatDate(user.date)}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {user.bled_by}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {user.venue}
+                    </Typography>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </CardBody>
       <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
         <Button
