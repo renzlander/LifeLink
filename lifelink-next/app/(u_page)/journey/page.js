@@ -2,7 +2,6 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Typography,   Spinner, } from "@material-tailwind/react";
-import { JourneyStepper } from './components/stepper';
 import { BloodBagTable } from './components/table';
 import axios from "axios"; 
 import { laravelBaseUrl } from "@/app/variables";

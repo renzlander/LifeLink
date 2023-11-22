@@ -43,7 +43,7 @@ export function JourneyTimeline({ activeSteps }) {
   }, [activeSteps]);
 
   return (
-    <Card className="md:w-1/2 w-full mt-10">
+    <Card className="xl:w-1/2 w-full mt-6">
       <CardHeader color="red" className="relative h-16 flex items-center">
         <Typography variant="h4" color="white" className="ml-4">
           Trace Blood Bag

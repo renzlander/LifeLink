@@ -69,8 +69,8 @@ export function BloodBagTable({ bloodJourney }) {
   }
 
   return (
-    <div className="flex md:flex-row flex-col items-start justify-between gap-4 min-h-screen">
-      <Card className="h-full md:w-1/2 w-full mt-10">
+    <div className="w-full min-h-screen flex xl:flex-row flex-col items-start justify-between gap-4 py-4">
+      <Card className="xl:w-1/2 w-full mt-6">
         <CardHeader color="red" className="relative h-16 flex items-center">
           <Typography variant="h4" color="white" className="ml-4">
             My Blood Bags

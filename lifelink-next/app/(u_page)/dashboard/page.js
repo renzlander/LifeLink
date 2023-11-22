@@ -124,27 +124,27 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
+      <>
         <Spinner color="red" className="h-16 w-16" />
         <p className="mb-[180px] text-gray-600">Loading...</p>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="bg-gray-300 min-h-screen flex flex-col gap-y-3 py-4">
-      <div className='flex justify-between gap-4 w-full'>
+    <div className="flex flex-col gap-y-3 py-4">
+      <div className='flex 3xl:flex-row flex-col justify-between gap-4 w-full'>
         <Card className="mt-6 w-full bg-gray-100">
           <CardHeader color='gray' variant='gradient' className="h-16 flex items-center mb-4">
             <Typography variant="h4" color="white" className="ml-4">
               Blood Stock
             </Typography>
           </CardHeader>
-          <CardBody className='w-full flex flex-col items-center gap-10'>
-            <div className="flex 3xl:gap-16 gap-3 shrink">
+          <CardBody className='w-full flex xl:flex-col flex-row items-center justify-center gap-10'>
+            <div className="flex xl:flex-row flex-col 3xl:gap-16 xl:gap-3 gap-10">
               {bloodListCards.slice(0, 4)}
             </div>
-            <div className="flex 3xl:gap-16 gap-3 shrink">
+            <div className="flex xl:flex-row flex-col 3xl:gap-16 xl:gap-3 gap-10">
               {bloodListCards.slice(4, 8)}
             </div>
           </CardBody>
@@ -153,7 +153,7 @@ export default function Home() {
               <ClockIcon className="w-5 h-5 text-gray-700" />
               <Typography className="text-sm text-gray-700 font-normal">Last Updated:</Typography>
             </div>
-            <Typography className="text-gray-700 text-md font-normal">{formatDate(updatedAt)} {updatedAtTime}</Typography>
+            <Typography className="text-gray-700 text-xl font-normal">{formatDate(updatedAt)} {updatedAtTime}</Typography>
           </CardFooter>
         </Card>
         <DonationCard donationSummary={donationSummary}/>
