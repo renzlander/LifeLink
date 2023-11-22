@@ -18,9 +18,8 @@ import {
   Spinner
 } from "@material-tailwind/react";
  import { 
-    PencilIcon,
-    Square3Stack3DIcon,
-    UserCircleIcon,
+    UserIcon,
+    TrophyIcon,
     Cog6ToothIcon,
   } from "@heroicons/react/24/solid";
 import axios from "axios";
@@ -153,13 +152,13 @@ export default function Home() {
     {
       label: "Profile",
       value: "pofile",
-      icon: Square3Stack3DIcon,
+      icon: UserIcon,
       content: <TabInfo userDetails={userDetails} donationSummary={donationSummary} lastDonation={lastDonation} />,
     },
     {
       label: "Achievements",
       value: "achieve",
-      icon: Square3Stack3DIcon,
+      icon: TrophyIcon,
       content: <TabAchieve userDetails={userDetails} donationSummary={donationSummary} achievement={achievement}/>,
     },
     {
@@ -183,7 +182,7 @@ export default function Home() {
     );
   }
   return (
-    <div className="flex min-h-screen flex-col py-4 px-10">
+    <div className="w-full min-h-screen flex flex-col py-4 ">
       <div>
         <div className="w-full h-72 bg-gray-900 rounded-xl shadow-md shadow-gray-500 relative">
           <Image
@@ -211,14 +210,16 @@ export default function Home() {
                   </Typography>
                 </div>
               </div>
-              <div className="w-full md:w-1/2">
+              <div className="w-full 2xl:w-4/6">
                 <Tabs value="pofile">
                   <TabsHeader>
                     {TABS.map(({ label, value, icon }) => (
                       <Tab key={value} value={value} onClick={() => handleTabChange(value)}>
                         <div className="flex items-center gap-2">
                           {React.createElement(icon, { className: "w-5 h-5" })}
-                          {label}
+                          <span className="hidden 2xl:block">
+                            {label}
+                          </span>
                         </div>
                       </Tab>
                     ))}
