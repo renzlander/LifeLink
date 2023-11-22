@@ -1,4 +1,6 @@
 import React, { useState, useEffect} from "react";
+import { useRouter } from "next/navigation";
+import Image from 'next/image';
 import {
   Card,
   CardHeader,
@@ -10,6 +12,14 @@ import {
   Chip,
   IconButton,
 } from "@material-tailwind/react";
+import { 
+    AtSymbolIcon,
+    DevicePhoneMobileIcon,
+    CakeIcon,
+    UsersIcon,
+    HomeIcon,
+    BriefcaseIcon,
+ } from "@heroicons/react/24/outline";
  import { 
     PencilIcon,
   } from "@heroicons/react/24/solid";
@@ -17,6 +27,8 @@ import {
  import BronzeBadge from "@/public/Badges/BronzeBadge";
  import SilverBadge from "@/public/Badges/SilverBadge";
  import GoldBadge from "@/public/Badges/GoldBadge";
+import axios from "axios";
+import { laravelBaseUrl } from "@/app/variables";
 
 function formatMiddleName(middleName) {
   if (!middleName) {
@@ -62,29 +74,27 @@ export function TabInfo({ userDetails, donationSummary, lastDonation }) {
               <Chip
                   value={donationSummary.badge === "none" ? "No Badge" : donationSummary.badge === "bronze" ? "Bronze Badge" : donationSummary.badge === "silver" ? "Silver Badge" : "Gold Badge"}
                   color={
-                      donationSummary.badge === "none"
-                    ? "gray"
-                    : donationSummary.badge === "bronze"
-                    ? "brown" 
-                    : donationSummary.badge === "silver"
-                    ? "blue-gray" 
-                    : "yellow"
+                            donationSummary.badge === "none"
+                          ? "gray"
+                          : donationSummary.badge === "bronze"
+                          ? "brown" 
+                          : donationSummary.badge === "silver"
+                          ? "blue-gray" 
+                          : "yellow"
                   }
                   variant="gradient"
                   className="text-white"
               />
-              <div className="bg-gray-200 w-full p-4 rounded-lg shadow-md flex items-center justify-center">
-                <Typography variant="paragraph" color="blue-gray" className="text-base text-center flex flex-row 3xl:flex-row 2xl:flex-col items-center">
-                    <span className="font-bold mx-2">{donationSummary.donationsNeeded}</span> more {donationSummary.donationsNeeded === 1 ? "Donation" : "Donations"} to unlock
-                    <Chip
-                        value={`${donationSummary.nextBadge} Badge`}
-                        color={donationSummary.nextBadge === "bronze" ? "brown" : donationSummary.nextBadge === "silver" ? "blue-gray" : "yellow"}
-                        variant="gradient"
-                        className="text-white mx-2"
-                    />
-                    badge
-                </Typography>
-              </div>
+              <Typography variant="paragraph" color="blue-gray" className="bg-gray-200 p-4 rounded-lg shadow-md md:text-base text-sm text-center flex items-center">
+                  <span className="font-bold mx-2">{donationSummary.donationsNeeded}</span> more {donationSummary.donationsNeeded === 1 ? "Donation" : "Donations"} to unlock
+                  <Chip
+                      value={`${donationSummary.nextBadge} Badge`}
+                      color={donationSummary.nextBadge === "bronze" ? "brown" : donationSummary.nextBadge === "silver" ? "blue-gray" : "yellow"}
+                      variant="gradient"
+                      className="text-white mx-2"
+                  />
+                  badge
+              </Typography>
             </div>
           </div>
           <div className="col-span-1 md:border-r md:border-b-0 border-b px-2 pb-4">
@@ -92,6 +102,9 @@ export function TabInfo({ userDetails, donationSummary, lastDonation }) {
               <Typography variant="h6" className="font-sans text-lg text-blue-gray-700">
                 Personal Info
               </Typography>
+              {/* <IconButton variant="text">
+                <PencilIcon className="w-4 h-4" />
+              </IconButton> */}
             </div>
             <div className="flex flex-col gap-2">
               <Typography variant="small" className="font-semibold text-base text-blue-gray-700">
