@@ -30,14 +30,14 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full min-h-screen flex flex-col py-4 ">
+    <div className="bg-gray-300 min-h-screen flex flex-col gap-y-3 py-4">
       <Card className="w-full mt-8 bg-gray-100">
         <CardHeader color="red" className="relative h-16 flex items-center">
           <Typography variant="h4" color="white" className="ml-4">
             Blood Network
           </Typography>
         </CardHeader>
-        <Tabs value={activeTab} className="w-full p-4 mx-4 mt-4">
+        <Tabs value={activeTab} className="md:w-1/3 w-full p-4 mx-4 mt-4">
           <TabsHeader className="justify-content: space-between">
             {TABS.map(({ label, value }) => {
               let tooltipText = "";

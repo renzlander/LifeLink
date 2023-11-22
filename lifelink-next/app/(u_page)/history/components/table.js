@@ -181,7 +181,7 @@ export function HistoryTable() {
   }
 
   return (
-    <Card className="w-full mt-6">
+    <Card className="h-full w-full mt-8">
         <CardHeader color="red" className="relative h-16 flex items-center">
           <Typography variant="h4" color="white" className="ml-4">
            Donation History
