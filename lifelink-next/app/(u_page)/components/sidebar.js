@@ -15,7 +15,7 @@ import {
     TruckIcon,
     UserIcon,
     ArrowLeftOnRectangleIcon,
-    ChevronRightIcon,
+    XCircleIcon,
     Bars3Icon,
   } from "@heroicons/react/24/solid";
   import axios from "axios";
@@ -25,8 +25,7 @@ import {
   import { useState, useEffect } from "react"; 
   import { laravelBaseUrl } from "@/app/variables";
 
-  export function UserSidebar() {
-    const [userData, setUserData] = useState(null); 
+  export function MobileUserSidebar({ openDrawer, closeDrawer, userData }) {
     const router = useRouter();
     const pathName = usePathname();
 
@@ -58,172 +57,39 @@ import {
       { icon: UserIcon, text: "Profile", link: './profile' },
     ];
 
-    useEffect(() => {
-      const fetchUserInfo = async () => {
-        try {
-          const token = getCookie("token");
-          if (!token) {
-            router.push("./login");
-            return;
-          }
-  
-          const response = await axios.get(`${laravelBaseUrl}/api/me`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          
-          setUserData(response.data.data);
-  
-        } catch (error) {
-          console.error("Error fetching user information:", error);
-        }
-      };
-  
-      fetchUserInfo();
-    }, []);
-
     return (
       <>
-        <Card color="gray" variant="gradient" className="fixed top-4 left-4 h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 flex flex-col justify-between">
-          <div className="w-full">
-            <div className="flex justify-center items-center p-4 my-3">
-              <Link href='./profile'>
-                <Image src="/patient_icon.png" width={60} height={60} />
-              </Link>
-              <div className="flex flex-col ml-3 truncate">
-                <Tooltip placement="right-end" content={`${userData ? userData.first_name : ""} ${userData ? userData.last_name : ""}`}>
-                  <Typography className="text-gray-100 font-medium text-md truncate overflow-hidden max-w-[8rem]">
-                    {userData ? `${userData.first_name} ${userData.last_name}` : "Loading..."}
-                  </Typography> 
-                </Tooltip>
-                <Typography className="text-gray-100 font-light text-sm">Donor no: {userData ? userData.donor_no : "Loading..."}</Typography>
-              </div>
-            </div>
-            <hr className="fading_divider_white mb-4" />
-            <List className="max-w-full">
-              {menuItems.map((item, index) => (
-                <Link href={item.link} key={index} passHref>
-                  <Button
-                    variant={'.' + pathName === item.link ? 'gradient': 'text'}
-                    color={'.' + pathName === item.link ? 'red' : undefined}
-                    className='text-white flex items-center justify-between w-full hover:bg-gray-100 hover:bg-opacity-30'
-                  >
-                    <div className="flex items-center gap-4">
-                      {<item.icon className="h-5 w-5" />}
-                      <Typography variant="paragraph" className="normal-case font-medium">
-                        {item.text}
-                      </Typography>
-                    </div>
-                    {'.' + pathName === item.link ? <ChevronRightIcon className="h-5 w-5" /> : ''}
-                  </Button>
-                </Link>
-              ))}
-            </List>
-            <hr className="fading_divider_white mb-4" />
-          </div>
-          <Button
-            variant="text"
-            color="red"
-            className='text-white flex items-center justify-between w-full hover:bg-gray-100 hover:bg-opacity-30'
-            onClick={handleLogout}
-          >
-            <div className="flex items-center gap-4">
-              <ArrowLeftOnRectangleIcon className="h-5 w-5"/>
-              <Typography variant="paragraph" className="normal-case font-medium">
-                Log Out
-              </Typography>
-            </div>
-          </Button>
-        </Card>
-      </>
-    );
-  }
-
-  export function MobileUserSidebar({ openDrawer, closeDrawer }) {
-    const [userData, setUserData] = useState(null); 
-    const router = useRouter();
-    const pathName = usePathname();
-
-    const handleLogout = async () => {
-      const token = getCookie("token");
-      if (!token) {
-        router.push("./login");
-        return;
-      }
-      try {
-        const response = await axios.post(`${laravelBaseUrl}/api/logout`, null, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
-        router.push("./login");
-        console.log(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    const menuItems = [
-      { icon: HomeIcon, text: "Dashboard", link: './dashboard' },
-      { icon: ClockIcon, text: "History", link: './history' },
-      { icon: GlobeAltIcon, text: "Network", link: './network' },
-      { icon: TruckIcon, text: "Journey", link: './journey' },
-      { icon: UserIcon, text: "Profile", link: './profile' },
-    ];
-
-    useEffect(() => {
-      const fetchUserInfo = async () => {
-        try {
-          const token = getCookie("token");
-          if (!token) {
-            router.push("./login");
-            return;
-          }
-  
-          const response = await axios.get(`${laravelBaseUrl}/api/me`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          
-          setUserData(response.data.data);
-  
-        } catch (error) {
-          console.error("Error fetching user information:", error);
-        }
-      };
-  
-      fetchUserInfo();
-    }, []);
-
-    return (
-      <>
-        <Drawer open={openDrawer} onClose={closeDrawer} overlay={false} className="xl:hidden bg-transparent">
-          <Card color="gray" variant="gradient" className="xl:hidden fixed top-4 left-0 h-[calc(100vh-2rem)] w-full max-w-[20rem] p-2 flex flex-col justify-between">
+        <Drawer open={openDrawer} onClose={closeDrawer} overlay={true} size={257} className="xl:hidden bg-transparent">
+          <Card 
+            className='fixed top-4 left-4 h-[calc(100vh-2rem)] w-full max-w-[15rem] py-4 flex flex-col justify-between'
+            >
             <div className="w-full">
-              <div className="flex justify-center items-center p-4 my-3">
+              <div className='flex justify-between px-6 items-center'>
+                <IconButton variant='text'>
+                  <Bars3Icon className="h-10 w-10" onClick={closeDrawer} />
+                </IconButton>
+                <Image src="/logo_lifelink.png" width={100} height={40} />
+              </div>
+              <div className='flex justify-between px-6 items-center py-4'>
                 <Link href='./profile'>
-                  <Image src="/patient_icon.png" width={60} height={60} />
+                  <Image src="/patient_icon.png" width={40} height={40} />
                 </Link>
-                <div className="flex flex-col ml-3 truncate">
+                <div className='flex flex-col truncate'>
                   <Tooltip placement="right-end" content={`${userData ? userData.first_name : ""} ${userData ? userData.last_name : ""}`}>
-                    <Typography className="text-gray-100 font-medium text-md truncate overflow-hidden max-w-[8rem]">
+                    <Typography className="text-gray-800 font-medium text-md truncate overflow-hidden max-w-[8rem]">
                       {userData ? `${userData.first_name} ${userData.last_name}` : "Loading..."}
                     </Typography> 
                   </Tooltip>
-                  <Typography className="text-gray-100 font-light text-sm">Donor no: {userData ? userData.donor_no : "Loading..."}</Typography>
+                  <Typography className="text-gray-800 font-light text-sm">Donor no: {userData ? userData.donor_no : "Loading..."}</Typography>
                 </div>
               </div>
-              <hr className="fading_divider_white mb-4" />
-              <List className="max-w-full">
+              <hr className="fading_divider_gray mb-4" />
+              <List className='min-w-max'>
                 {menuItems.map((item, index) => (
                   <Link href={item.link} key={index} passHref>
                     <Button
-                      variant={'.' + pathName === item.link ? 'gradient': 'text'}
-                      color={'.' + pathName === item.link ? 'red' : undefined}
-                      className='text-white flex items-center justify-between w-full hover:bg-gray-100 hover:bg-opacity-30'
+                      variant='text'
+                      className={`${'.' + pathName === item.link ? 'bg-gray-300' : ''} text-gray-800 flex items-center justify-between w-full hover:bg-gray-300`}
                     >
                       <div className="flex items-center gap-4">
                         {<item.icon className="h-5 w-5" />}
@@ -231,26 +97,26 @@ import {
                           {item.text}
                         </Typography>
                       </div>
-                      {'.' + pathName === item.link ? <ChevronRightIcon className="h-5 w-5" /> : ''}
                     </Button>
                   </Link>
                 ))}
               </List>
-              <hr className="fading_divider_white mb-4" />
+              <hr className="fading_divider_gray my-4" />
             </div>
-            <Button
-              variant="text"
-              color="red"
-              className='text-white flex items-center justify-between w-full hover:bg-gray-100 hover:bg-opacity-30'
-              onClick={handleLogout}
-            >
-              <div className="flex items-center gap-4">
-                <ArrowLeftOnRectangleIcon className="h-5 w-5"/>
-                <Typography variant="paragraph" className="normal-case font-medium">
-                  Log Out
-                </Typography>
-              </div>
-            </Button>
+            <div className='px-2 flex justify-center'>
+              <Button
+                variant="text"
+                className='text-gray-800 flex items-center justify-between w-full hover:bg-gray-300'
+                onClick={handleLogout}
+              >
+                <div className="flex items-center gap-4">
+                  <ArrowLeftOnRectangleIcon className="h-5 w-5"/>
+                  <Typography variant="paragraph" className="normal-case font-medium">
+                    Log Out
+                  </Typography>
+                </div>
+              </Button>
+            </div>
           </Card>
         </Drawer>
       </>
