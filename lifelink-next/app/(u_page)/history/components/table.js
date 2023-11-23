@@ -229,8 +229,8 @@ export function HistoryTable() {
             </Button>
           </Tooltip>
         </div>
-        <div className="w-full overflow-x-auto">
-          <table className="w-full table-auto text-left">
+        <div className="overflow-x-auto">
+          <table className="min-w-max md:w-full table-auto text-left">
             <thead>
               <tr>
                 {TABLE_HEAD.map((head) => (

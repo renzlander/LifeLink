@@ -59,15 +59,13 @@ import {
 
     return (
       <>
-        <Drawer open={openDrawer} onClose={closeDrawer} overlay={true} size={257} className="xl:hidden bg-transparent">
+        <Drawer open={openDrawer} onClose={closeDrawer} overlay={false} size={257} className="xl:hidden bg-transparent">
           <Card 
             className='fixed top-4 left-4 h-[calc(100vh-2rem)] w-full max-w-[15rem] py-4 flex flex-col justify-between'
             >
             <div className="w-full">
               <div className='flex justify-between px-6 items-center'>
-                <IconButton variant='text'>
-                  <Bars3Icon className="h-10 w-10" onClick={closeDrawer} />
-                </IconButton>
+                <Image src="/prc_logo.png" width={40} height={40} />
                 <Image src="/logo_lifelink.png" width={100} height={40} />
               </div>
               <div className='flex justify-between px-6 items-center py-4'>
