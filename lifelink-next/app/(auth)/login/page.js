@@ -1,8 +1,6 @@
-"use client"
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { LoginForm } from './components/loginForm';
-import { ToastContainer, toast  } from 'react-toastify';
+"use client";
+import { ToastContainer } from "react-toastify";
+import { LoginForm } from "./components/LoginForm";
 
 export default function LoginPage() {
   return (
@@ -21,5 +19,5 @@ export default function LoginPage() {
         theme="dark"
       />
     </main>
-  )
+  );
 }

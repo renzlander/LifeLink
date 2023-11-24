@@ -1,6 +1,11 @@
-import { DocumentIcon, UserCircleIcon, CheckIcon, EnvelopeIcon   } from "@heroicons/react/24/outline";
-import { Stepper, Step, Button, Typography } from "@material-tailwind/react";
-import React, { useState, useEffect } from "react";
+import {
+  CheckIcon,
+  DocumentIcon,
+  EnvelopeIcon,
+  UserCircleIcon,
+} from "@heroicons/react/24/outline";
+import { Step, Stepper } from "@material-tailwind/react";
+import { useEffect, useState } from "react";
 import { RegF1 } from "./regf1";
 import { RegF2 } from "./regf2";
 import { RegF3 } from "./regf3";
@@ -10,7 +15,7 @@ export function RegisterStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [isLastStep, setIsLastStep] = useState(false);
   const [isFirstStep, setIsFirstStep] = useState(true);
-  console.log("activeStep",activeStep);
+  console.log("activeStep", activeStep);
   const handleNextStep = () => {
     if (!isLastStep) {
       setActiveStep((cur) => cur + 1);
@@ -31,10 +36,12 @@ export function RegisterStepper() {
     <RegF3 key="step3" />,
     <RegF4 key="step4" />,
   ];
-  
 
   useEffect(() => {
-    const user_id = document.cookie.replace(/(?:(?:^|.*;\s*)user_id\s*=\s*([^;]*).*$)|^.*$/, "$1");
+    const user_id = document.cookie.replace(
+      /(?:(?:^|.*;\s*)user_id\s*=\s*([^;]*).*$)|^.*$/,
+      "$1"
+    );
     if (user_id) {
       setActiveStep(1);
     }
@@ -54,7 +61,7 @@ export function RegisterStepper() {
           <DocumentIcon className="h-5 w-5" />
         </Step>
         <Step key="checkIcon">
-          <EnvelopeIcon  className="h-5 w-5" />
+          <EnvelopeIcon className="h-5 w-5" />
         </Step>
         <Step key="checkIcon">
           {/* Add your custom icon component here */}
@@ -66,5 +73,4 @@ export function RegisterStepper() {
       </div>
     </div>
   );
-  
 }
