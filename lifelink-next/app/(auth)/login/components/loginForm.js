@@ -9,7 +9,7 @@ import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export function LoginForm() {
+export default function LoginForm() {
   const router = useRouter();
   const [email_or_phone, setEmail] = useState("");
   const [password, setPassword] = useState("");

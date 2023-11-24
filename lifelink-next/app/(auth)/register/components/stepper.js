@@ -11,7 +11,7 @@ import { RegF2 } from "./RegForm2";
 import { RegF3 } from "./RegForm3";
 import { RegF4 } from "./RegForm4";
 
-export function RegisterStepper() {
+export default function RegisterStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [isLastStep, setIsLastStep] = useState(false);
   const [isFirstStep, setIsFirstStep] = useState(true);

@@ -10,7 +10,7 @@ import {
 } from "@material-tailwind/react";
 import { useRouter } from "next/navigation";
 
-export function NavbarIndex() {
+export default function NavbarIndex() {
   const router = useRouter();
   const [openNav, setOpenNav] = useState(false);
 
