@@ -1,6 +1,6 @@
-'use client'
-import { useEffect, useState } from "react";
-import Image from 'next/image';
+"use client";
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import {
   Navbar,
   Collapse,
@@ -9,18 +9,18 @@ import {
   IconButton,
 } from "@material-tailwind/react";
 import { useRouter } from "next/navigation";
- 
+
 export function NavbarIndex() {
   const router = useRouter();
   const [openNav, setOpenNav] = useState(false);
- 
+
   useEffect(() => {
     window.addEventListener(
       "resize",
-      () => window.innerWidth >= 960 && setOpenNav(false),
+      () => window.innerWidth >= 960 && setOpenNav(false)
     );
   }, []);
- 
+
   const navList = (
     <ul className="mb-4 mt-2 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
       <Typography
@@ -30,7 +30,7 @@ export function NavbarIndex() {
         className="p-1 font-normal"
       >
         <a href="#" className="flex items-center">
-            Home
+          Home
         </a>
       </Typography>
       <Typography
@@ -40,7 +40,7 @@ export function NavbarIndex() {
         className="p-1 font-normal"
       >
         <a href="#" className="flex items-center">
-            News
+          News
         </a>
       </Typography>
       <Typography
@@ -50,7 +50,7 @@ export function NavbarIndex() {
         className="p-1 font-normal"
       >
         <a href="#" className="flex items-center">
-            Blood Banks
+          Blood Banks
         </a>
       </Typography>
       <Typography
@@ -60,7 +60,7 @@ export function NavbarIndex() {
         className="p-1 font-normal"
       >
         <a href="#" className="flex items-center">
-            About
+          About
         </a>
       </Typography>
       <Typography
@@ -70,19 +70,17 @@ export function NavbarIndex() {
         className="p-1 font-normal"
       >
         <a href="#" className="flex items-center">
-            Contact Us
+          Contact Us
         </a>
       </Typography>
     </ul>
   );
- 
+
   return (
     <Navbar className="my-2 mx-auto min-w-full py-2 px-4 lg:px-8 lg:py-4">
       <div className="container mx-auto flex items-center justify-between text-blue-gray-900">
-        <Image src="/logo_lifelink.png" alt="Logo" width={100} height={50}/>
-        <div className="hidden lg:block">
-          {navList}
-        </div>
+        <Image src="/logo_lifelink.png" alt="Logo" width={100} height={50} />
+        <div className="hidden lg:block">{navList}</div>
         <div className="flex items-center gap-x-1">
           <Button
             onClick={() => {
@@ -146,24 +144,24 @@ export function NavbarIndex() {
       <Collapse open={openNav}>
         {navList}
         <div className="flex items-center gap-x-1">
-          <Button 
+          <Button
             onClick={() => {
               router.push("/login");
             }}
-            fullWidth 
-            variant="text" 
-            size="sm" 
+            fullWidth
+            variant="text"
+            size="sm"
             className=""
           >
             <span>Log In</span>
           </Button>
-          <Button 
+          <Button
             onClick={() => {
               router.push("/register");
             }}
-            fullWidth 
-            variant="gradient" 
-            size="sm" 
+            fullWidth
+            variant="gradient"
+            size="sm"
             className=""
           >
             <span>Sign in</span>

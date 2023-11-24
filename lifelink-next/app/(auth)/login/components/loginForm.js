@@ -1,11 +1,12 @@
 "use client";
+import React from "react";
 import { laravelBaseUrl } from "@/app/variables";
 import { Button, Card, Input, Typography } from "@material-tailwind/react";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export function LoginForm() {
