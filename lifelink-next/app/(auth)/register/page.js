@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from "react";
-import RegisterStepper from "./components/Stepper";
+import RegisterStepper from "./components/Steppers";
 
 export default function RegisterPage() {
   useEffect(() => {

@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import LoginForm from "./components/LoginForm";
+import LoginForm from "./components/LoginForms";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
