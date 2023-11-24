@@ -124,10 +124,10 @@ export default function Home() {
 
   if (loading) {
     return (
-      <>
+      <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
         <Spinner color="red" className="h-16 w-16" />
         <p className="mb-[180px] text-gray-600">Loading...</p>
-      </>
+      </div>
     );
   }
 
@@ -140,7 +140,7 @@ export default function Home() {
               Blood Stock
             </Typography>
           </CardHeader>
-          <CardBody className='w-full flex 2xl:flex-col flex-row items-center justify-start gap-10 overflow-x-auto'>
+          <CardBody className='w-full flex 2xl:flex-col flex-row items-center justify-center 2xl:gap-10 gap-6 overflow-x-auto'>
             <div className="flex 2xl:flex-row flex-col 3xl:gap-16 2xl:gap-3 gap-10">
               {bloodListCards.slice(0, 4)}
             </div>

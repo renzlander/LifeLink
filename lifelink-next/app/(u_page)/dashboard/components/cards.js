@@ -36,7 +36,7 @@ export function BloodListCard({ bloodType, availability, legend }) {
   }
   
   return (
-    <Card className="w-56">
+    <Card className="2xl:w-56 w-34">
       <CardHeader
         color="transparent"
         shadow={false}

@@ -25,9 +25,7 @@ export default function Home() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState(TABS[0].value);
 
-  const handleTabChange = (tabValue) => {
-    setActiveTab(tabValue);
-  };
+  const handleTabChange = (tabValue) => setActiveTab(tabValue);;
 
   return (
     <div className="w-full min-h-screen flex flex-col py-4 ">
@@ -37,7 +35,7 @@ export default function Home() {
             Blood Network
           </Typography>
         </CardHeader>
-        <Tabs value={activeTab} className="w-full p-4 2xl:mx-4 mt-4">
+        <Tabs value={activeTab} className="w-full 2xl:w-1/2 p-4 2xl:mx-4 mt-4">
           <TabsHeader className="justify-content: space-between">
             {TABS.map(({ label, value }) => {
               let tooltipText = "";

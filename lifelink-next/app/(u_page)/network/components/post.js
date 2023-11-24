@@ -140,23 +140,28 @@ export function PostCard() {
 
             {adminPosts.map((post) => (
                 <Card key={post.blood_request_id} shadow={false} className="p-4 w-full shadow-md">
-                    <CardHeader color="transparent" floated={false} shadow={false} className="mx-0 flex items-center gap-4 pt-0 pb-8">
-                        <Avatar size="md" variant="circular" src="/prc_logo.png" />
-                        <div className="flex w-full justify-between gap-0.5">
-                            <div className="flex flex-col">
+                    <CardHeader color="transparent" floated={false} shadow={false} className="w-full m-0 flex 2xl:flex-row flex-col items-center justify-between">
+                        <div className="flex gap-4">
+                            <Avatar size="md" variant="circular" src="/prc_logo.png" />
+                            <div className="flex flex-col items-start">
                                 <Typography variant="h5" color="blue-gray">
                                     Valenzuela City Philippine Red Cross
                                 </Typography>
-                                <Typography color="blue-gray">Posted on: {formatDate(post.created_at)}</Typography>
-                            </div>
-                            <div className="flex flex-col">
-                                <Typography color="blue-gray">Donation Date: {formatDate(post.donation_date)}</Typography>
-                                <Typography color="blue-gray">Venue : {post.venue}</Typography>
+                                <Typography color="blue-gray" variant="small">{formatDate(post.created_at)}</Typography>
                             </div>
                         </div>
                     </CardHeader>
-                    <CardBody className="mb-2 p-0">
-                        <Typography variant="h6" color="blue-gray">Blood Type Need : <span>{post.blood_needs}</span></Typography>
+                    <CardBody className="mt-6 p-0">
+                        <div className="w-full flex flex-col 2xl:flex-row items-start justify-between">
+                            <Typography variant="h6" color="blue-gray">Blood Type Need : <span>{post.blood_needs}</span></Typography>
+                            <div className="flex flex-col items-start">
+                                <Typography color="blue-gray" variant="h6" className="text-base">
+                                    Donation Date: 
+                                    <span className="font-medium"> {formatDate(post.donation_date)}</span>
+                                </Typography>
+                                <Typography color="blue-gray" variant="h6" className="text-base">Venue : <span className="font-medium"> {post.venue}</span></Typography>
+                            </div>
+                        </div>
                         <Typography color="blue-gray" className="mt-2">
                             {post.body}
                         </Typography>
@@ -181,46 +186,6 @@ export function PostCard() {
         </>
     );
     
-}
-
-export function FilterCheckBox() {
-    const filters = ["Approved", "Pending", "Disapproved"];
-    const [checkedStatus, setCheckedStatus] = useState(filters.map(() => true));
-
-    return (
-        <Card className="w-full max-w-md">
-            <Typography variant="h5" color="blue-gray" className="ml-4 mt-4">
-                Filters
-            </Typography>
-            <List className="flex-row">
-                {filters.map((filters, index) => (
-                    <ListItem className="p-0" key={filters}>
-                        <label htmlFor={`horizontal-list-${filters.toLowerCase()}`} className="flex w-full cursor-pointer items-center px-3 py-2">
-                            <ListItemPrefix className="mr-3">
-                                <Checkbox
-                                    id={`horizontal-list-${filters.toLowerCase()}`}
-                                    ripple={false}
-                                    className="hover:before:opacity-0"
-                                    containerProps={{
-                                        className: "p-0",
-                                    }}
-                                    checked={checkedStatus[index]}
-                                    onChange={(event) => {
-                                        const updatedCheckedStatus = [...checkedStatus];
-                                        updatedCheckedStatus[index] = event.target.checked;
-                                        setCheckedStatus(updatedCheckedStatus);
-                                    }}
-                                />
-                            </ListItemPrefix>
-                            <Typography color="blue-gray" className="font-medium">
-                                {filters}
-                            </Typography>
-                        </label>
-                    </ListItem>
-                ))}
-            </List>
-        </Card>
-    );
 }
 
 function getCookie(name) {

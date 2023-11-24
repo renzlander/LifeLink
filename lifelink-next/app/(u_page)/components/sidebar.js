@@ -1,29 +1,25 @@
 "use client";
+import { laravelBaseUrl } from "@/app/variables";
 import {
-    Card,
-    Drawer,
-    Typography,
-    List,
-    Button,
-    IconButton,
-    Tooltip,
-  } from "@material-tailwind/react";
-  import {
-    HomeIcon,
-    ClockIcon,
-    GlobeAltIcon,
-    TruckIcon,
-    UserIcon,
-    ArrowLeftOnRectangleIcon,
-    XCircleIcon,
-    Bars3Icon,
-  } from "@heroicons/react/24/solid";
-  import axios from "axios";
-  import Image from "next/image";
-  import Link from "next/link";
-  import { useRouter, usePathname } from 'next/navigation';
-  import { useState, useEffect } from "react"; 
-  import { laravelBaseUrl } from "@/app/variables";
+  ArrowLeftOnRectangleIcon,
+  ClockIcon,
+  GlobeAltIcon,
+  HomeIcon,
+  TruckIcon,
+  UserIcon,
+} from "@heroicons/react/24/solid";
+import {
+  Button,
+  Card,
+  Drawer,
+  List,
+  Tooltip,
+  Typography
+} from "@material-tailwind/react";
+import axios from "axios";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname, useRouter } from 'next/navigation';
 
   export function MobileUserSidebar({ openDrawer, closeDrawer, userData }) {
     const router = useRouter();

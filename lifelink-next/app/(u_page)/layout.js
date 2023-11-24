@@ -41,9 +41,7 @@ export default function UserLayout({ children }) {
   const openDrawer = () => setOpen(true);
   const closeDrawer = () => setOpen(false);
 
-  const openMiniSide = () => {
-    setMiniSide(!MiniSide)
-  };
+  const openMiniSide = () => setMiniSide(!MiniSide);
 
   useEffect(() => {
     window.addEventListener(

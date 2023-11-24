@@ -74,7 +74,7 @@ export function TabInfo({ userDetails, donationSummary, lastDonation }) {
                   className="text-white"
               />
               <div className="bg-gray-200 w-full p-4 rounded-lg shadow-md flex items-center justify-center">
-                <Typography variant="paragraph" color="blue-gray" className="text-base text-center flex flex-row 3xl:flex-row 2xl:flex-col items-center">
+                <Typography variant="paragraph" color="blue-gray" className="text-base text-center flex flex-col 3xl:flex-row 2xl:flex-col items-center">
                     <span className="font-bold mx-2">{donationSummary.donationsNeeded}</span> more {donationSummary.donationsNeeded === 1 ? "Donation" : "Donations"} to unlock
                     <Chip
                         value={`${donationSummary.nextBadge} Badge`}

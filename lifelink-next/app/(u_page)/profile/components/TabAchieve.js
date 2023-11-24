@@ -38,7 +38,10 @@ export function TabAchieve({ achievement }) {
             />
           </CardBody>
           <CardFooter className="border-t-2 p-4">
-            <Typography>Date Achieved: {formatDate(dateAchieved)}</Typography>
+            <div className="flex flex-col 2xl:flex-row items-center gap-3">
+              <Typography>Date Achieved:</Typography>
+              <Typography>{formatDate(dateAchieved)}</Typography>
+            </div>
           </CardFooter>
         </Card>
       );

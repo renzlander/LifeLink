@@ -21,26 +21,26 @@ export function CreateRequest() {
       </Button>
       <Dialog open={open} handler={handleOpen}>
         <DialogHeader>Make a Blood Request</DialogHeader>
-        <DialogBody className="grid gap-4">
+        <DialogBody className="flex flex-col gap-4">
           <Input label="No. of Blood Units" />
           {/* <InputSelect /> */}
           <Input label="Diagnosis" />
           <Input label="Hospital" />
-          <div className="flex items-center justify-between gap-4 w-full">
-            <Input type="date" label="Date" />
-            <Input type="time" label="Time" />
+          <div className="flex flex-wrap 2xl:flex-nowrap items-center justify-between gap-4 w-full">
+            <Input type="date" label="Date"/>
+            <Input type="time" label="Time"/>
           </div>
         </DialogBody>
         <DialogFooter>
           <Button
-            variant="text"
-            color="red"
+            variant="outlined"
+            color="gray"
             onClick={handleOpen}
-            className="mr-1"
+            className="mr-3"
           >
             <span>Cancel</span>
           </Button>
-          <Button variant="gradient" color="green" onClick={handleOpen}>
+          <Button variant="gradient" color="red" onClick={handleOpen}>
             <span>Submit Request</span>
           </Button>
         </DialogFooter>
