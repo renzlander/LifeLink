@@ -6,10 +6,10 @@ import {
 } from "@heroicons/react/24/outline";
 import { Step, Stepper } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { RegF1 } from "./regf1";
-import { RegF2 } from "./regf2";
-import { RegF3 } from "./regf3";
-import { RegF4 } from "./regf4";
+import { RegF1 } from "./RegForm1";
+import { RegF2 } from "./RegForm2";
+import { RegF3 } from "./RegForm3";
+import { RegF4 } from "./RegForm4";
 
 export function RegisterStepper() {
   const [activeStep, setActiveStep] = useState(0);
