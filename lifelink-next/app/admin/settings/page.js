@@ -6,7 +6,9 @@ import { MaintenanceSwitch } from "./components/Maintenance";
 import { PDCatCrud } from "./components/PdcatCrud";
 import { SecurityPin } from "./components/SecurityPin";
 import { TDCatCrud } from "./components/TdcatCrud";
-import { TDRemCrud } from "./components/TdremCrud";
+import { ReactiveRemarksCrud } from "./components/ReactiveCrud";
+import { SpoiledRemarksCrud } from "./components/SpoiledCrud";
+
 import { VenueCrud } from "./components/VenueCrud";
 
 import HospitalIcon from "@/public/HospitalIcon";
@@ -46,13 +48,18 @@ export default function Home() {
       icon: <QueueListIcon className="h-5 w-5 text-black" />,
     },
     {
-      title: "Temporary Deferral Remarks",
-      url: "#tdrem",
+      title: "Permanent Deferral Category",
+      url: "#pdcat",
       icon: <QueueListIcon className="h-5 w-5 text-black" />,
     },
     {
-      title: "Permanent Deferral Category",
-      url: "#pdcat",
+      title: "Reactive Blood Bags Remarks",
+      url: "#reactive-remarks",
+      icon: <QueueListIcon className="h-5 w-5 text-black" />,
+    },
+    {
+      title: "Spoiled Blood Bags Remarks",
+      url: "#spoiled-remarks",
       icon: <QueueListIcon className="h-5 w-5 text-black" />,
     },
     {
@@ -88,8 +95,9 @@ export default function Home() {
           <HospitalCrud />
           <BledByCrud />
           <TDCatCrud />
-          <TDRemCrud />
           <PDCatCrud />
+          <ReactiveRemarksCrud />
+          <SpoiledRemarksCrud />
           <SecurityPin />
         </div>
       </div>
