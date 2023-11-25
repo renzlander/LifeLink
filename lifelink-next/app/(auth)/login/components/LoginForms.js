@@ -37,13 +37,13 @@ export default function LoginForm() {
             new Date().getTime() + 86400 * 1000
           ).toUTCString()}; path=/`;
           // toast.success("Login successful!");
-          router.push("/user-dashboard");
+          router.push("/user/dashboard");
         } else {
           document.cookie = `token=${response.data.token}; expires=${new Date(
             new Date().getTime() + 86400 * 1000
           ).toUTCString()}; path=/`;
           // toast.success("Login successful!");
-          router.push("/admin-dashboard");
+          router.push("/admin/dashboard");
         }
       } else {
         setErrorMessage(response.data.response.data.msg);

@@ -28,6 +28,7 @@
     "eslint-config-next": "13.4.19",
     "html2canvas": "^1.4.1",
     "js-cookie": "^3.0.5",
+    "jsonwebtoken": "^9.0.2",
     "jspdf": "^2.5.1",
     "leaflet": "^1.9.4",
     "next": "^13.5.3",

@@ -1,12 +1,16 @@
-import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server';
+import axios from 'axios';
+// const jwt = require('jsonwebtoken');
  
 // This function can be marked `async` if using `await` inside
 export function middleware(request) {
-  console.log('hello')
+  const path = request.nextUrl.pathname;
+  const token = request.cookies.get('token');
+  const isPublicPath = path === '/' || path.includes('/login') || path.includes('/register')
   // return NextResponse.redirect(new URL('', request.url))
 }
  
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: '/',
+  matcher: ['/', '/login', '/register', '/admin/:path*', '/user/:path*'],
 }

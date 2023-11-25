@@ -30,7 +30,7 @@ import { IconButton } from "@material-tailwind/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { CreatePost } from "./admin-posts/components/CreatePost";
+import { CreatePost } from "./posts/components/CreatePost";
 import { AppBar, Drawer, DrawerHeader } from "./components/Constants";
 import UserPopover from "./components/PopOver";
 
@@ -48,37 +48,37 @@ export default function AdminLayout({ children }) {
     setOpen(false);
   };
   const links = [
-    { href: "./admin-dashboard", text: "Dashboard", icon: <Squares2X2Icon /> },
-    { href: "./admin-users", text: "Users", icon: <UserIcon /> },
-    { href: "./admin-donorlist", text: "Donor List", icon: <ListBulletIcon /> },
-    { href: "./admin-bags", text: "Blood Bags", icon: <ShoppingBagIcon /> },
+    { href: "./dashboard", text: "Dashboard", icon: <Squares2X2Icon /> },
+    { href: "./users", text: "Users", icon: <UserIcon /> },
+    { href: "./donorlist", text: "Donor List", icon: <ListBulletIcon /> },
+    { href: "./bags", text: "Blood Bags", icon: <ShoppingBagIcon /> },
     {
-      href: "./admin-inventory",
+      href: "./inventory",
       text: "Blood Inventory",
       icon: <ClipboardDocumentListIcon />,
     },
     {
-      href: "./admin-deferrallist",
+      href: "./deferrallist",
       text: "Deferral List",
       icon: <InboxStackIcon />,
     },
     {
-      href: "./admin-dispensed",
+      href: "./dispensed",
       text: "Dispensed Blood",
       icon: <ArrowUpOnSquareIcon />,
     },
     {
-      href: "./admin-disposed",
+      href: "./disposed",
       text: "Disposed Blood Bags",
       icon: <ArrowUpOnSquareIcon />,
     },
-    { href: "./admin-posts", text: "Donor Posts", icon: <DocumentPlusIcon /> },
+    { href: "./posts", text: "Donor Posts", icon: <DocumentPlusIcon /> },
     {
-      href: "./admin-logs",
+      href: "./logs",
       text: "Activity Logs",
       icon: <ClipboardDocumentIcon />,
     },
-    { href: "./admin-mbd", text: "MBD Report", icon: <DocumentTextIcon /> },
+    { href: "./mbd", text: "MBD Report", icon: <DocumentTextIcon /> },
   ];
 
   return (

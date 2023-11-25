@@ -82,13 +82,13 @@ return (
         </CardBody>
       </Card>
     </CardBody>
-    <CardFooter className="border-t-2 flex flex-col justify-center items-center p-2">
-      <Link href="./network">
-        <Typography variant="paragraph" color="blue-gray" className="text-center">
-          View All {">"}
-        </Typography>
-      </Link>
-    </CardFooter>
+    <Link href="./network">
+      <CardFooter className="border-t-2 flex flex-col justify-center items-center p-2 hover:bg-gray-50 hover:rounded-b-xl">
+          <Typography variant="paragraph" color="blue-gray" className="text-center">
+            View All {">"}
+          </Typography>
+      </CardFooter>
+    </Link>
   </Card>
 );
 }

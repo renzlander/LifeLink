@@ -5,7 +5,7 @@ import {
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import { Step, Stepper } from "@material-tailwind/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { RegF1 } from "./RegForm1";
 import { RegF2 } from "./RegForm2";
 import { RegF3 } from "./RegForm3";
@@ -15,20 +15,22 @@ export default function RegisterStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [isLastStep, setIsLastStep] = useState(false);
   const [isFirstStep, setIsFirstStep] = useState(true);
+
   console.log("activeStep", activeStep);
-  const handleNextStep = () => {
+  
+  const handleNextStep = useCallback(() => {
     if (!isLastStep) {
       setActiveStep((cur) => cur + 1);
       setIsFirstStep(false);
     }
-  };
+  }, [isLastStep]);
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     if (!isFirstStep) {
       setActiveStep((cur) => cur - 1);
       setIsLastStep(false);
     }
-  };
+  }, [isFirstStep]);
 
   const stepsContent = [
     <RegF1 key="step1" onNextStep={handleNextStep} />,

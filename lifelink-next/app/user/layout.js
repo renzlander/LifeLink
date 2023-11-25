@@ -27,7 +27,7 @@ import {
   Tooltip,
   Navbar,
 } from "@material-tailwind/react";
-import { CreateRequest } from './user-network/components/CreateRequest';
+import { CreateRequest } from './network/components/CreateRequest';
 import { MobileUserSidebar } from './components/SideBar';
 
 export default function UserLayout({ children }) {
@@ -53,7 +53,7 @@ export default function UserLayout({ children }) {
   const handleLogout = async () => {
     const token = getCookie("token");
     if (!token) {
-      router.push("./login");
+      router.push("../login");
       return;
     }
     try {
@@ -63,7 +63,7 @@ export default function UserLayout({ children }) {
         },
       });
       document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
-      router.push("./login");
+      router.push("../login");
       console.log(response.data);
     } catch (error) {
       console.log(error);
@@ -71,11 +71,11 @@ export default function UserLayout({ children }) {
   };
 
   const menuItems = [
-    { icon: Squares2X2Icon, text: "Dashboard", link: './user-dashboard' },
-    { icon: ClockIcon, text: "History", link: './user-history' },
-    { icon: GlobeAltIcon, text: "Network", link: './user-network' },
-    { icon: TruckIcon, text: "Journey", link: './user-journey' },
-    { icon: UserIcon, text: "Profile", link: './user-profile' },
+    { icon: Squares2X2Icon, text: "Dashboard", link: './dashboard' },
+    { icon: ClockIcon, text: "History", link: './history' },
+    { icon: GlobeAltIcon, text: "Network", link: './network' },
+    { icon: TruckIcon, text: "Journey", link: './journey' },
+    { icon: UserIcon, text: "Profile", link: './profile' },
   ];
 
   useEffect(() => {
@@ -83,7 +83,7 @@ export default function UserLayout({ children }) {
       try {
         const token = getCookie("token");
         if (!token) {
-          router.push("./login");
+          router.push("../login");
           return;
         }
 
@@ -138,7 +138,7 @@ export default function UserLayout({ children }) {
                     <div className='flex justify-center'>
                       <Button
                         variant='text'
-                        className={`${'.' + pathName === item.link ? 'bg-gray-300' : ''} text-gray-800 hover:bg-gray-300`}
+                        className={`${pathName.replace('/user', '.') === item.link ? 'bg-gray-300' : ''} text-gray-800 hover:bg-gray-300`}
                       >
                         {<item.icon className="h-5 w-5" />}
                       </Button>
@@ -146,7 +146,7 @@ export default function UserLayout({ children }) {
                   ) : (
                     <Button
                       variant='text'
-                      className={`${'.' + pathName === item.link ? 'bg-gray-300' : ''} text-gray-800 flex items-center justify-between w-full hover:bg-gray-300`}
+                      className={`${pathName.replace('/user', '.') === item.link ? 'bg-gray-300' : ''} text-gray-800 flex items-center justify-between w-full hover:bg-gray-300`}
                     >
                       <div className="flex items-center gap-4">
                         {<item.icon className="h-5 w-5" />}

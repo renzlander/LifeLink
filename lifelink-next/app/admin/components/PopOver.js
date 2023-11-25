@@ -29,7 +29,7 @@ export default function UserPopover() {
       try {
         const token = getCookie("token");
         if (!token) {
-          router.push("./login");
+          router.push("../login");
           return;
         }
 
@@ -57,7 +57,7 @@ export default function UserPopover() {
         },
       });
       document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
-      router.push("./login");
+      router.push("../login");
       console.log(response.data);
     } catch (error) {
       console.error("Error logging out:", error);
@@ -76,7 +76,7 @@ export default function UserPopover() {
       </PopoverHandler>
       <PopoverContent className="w-72 z-[9999]">
         <div className="mb-4 flex items-center gap-4 border-b border-blue-gray-50 pb-4">
-          <Avatar src="./next.svg" />
+          <Avatar src="../next.svg" />
           <div>
             <Typography variant="h6" color="blue-gray">
               {userData

@@ -1,5 +1,6 @@
 import { Button, Card, Typography } from "@material-tailwind/react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export function RegF4() {
   const router = useRouter();
@@ -15,7 +16,7 @@ export function RegF4() {
           <Typography variant="h4" className="mb-6" color="blue-gray">
             You're Done!
           </Typography>
-          <img src="/shakehands.svg" alt="Shake Hands" className="w-80 h-80" />
+          <Image src="/shakehands.svg" alt="Shake Hands" width={320} height={320} />
           <Button
             type="button"
             variant="contained"
