@@ -122,6 +122,8 @@ export function UsersTable() {
         }
       );
 
+      console.log("Dsadsa", response);
+
       if (response.data.status === "success") {
         // Update the state variables with the data from the API response
         setBledByOptions(response.data.bledBy);
