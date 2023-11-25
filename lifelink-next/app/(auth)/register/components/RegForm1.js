@@ -2,6 +2,7 @@ import { laravelBaseUrl } from "@/app/variables";
 import {
   Button,
   Card,
+  Collapse,
   Input,
   Spinner,
   Typography,
@@ -17,6 +18,9 @@ export function RegF1({ onNextStep }) {
   const [password_confirmation, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState({ email: [], mobile: [] });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const openCheckList = () => setOpen(true);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -70,11 +74,7 @@ export function RegF1({ onNextStep }) {
     confirmPasswordStyle === "success";
 
   return (
-    <Card
-      className="mt-6 flex justify-center items-center"
-      color="transparent"
-      shadow={false}
-    >
+    <>
       <Typography variant="h4" className="mt-2" color="blue-gray">
         Enter your details for logging in
       </Typography>
@@ -149,15 +149,19 @@ export function RegF1({ onNextStep }) {
             onChange={(e) => {
               setPassword(e.target.value);
             }}
+            onFocus={openCheckList}
             required
             className="mb-1"
           />
-          <PasswordChecklist
-            rules={["minLength", "specialChar", "number", "capital"]}
-            minLength={8}
-            value={password}
-            className="mb-2"
-          />
+          <Collapse open={open} className={open === false ? 'hidden' : ''}>
+            <Card shadow={false} className="bg-gray-300 w-full px-4 py-2">
+              <PasswordChecklist
+                rules={["minLength", "specialChar", "number", "capital"]}
+                minLength={8}
+                value={password}
+              />
+            </Card>
+          </Collapse>
           <Input
             type="password"
             size="lg"
@@ -176,8 +180,8 @@ export function RegF1({ onNextStep }) {
         <div className="flex justify-center mt-6">
           <Button
             type="submit"
+            className="w-full flex items-center justify-center gap-5"
             disabled={!isFormValid || isSubmitting}
-            className="w-full"
           >
             {isSubmitting ? <Spinner size="sm" /> : ""}
             NEXT STEP
@@ -190,6 +194,6 @@ export function RegF1({ onNextStep }) {
           </a>
         </Typography>
       </form>
-    </Card>
+    </>
   );
 }

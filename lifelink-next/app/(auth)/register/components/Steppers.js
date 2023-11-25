@@ -4,7 +4,13 @@ import {
   EnvelopeIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
-import { Step, Stepper } from "@material-tailwind/react";
+import { 
+  Step,
+  Stepper,
+  Card,
+  CardHeader,
+  CardBody,
+} from "@material-tailwind/react";
 import { useEffect, useState, useCallback } from "react";
 import { RegF1 } from "./RegForm1";
 import { RegF2 } from "./RegForm2";
@@ -50,29 +56,52 @@ export default function RegisterStepper() {
   }, []);
 
   return (
-    <div className="md:w-1/2 lg:w-7/12 bg-gray-100 rounded-xl p-8">
-      <Stepper
-        activeStep={activeStep}
-        isLastStep={(value) => setIsLastStep(value)}
-        isFirstStep={(value) => setIsFirstStep(value)}
-      >
-        <Step key="userCircleIcon">
-          <UserCircleIcon className="h-5 w-5" />
-        </Step>
-        <Step key="documentIcon">
-          <DocumentIcon className="h-5 w-5" />
-        </Step>
-        <Step key="checkIcon">
-          <EnvelopeIcon className="h-5 w-5" />
-        </Step>
-        <Step key="checkIcon">
-          {/* Add your custom icon component here */}
-          <CheckIcon className="h-5 w-5" />
-        </Step>
-      </Stepper>
-      <div className="flex justify-center items-center">
+    <Card className="w-full 2xl:w-1/2 bg-gray-100 my-12">
+      <CardHeader color='gray' variant='gradient' className="h-16 flex items-center p-4 mb-4">
+        <Stepper
+          activeStep={activeStep}
+          isLastStep={(value) => setIsLastStep(value)}
+          isFirstStep={(value) => setIsFirstStep(value)}
+          lineClassName="bg-gray-400"
+          activeLineClassName="bg-gray-700"
+        >
+          <Step
+            className="bg-gray-400"
+            activeClassName="!bg-gray-800 text-gray-100"
+            completedClassName="!bg-gray-800 text-gray-100"
+            key="userCircleIcon"
+          >
+            <UserCircleIcon className="h-5 w-5" />
+          </Step>
+          <Step 
+            className="bg-gray-400"
+            activeClassName="!bg-gray-800 text-gray-100"
+            completedClassName="!bg-gray-800 text-gray-100"
+            key="documentIcon"
+          >
+            <DocumentIcon className="h-5 w-5" />
+          </Step>
+          <Step
+            className="bg-gray-400"
+            activeClassName="!bg-gray-800 text-gray-100"
+            completedClassName="!bg-gray-800 text-gray-100"
+            key="checkIcon"
+          >
+            <EnvelopeIcon className="h-5 w-5" />
+          </Step>
+          <Step
+            className="bg-gray-400"
+            activeClassName="!bg-gray-800 text-gray-100"
+            completedClassName="!bg-gray-800 text-gray-100"
+            key="checkIcon"
+          >
+            <CheckIcon className="h-5 w-5" />
+          </Step>
+        </Stepper>
+      </CardHeader>
+      <CardBody className="flex flex-col justify-center items-center">
         {stepsContent[activeStep]}
-      </div>
-    </div>
+      </CardBody>
+    </Card>
   );
 }
