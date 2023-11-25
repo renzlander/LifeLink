@@ -191,24 +191,17 @@ export function RegF2({ onNextStep }) {
   }, []);
 
   return (
-    <Card
-      className="mt-6 flex justify-center items-center"
-      color="transparent"
-      shadow={false}
-    >
-      <Typography variant="h4" className="mt-2" color="blue-gray">
+    <div className="p-4 flex flex-col justify-center items-center gap-2">
+      <Typography variant="h4"color="blue-gray">
         Enter your personal details
       </Typography>
-      <Typography variant="paragraph" className="mt-2" color="blue-gray">
+      <Typography variant="paragraph" color="blue-gray">
         Some details will not be displayed in your profile.
       </Typography>
 
-      <form
-        onSubmit={handleSubmit}
-        className="mt-8 mb-2 max-w-screen-lg sm:w-full"
-      >
+      <form onSubmit={handleSubmit} className="w-full mt-8 mb-2 gap-4 flex flex-col justify-center items-center">
         <input type="hidden" value={dob} name="dob" />
-        <div className="mb-4 flex gap-6 lg:flex-row sm:flex-col">
+        <div className="flex gap-6 2xl:flex-nowrap flex-wrap">
           <Input
             size="lg"
             label="First Name"
@@ -249,7 +242,7 @@ export function RegF2({ onNextStep }) {
             }}
           />
         </div>
-        <div className="mb-4 flex grow gap-6">
+        <div className="w-full flex flex-wrap 2xl:flex-nowrap justify-center gap-6">
           <Input
             size="lg"
             label="Occupation"
@@ -284,7 +277,7 @@ export function RegF2({ onNextStep }) {
             )}
           </div>
         </div>
-        <div className="mb-4 flex grow gap-6">
+        <div className="w-full flex flex-wrap 2xl:flex-nowrap justify-center gap-6">
           <Select onChange={handleSexChange} label="Sex" value={sex} required>
             <Option value="Male">Male</Option>
             <Option value="Female">Female</Option>
@@ -303,7 +296,7 @@ export function RegF2({ onNextStep }) {
             ))}
           </Select>
         </div>
-        <div className="mb-4 flex grow gap-6">
+        <div className="w-full flex flex-wrap 2xl:flex-nowrap justify-center gap-6">
           <Select label="Region" required name={selectedRegion?.regionName}>
             {regionList?.map((region) => (
               <Option
@@ -342,7 +335,7 @@ export function RegF2({ onNextStep }) {
             ))}
           </Select>
         </div>
-        <div className="mb-4 flex grow gap-6">
+        <div className="w-full flex flex-wrap 2xl:flex-nowrap justify-center gap-6">
           <Select
             label="Municipality"
             required
@@ -385,7 +378,7 @@ export function RegF2({ onNextStep }) {
               ))}
           </Select>
         </div>
-        <div className="mb-4 flex grow gap-6">
+        <div className="w-full flex flex-wrap 2xl:flex-nowrap justify-center gap-6">
           <Input
             size="lg"
             label="Street"
@@ -413,7 +406,7 @@ export function RegF2({ onNextStep }) {
             }}
           />
         </div>
-        <div className="mb-4 flex justify-center grow gap-6">
+        <div className="w-full flex justify-center grow gap-6">
           <Checkbox
             label={
               <Typography variant="body2" color="textSecondary">
@@ -430,7 +423,7 @@ export function RegF2({ onNextStep }) {
             onChange={(event) => setIsChecked(event.target.checked)}
           />
         </div>
-        <div className="flex justify-center">
+        <div className="flex justify-center w-full">
           <Button
             type="submit"
             variant="contained"
@@ -442,6 +435,6 @@ export function RegF2({ onNextStep }) {
           </Button>
         </div>
       </form>
-    </Card>
+    </div>
   );
 }

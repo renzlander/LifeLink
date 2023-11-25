@@ -197,7 +197,7 @@ export default function Home() {
             <CardBody className="flex md:flex-row flex-col items-center justify-between gap-4 p-4">
               <div className="flex items-center gap-6 w-full">
                 <Avatar 
-                    src="patient_icon.png" 
+                    src="../patient_icon.png" 
                     alt="Profile Picture"
                     className="2xl:h-20 h-12 2xl:w-20 w-12"
                 />
@@ -210,7 +210,7 @@ export default function Home() {
                   </Typography>
                 </div>
               </div>
-              <div className="w-full 2xl:w-4/6">
+              <div className="w-full 2xl:w-[70%]">
                 <Tabs value="pofile">
                   <TabsHeader>
                     {TABS.map(({ label, value, icon }) => (

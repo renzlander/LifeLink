@@ -143,7 +143,7 @@ export default function AdminLayout({ children }) {
               <ListItem
                 disablePadding
                 sx={{ display: "block" }}
-                className={"." + pathName === link.href ? "bg-gray-200" : ""}
+                className={pathName.replace('/admin', '.') === link.href ? "bg-gray-200" : ""}
               >
                 <ListItemButton
                   sx={{
@@ -168,7 +168,7 @@ export default function AdminLayout({ children }) {
         <DrawerHeader />
         {children}
 
-        {"." + pathName === "./a_posts" ? (
+        {pathName.replace('/admin', '.') === "./a_posts" ? (
           <div className="fixed bottom-10 right-10">
             <CreatePost />
           </div>

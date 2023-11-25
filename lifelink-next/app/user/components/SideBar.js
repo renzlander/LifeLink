@@ -28,7 +28,7 @@ import { usePathname, useRouter } from 'next/navigation';
     const handleLogout = async () => {
       const token = getCookie("token");
       if (!token) {
-        router.push("./login");
+        router.push("../login");
         return;
       }
       try {
@@ -38,7 +38,7 @@ import { usePathname, useRouter } from 'next/navigation';
           },
         });
         document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
-        router.push("./login");
+        router.push("../login");
         console.log(response.data);
       } catch (error) {
         console.log(error);
@@ -46,11 +46,11 @@ import { usePathname, useRouter } from 'next/navigation';
     };
 
     const menuItems = [
-      { icon: HomeIcon, text: "Dashboard", link: './user-dashboard' },
-      { icon: ClockIcon, text: "History", link: './user-history' },
-      { icon: GlobeAltIcon, text: "Network", link: './user-network' },
-      { icon: TruckIcon, text: "Journey", link: './user-journey' },
-      { icon: UserIcon, text: "Profile", link: './user-profile' },
+      { icon: HomeIcon, text: "Dashboard", link: './dashboard' },
+      { icon: ClockIcon, text: "History", link: './history' },
+      { icon: GlobeAltIcon, text: "Network", link: './network' },
+      { icon: TruckIcon, text: "Journey", link: './journey' },
+      { icon: UserIcon, text: "Profile", link: './profile' },
     ];
 
     return (
@@ -83,7 +83,7 @@ import { usePathname, useRouter } from 'next/navigation';
                   <Link href={item.link} key={index} passHref>
                     <Button
                       variant='text'
-                      className={`${'.' + pathName === item.link ? 'bg-gray-300' : ''} text-gray-800 flex items-center justify-between w-full hover:bg-gray-300`}
+                      className={`${pathName.replace('/user', '.') === item.link ? 'bg-gray-300' : ''} text-gray-800 flex items-center justify-between w-full hover:bg-gray-300`}
                     >
                       <div className="flex items-center gap-4">
                         {<item.icon className="h-5 w-5" />}
