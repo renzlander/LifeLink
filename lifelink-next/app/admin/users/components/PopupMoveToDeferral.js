@@ -63,7 +63,7 @@ export function MoveToDeferral({
 
   const dynamicVenueOptions = venueOptions.map((item) => ({
     label: item.venues_desc,
-    value: item.venues_desc,
+    value: item.venues_id.toString(),
   }));
 
   const handleIncrement = () => {

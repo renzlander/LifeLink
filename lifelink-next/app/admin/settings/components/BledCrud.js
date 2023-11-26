@@ -214,7 +214,7 @@ export function AddBledByModal({ refreshData }) {
         }
       );
 
-      if (response == "success") {
+      if (response.data.status == "success") {
         // Notify the parent component that the add operation is complete
         refreshData();
         setOpen(false);

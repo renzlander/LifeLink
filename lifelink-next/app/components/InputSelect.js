@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Card, Input, Typography } from "@material-tailwind/react";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
 
-export default function InputSelect({ label, options, onSelect }) {
+export default function InputSelect({ label, options, onSelect, value }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const inputRef = useRef(null);
@@ -27,6 +27,16 @@ export default function InputSelect({ label, options, onSelect }) {
       setIsDropdownOpen(false);
     }
   };
+
+  useEffect(() => {
+    if(value) {
+      const selectedOption = options.find(option => option.value === value);
+      if (selectedOption) {
+        setSelectedValue(value);
+        setSearchTerm(selectedOption.label);
+      }
+    }
+  }, [value, options]);
 
   useEffect(() => {
     document.addEventListener("click", handleDocumentClick);
