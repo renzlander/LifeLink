@@ -16,7 +16,7 @@ export default function LoginLayout({ children }) {
   }, [pageTitle]);
 
   return (
-    <body className="bg-[#d9d9d9] gen_bg">
+    <main className="bg-[#d9d9d9] gen_bg">
       <Button
         variant="gradient"
         color="gray"
@@ -28,6 +28,6 @@ export default function LoginLayout({ children }) {
         <span className="hidden 2xl:block">BACK</span>
       </Button>
       {children}
-    </body>
+    </main>
   );
 }

@@ -2,6 +2,7 @@
 import React from "react";
 import { laravelBaseUrl } from "@/app/variables";
 import { Button, Card, Input, Typography } from "@material-tailwind/react";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -15,6 +16,9 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isToastShown, setIsToastShown] = useState(false);
+  const [showPass,setShowPass] = useState(false);
+
+  const showPassword = () => setShowPass(!showPass);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -103,11 +107,18 @@ export default function LoginForm() {
             required
           />
           <Input
-            type="password"
+            type={showPass === true ? "text" : "password"}
             size="lg"
             label="Password"
             onChange={(e) => setPassword(e.target.value)}
             required
+            icon={
+              showPass === true ? (
+                <EyeSlashIcon className="w-5 h-5" onClick={showPassword} />
+              ) : (
+                <EyeIcon className="w-5 h-5" onClick={showPassword} />
+              )
+            }
           />
         </div>
         <Button type="submit" className="mt-6" fullWidth>
