@@ -7,6 +7,7 @@ import {
   Spinner,
   Typography,
 } from "@material-tailwind/react";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import { useState } from "react";
 import PasswordChecklist from "react-password-checklist";
@@ -19,8 +20,12 @@ export function RegF1({ onNextStep }) {
   const [errorMessage, setErrorMessage] = useState({ email: [], mobile: [] });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
+  const [showPass, setShowPass] = useState(false);
+  const [showConPass, setShowConPass] = useState(false);
 
   const openCheckList = () => setOpen(true);
+  const showPassword = () => setShowPass(!showPass);
+  const showConfirmPassword = () => setShowConPass(!showConPass);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -92,7 +97,9 @@ export function RegF1({ onNextStep }) {
               size="lg"
               label="Email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
               required
               className={`w-full ${
                 errorMessage.email.length > 0 ? "border-red-500" : ""
@@ -140,9 +147,8 @@ export function RegF1({ onNextStep }) {
               </div>
             )}
           </div>
-
           <Input
-            type="password"
+            type={showPass === true ? "text" : "password"}
             size="lg"
             label="Password"
             value={password}
@@ -152,8 +158,15 @@ export function RegF1({ onNextStep }) {
             onFocus={openCheckList}
             required
             className="mb-1"
+            icon={
+              showPass === true ? (
+                <EyeSlashIcon className="w-5 h-5" onClick={showPassword} />
+              ) : (
+                <EyeIcon className="w-5 h-5" onClick={showPassword} />
+              )
+            }
           />
-          <Collapse open={open} className={open === false ? 'hidden' : ''}>
+          <Collapse open={open} className={open === false ? "hidden" : ""}>
             <Card shadow={false} className="bg-gray-300 w-full px-4 py-2">
               <PasswordChecklist
                 rules={["minLength", "specialChar", "number", "capital"]}
@@ -163,7 +176,7 @@ export function RegF1({ onNextStep }) {
             </Card>
           </Collapse>
           <Input
-            type="password"
+            type={showConPass === true ? "text" : "password"}
             size="lg"
             label="Confirm Password"
             value={password_confirmation}
@@ -175,6 +188,16 @@ export function RegF1({ onNextStep }) {
               ? { success: true }
               : { error: true })}
             className="mb-2"
+            icon={
+              showConPass === true ? (
+                <EyeSlashIcon
+                  className="w-5 h-5"
+                  onClick={showConfirmPassword}
+                />
+              ) : (
+                <EyeIcon className="w-5 h-5" onClick={showConfirmPassword} />
+              )
+            }
           />
         </div>
         <div className="flex justify-center mt-6">
