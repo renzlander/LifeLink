@@ -79,7 +79,7 @@ export function DispenseTable() {
     },
     ...hospitalOptions.map((item) => ({
       label: item.hospital_desc,
-      value: item.hospital_desc,
+      value: item.hospitals_id.toString(),
     })),
   ];
 
@@ -549,7 +549,7 @@ export function DispenseTable() {
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {user.hospital}
+                    {user.hospital_desc}
                   </Typography>
                 </td>
                 <td className={classes}>

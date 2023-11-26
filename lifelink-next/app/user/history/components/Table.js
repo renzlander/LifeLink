@@ -64,7 +64,7 @@ export function HistoryTable() {
           },
         }
       );
-      console.log(response);
+      console.log("dsadsa",response);
 
       if (response.data.status === "success") {
         setUserDetails(response.data.data.data);

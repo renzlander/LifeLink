@@ -131,13 +131,23 @@ export function RemoveBlood({
   );
 }
 
-export function EditPopUp({ user, countdown, countdownEndDate, refreshData }) {
+export function EditPopUp({
+  bledByOptions,
+  venueOptions,
+  user,
+  countdown,
+  countdownEndDate,
+  refreshData,
+}) {
   const [errorMessage, setErrorMessage] = useState({
     serial_no: [],
     date_donated: [],
     bled_by: [],
     venue: [],
   });
+
+  console.log("Segi", user);
+
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [bledBy, setBledBy] = useState(user.bled_by);
@@ -155,7 +165,6 @@ export function EditPopUp({ user, countdown, countdownEndDate, refreshData }) {
   let firstPart = "";
   let secondPart = "";
   let thirdPart = "";
-  console.log | ("countdowndddd", countdown);
   if (serialFormat) {
     firstPart = serialFormat[1];
     secondPart = serialFormat[2];
@@ -174,6 +183,47 @@ export function EditPopUp({ user, countdown, countdownEndDate, refreshData }) {
       }
     }
   }, [user.serial_no]);
+  
+  const validateSerialNumber = () => {
+    let valid = true;
+    const errors = {
+      serial_no: [],
+      date_donated: [],
+      bled_by: [],
+      venue: [],
+      donationType: [],
+    };
+
+    if (part1.length !== 4) {
+      errors.serial_no.push("All fields for serial numbers must be complete.");
+      valid = false;
+    }
+
+    if (part2.length !== 6) {
+      errors.serial_no.push("All fields for serial numbers must be complete.");
+      valid = false;
+    }
+
+    if (part3.length !== 1) {
+      errors.serial_no.push("All fields for serial numbers must be complete.");
+      valid = false;
+    }
+
+    setErrorMessage(errors);
+
+    return valid;
+  };
+
+  console.log("venue", venue);
+  const dynamicBledByOptions = bledByOptions.map((item) => ({
+    label: item.full_name,
+    value: item.bled_by_id.toString(),
+}));
+
+  const dynamicVenueOptions = venueOptions.map((item) => ({
+    label: item.venues_desc,
+    value: item.venues_id.toString(),
+  }));
 
   const handleEditSerialNumber = async () => {
     try {
@@ -183,6 +233,10 @@ export function EditPopUp({ user, countdown, countdownEndDate, refreshData }) {
         return;
       }
 
+      const isSerialNumberValid = validateSerialNumber();
+      if (!isSerialNumberValid) {
+        return; // Stop execution if serial number is not valid
+      }
       const data = {
         blood_bags_id: user.blood_bags_id,
         serial_no: srNumber,
@@ -243,6 +297,14 @@ export function EditPopUp({ user, countdown, countdownEndDate, refreshData }) {
     } catch (error) {
       console.error("Unknown error occurred:", error);
     }
+  };
+
+  const handleBledBySelect = (selectedValue) => {
+    setBledBy(selectedValue);
+  };
+
+  const handleVenueSelect = (selectedValue) => {
+    setVenue(selectedValue);
   };
 
   return (
@@ -332,11 +394,20 @@ export function EditPopUp({ user, countdown, countdownEndDate, refreshData }) {
             )}
           </div>
           <div className={`relative ${errorMessage.bled_by ? "mb-1" : ""}`}>
-            <Input
+            {/* <Input
               label="Bled by"
               value={bledBy}
               disabled={countdown === 0}
               onChange={(e) => setBledBy(e.target.value)}
+            /> */}
+            <InputSelect
+              label="Bled by"
+              value={bledBy}
+              onSelect={handleBledBySelect}
+              options={dynamicBledByOptions}
+              isSearchable
+              required
+              placeholder="Bled By"
             />
             {errorMessage.bled_by && (
               <div className="error-message text-red-600 text-sm">
@@ -345,11 +416,20 @@ export function EditPopUp({ user, countdown, countdownEndDate, refreshData }) {
             )}
           </div>
           <div className={`relative ${errorMessage.venue ? "mb-1" : ""}`}>
-            <Input
+            {/* <Input
               label="Venue"
               value={venue}
               disabled={countdown === 0}
               onChange={(e) => setVenue(e.target.value)}
+            /> */}
+            <InputSelect
+              label="Venue"
+              value={venue}
+              onSelect={handleVenueSelect}
+              options={dynamicVenueOptions}
+              isSearchable
+              required
+              placeholder="Venue"
             />
             {errorMessage.venue && (
               <div className="error-message text-red-600 text-sm">

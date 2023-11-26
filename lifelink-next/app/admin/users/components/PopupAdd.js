@@ -88,12 +88,12 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
 
   const dynamicBledByOptions = bledByOptions.map((item) => ({
     label: item.full_name,
-    value: item.full_name,
-  }));
+    value: item.bled_by_id.toString(),
+}));
 
   const dynamicVenueOptions = venueOptions.map((item) => ({
     label: item.venues_desc,
-    value: item.venues_desc,
+    value: item.venues_id.toString(),
   }));
 
   const donationTypeOptions = [

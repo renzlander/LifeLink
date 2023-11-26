@@ -1,3 +1,4 @@
+import { laravelBaseUrl } from "@/app/variables";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { PencilIcon, TrashIcon, PlusIcon } from "@heroicons/react/24/solid";
 import {
@@ -14,18 +15,17 @@ import {
   Typography,
   Tooltip
 } from "@material-tailwind/react";
-import { useEffect, useState } from "react";
-import { laravelBaseUrl } from "@/app/variables";
-
 import axios from "axios";
-const TABLE_HEAD = ["ID", "Venue", "Location"];
+import { useEffect, useState } from "react";
 
-export function HospitalCrud() {
-  const [hospitals, setHospitals] = useState([]);
+const TABLE_HEAD = ["ID", "Remarks"];
+
+export function ReactiveRemarksCrud() {
+  const [remarks, setRemarks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const fetchHospitals = async () => {
+  const fetchRemarks = async () => {
     const token = getCookie("token");
     if (!token) {
       router.push("/login");
@@ -33,32 +33,32 @@ export function HospitalCrud() {
     }
 
     try {
-      const response = await axios.get(`${laravelBaseUrl}/api/get-hospital`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setHospitals(response.data.data);
-      setLoading(false);
-      console.log(response);
+      const response = await axios.get(
+        `${laravelBaseUrl}/api/get-reactive-remarks`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setRemarks(response.data.data);
     } catch (error) {
-      console.error("Error fetching hospitals:", error);
-      setLoading(false);
+      console.error("Error fetching reactive remarks:", error);
+    } finally {
+      setLoading(false); // Set loading to false whether the request was successful or not
     }
   };
 
   useEffect(() => {
-    fetchHospitals();
+    fetchRemarks();
   }, []);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredHospitals = hospitals.filter(
-    ({ hospital_desc, hospital_address }) =>
-      hospital_desc.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      hospital_address.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredReactiveRemarks = remarks.filter(({ reactive_remarks_desc }) =>
+    reactive_remarks_desc.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -66,15 +66,15 @@ export function HospitalCrud() {
   }
 
   return (
-    <Card id="hospital" className="h-full w-full">
+    <Card id="reactive-remarks" className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
           <div>
             <Typography variant="h5" color="blue-gray">
-              Hospitals
+              Reactive Remarks
             </Typography>
             <Typography color="gray" className="mt-1 font-normal">
-              These are the list of hospitals
+              These are the list of reactive remarks
             </Typography>
           </div>
           <div className="flex w-full shrink-0 gap-2 md:w-max">
@@ -87,10 +87,10 @@ export function HospitalCrud() {
             </div>
           </div>
         </div>
-        <div className="flex justify-end w-full">
-          <AddHospitalModal refreshData={fetchHospitals} />
-        </div>
       </CardHeader>
+      <div className="flex justify-end w-full">
+          <AddReactiveRemarksModal refreshData={fetchRemarks} />
+        </div>
       <CardBody className="px-0">
         <table className="w-full min-w-max table-auto text-left">
           <thead>
@@ -121,10 +121,10 @@ export function HospitalCrud() {
             </tr>
           </thead>
           <tbody>
-            {filteredHospitals.map(
-              ({ hospitals_id, hospital_desc, hospital_address }, index) => (
+            {filteredReactiveRemarks.map(
+              ({ reactive_remarks_id, reactive_remarks_desc }, index) => (
                 <tr
-                  key={hospitals_id}
+                  key={reactive_remarks_id}
                   className={index % 2 === 0 ? "even:bg-blue-gray-50/50" : ""}
                 >
                   <td className="p-4">
@@ -133,7 +133,7 @@ export function HospitalCrud() {
                       color="blue-gray"
                       className="font-bold"
                     >
-                      {hospitals_id}
+                      {reactive_remarks_id}
                     </Typography>
                   </td>
                   <td className="p-4">
@@ -142,31 +142,20 @@ export function HospitalCrud() {
                       color="blue-gray"
                       className="font-normal"
                     >
-                      {hospital_desc}
-                    </Typography>
-                  </td>
-                  <td className="p-4">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
-                      {hospital_address || "-"}
+                      {reactive_remarks_desc}
                     </Typography>
                   </td>
                   <td className="p-4 flex gap-3">
+                    {/* Pass reactive remarks details to EditModal */}
                     <EditModal
-                      hospitalId={hospitals_id}
-                      hospitalDesc={hospital_desc}
-                      hospitalAddress={hospital_address}
-                      refreshData={fetchHospitals}
+                      remarkId={reactive_remarks_id}
+                      remarkDesc={reactive_remarks_desc}
+                      refreshData={fetchRemarks}
                     />
-
                     <DeleteModal
-                      hospitalId={hospitals_id}
-                      refreshData={fetchHospitals}
+                      remarkId={reactive_remarks_id}
+                      refreshData={fetchRemarks}
                     />
-                  
                   </td>
                 </tr>
               )
@@ -178,11 +167,10 @@ export function HospitalCrud() {
   );
 }
 
-export function AddHospitalModal({ refreshData }) {
+export function AddReactiveRemarksModal({ refreshData }) {
   const [open, setOpen] = useState(false);
-  const [newHospital, setNewHospital] = useState({
-    hospital_desc: "",
-    hospital_address: "",
+  const [newReactiveRemarks, setNewReactiveRemarks] = useState({
+    reactive_remarks_desc: '',
   });
   const [fieldErrors, setFieldErrors] = useState({});
 
@@ -191,16 +179,24 @@ export function AddHospitalModal({ refreshData }) {
     setFieldErrors({}); // Clear field-specific error messages when opening the modal
   };
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const handleConfirm = async () => {
     try {
-      // Make an API call to add a new hospital
-      const response = await axios.post(`${laravelBaseUrl}/api/add-hospital`, newHospital, {
-        headers: {
-          Authorization: `Bearer ${getCookie("token")}`,
-        },
-      });
+      // Make an API call to add a new reactive remarks
+      const response = await axios.post(
+        `${laravelBaseUrl}/api/add-reactive-remarks`,
+        newReactiveRemarks,
+        {
+          headers: {
+            Authorization: `Bearer ${getCookie('token')}`,
+          },
+        }
+      );
 
-      if (response.data.status === "success") {
+      if (response.data.status === 'success') {
         // Notify the parent component that the add operation is complete
         refreshData();
 
@@ -213,7 +209,7 @@ export function AddHospitalModal({ refreshData }) {
         }
       }
     } catch (error) {
-      console.error("Error adding hospital:", error.response.data);
+      console.error('Error adding reactive remarks:', error.response.data);
 
       if (error.response.data.errors) {
         // Set field-specific error messages
@@ -224,7 +220,7 @@ export function AddHospitalModal({ refreshData }) {
 
   return (
     <>
-      <Tooltip content="Add Hospital">
+      <Tooltip content="Add Remarks">
         <Button
           size="sm"
           onClick={handleOpen}
@@ -232,39 +228,27 @@ export function AddHospitalModal({ refreshData }) {
           className="flex items-center gap-2 bg-green-400"
         >
           <PlusIcon className="h-5 w-5" />
-          <span>Add Hospital</span>
+          <span>Add Remarks</span>
         </Button>
       </Tooltip>
-      <Dialog open={open} handler={() => setOpen(!open)}>
-        <DialogHeader>Add Hospital</DialogHeader>
+      <Dialog open={open} handler={handleClose}>
+        <DialogHeader>Add Reactive Remarks</DialogHeader>
         <DialogBody>
           <div className="space-y-4">
-            {/* Input field for hospital description */}
+            {/* Input field for reactive remarks description */}
             <Input
-              label="Hospital Description"
-              value={newHospital.hospital_desc}
+              label="Reactive Remarks Description"
+              value={newReactiveRemarks.reactive_remarks_desc}
               onChange={(e) =>
-                setNewHospital({ ...newHospital, hospital_desc: e.target.value })
+                setNewReactiveRemarks({
+                  ...newReactiveRemarks,
+                  reactive_remarks_desc: e.target.value,
+                })
               }
             />
-
-            {/* Display field-specific error message for hospital_desc */}
-            {fieldErrors.hospital_desc && (
-              <div className="text-red-500">{fieldErrors.hospital_desc[0]}</div>
-            )}
-
-            {/* Input field for hospital address */}
-            <Input
-              label="Hospital Address"
-              value={newHospital.hospital_address}
-              onChange={(e) =>
-                setNewHospital({ ...newHospital, hospital_address: e.target.value })
-              }
-            />
-
-            {/* Display field-specific error message for hospital_address */}
-            {fieldErrors.hospital_address && (
-              <div className="text-red-500">{fieldErrors.hospital_address[0]}</div>
+            {/* Display field-specific error message for reactive_remarks_desc */}
+            {fieldErrors.reactive_remarks_desc && (
+              <div className="text-red-500">{fieldErrors.reactive_remarks_desc[0]}</div>
             )}
           </div>
         </DialogBody>
@@ -272,7 +256,7 @@ export function AddHospitalModal({ refreshData }) {
           <Button
             variant="text"
             color="red"
-            onClick={() => setOpen(false)}
+            onClick={handleClose}
             className="mr-1"
           >
             <span>Cancel</span>
@@ -287,13 +271,10 @@ export function AddHospitalModal({ refreshData }) {
 }
 
 
-
-
-export function EditModal({ hospitalId, hospitalDesc, hospitalAddress, refreshData }) {
+export function EditModal({ remarkId, remarkDesc, refreshData }) {
   const [open, setOpen] = useState(false);
-  const [editedHospital, setEditedHospital] = useState({
-    hospital_desc: hospitalDesc,
-    hospital_address: hospitalAddress,
+  const [editedReactiveRemarks, setEditedReactiveRemarks] = useState({
+    reactive_remarks_desc: remarkDesc,
   });
   const [fieldErrors, setFieldErrors] = useState({});
 
@@ -302,12 +283,16 @@ export function EditModal({ hospitalId, hospitalDesc, hospitalAddress, refreshDa
     setFieldErrors({}); // Clear field-specific error messages when opening the modal
   };
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const handleConfirm = async () => {
     try {
-      // Make an API call to update the hospital
+      // Make an API call to update the reactive remarks
       const response = await axios.post(
-        `${laravelBaseUrl}/api/edit-hospital?hospitals_id=${hospitalId}`,
-        editedHospital,
+        `${laravelBaseUrl}/api/edit-reactive-remarks?reactive_remarks_id=${remarkId}`,
+        editedReactiveRemarks,
         {
           headers: {
             Authorization: `Bearer ${getCookie("token")}`,
@@ -315,7 +300,7 @@ export function EditModal({ hospitalId, hospitalDesc, hospitalAddress, refreshDa
         }
       );
 
-      if (response.data.status === "success") {
+      if (response.data.status === 'success') {
         // Notify the parent component that the edit is complete
         refreshData();
 
@@ -328,7 +313,7 @@ export function EditModal({ hospitalId, hospitalDesc, hospitalAddress, refreshDa
         }
       }
     } catch (error) {
-      console.error("Error updating hospital:", error.response.data);
+      console.error('Error updating reactive remarks:', error.response.data);
 
       if (error.response.data.errors) {
         // Set field-specific error messages
@@ -342,39 +327,24 @@ export function EditModal({ hospitalId, hospitalDesc, hospitalAddress, refreshDa
       <IconButton onClick={handleOpen} variant="text">
         <PencilIcon className="h-5 w-5 text-blue-600" />
       </IconButton>
-      <Dialog open={open} handler={() => setOpen(!open)}>
-        <DialogHeader>Edit Hospital</DialogHeader>
+      <Dialog open={open} handler={handleClose}>
+        <DialogHeader>Edit Reactive Remarks</DialogHeader>
         <DialogBody>
           <div className="space-y-4">
-            {/* Input field for hospital description */}
+            {/* Input field for reactive remarks description */}
             <Input
-              label="Hospital Description"
-              value={editedHospital.hospital_desc}
+              label="Reactive Remarks Description"
+              value={editedReactiveRemarks.reactive_remarks_desc}
               onChange={(e) =>
-                setEditedHospital({ ...editedHospital, hospital_desc: e.target.value })
-              }
-            />
-
-            {/* Display field-specific error message for hospital_desc */}
-            {fieldErrors.hospital_desc && (
-              <div className="text-red-500">{fieldErrors.hospital_desc[0]}</div>
-            )}
-
-            {/* Input field for hospital address */}
-            <Input
-              label="Hospital Address"
-              value={editedHospital.hospital_address}
-              onChange={(e) =>
-                setEditedHospital({
-                  ...editedHospital,
-                  hospital_address: e.target.value,
+                setEditedReactiveRemarks({
+                  ...editedReactiveRemarks,
+                  reactive_remarks_desc: e.target.value,
                 })
               }
             />
-
-            {/* Display field-specific error message for hospital_address */}
-            {fieldErrors.hospital_address && (
-              <div className="text-red-500">{fieldErrors.hospital_address[0]}</div>
+            {/* Display field-specific error message for reactive_remarks_desc */}
+            {fieldErrors.reactive_remarks_desc && (
+              <div className="text-red-500">{fieldErrors.reactive_remarks_desc[0]}</div>
             )}
           </div>
         </DialogBody>
@@ -382,7 +352,7 @@ export function EditModal({ hospitalId, hospitalDesc, hospitalAddress, refreshDa
           <Button
             variant="text"
             color="red"
-            onClick={() => setOpen(false)}
+            onClick={handleClose}
             className="mr-1"
           >
             <span>Cancel</span>
@@ -396,17 +366,18 @@ export function EditModal({ hospitalId, hospitalDesc, hospitalAddress, refreshDa
   );
 }
 
-export function DeleteModal({ hospitalId, refreshData }) {
+
+
+export function DeleteModal({ remarkId, refreshData }) {
   const [open, setOpen] = useState(false);
-
+  
   const handleOpen = () => setOpen(!open);
-
 
   const handleConfirm = async () => {
     try {
-      // Make an API call to delete the hospital
-      await axios.delete(
-        `${laravelBaseUrl}/api/delete-hospital?hospitals_id=${hospitalId}`,
+      // Make an API call to update the venue
+      const response = await axios.delete(
+        `${laravelBaseUrl}/api/delete-reactive-remarks?reactive_remarks_id=${remarkId}`,
         {
           headers: {
             Authorization: `Bearer ${getCookie("token")}`,
@@ -414,38 +385,39 @@ export function DeleteModal({ hospitalId, refreshData }) {
         }
       );
 
-      // Notify the parent component that the delete is complete
-      refreshData();
-
-      // Close the modal
-      handleClose();
+      if (response.data.status === "success") {
+        refreshData();
+        setOpen(false);
+      } else {
+        console.error("Error updating venue:", response.data.message);
+      }
     } catch (error) {
-      console.error("Error deleting hospital:", error);
+      console.error("Error updating venue:", error);
     }
   };
 
   return (
     <>
-    <IconButton onClick={handleOpen} variant="text">
+      <IconButton onClick={handleOpen} variant="text">
         <TrashIcon className="h-5 w-5 text-red-600" />
       </IconButton>
-      <Dialog open={open} handler={() => setOpen(!open)}>
-      <DialogHeader>Delete Hospital</DialogHeader>
-      <DialogBody>Are you sure you want to delete this hospital?</DialogBody>
-      <DialogFooter>
+      <Dialog open={open} handler={handleOpen}>
+        <DialogHeader>Delete Reactive Remarks</DialogHeader>
+        <DialogBody>Are you sure you want to delete this reactive remarks?</DialogBody>
+        <DialogFooter>
         <Button
-          variant="text"
-          color="red"
-          onClick={() => setOpen(false)}
-          className="mr-1"
-        >
-          <span>Cancel</span>
-        </Button>
-        <Button variant="gradient" color="green" onClick={handleConfirm}>
-          <span>Confirm</span>
-        </Button>
-      </DialogFooter>
-    </Dialog>
+            variant="text"
+            color="red"
+            onClick={() => setOpen(false)}
+            className="mr-1"
+          >
+            <span>Cancel</span>
+          </Button>
+          <Button variant="gradient" color="green" onClick={handleConfirm}>
+            <span>Confirm</span>
+          </Button>
+        </DialogFooter>
+      </Dialog>
     </>
   );
 }

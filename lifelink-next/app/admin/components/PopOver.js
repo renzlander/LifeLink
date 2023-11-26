@@ -89,7 +89,7 @@ export default function UserPopover() {
           </div>
         </div>
         <List className="p-0">
-          <Link href="./AdminSettings" className="text-initial">
+          <Link href="./settings" className="text-initial">
             <ListItem>
               <ListItemPrefix>
                 <Cog6ToothIcon className="h-5 w-5" />

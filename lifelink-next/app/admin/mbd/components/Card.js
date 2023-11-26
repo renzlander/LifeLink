@@ -69,7 +69,7 @@ export function MBDCard() {
 
   const dynamicVenueOptions = venueOptions.map((item) => ({
     label: item.venues_desc,
-    value: item.venues_desc,
+    value: item.venues_id.toString(),
   }));
 
   useEffect(() => {

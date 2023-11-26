@@ -77,7 +77,7 @@ export function BagsTable() {
     { label: "All", value: "All" },
     ...bledByOptions.map((item) => ({
       label: item.full_name,
-      value: item.full_name,
+      value: item.bled_by_id,
     })),
   ];
 
@@ -85,7 +85,7 @@ export function BagsTable() {
     { label: "All", value: "All" },
     ...venueOptions.map((item) => ({
       label: item.venues_desc,
-      value: item.venues_desc,
+      value: item.venues_id,
     })),
   ];
 
@@ -257,6 +257,8 @@ export function BagsTable() {
           }
         );
       }
+
+      console.log(response.data);
       if (response.data.status === "success") {
         setUserDetails(response.data.data.data);
         setTotalPages(response.data.data.last_page);
@@ -625,7 +627,7 @@ export function BagsTable() {
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {user.venue}
+                    {user.venues_desc}
                   </Typography>
                 </td>
                 <td className={classes}>
@@ -634,13 +636,15 @@ export function BagsTable() {
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {user.bled_by}
+                    {user.bled_by_first_name} {user.bled_by_middle_name} {user.bled_by_last_name}
                   </Typography>
                 </td>
                 <td
                   className={`${classes} flex items-center justify-around gap-3`}
                 >
                   <EditPopUp
+                    bledByOptions={bledByOptions}
+                    venueOptions={venueOptions}
                     user={user}
                     countdown={user.countdown}
                     countdownEndDate={user.countdown_end_date}

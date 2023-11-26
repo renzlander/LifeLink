@@ -96,7 +96,7 @@ export function PatientRecord({ dispensedRecords, donors }) {
             </div>
             <div>
               <strong>Hospital:</strong>
-              <p>{firstRecord?.hospital}</p>
+              <p>{firstRecord?.hospital_desc}</p>
             </div>
             <div>
               <strong>Date Received:</strong>
@@ -140,8 +140,8 @@ export function PatientRecord({ dispensedRecords, donors }) {
                           <td className="pr-2 py-2">
                             {formatDate(donor?.date_donated)}
                           </td>
-                          <td className="pr-2 py-2">{donor?.venue}</td>
-                          <td className="pr-2 py-2">{donor?.bled_by}</td>
+                          <td className="pr-2 py-2">{donor?.venues_desc}</td>
+                          <td className="pr-2 py-2">{donor?.blb_first_name} {donor?.blb_middle_name} {donor?.blb_last_name}</td>
                         </tr>
                       );
                     })}

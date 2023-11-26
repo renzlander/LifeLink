@@ -101,7 +101,7 @@ export function ViewPopUp({ user }) {
           <div className="flex justify-between">
             <div className="flex flex-col gap-2">
               <span className="font-bold">Hospital:</span>
-              <p>{user?.hospital}</p>
+              <p>{user?.hospital_desc}</p>
             </div>
             <div className="flex flex-col gap-2">
               <span className="font-bold">Date Received:</span>

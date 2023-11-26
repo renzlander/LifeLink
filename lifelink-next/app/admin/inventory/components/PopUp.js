@@ -140,9 +140,10 @@ export function Dispense({
   const [hospital, setHospital] = useState("");
   const [paymentType, setPaymentType] = useState("");
   const bloodType = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+  console.log("hospitalOptions", hospitalOptions);
   const dynamicHospitalOptions = hospitalOptions.map((item) => ({
     label: item.hospital_desc,
-    value: item.hospital_desc,
+    value: item.hospitals_id.toString(),
   }));
 
   const handleOpen = () => setOpen(!open);
@@ -459,7 +460,7 @@ export function MultipleDispensed({
   const bloodType = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
   const dynamicHospitalOptions = hospitalOptions.map((item) => ({
     label: item.hospital_desc,
-    value: item.hospital_desc,
+    value: item.hospitals_id.toString(),
   }));
   const handleOpen = () => setOpen(!open);
 
