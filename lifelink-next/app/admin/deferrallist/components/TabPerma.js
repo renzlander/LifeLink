@@ -1,6 +1,22 @@
 import InputSelect from "@/app/components/InputSelect";
 import { laravelBaseUrl } from "@/app/variables";
-import { Spinner, Typography } from "@material-tailwind/react";
+import {
+  MagnifyingGlassIcon,
+  DocumentArrowDownIcon,
+} from "@heroicons/react/24/outline";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  Checkbox,
+  IconButton,
+  Input,
+  Option,
+  Select,
+  Spinner,
+  Typography,
+} from "@material-tailwind/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -30,10 +46,7 @@ function formatDate(dateString) {
 export function PermanentTable() {
   const [userDetails, setUserDetails] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [sortColumn, setSortColumn] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [visibleRows, setVisibleRows] = useState(8);
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("All");
   const [permanentDeferralCategories, setPermanentDeferralCategories] =
@@ -49,12 +62,14 @@ export function PermanentTable() {
       value: item.category_desc,
     })),
   ];
+
   const handleCategorySelect = (selectedValue) => {
     console.log("handleCategorySelect:", selectedValue);
     setCategory(selectedValue);
   };
 
   const router = useRouter();
+
   useEffect(() => {
     const fetchDeferralCategories = async () => {
       try {
@@ -91,7 +106,7 @@ export function PermanentTable() {
     fetchDeferralCategories();
   }, []);
 
-  const fetchData = async (page) => {
+  const fetchData = async () => {
     try {
       const token = getCookie("token");
       if (!token) {
@@ -99,40 +114,22 @@ export function PermanentTable() {
         return;
       }
 
-      let response;
-
-      if (searchQuery) {
-        response = await axios.post(
-          `${laravelBaseUrl}/api/search-user?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
-          {
-            searchInput: searchQuery,
+      const response = await axios.get(
+        `${laravelBaseUrl}/api/get-permanent-defferal`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-      } else {
-        response = await axios.get(
-          `${laravelBaseUrl}/api/get-permanent-defferal?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            params: {
-              category: category,
-            },
-          }
-        );
-      }
+          params: {
+            category: category,
+          },
+        }
+      );
 
       console.log("Response:", response);
 
       if (response && response.data && response.data.status === "success") {
-        setUserDetails(response.data.data.data);
-        setTotalPages(response.data.data.last_page);
-        setCurrentPage(response.data.data.current_page);
+        setUserDetails(response.data.data);
         setLoading(false);
       } else {
         console.error("Error fetching data:", response.data.message);
@@ -145,27 +142,8 @@ export function PermanentTable() {
   };
 
   useEffect(() => {
-    fetchData(currentPage);
-  }, [router, sortColumn, sortOrder, searchQuery, category]);
-
-  const handlePageChange = (newPage) => {
-    if (newPage < 1 || newPage > totalPages) {
-      return;
-    }
-
-    setCurrentPage(newPage);
-    fetchData(newPage);
-  };
-
-  const handleSort = (columnKey) => {
-    // If the same column is clicked, toggle the sort order
-    if (sortColumn === columnKey) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortColumn(columnKey);
-      setSortOrder("asc");
-    }
-  };
+    fetchData();
+  }, [router, searchQuery, category]);
 
   const exportUserDetailsAsPDF = async () => {
     try {
@@ -202,21 +180,14 @@ export function PermanentTable() {
     }
   };
 
-  const sortedUserDetails = userDetails.sort((a, b) => {
-    const columnA =
-      sortColumn === "name" ? `${a.first_name} ${a.last_name}` : a[sortColumn];
-    const columnB =
-      sortColumn === "name" ? `${b.first_name} ${b.last_name}` : b[sortColumn];
+  const loadMoreRows = () => {
+    setVisibleRows((prevVisibleRows) => prevVisibleRows + 4);
+  };
 
-    if (sortOrder === "asc") {
-      if (columnA < columnB) return -1;
-      if (columnA > columnB) return 1;
-    } else {
-      if (columnA < columnB) return 1;
-      if (columnA > columnB) return -1;
-    }
-
-    return 0;
+  const filteredUserDetails = userDetails.filter((user) => {
+    const fullName =
+      `${user.first_name} ${user.middle_name} ${user.last_name}`.toLowerCase();
+    return fullName.includes(searchQuery.toLowerCase());
   });
 
   if (loading) {
@@ -227,125 +198,142 @@ export function PermanentTable() {
       </div>
     );
   }
+
   return (
     <>
-      <div className="flex flex-row mx-4 px-4 gap-6">
-        <InputSelect
-          label="Category"
-          value={category}
-          onSelect={handleCategorySelect}
-          options={dynamicPermaCategories}
-          isSearchable
-          required
-          placeholder="Category"
-        />
-      </div>
-      <table className="w-full min-w-max table-auto text-left">
-        <thead>
-          <tr>
-            {TABLE_HEAD.map((head) => (
-              <th
-                key={head.key}
-                className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
-                onClick={() => handleSort(head.key)}
-              >
-                <div className="flex items-center">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal leading-none opacity-70"
+      <Card className="w-full -mb-6">
+        <CardBody>
+          <div className="flex items-center gap-3 w-full md:w-72">
+            <Input
+              label="Search"
+              icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+              value={searchQuery}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                setSearchQuery(inputValue);
+              }}
+            />
+          </div>
+          <div className="flex flex-row mx-4 px-4 gap-6">
+            <InputSelect
+              label="Category"
+              value={category}
+              onSelect={handleCategorySelect}
+              options={dynamicPermaCategories}
+              isSearchable
+              required
+              placeholder="Category"
+            />
+          </div>
+          <table className="w-full min-w-max table-auto text-left">
+            <thead>
+              <tr>
+                {TABLE_HEAD.map((head) => (
+                  <th
+                    key={head.key}
+                    className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
                   >
-                    {head.label}
-                  </Typography>
-                  {sortColumn === head.key && (
-                    <span className="ml-2">
-                      {sortOrder === "asc" ? "▲" : "▼"}
-                    </span>
-                  )}
-                </div>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {userDetails.map((user, index) => (
-            <tr key={user.donor_no}>
-              <td className={classes}>
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-bold"
-                >
-                  {user.donor_no}
-                </Typography>
-              </td>
-              <td className={classes}>
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-normal"
-                >
-                  {`${user.first_name} ${user.last_name}`}
-                </Typography>
-              </td>
-              <td className={classes}>
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-normal"
-                >
-                  {user.blood_type}
-                </Typography>
-              </td>
-              <td className={classes}>
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-normal"
-                >
-                  {user.email}
-                </Typography>
-              </td>
-              <td className={classes}>
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-normal"
-                >
-                  {user.mobile}
-                </Typography>
-              </td>
-              <td className={classes}>
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-normal capitalize"
-                >
-                  {formatDate(user.dob)}
-                </Typography>
-              </td>
-              <td className={classes}>
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-normal"
-                >
-                  {user.category_desc}
-                </Typography>
-              </td>
-              <td className={classes}>
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-normal"
-                >
-                  {user.specific_reason}
-                </Typography>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                    <div className="flex items-center">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal leading-none opacity-70"
+                      >
+                        {head.label}
+                      </Typography>
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+            {filteredUserDetails.slice(0, visibleRows).map((user, index) => (
+                <tr key={user.donor_no}>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-bold"
+                    >
+                      {user.donor_no}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {`${user.first_name} ${user.last_name}`}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {user.blood_type}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {user.email}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {user.mobile}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal capitalize"
+                    >
+                      {formatDate(user.dob)}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {user.category_desc}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {user.specific_reason}
+                    </Typography>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </CardBody>
+        <CardFooter className="flex items-center justify-center border-t border-blue-gray-50 p-4">
+          {visibleRows < userDetails.length && (
+            <div className="flex justify-center mt-4">
+              <Button onClick={loadMoreRows}>Load More</Button>
+            </div>
+          )}
+        </CardFooter>
+      </Card>
     </>
   );
 }

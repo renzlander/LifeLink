@@ -51,11 +51,8 @@ function formatDate(dateString) {
 
 export function BagsTable() {
   const [userDetails, setUserDetails] = useState([]);
+  const [visibleRows, setVisibleRows] = useState(8); // Track visible rows
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [sortColumn, setSortColumn] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc");
   const [searchQuery, setSearchQuery] = useState("");
   const [blood_type, setBlood] = useState("All");
   const [startDate, setStartDate] = useState("");
@@ -91,7 +88,7 @@ export function BagsTable() {
 
   const handleBloodChange = (selectedBlood) => {
     setBlood(selectedBlood);
-    fetchBloodTypeFilteredData(
+    fetchData(
       selectedBlood,
       startDate,
       endDate,
@@ -102,7 +99,7 @@ export function BagsTable() {
 
   const handleBledByChange = (selectedBledBy) => {
     setBledBy(selectedBledBy);
-    fetchBloodTypeFilteredData(
+    fetchData(
       blood_type,
       startDate,
       endDate,
@@ -113,7 +110,7 @@ export function BagsTable() {
 
   const handleVenueChange = (selectedVenue) => {
     setVenue(selectedVenue);
-    fetchBloodTypeFilteredData(
+    fetchData(
       blood_type,
       startDate,
       endDate,
@@ -178,13 +175,9 @@ export function BagsTable() {
     }
   };
 
-  const fetchBloodTypeFilteredData = async (
-    selectedBlood,
-    startDate,
-    endDate,
-    bledBy,
-    venue
-  ) => {
+
+
+  const fetchData = async ( blood_type, startDate, endDate, bledBy, venue) => {
     try {
       const token = getCookie("token");
       if (!token) {
@@ -200,7 +193,7 @@ export function BagsTable() {
             Authorization: `Bearer ${token}`,
           },
           params: {
-            blood_type: selectedBlood,
+            blood_type: blood_type,
             startDate: startDate,
             endDate: endDate,
             bledBy: bledBy,
@@ -210,60 +203,7 @@ export function BagsTable() {
       );
 
       if (response.data.status === "success") {
-        setUserDetails(response.data.data.data);
-        setBloodQty(response.data.total_count);
-        setTotalPages(response.data.data.last_page);
-        setCurrentPage(response.data.total_count);
-        setLoading(false);
-      } else {
-        console.error("Error fetching data:", response.data.message);
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setLoading(false);
-    }
-  };
-
-  const fetchData = async (page) => {
-    try {
-      const token = getCookie("token");
-      if (!token) {
-        router.push("/login");
-        return;
-      }
-
-      let response;
-
-      if (searchQuery) {
-        response = await axios.post(
-          `${laravelBaseUrl}/api/search-collected-bloodbag?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
-          {
-            searchInput: searchQuery,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-      } else {
-        response = await axios.get(
-          `${laravelBaseUrl}/api/get-collected-bloodbags?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-      }
-
-      console.log(response.data);
-      if (response.data.status === "success") {
-        setUserDetails(response.data.data.data);
-        setTotalPages(response.data.data.last_page);
-        setCurrentPage(response.data.data.current_page);
-        setCountdown(response.data.data.countdown);
+        setUserDetails(response.data.data);
         setBloodQty(response.data.total_count);
         setLoading(false);
       } else {
@@ -277,30 +217,25 @@ export function BagsTable() {
   };
 
   useEffect(() => {
-    // fetchBloodTypeFilteredData(blood_type, startDate, endDate, bledBy, venue);
-    fetchData(currentPage);
+    fetchData(blood_type,
+      startDate,
+      endDate,
+      bledBy,
+      venue);
     fetchBledByAndVenueLists();
     fetchUnsafeRemarks();
-  }, [router, sortColumn, sortOrder, searchQuery]);
+  }, [router, searchQuery, blood_type, startDate, endDate, bledBy, venue]);
 
-  const handlePageChange = (newPage) => {
-    if (newPage < 1 || newPage > totalPages) {
-      return;
-    }
-
-    setCurrentPage(newPage);
-    fetchData(newPage);
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
   };
 
-  const handleSort = (columnKey) => {
-    // If the same column is clicked, toggle the sort order
-    if (sortColumn === columnKey) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortColumn(columnKey);
-      setSortOrder("asc");
-    }
-  };
+  const filteredUserDetails = userDetails.filter((user) => {
+    const fullName =
+      `${user.first_name} ${user.middle_name} ${user.last_name}`.toLowerCase();
+    return fullName.includes(searchQuery.toLowerCase());
+  });
+
 
   const exportBloodBagsAsPDF = async () => {
     try {
@@ -337,22 +272,7 @@ export function BagsTable() {
     }
   };
 
-  const sortedBloodBagDetails = userDetails.sort((a, b) => {
-    const columnA =
-      sortColumn === "name" ? `${a.first_name} ${a.last_name}` : a[sortColumn];
-    const columnB =
-      sortColumn === "name" ? `${b.first_name} ${b.last_name}` : b[sortColumn];
 
-    if (sortOrder === "asc") {
-      if (columnA < columnB) return -1;
-      if (columnA > columnB) return 1;
-    } else {
-      if (columnA < columnB) return 1;
-      if (columnA > columnB) return -1;
-    }
-
-    return 0;
-  });
 
   if (loading) {
     return (
@@ -372,6 +292,9 @@ export function BagsTable() {
     }
   };
 
+  const loadMoreRows = () => {
+    setVisibleRows((prevVisibleRows) => prevVisibleRows + 4);
+  };
   return (
     <Card className="w-full">
       <CardHeader color="red" className="relative h-16 flex items-center">
@@ -465,11 +388,7 @@ export function BagsTable() {
                   label="Search"
                   icon={<MagnifyingGlassIcon className="h-5 w-5" />}
                   value={searchQuery}
-                  onChange={(e) => {
-                    const inputValue = e.target.value;
-                    setSearchQuery(inputValue);
-                    fetchData(inputValue);
-                  }}
+                  onChange={handleSearchChange}
                 />
               </div>
               <Button
@@ -521,7 +440,6 @@ export function BagsTable() {
                 <th
                   key={head.key}
                   className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
-                  onClick={() => handleSort(head.key)}
                 >
                   <div className="flex items-center">
                     <Typography
@@ -531,18 +449,15 @@ export function BagsTable() {
                     >
                       {head.label}
                     </Typography>
-                    {sortColumn === head.key && (
-                      <span className="ml-2">
-                        {sortOrder === "asc" ? "▲" : "▼"}
-                      </span>
-                    )}
                   </div>
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {userDetails.map((user, index) => (
+          {filteredUserDetails
+              .slice(0, visibleRows)
+              .map((user, index) => (
               <tr
                 key={user.blood_bags_id}
                 className={`${
@@ -673,35 +588,12 @@ export function BagsTable() {
           </tbody>
         </table>
       </CardBody>
-      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Button
-          variant="outlined"
-          size="sm"
-          disabled={currentPage === 1}
-          onClick={() => handlePageChange(currentPage - 1)}
-        >
-          Previous
-        </Button>
-        <div className="flex items-center gap-2">
-          {Array.from({ length: totalPages }, (_, index) => (
-            <IconButton
-              key={index}
-              variant={currentPage === index + 1 ? "outlined" : "text"}
-              size="sm"
-              onClick={() => handlePageChange(index + 1)}
-            >
-              {index + 1}
-            </IconButton>
-          ))}
-        </div>
-        <Button
-          variant="outlined"
-          size="sm"
-          disabled={currentPage === totalPages}
-          onClick={() => handlePageChange(currentPage + 1)}
-        >
-          Next
-        </Button>
+      <CardFooter className="flex items-center justify-center border-t border-blue-gray-50 p-4">
+      {visibleRows < userDetails.length && (
+          <div className="flex justify-center mt-4">
+            <Button onClick={loadMoreRows}>Load More</Button>
+          </div>
+        )}
       </CardFooter>
     </Card>
   );

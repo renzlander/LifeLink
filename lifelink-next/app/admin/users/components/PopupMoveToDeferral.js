@@ -57,7 +57,7 @@ export function MoveToDeferral({
   };
 
   const donationTypeOptions = [
-    { label: "Non-Patient Blood Donation", value: "1" },
+    { label: "Voluntary Blood Donation", value: "1" },
     { label: "Direct Patient Blood Donation", value: "2" },
   ];
 

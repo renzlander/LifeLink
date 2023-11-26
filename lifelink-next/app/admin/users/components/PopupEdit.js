@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export function EditPopUp({ user, onUpdate, refreshData }) {
+export function EditPopUp({ user, refreshData }) {
   const [open, setOpen] = useState(false);
   const [editedUser, setEditedUser] = useState({ ...user });
   const bloodTypes = ["AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
@@ -139,7 +139,6 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
         refreshData();
         toast.success("User data updated successfully");
         // Notify the parent component about the update
-        onUpdate({ ...editedUser, ...data }); // Merge the edited data with the response data
 
         // Close the dialog
         setOpen(false);
@@ -206,7 +205,7 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
               }
               containerProps={{ className: "min-w-[50px]" }}
             />
-            {errorMessage.first_name.length > 0 && (
+            {errorMessage.first_name?.length > 0 && (
               <div className="error-message text-red-600 text-sm">
                 {errorMessage.first_name[0]}
               </div>
@@ -229,7 +228,7 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
                 setEditedUser({ ...editedUser, last_name: e.target.value })
               }
               containerProps={{ className: "min-w-[50px]" }}
-              error={errorMessage.last_name.length > 0}
+              error={errorMessage.last_name?.length > 0}
               required
             />
             {/* {errorMessage.last_name.length > 0 && <Typography variant="small" color="gray" className="mt-2 flex items-center gap-1 font-normal">{errorMessage.last_name[0]}</Typography>} */}
@@ -272,7 +271,7 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
               <Option value="Male">Male</Option>
               <Option value="Female">Female</Option>
             </Select>
-            {errorMessage.sex.length > 0 && (
+            {errorMessage.sex?.length > 0 && (
               <div className="error-message text-red-600 text-sm">
                 {errorMessage.sex[0]}
               </div>
@@ -286,7 +285,7 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
               }
               containerProps={{ className: "min-w-[50px]" }}
             />
-            {errorMessage.dob.length > 0 && (
+            {errorMessage.dob?.length > 0 && (
               <div className="error-message text-red-600 text-sm">
                 {errorMessage.dob[0]}
               </div>
@@ -306,7 +305,7 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
                 </Option>
               ))}
             </Select>
-            {errorMessage.blood_type.length > 0 && (
+            {errorMessage.blood_type?.length > 0 && (
               <div className="error-message text-red-600 text-sm">
                 {errorMessage.blood_type[0]}
               </div>
@@ -320,6 +319,7 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
               setEditedUser({ ...editedUser, street: e.target.value })
             }
           />
+
           <div className="flex items-center gap-2">
             <InputSelect
               label="Region"
@@ -338,6 +338,7 @@ export function EditPopUp({ user, onUpdate, refreshData }) {
               ))}
             </Select>
           </div>
+
           <div className="flex items-center gap-2">
             <Select
               label="Municipality"

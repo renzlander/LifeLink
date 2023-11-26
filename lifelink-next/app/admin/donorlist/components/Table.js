@@ -48,31 +48,26 @@ function formatDate(dateString) {
 export function DonorTable() {
   const [userDetails, setUserDetails] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [sortColumn, setSortColumn] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc");
   const [searchQuery, setSearchQuery] = useState("");
-  const [bloodType, setbloodType] = useState("All");
-  const [donorType, setDonorTypes] = useState("All");
-  const [donorQty, setDonorQty] = useState();
-  const pagesToShow = 8;
+  const [visibleRows, setVisibleRows] = useState(8); // Track visible rows
+  const [bloodType, setBloodType] = useState("All");
+  const [donorType, setDonorType] = useState("All");
 
   const router = useRouter();
   const bloodTypes = ["All", "AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
   const donorTypes = ["All", "First Time", "Regular", "Lapsed", "Galloneer"];
 
   const handleBloodChange = (selectedBlood) => {
-    setbloodType(selectedBlood);
+    setBloodType(selectedBlood);
     fetchData(selectedBlood, donorType);
   };
 
   const handleDonorTypeChange = (selectedDonorType) => {
-    setDonorTypes(selectedDonorType);
+    setDonorType(selectedDonorType);
     fetchData(bloodType, selectedDonorType);
   };
 
-  const fetchData = async (page, bloodType, donorType) => {
+  const fetchData = async (bloodType, donorType) => {
     try {
       const token = getCookie("token");
       if (!token) {
@@ -80,38 +75,18 @@ export function DonorTable() {
         return;
       }
 
-      let response;
+      const response = await axios.get(`${laravelBaseUrl}/api/get-donor-list`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          blood_type: bloodType,
+          donor_type: donorType,
+        },
+      });
 
-      if (searchQuery) {
-        response = await axios.post(
-          `${laravelBaseUrl}/api/search-donor?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
-          {
-            searchInput: searchQuery,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-      } else {
-        response = await axios.get(
-          `${laravelBaseUrl}/api/get-donor-list?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            params: {
-              blood_type: bloodType,
-              donor_type: donorType,
-            },
-          }
-        );
-      }
       if (response.data.status === "success") {
-        setUserDetails(response.data.data.data);
-        setTotalPages(response.data.data.last_page);
-        setCurrentPage(response.data.data.current_page);
+        setUserDetails(response.data.data);
         setLoading(false);
       } else {
         console.error("Error fetching data:", response.data.message);
@@ -124,35 +99,8 @@ export function DonorTable() {
   };
 
   useEffect(() => {
-    fetchData(currentPage, bloodType, donorType); // Include bloodType and donorType here
-  }, [
-    currentPage,
-    router,
-    sortColumn,
-    sortOrder,
-    searchQuery,
-    bloodType,
-    donorType,
-  ]);
-
-  const handlePageChange = (newPage) => {
-    if (newPage < 1 || newPage > totalPages) {
-      return;
-    }
-
-    setCurrentPage(newPage);
-    fetchData(newPage, bloodType, donorType); // Include bloodType and donorType here
-  };
-
-  const handleSort = (columnKey) => {
-    // If the same column is clicked, toggle the sort order
-    if (sortColumn === columnKey) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortColumn(columnKey);
-      setSortOrder("asc");
-    }
-  };
+    fetchData(bloodType, donorType);
+  }, [router, searchQuery, bloodType, donorType]);
 
   const exportUserDetailsAsPDF = async () => {
     try {
@@ -185,37 +133,18 @@ export function DonorTable() {
     }
   };
 
-  const sortedDonorDetails = userDetails.sort((a, b) => {
-    const columnA =
-      sortColumn === "name" ? `${a.first_name} ${a.last_name}` : a[sortColumn];
-    const columnB =
-      sortColumn === "name" ? `${b.first_name} ${b.last_name}` : b[sortColumn];
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
-    if (sortOrder === "asc") {
-      if (columnA < columnB) return -1;
-      if (columnA > columnB) return 1;
-    } else {
-      if (columnA < columnB) return 1;
-      if (columnA > columnB) return -1;
-    }
-
-    return 0;
+  const filteredUserDetails = userDetails.filter((user) => {
+    const fullName =
+      `${user.first_name} ${user.middle_name} ${user.last_name}`.toLowerCase();
+    return fullName.includes(searchQuery.toLowerCase());
   });
 
-  const getPageNumbers = () => {
-    const halfPagesToShow = Math.floor(pagesToShow / 2);
-    let startPage = Math.max(1, currentPage - halfPagesToShow);
-    let endPage = startPage + pagesToShow - 1;
-
-    if (endPage > totalPages) {
-      endPage = totalPages;
-      startPage = Math.max(1, endPage - pagesToShow + 1);
-    }
-
-    return Array.from(
-      { length: endPage - startPage + 1 },
-      (_, i) => startPage + i
-    );
+  const loadMoreRows = () => {
+    setVisibleRows((prevVisibleRows) => prevVisibleRows + 8);
   };
 
   if (loading) {
@@ -271,11 +200,7 @@ export function DonorTable() {
                 label="Search"
                 icon={<MagnifyingGlassIcon className="h-5 w-5" />}
                 value={searchQuery}
-                onChange={(e) => {
-                  const inputValue = e.target.value;
-                  setSearchQuery(inputValue);
-                  fetchData(inputValue);
-                }}
+                onChange={handleSearchChange}
               />
             </div>
             <Button
@@ -295,8 +220,7 @@ export function DonorTable() {
               {TABLE_HEAD.map((head) => (
                 <th
                   key={head.key}
-                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
-                  onClick={() => handleSort(head.key)}
+                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
                 >
                   <div className="flex items-center">
                     <Typography
@@ -306,18 +230,13 @@ export function DonorTable() {
                     >
                       {head.label}
                     </Typography>
-                    {sortColumn === head.key && (
-                      <span className="ml-2">
-                        {sortOrder === "asc" ? "▲" : "▼"}
-                      </span>
-                    )}
                   </div>
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {userDetails.map((user, index) => (
+            {filteredUserDetails.slice(0, visibleRows).map((user, index) => (
               <tr key={user.donor_no} className="border-b">
                 <td className={classes}>
                   <div className="flex items-center gap-3">
@@ -428,35 +347,12 @@ export function DonorTable() {
           </tbody>
         </table>
       </CardBody>
-      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Button
-          variant="outlined"
-          size="sm"
-          disabled={currentPage === 1}
-          onClick={() => handlePageChange(currentPage - 1)}
-        >
-          Previous
-        </Button>
-        <div className="flex items-center gap-2">
-          {getPageNumbers().map((page) => (
-            <IconButton
-              key={page}
-              variant={currentPage === page ? "outlined" : "text"}
-              size="sm"
-              onClick={() => handlePageChange(page)}
-            >
-              {page}
-            </IconButton>
-          ))}
-        </div>
-        <Button
-          variant="outlined"
-          size="sm"
-          disabled={currentPage === totalPages}
-          onClick={() => handlePageChange(currentPage + 1)}
-        >
-          Next
-        </Button>
+      <CardFooter className="flex items-center justify-center border-t border-blue-gray-50 p-4">
+      {visibleRows < userDetails.length && (
+          <div className="flex justify-center mt-4">
+            <Button onClick={loadMoreRows}>Load More</Button>
+          </div>
+        )}
       </CardFooter>
     </Card>
   );

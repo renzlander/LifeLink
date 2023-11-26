@@ -1,20 +1,16 @@
 import { laravelBaseUrl } from "@/app/variables";
 import {
-  BarsArrowDownIcon,
-  BarsArrowUpIcon,
-  MagnifyingGlassIcon,
+  MagnifyingGlassIcon
 } from "@heroicons/react/24/outline";
 import {
   Button,
   Card,
   CardBody,
-  CardFooter,
   CardHeader,
   Chip,
-  IconButton,
   Input,
   Spinner,
-  Typography,
+  Typography
 } from "@material-tailwind/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -37,9 +33,6 @@ const TABLE_HEAD = [
   { label: "", key: "actions" },
 ];
 const classes = "p-4";
-const DEFAULT_SORT_COLUMN = null; // Set your default sort column key here
-const DEFAULT_SORT_ORDER = null; // Set default sort order to null
-
 function formatDate(dateString) {
   const options = { year: "numeric", month: "long", day: "numeric" };
   const formattedDate = new Date(dateString).toLocaleDateString(
@@ -52,19 +45,14 @@ function formatDate(dateString) {
 export function UsersTable() {
   const [userDetails, setUserDetails] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [sortColumn, setSortColumn] = useState(DEFAULT_SORT_COLUMN); // Set default sort column
-  const [sortOrder, setSortOrder] = useState(DEFAULT_SORT_ORDER);
   const [searchQuery, setSearchQuery] = useState("");
+  const [visibleRows, setVisibleRows] = useState(8); // Track visible rows
   const [bledByOptions, setBledByOptions] = useState([]);
   const [venueOptions, setVenueOptions] = useState([]);
   const [temporaryDeferralCategories, setTemporaryDeferralCategories] =
     useState([]);
-  const [temporaryDeferralRemarks, setTemporaryDeferralRemarks] = useState([]);
   const [permanentDeferralCategories, setPermanentDeferralCategories] =
     useState([]);
-  const pagesToShow = 8;
   const router = useRouter();
 
   useEffect(() => {
@@ -122,23 +110,20 @@ export function UsersTable() {
         }
       );
 
-      console.log("Dsadsa", response);
+      console.log("Response:", response);
 
       if (response.data.status === "success") {
-        // Update the state variables with the data from the API response
         setBledByOptions(response.data.bledBy);
         setVenueOptions(response.data.venue);
       } else {
-        // Handle the case when the API request fails
         console.error("Oops! Something went wrong.");
       }
     } catch (error) {
       console.error("Error fetching bled_by and venues lists:", error);
-      // You can handle the error here, e.g., by displaying a message to the user
     }
   };
 
-  const fetchData = async (page) => {
+  const fetchData = async () => {
     try {
       const token = getCookie("token");
       if (!token) {
@@ -146,35 +131,19 @@ export function UsersTable() {
         return;
       }
 
-      let response;
-
-      if (searchQuery) {
-        response = await axios.post(
-          `${laravelBaseUrl}/api/search-user?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
-          {
-            searchInput: searchQuery,
+      const response = await axios.get(
+        `${laravelBaseUrl}/api/get-user-details`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-      } else {
-        response = await axios.get(
-          `${laravelBaseUrl}/api/get-user-details?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-      }
+        }
+      );
 
-      if (response && response.data && response.data.status === "success") {
-        setUserDetails(response.data.data.data);
-        setTotalPages(response.data.data.last_page);
-        setCurrentPage(response.data.data.current_page);
+      console.log("Response:", response);
+
+      if (response.data.status === "success") {
+        setUserDetails(response.data.data);
         setLoading(false);
       } else {
         console.error("Error fetching data:", response.data.message);
@@ -187,28 +156,9 @@ export function UsersTable() {
   };
 
   useEffect(() => {
-    fetchData(currentPage);
+    fetchData();
     fetchBledByAndVenueLists();
-  }, [router, sortColumn, sortOrder, searchQuery]);
-
-  const handlePageChange = (newPage) => {
-    if (newPage < 1 || newPage > totalPages) {
-      return;
-    }
-
-    setCurrentPage(newPage);
-    fetchData(newPage);
-  };
-
-  const handleSort = (columnKey) => {
-    // If the same column is clicked, toggle the sort order
-    if (sortColumn === columnKey) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortColumn(columnKey);
-      setSortOrder("asc");
-    }
-  };
+  }, [router, searchQuery]);
 
   const exportUserDetailsAsPDF = async () => {
     try {
@@ -218,80 +168,25 @@ export function UsersTable() {
         return;
       }
 
-      // Send a request to the PDF export endpoint
       const response = await axios.get(
         `${laravelBaseUrl}/api/export-pdf-user-details`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          responseType: "blob", // Set the response type to blob for binary data
+          responseType: "blob",
         }
       );
 
-      // Create a Blob object from the response data
       const pdfBlob = new Blob([response.data], { type: "application/pdf" });
-
-      // Create a URL for the Blob object
       const pdfUrl = window.URL.createObjectURL(pdfBlob);
 
-      // Open the PDF in a new window or tab
       window.open(pdfUrl);
-
-      // Clean up by revoking the URL when it's no longer needed
       window.URL.revokeObjectURL(pdfUrl);
     } catch (error) {
       console.error("Error exporting PDF:", error);
     }
   };
-
-  const sortedUserDetails = userDetails.sort((a, b) => {
-    // Replace 'name' with the correct column name for sorting
-    const columnA =
-      sortColumn === "fullname"
-        ? a.first_name
-        : sortColumn === "middlename"
-        ? a.middle_name
-        : sortColumn === "lastname"
-        ? a.last_name
-        : a[sortColumn];
-    const columnB =
-      sortColumn === "fullname"
-        ? b.first_name
-        : sortColumn === "middlename"
-        ? b.middle_name
-        : sortColumn === "lastname"
-        ? b.last_name
-        : b[sortColumn];
-
-    if (sortOrder === "asc") {
-      if (columnA < columnB) return -1;
-      if (columnA > columnB) return 1;
-    } else {
-      if (columnA < columnB) return 1;
-      if (columnA > columnB) return -1;
-    }
-
-    return 0;
-  });
-
-  const getPageNumbers = () => {
-    const halfPagesToShow = Math.floor(pagesToShow / 2);
-    let startPage = Math.max(1, currentPage - halfPagesToShow);
-    let endPage = startPage + pagesToShow - 1;
-
-    if (endPage > totalPages) {
-      endPage = totalPages;
-      startPage = Math.max(1, endPage - pagesToShow + 1);
-    }
-
-    return Array.from(
-      { length: endPage - startPage + 1 },
-      (_, i) => startPage + i
-    );
-  };
-
-  const handleUpdateUser = (updatedUserData) => {};
 
   if (loading) {
     return (
@@ -301,6 +196,20 @@ export function UsersTable() {
       </div>
     );
   }
+
+  const loadMoreRows = () => {
+    setVisibleRows((prevVisibleRows) => prevVisibleRows + 4);
+  };
+
+  const filteredUserDetails = userDetails.filter((user) => {
+    const fullName =
+      `${user.first_name} ${user.middle_name} ${user.last_name}`.toLowerCase();
+    return fullName.includes(searchQuery.toLowerCase());
+  });
+
+  const handleClear = () => {
+    onChange("");
+  };
 
   return (
     <Card className="h-full w-full mt-4">
@@ -323,7 +232,6 @@ export function UsersTable() {
                 onChange={(e) => {
                   const inputValue = e.target.value;
                   setSearchQuery(inputValue);
-                  fetchData(inputValue);
                 }}
               />
             </div>
@@ -336,39 +244,34 @@ export function UsersTable() {
             </Button>
           </div>
         </div>
-        <table className="w-full min-w-max table-auto text-left">
-          <thead>
-            <tr>
-              {TABLE_HEAD.map((head) => (
-                <th
-                  key={head.key}
-                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
-                  onClick={() => handleSort(head.key)}
-                >
-                  <div className="flex items-center">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal leading-none opacity-70"
-                    >
-                      {head.label}
-                    </Typography>
-                    {sortColumn === head.key && (
-                      <span className="ml-2">
-                        {sortOrder === "asc" ? (
-                          <BarsArrowUpIcon className="h-5 w-5" />
-                        ) : (
-                          <BarsArrowDownIcon className="h-5 w-5" />
-                        )}
-                      </span>
-                    )}
-                  </div>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {userDetails.map((user, index) => (
+        {userDetails.length === 0 ? (
+          <div className="text-center text-gray-600 mt-8">
+            No users available.
+          </div>
+        ) : (
+          <table className="w-full min-w-max table-auto text-left">
+            <thead>
+              <tr>
+                {TABLE_HEAD.map((head) => (
+                  <th
+                    key={head.key}
+                    className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
+                  >
+                    <div className="flex items-center">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal leading-none opacity-70"
+                      >
+                        {head.label}
+                      </Typography>
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+            {filteredUserDetails.slice(0, visibleRows).map((user, index) => (
               <tr key={user.donor_no} className="border-b border-blue-gray-100">
                 <td className={classes}>
                   <Typography
@@ -437,11 +340,7 @@ export function UsersTable() {
                 </td>
                 <td className={classes}>
                   <ViewPopUp user={user} />
-                  <EditPopUp
-                    user={user}
-                    onUpdate={handleUpdateUser}
-                    refreshData={fetchData}
-                  />
+                  <EditPopUp user={user} refreshData={fetchData} />
                 </td>
                 <td
                   className={`${classes} mt-1 flex items-center justify-center gap-2`}
@@ -473,39 +372,15 @@ export function UsersTable() {
                 </td>
               </tr>
             ))}
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        )}
+        {visibleRows < userDetails.length && (
+          <div className="flex justify-center mt-4">
+            <Button onClick={loadMoreRows}>Load More</Button>
+          </div>
+        )}
       </CardBody>
-      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Button
-          variant="outlined"
-          size="sm"
-          disabled={currentPage === 1}
-          onClick={() => handlePageChange(currentPage - 1)}
-        >
-          Previous
-        </Button>
-        <div className="flex items-center gap-2">
-          {getPageNumbers().map((page) => (
-            <IconButton
-              key={page}
-              variant={currentPage === page ? "outlined" : "text"}
-              size="sm"
-              onClick={() => handlePageChange(page)}
-            >
-              {page}
-            </IconButton>
-          ))}
-        </div>
-        <Button
-          variant="outlined"
-          size="sm"
-          disabled={currentPage === totalPages}
-          onClick={() => handlePageChange(currentPage + 1)}
-        >
-          Next
-        </Button>
-      </CardFooter>
     </Card>
   );
 }

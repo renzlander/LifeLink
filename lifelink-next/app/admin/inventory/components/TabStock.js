@@ -46,16 +46,13 @@ function formatDate(dateString) {
 
 export function TabStock() {
   const [userDetails, setUserDetails] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [sortColumn, setSortColumn] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [visibleRows, setVisibleRows] = useState(8);
   const [searchQuery, setSearchQuery] = useState("");
-  const [blood_type, setBlood] = useState("All");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [bloodQty, setBloodQty] = useState();
+  const [loading, setLoading] = useState(true);
+  const [blood_type, setBlood] = useState('All');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [bloodQty, setBloodQty] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
   const [user, setUser] = useState([]);
   const [selectedData, setSelectedData] = useState([]);
@@ -66,7 +63,6 @@ export function TabStock() {
   const router = useRouter();
 
   const handleBloodChange = (selectedBlood) => {
-    // console.log("Selected Blood Type:", selectedBlood);
     setBlood(selectedBlood);
     fetchBloodTypeFilteredData(selectedBlood, startDate, endDate);
   };
@@ -106,7 +102,7 @@ export function TabStock() {
             Authorization: `Bearer ${token}`,
           },
           params: {
-            blood_type: selectedBlood, // Use the selected blood type
+            blood_type: selectedBlood,
             startDate: startDate,
             endDate: endDate,
           },
@@ -116,8 +112,6 @@ export function TabStock() {
       if (response.data.status === "success") {
         setUserDetails(response.data.data.data);
         setBloodQty(response.data.total_count);
-        setTotalPages(response.data.data.last_page);
-        setCurrentPage(response.data.total_count);
         setLoading(false);
       } else {
         console.error("Error fetching data:", response.data.message);
@@ -151,16 +145,14 @@ export function TabStock() {
       if (response.data.status === "success") {
         setRegisteredUser(response.data.userDetails);
       } else {
-        // Handle the case when the API request fails
         console.error("Oops! Something went wrong.");
       }
     } catch (error) {
       console.error("Error fetching bled_by and venues lists:", error);
-      // You can handle the error here, e.g., by displaying a message to the user
     }
   };
 
-  const fetchData = async (page = "") => {
+  const fetchData = async () => {
     try {
       const token = getCookie("token");
       if (!token) {
@@ -168,40 +160,14 @@ export function TabStock() {
         return;
       }
 
-      let response;
-
-      const params = {
-        page: page,
-        sort: sortColumn,
-        order: sortOrder,
-      };
-
-      if (searchQuery) {
-        response = await axios.post(
-          `${laravelBaseUrl}/api/search-stocks`,
-          {
-            searchInput: searchQuery,
-            ...params,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-      } else {
-        response = await axios.get(`${laravelBaseUrl}/api/get-stocks`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          params: params,
-        });
-      }
+      const response = await axios.get(`${laravelBaseUrl}/api/get-stocks`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.data.status === "success") {
-        setUserDetails(response.data.data.data);
-        setTotalPages(response.data.data.last_page);
-        setCurrentPage(response.data.data.current_page);
+        setUserDetails(response.data.data);
         setBloodQty(response.data.total_count);
         setLoading(false);
       } else {
@@ -215,27 +181,32 @@ export function TabStock() {
   };
 
   useEffect(() => {
-    fetchData(currentPage);
-    fetchUserDetails();
+    fetchData();
     getHospitalList();
-  }, [router, sortColumn, sortOrder, searchQuery]);
+    fetchUserDetails();
+  }, [router, searchQuery]);
 
-  const handlePageChange = (newPage) => {
-    if (newPage < 1 || newPage > totalPages) {
-      return;
+  const handleRowSelect = (rowId) => {
+    if (selectedRows.includes(rowId)) {
+      setSelectedRows(selectedRows.filter((id) => id !== rowId));
+    } else {
+      setSelectedRows([...selectedRows, rowId]);
     }
-
-    setCurrentPage(newPage);
-    fetchData(newPage);
   };
 
-  const handleSort = (columnKey) => {
-    // If the same column is clicked, toggle the sort order
-    if (sortColumn === columnKey) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+  const selectedRowClass = "bg-gray-400";
+
+  const handleRowSelection = (user, blood_bags_id) => {
+    const isSelected = selectedRows.includes(blood_bags_id);
+
+    if (isSelected) {
+      setSelectedRows(selectedRows.filter((id) => id !== blood_bags_id));
+      setSelectedData(
+        selectedData.filter((data) => data.blood_bags_id !== blood_bags_id)
+      );
     } else {
-      setSortColumn(columnKey);
-      setSortOrder("asc");
+      setSelectedRows([...selectedRows, blood_bags_id]);
+      setSelectedData([...selectedData, { user, blood_bags_id }]);
     }
   };
 
@@ -247,7 +218,6 @@ export function TabStock() {
         return;
       }
 
-      // Send a request to the PDF export endpoint
       const response = await axios.get(`${laravelBaseUrl}/api/export-stocks`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -269,22 +239,15 @@ export function TabStock() {
     }
   };
 
-  const sortedBloodBagDetails = userDetails.sort((a, b) => {
-    const columnA =
-      sortColumn === "name" ? `${a.first_name} ${a.last_name}` : a[sortColumn];
-    const columnB =
-      sortColumn === "name" ? `${b.first_name} ${b.last_name}` : b[sortColumn];
+  const handleLoadMore = () => {
+    setVisibleRows((prevVisibleRows) => prevVisibleRows + 8);
+  };
 
-    if (sortOrder === "asc") {
-      if (columnA < columnB) return -1;
-      if (columnA > columnB) return 1;
-    } else {
-      if (columnA < columnB) return 1;
-      if (columnA > columnB) return -1;
-    }
 
-    return 0;
+  const filteredUserDetails = userDetails.filter((user) => {
+    return user.serial_no.toLowerCase().includes(searchQuery.toLowerCase());
   });
+  
 
   if (loading) {
     return (
@@ -294,44 +257,6 @@ export function TabStock() {
       </div>
     );
   }
-
-  const handleRowSelect = (rowId) => {
-    // Check if the rowId is already in the selectedRows array
-    if (selectedRows.includes(rowId)) {
-      // If it's already selected, remove it from the array
-      setSelectedRows(selectedRows.filter((id) => id !== rowId));
-    } else {
-      // If it's not selected, add it to the array
-      setSelectedRows([...selectedRows, rowId]);
-    }
-  };
-
-  const selectedRowClass = "bg-gray-400";
-  const handleRowSelection = (user, blood_bags_id) => {
-    const isSelected = selectedRows.includes(blood_bags_id);
-
-    if (isSelected) {
-      // If the row is already selected, remove it from the array
-      setSelectedRows(selectedRows.filter((id) => id !== blood_bags_id));
-    } else {
-      // If the row is not selected, add it to the array
-      setSelectedRows([...selectedRows, blood_bags_id]);
-    }
-
-    // Check if the user object and blood_bags_id are not already in the selectedData array
-    const selectedDataIndex = selectedData.findIndex(
-      (data) => data.blood_bags_id === blood_bags_id
-    );
-    if (isSelected && selectedDataIndex !== -1) {
-      // If the row is deselected and exists in selectedData, remove it
-      setSelectedData(
-        selectedData.filter((data) => data.blood_bags_id !== blood_bags_id)
-      );
-    } else if (!isSelected && selectedDataIndex === -1) {
-      // If the row is selected and not in selectedData, add it
-      setSelectedData([...selectedData, { user, blood_bags_id }]);
-    }
-  };
 
   return (
     <Card className="h-full w-full -mb-6">
@@ -364,7 +289,7 @@ export function TabStock() {
               Expiration Date Filter
             </Typography>
             <div className="flex items-center gap-4">
-              <Input
+            <Input
                 type="date"
                 label="Start Date"
                 value={startDate}
@@ -394,20 +319,18 @@ export function TabStock() {
               variant="subtitle1"
               className="mb-2 flex justify-center font-bold text-red-800"
             >
-              {/* Other Tools  */}
             </Typography>
             <div className="flex items-center gap-3 pt-6">
               <div className="flex items-center gap-3 w-full md:w-72">
-                <Input
-                  label="Search"
-                  icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-                  value={searchQuery}
-                  onChange={(e) => {
-                    const inputValue = e.target.value;
-                    setSearchQuery(inputValue);
-                    fetchData(inputValue);
-                  }}
-                />
+              <Input
+                label="Search"
+                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+                value={searchQuery}
+                onChange={(e) => {
+                  const inputValue = e.target.value;
+                  setSearchQuery(inputValue);
+                }}
+              />
               </div>
               <Button
                 className="flex items-center gap-3"
@@ -443,15 +366,13 @@ export function TabStock() {
                 <Checkbox
                   onChange={() => {
                     if (selectedRows.length === userDetails.length) {
-                      // Deselect all users
                       setSelectedRows([]);
-                      setUser([]); // Clear the selected users
+                      setUser([]);
                     } else {
-                      // Select all users
                       setSelectedRows(
                         userDetails.map((user) => user.blood_bags_id)
                       );
-                      setUser(userDetails); // Select all users and update the user state
+                      setUser(userDetails);
                     }
                   }}
                   checked={
@@ -464,7 +385,6 @@ export function TabStock() {
                 <th
                   key={head.key}
                   className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
-                  onClick={() => handleSort(head.key)}
                 >
                   <div className="flex items-center">
                     <Typography
@@ -474,18 +394,13 @@ export function TabStock() {
                     >
                       {head.label}
                     </Typography>
-                    {sortColumn === head.key && (
-                      <span className="ml-2">
-                        {sortOrder === "asc" ? "▲" : "▼"}
-                      </span>
-                    )}
                   </div>
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {userDetails.map((user, index) => (
+          {filteredUserDetails.slice(0, visibleRows).map((user, index) => (
               <tr
                 key={user.blood_bags_id}
                 className={`${
@@ -498,11 +413,9 @@ export function TabStock() {
                   <Checkbox
                     onChange={() => {
                       if (selectedRows.includes(user.blood_bags_id)) {
-                        // Deselect the user
                         setSelectedRows(
                           selectedRows.filter((id) => id !== user.blood_bags_id)
                         );
-                        // Remove the user from the user state
                         setUser((prevUsers) =>
                           prevUsers.filter(
                             (selectedUser) =>
@@ -510,9 +423,7 @@ export function TabStock() {
                           )
                         );
                       } else {
-                        // Select the user
                         setSelectedRows([...selectedRows, user.blood_bags_id]);
-                        // Add the user to the user state
                         setUser((prevUsers) => [...prevUsers, user]);
                       }
                     }}
@@ -599,7 +510,6 @@ export function TabStock() {
                 </td>
                 <td className={`${classes} flex items-center gap-3`}>
                   <Revert serial_no={user.serial_no} refreshData={fetchData} />
-
                   <Dispense
                     user={user}
                     blood_bags_id={user.blood_bags_id}
@@ -613,35 +523,12 @@ export function TabStock() {
           </tbody>
         </table>
       </CardBody>
-      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Button
-          variant="outlined"
-          size="sm"
-          disabled={currentPage === 1}
-          onClick={() => handlePageChange(currentPage - 1)}
-        >
-          Previous
-        </Button>
-        <div className="flex items-center gap-2">
-          {Array.from({ length: totalPages }, (_, index) => (
-            <IconButton
-              key={index}
-              variant={currentPage === index + 1 ? "outlined" : "text"}
-              size="sm"
-              onClick={() => handlePageChange(index + 1)}
-            >
-              {index + 1}
-            </IconButton>
-          ))}
-        </div>
-        <Button
-          variant="outlined"
-          size="sm"
-          disabled={currentPage === totalPages}
-          onClick={() => handlePageChange(currentPage + 1)}
-        >
-          Next
-        </Button>
+      <CardFooter className="flex items-center justify-center border-t border-blue-gray-50 p-4">
+        {userDetails.length > visibleRows && (
+          <div className="flex justify-center mt-4">
+            <Button onClick={handleLoadMore}>Load More</Button>
+          </div>
+        )}
       </CardFooter>
     </Card>
   );

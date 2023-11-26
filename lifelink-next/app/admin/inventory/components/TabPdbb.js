@@ -49,10 +49,7 @@ function formatDate(dateString) {
 export function TabPerma() {
   const [userDetails, setUserDetails] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [sortColumn, setSortColumn] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [visibleRows, setVisibleRows] = useState(8);
   const [searchQuery, setSearchQuery] = useState("");
   const [blood_type, setBlood] = useState("All");
   const [startDate, setStartDate] = useState("");
@@ -82,7 +79,7 @@ export function TabPerma() {
 
   const handleRemarks = (selectedRemarks) => {
     setRemarks(selectedRemarks);
-    fetchBloodTypeFilteredData(blood_type, selectedRemarks, startDate, endDate); // Pass the selected remarks here
+    fetchBloodTypeFilteredData(blood_type, selectedRemarks, startDate, endDate);
   };
 
   const fetchBloodTypeFilteredData = async (
@@ -106,7 +103,7 @@ export function TabPerma() {
             Authorization: `Bearer ${token}`,
           },
           params: {
-            blood_type: selectedBlood, // Use the selected blood type
+            blood_type: selectedBlood,
             remarks: remarks,
             startDate: startDate,
             endDate: endDate,
@@ -117,8 +114,6 @@ export function TabPerma() {
       if (response.data.status === "success") {
         setUserDetails(response.data.data.data);
         setBloodQty(response.data.total_count);
-        setTotalPages(response.data.data.last_page);
-        setCurrentPage(response.data.total_count);
         setLoading(false);
       } else {
         console.error("Error fetching data:", response.data.message);
@@ -157,7 +152,8 @@ export function TabPerma() {
       console.error("Error fetching remarks:", error);
     }
   };
-  const fetchData = async (page) => {
+
+  const fetchData = async () => {
     try {
       const token = getCookie("token");
       if (!token) {
@@ -165,36 +161,17 @@ export function TabPerma() {
         return;
       }
 
-      let response;
-
-      if (searchQuery) {
-        response = await axios.post(
-          `${laravelBaseUrl}/api/search-sbb?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
-          {
-            searchInput: searchQuery,
+      const response = await axios.get(
+        `${laravelBaseUrl}/api/get-permanent-bloodbags`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-      } else {
-        response = await axios.get(
-          `${laravelBaseUrl}/api/get-permanent-bloodbags?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-      }
+        }
+      );
 
       if (response.data.status === "success") {
-        console.log(response);
         setUserDetails(response.data.data.data);
-        setTotalPages(response.data.data.last_page);
-        setCurrentPage(response.data.data.current_page);
         setBloodQty(response.data.total_count);
         setLoading(false);
       } else {
@@ -210,26 +187,7 @@ export function TabPerma() {
   useEffect(() => {
     fetchBloodTypeFilteredData(blood_type, remarks, startDate, endDate);
     fetchUnsafeRemarks();
-  }, [router, sortColumn, sortOrder, searchQuery]);
-
-  const handlePageChange = (newPage) => {
-    if (newPage < 1 || newPage > totalPages) {
-      return;
-    }
-
-    setCurrentPage(newPage);
-    fetchData(newPage);
-  };
-
-  const handleSort = (columnKey) => {
-    // If the same column is clicked, toggle the sort order
-    if (sortColumn === columnKey) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortColumn(columnKey);
-      setSortOrder("asc");
-    }
-  };
+  }, [router, searchQuery]);
 
   const exportBloodBagsAsPDF = async () => {
     try {
@@ -262,32 +220,6 @@ export function TabPerma() {
     }
   };
 
-  const sortedBloodBagDetails = userDetails.sort((a, b) => {
-    const columnA =
-      sortColumn === "name" ? `${a.first_name} ${a.last_name}` : a[sortColumn];
-    const columnB =
-      sortColumn === "name" ? `${b.first_name} ${b.last_name}` : b[sortColumn];
-
-    if (sortOrder === "asc") {
-      if (columnA < columnB) return -1;
-      if (columnA > columnB) return 1;
-    } else {
-      if (columnA < columnB) return 1;
-      if (columnA > columnB) return -1;
-    }
-
-    return 0;
-  });
-
-  if (loading) {
-    return (
-      <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
-        <Spinner color="red" className="h-16 w-16" />
-        <p className="mb-[180px] text-gray-600">Loading...</p>
-      </div>
-    );
-  }
-
   const selectedRowClass = "bg-red-100";
   const handleRowSelection = (blood_bags_id) => {
     if (selectedRows.includes(blood_bags_id)) {
@@ -296,6 +228,14 @@ export function TabPerma() {
       setSelectedRows([...selectedRows, blood_bags_id]);
     }
   };
+
+  const loadMoreRows = () => {
+    setVisibleRows((prevVisibleRows) => prevVisibleRows + 4);
+  };
+
+  const filteredUserDetails = userDetails.filter((user) => {
+    return user.serial_no.toLowerCase().includes(searchQuery.toLowerCase());
+  });
 
   return (
     <Card className="w-full -mb-6">
@@ -381,7 +321,6 @@ export function TabPerma() {
                   onChange={(e) => {
                     const inputValue = e.target.value;
                     setSearchQuery(inputValue);
-                    fetchData(inputValue);
                   }}
                 />
               </div>
@@ -433,7 +372,6 @@ export function TabPerma() {
                 <th
                   key={head.key}
                   className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
-                  onClick={() => handleSort(head.key)}
                 >
                   <div className="flex items-center">
                     <Typography
@@ -443,18 +381,13 @@ export function TabPerma() {
                     >
                       {head.label}
                     </Typography>
-                    {sortColumn === head.key && (
-                      <span className="ml-2">
-                        {sortOrder === "asc" ? "▲" : "▼"}
-                      </span>
-                    )}
                   </div>
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {userDetails.map((user, index) => (
+          {filteredUserDetails.slice(0, visibleRows).map((user, index) => (
               <tr
                 key={user.blood_bags_id}
                 className={`${
@@ -563,7 +496,7 @@ export function TabPerma() {
                 <td className={classes}>
                   <Disposed
                     blood_bags_id={user.blood_bags_id}
-                    refreshData={fetchBloodTypeFilteredData}
+                    refreshData={fetchData}
                   />
                 </td>
               </tr>
@@ -571,35 +504,12 @@ export function TabPerma() {
           </tbody>
         </table>
       </CardBody>
-      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Button
-          variant="outlined"
-          size="sm"
-          disabled={currentPage === 1}
-          onClick={() => handlePageChange(currentPage - 1)}
-        >
-          Previous
-        </Button>
-        <div className="flex items-center gap-2">
-          {Array.from({ length: totalPages }, (_, index) => (
-            <IconButton
-              key={index}
-              variant={currentPage === index + 1 ? "outlined" : "text"}
-              size="sm"
-              onClick={() => handlePageChange(index + 1)}
-            >
-              {index + 1}
-            </IconButton>
-          ))}
-        </div>
-        <Button
-          variant="outlined"
-          size="sm"
-          disabled={currentPage === totalPages}
-          onClick={() => handlePageChange(currentPage + 1)}
-        >
-          Next
-        </Button>
+      <CardFooter className="flex items-center justify-center border-t border-blue-gray-50 p-4">
+        {visibleRows < userDetails.length && (
+          <div className="flex justify-center mt-4">
+            <Button onClick={loadMoreRows}>Load More</Button>
+          </div>
+        )}
       </CardFooter>
     </Card>
   );
