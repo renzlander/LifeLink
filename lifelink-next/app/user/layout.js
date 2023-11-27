@@ -209,7 +209,7 @@ export default function UserLayout({ children }) {
         {children}
       </div>
       <div  className="fixed bottom-10 right-10">
-        {"." + pathName === "./network" ? <CreateRequest /> : ""}
+        {pathName.replace('/user', '.') === "./network" ? <CreateRequest /> : ""}
       </div>
     </div>
   );

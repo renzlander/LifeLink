@@ -10,7 +10,7 @@ export default function RootLayout({ children }) {
     pathName.split("/")[1]?.replace(/^\w/, (c) => c.toUpperCase()) || "";
 
   useEffect(() => {
-    document.title = pageTitle === "" ? "Home" : pageTitle;
+    document.title = pageTitle === "vc.recrosslifelink.com" ? "Home" : pageTitle;
   }, [pageTitle]);
 
   return (

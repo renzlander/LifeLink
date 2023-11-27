@@ -105,7 +105,7 @@ export function SecurityPin() {
             </span>
             <Typography
               className={isLengthValid ? "text-green-500" : "text-red-500"}
-              variant="caption"
+              variant="paragraph"
             >
               Security pin has at least 8 characters.
             </Typography>
@@ -116,7 +116,7 @@ export function SecurityPin() {
             </span>
             <Typography
               className={hasSpecialChar ? "text-green-500" : "text-red-500"}
-              variant="caption"
+              variant="paragraph"
             >
               Security pin has special characters.
             </Typography>
@@ -127,7 +127,7 @@ export function SecurityPin() {
             </span>
             <Typography
               className={hasNumber ? "text-green-500" : "text-red-500"}
-              variant="caption"
+              variant="paragraph"
             >
               Security pin has a number.
             </Typography>
@@ -140,7 +140,7 @@ export function SecurityPin() {
             </span>
             <Typography
               className={hasCapitalLetter ? "text-green-500" : "text-red-500"}
-              variant="caption"
+              variant="paragraph"
             >
               Security pin has a capital letter.
             </Typography>

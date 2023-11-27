@@ -17,18 +17,44 @@ export function RegF1({ onNextStep }) {
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
   const [password_confirmation, setConfirmPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState({ email: [], mobile: [] });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [showConPass, setShowConPass] = useState(false);
+  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [isPhoneValid, setIsPhoneValid] = useState(false);
 
   const openCheckList = () => setOpen(true);
   const showPassword = () => setShowPass(!showPass);
   const showConfirmPassword = () => setShowConPass(!showConPass);
 
+  const isValidEmail = (email) => {
+    const validDomains = ["@gmail.com", "@hotmail.com", "@yahoo.com"];
+    return validDomains.some((domain) => email.includes(domain));
+  };
+
+  const handleEmailChange = (e) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+    setIsEmailValid(isValidEmail(newEmail));
+  };
+  const handlePhoneChange = (e) => {
+    const newMobile = e.target.value;
+    const standardMobile = newMobile.replace(/[^0-9]/g, "");
+    setMobile(standardMobile);
+    if (newMobile.length === 11) {
+      setIsPhoneValid(true);
+    } else {
+      setIsPhoneValid(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!isValidEmail(email)) {
+      return;
+    }
 
     try {
       setIsSubmitting(true);
@@ -46,19 +72,12 @@ export function RegF1({ onNextStep }) {
       if (response.data.user_id) {
         document.cookie = `user_id=${response.data.user_id}; secure; SameSite=Strict`;
       }
-      console.log(response);
+
       if (response.status === 200) {
         onNextStep();
       }
     } catch (error) {
-      if (error.response && error.response.data && error.response.data.errors) {
-        const { errors } = error.response.data;
-        const emailErrors = errors.email || [];
-        const mobileErrors = errors.mobile || [];
-        setErrorMessage({ email: emailErrors, mobile: mobileErrors });
-      } else {
-        setErrorMessage({ email: [error.message], mobile: [error.message] });
-      }
+      console.error("Error:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -90,62 +109,54 @@ export function RegF1({ onNextStep }) {
         <div className="mb-6 space-y-6">
           <div
             className={`relative ${
-              errorMessage.email.length > 0 ? "mb-1" : ""
+              !isEmailValid && email.trim() !== "" ? "mb-1" : ""
             }`}
           >
             <Input
               size="lg"
               label="Email"
               value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
+              onChange={handleEmailChange}
               required
-              className={`w-full ${
-                errorMessage.email.length > 0 ? "border-red-500" : ""
-              }`}
+              error={!isEmailValid && email.trim() !== ""}
+              success={isEmailValid}
+              maxLength={100}
             />
-
-            {errorMessage.email.length > 0 && (
-              <div
-                key="emailError"
-                className="error-message text-red-600 text-sm"
-              >
-                {errorMessage.email[0]}
-              </div>
-            )}
+            <Typography
+              key="emailError"
+              variant="small"
+              color="red"
+              className="error-message"
+            >
+              {!isEmailValid && email.trim() !== "" && "Invalid Email"}
+            </Typography>
           </div>
 
           <div
             className={`relative ${
-              errorMessage.mobile.length > 0 ? "mb-1" : ""
+              !isPhoneValid && mobile.trim() !== "" ? "mb-1" : ""
             }`}
           >
             <Input
               size="lg"
               label="Phone Number"
               value={mobile}
-              onChange={(e) => {
-                const inputValue = e.target.value;
-                const sanitizedValue = inputValue
-                  .replace(/[^0-9]/g, "")
-                  .slice(0, 11);
-                setMobile(sanitizedValue);
-              }}
+              onChange={handlePhoneChange}
               required
-              className={`w-full ${
-                errorMessage.mobile.length > 0 ? "border-red-500" : ""
-              }`}
+              maxLength={11}
+              error={!isPhoneValid && mobile.trim() !== ""}
+              success={isPhoneValid}
             />
-
-            {errorMessage.mobile.length > 0 && (
-              <div
-                key="mobileError"
-                className="error-message text-red-600 text-sm"
-              >
-                {errorMessage.mobile[0]}
-              </div>
-            )}
+            <Typography
+              key="emailError"
+              variant="small"
+              color="red"
+              className="error-message"
+            >
+              {!isPhoneValid &&
+                mobile.trim() !== "" &&
+                "Mobile number must be 11 digits"}
+            </Typography>
           </div>
           <Input
             type={showPass === true ? "text" : "password"}
@@ -165,6 +176,7 @@ export function RegF1({ onNextStep }) {
                 <EyeIcon className="w-5 h-5" onClick={showPassword} />
               )
             }
+            maxLength={128}
           />
           <Collapse open={open} className={open === false ? "hidden" : ""}>
             <Card shadow={false} className="bg-gray-300 w-full px-4 py-2">
@@ -206,7 +218,7 @@ export function RegF1({ onNextStep }) {
             className="w-full flex items-center justify-center gap-5"
             disabled={!isFormValid || isSubmitting}
           >
-            {isSubmitting ? <Spinner size="sm" /> : ""}
+            {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
             NEXT STEP
           </Button>
         </div>
