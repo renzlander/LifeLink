@@ -38,18 +38,14 @@ function formatDateTime(dateTimeString) {
   return formattedDateTime;
 }
 
-const formatDate = (donationDate) => {
-  const formattedDate = new Date(donationDate).toLocaleString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  });
-
+function formatDate(dateString) {
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  const formattedDate = new Date(dateString).toLocaleDateString(
+    undefined,
+    options
+  );
   return formattedDate;
-};
+}
 
 function hideMiddleCharacters(text) {
   if (text && text.length && text.length > 2) {
@@ -295,7 +291,7 @@ const fetchMySchedule = async () => {
                   <Typography variant="h6">
                     Schedule of Transfusion/Operation:
                     <span className="font-normal ml-3">
-                      {formatDateTime(latestBloodRequest.schedule)}
+                      {formatDate(latestBloodRequest.schedule)}
                     </span>
                   </Typography>
                 </div>
