@@ -200,14 +200,14 @@ export function CreatePost() {
 
           <Textarea
             size="lg"
-            label="Textarea Large"
+            label="Description"
             onChange={handleBodyChange}
           />
         </DialogBody>
         <DialogFooter>
           <Button
             variant="text"
-            color="red"
+            color="gray"
             onClick={handleOpen}
             className="mr-1"
           >

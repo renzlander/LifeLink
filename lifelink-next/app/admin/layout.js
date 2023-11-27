@@ -168,7 +168,7 @@ export default function AdminLayout({ children }) {
         <DrawerHeader />
         {children}
 
-        {pathName.replace('/admin', '.') === "./a_posts" ? (
+        {pathName.replace('/admin', '.') === "./posts" ? (
           <div className="fixed bottom-10 right-10">
             <CreatePost />
           </div>
