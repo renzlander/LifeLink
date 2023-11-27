@@ -36,7 +36,6 @@ export function PostCard() {
                 },
             });
 
-            console.log(response);
             setAdminPosts(response.data.data);
         } catch (error) {
             console.error("Error fetching user information:", error);
@@ -56,8 +55,6 @@ export function PostCard() {
                     Authorization: `Bearer ${token}`,
                 },
             });
-
-            console.log('My Interest', response);
 
             if (response.data.status === 'success') {
                 setInterestedBloodRequests(response.data.data);
@@ -80,8 +77,6 @@ export function PostCard() {
                     Authorization: `Bearer ${token}`,
                 },
             });
-
-            console.log('My schedule', response);
 
             if (response.data.status === 'success') {
                 setMySchedule(response.data.data);
@@ -137,52 +132,6 @@ export function PostCard() {
                     </>
                 )}
             </div>
-
-            {adminPosts.map((post) => (
-                <Card key={post.blood_request_id} shadow={false} className="p-4 w-full shadow-md">
-                    <CardHeader color="transparent" floated={false} shadow={false} className="w-full m-0 flex 2xl:flex-row flex-col items-center justify-between">
-                        <div className="flex gap-4">
-                            <Avatar size="md" variant="circular" src="/prc_logo.png" />
-                            <div className="flex flex-col items-start">
-                                <Typography variant="h5" color="blue-gray">
-                                    Valenzuela City Philippine Red Cross
-                                </Typography>
-                                <Typography color="blue-gray" variant="small">{formatDate(post.created_at)}</Typography>
-                            </div>
-                        </div>
-                    </CardHeader>
-                    <CardBody className="mt-6 p-0">
-                        <div className="w-full flex flex-col 2xl:flex-row items-start justify-between">
-                            <Typography variant="h6" color="blue-gray">Blood Type Need : <span>{post.blood_needs}</span></Typography>
-                            <div className="flex flex-col items-start">
-                                <Typography color="blue-gray" variant="h6" className="text-base">
-                                    Donation Date: 
-                                    <span className="font-medium"> {formatDate(post.donation_date)}</span>
-                                </Typography>
-                                <Typography color="blue-gray" variant="h6" className="text-base">Venue : <span className="font-medium"> {post.venue}</span></Typography>
-                            </div>
-                        </div>
-                        <Typography color="blue-gray" className="mt-2">
-                            {post.body}
-                        </Typography>
-                        {isInterested(post.blood_request_id) ? (
-                            <Button disabled color="green" variant="gradient" className="w-1/8 mt-4">
-                                <span className="flex items-center">
-                                    Already Interested
-                                    <CheckIcon className="h-5 w-5 ml-2" />
-                                </span>
-                            </Button>
-                        ) : (
-                            <Interested
-                                requestId={post.blood_request_id}
-                                onInterestedClick={() => handleInterestedClick(post.blood_request_id)}
-                                updateInterestedBloodRequests={updateInterestedBloodRequests}
-                                fetchMySchedule={fetchMySchedule}
-                            />
-                        )}
-                    </CardBody>
-                </Card>
-            ))}
         </>
     );
     
