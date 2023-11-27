@@ -11,8 +11,10 @@ import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import { useState } from "react";
 import PasswordChecklist from "react-password-checklist";
+import { useRouter } from "next/navigation";
 
 export function RegF1({ onNextStep }) {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
@@ -24,6 +26,7 @@ export function RegF1({ onNextStep }) {
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [isMobileValid, setIsMobileValid] = useState(false);
   const [MobileError, setMobileError] = useState("");
+  const [isPassValid, setIsPassValid] = useState(false);
 
   const openCheckList = () => setOpen(true);
   const showPassword = () => setShowPass(!showPass);
@@ -181,9 +184,17 @@ export function RegF1({ onNextStep }) {
           <Collapse open={open} className={open === false ? "hidden" : ""}>
             <Card shadow={false} className="bg-gray-300 w-full px-4 py-2">
               <PasswordChecklist
-                rules={["minLength", "specialChar", "number", "capital"]}
+                rules={["minLength", "specialChar", "number", "capital", "match"]}
                 minLength={8}
                 value={password}
+                valueAgain={password_confirmation}
+                onChange={(isValid) => {
+                  if (isValid === true) {
+                    setIsPassValid(true);
+                  } else {
+                    setIsPassValid(false);
+                  }
+                }}
               />
             </Card>
           </Collapse>
@@ -215,7 +226,7 @@ export function RegF1({ onNextStep }) {
           <Button
             type="submit"
             className="w-full flex items-center justify-center gap-5"
-            disabled={!isFormValid || isSubmitting}
+            disabled={!isFormValid || isSubmitting || !isPassValid}
           >
             {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
             NEXT STEP
@@ -223,9 +234,9 @@ export function RegF1({ onNextStep }) {
         </div>
         <Typography color="gray" className="mt-4 text-center font-normal">
           Already have an account?{" "}
-          <a href="/login" className="font-medium text-gray-900">
+          <span href="/login" className="font-medium text-gray-900 cursor-pointer" onClick={() => router.push("/login")}>
             Sign In
-          </a>
+          </span>
         </Typography>
       </form>
     </>

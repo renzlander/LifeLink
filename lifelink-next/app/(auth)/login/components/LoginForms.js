@@ -4,7 +4,6 @@ import { laravelBaseUrl } from "@/app/variables";
 import { Button, Card, Input, Typography, Spinner } from "@material-tailwind/react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -123,11 +122,14 @@ export default function LoginForm() {
           {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
           {isSubmitting ? "LOGGING IN" : "LOGIN"}
         </Button>
+        <Typography color="gray" className="mt-4 text-center font-medium hover:text-gray-900 cursor-pointer" onClick={() => router.push("/forgot")}>
+          Forgot Password
+        </Typography>
         <Typography color="gray" className="mt-4 text-center font-normal">
           Don't have an account?{" "}
-          <Link href="/register">
-            <span className="font-medium text-gray-900">Sign Up</span>
-          </Link>
+          <span className="font-medium text-gray-900 cursor-pointer" onClick={() => router.push("/register")}>
+            Sign Up
+          </span>
         </Typography>
       </form>
     </Card>

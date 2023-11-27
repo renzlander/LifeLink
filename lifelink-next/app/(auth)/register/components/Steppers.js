@@ -21,8 +21,6 @@ export default function RegisterStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [isLastStep, setIsLastStep] = useState(false);
   const [isFirstStep, setIsFirstStep] = useState(true);
-
-  console.log("activeStep", activeStep);
   
   const handleNextStep = useCallback(() => {
     if (!isLastStep) {
