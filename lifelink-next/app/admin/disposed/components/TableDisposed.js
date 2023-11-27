@@ -1,19 +1,21 @@
 import InputSelect from "@/app/components/InputSelect";
 import { laravelBaseUrl } from "@/app/variables";
 import {
-    DocumentArrowDownIcon
+  MagnifyingGlassIcon,
+  DocumentArrowDownIcon,
 } from "@heroicons/react/24/outline";
 import {
-    Button,
-    Card,
-    CardBody,
-    CardFooter,
-    IconButton,
-    Input,
-    Option,
-    Select,
-    Spinner,
-    Typography
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  Checkbox,
+  IconButton,
+  Input,
+  Option,
+  Select,
+  Spinner,
+  Typography,
 } from "@material-tailwind/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -44,16 +46,12 @@ function formatDate(dateString) {
 export function TabStock() {
   const [userDetails, setUserDetails] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [sortColumn, setSortColumn] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [visibleRows, setVisibleRows] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [blood_type, setBlood] = useState("All");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [bloodQty, setBloodQty] = useState();
-  const [selectedRows, setSelectedRows] = useState([]);
   const [bbType, setBbType] = useState("All");
 
   const bloodTypes = ["All", "AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
@@ -118,10 +116,7 @@ export function TabStock() {
       );
 
       if (response.data.status === "success") {
-        setUserDetails(response.data.data.data);
-        setBloodQty(response.data.total_count);
-        setTotalPages(response.data.data.last_page);
-        setCurrentPage(response.data.total_count);
+        setUserDetails(response.data.data);
         setLoading(false);
       } else {
         console.error("Error fetching data:", response.data.message);
@@ -141,46 +136,20 @@ export function TabStock() {
         return;
       }
 
-      let response;
-
-      const params = {
-        page: page,
-        sort: sortColumn,
-        order: sortOrder,
-      };
-
-      if (searchQuery) {
-        response = await axios.post(
-          `${laravelBaseUrl}/api/search-disposed-bloodbag`,
-          {
-            searchInput: searchQuery,
-            ...params,
+      const response = await axios.get(
+        `${laravelBaseUrl}/api/get-disposed-bloodbag`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-      } else {
-        response = await axios.get(
-          `${laravelBaseUrl}/api/get-disposed-bloodbag`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            params: params,
-          }
-        );
-      }
+          params: params,
+        }
+      );
 
       console.log("Response:", response);
 
       if (response.data.status === "success") {
         setUserDetails(response.data.data);
-        setTotalPages(response.data.data.last_page);
-        setCurrentPage(response.data.data.current_page);
-        setBloodQty(response.data.total_count);
         setLoading(false);
       } else {
         console.error("Error fetching data:", response.data.message);
@@ -194,35 +163,7 @@ export function TabStock() {
 
   useEffect(() => {
     fetchBloodTypeFilteredData(blood_type, bbType, startDate, endDate);
-  }, [
-    router,
-    sortColumn,
-    sortOrder,
-    searchQuery,
-    blood_type,
-    bbType,
-    startDate,
-    endDate,
-  ]);
-
-  const handlePageChange = (newPage) => {
-    if (newPage < 1 || newPage > totalPages) {
-      return;
-    }
-
-    setCurrentPage(newPage);
-    fetchData(newPage);
-  };
-
-  const handleSort = (columnKey) => {
-    // If the same column is clicked, toggle the sort order
-    if (sortColumn === columnKey) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortColumn(columnKey);
-      setSortOrder("asc");
-    }
-  };
+  }, [router, searchQuery, blood_type, bbType, startDate, endDate]);
 
   const exportBloodBagsAsPDF = async () => {
     try {
@@ -258,21 +199,12 @@ export function TabStock() {
     }
   };
 
-  const sortedBloodBagDetails = userDetails.sort((a, b) => {
-    const columnA =
-      sortColumn === "name" ? `${a.first_name} ${a.last_name}` : a[sortColumn];
-    const columnB =
-      sortColumn === "name" ? `${b.first_name} ${b.last_name}` : b[sortColumn];
+  const loadMoreRows = () => {
+    setVisibleRows((prevVisibleRows) => prevVisibleRows + 4);
+  };
 
-    if (sortOrder === "asc") {
-      if (columnA < columnB) return -1;
-      if (columnA > columnB) return 1;
-    } else {
-      if (columnA < columnB) return 1;
-      if (columnA > columnB) return -1;
-    }
-
-    return 0;
+  const filteredUserDetails = userDetails.filter((user) => {
+    return user.serial_no.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
   if (loading) {
@@ -283,8 +215,6 @@ export function TabStock() {
       </div>
     );
   }
-
-  console.log("UserDetails:", userDetails);
 
   return (
     <Card className="w-full -mb-6">
@@ -372,13 +302,17 @@ export function TabStock() {
               {/* Other Tools  */}
             </Typography>
             <div className="flex items-center gap-3 pt-6">
-              {/* <div className="flex items-center gap-3 w-full md:w-72">
-                                <Input label="Search" icon={<MagnifyingGlassIcon className="h-5 w-5" />} value={searchQuery}  onChange={(e) => {
-                                    const inputValue = e.target.value;
-                                    setSearchQuery(inputValue);
-                                    fetchData(inputValue);
-                                }}/>
-                            </div> */}
+              <div className="flex items-center gap-3 w-full md:w-72">
+                <Input
+                  label="Search"
+                  icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+                  value={searchQuery}
+                  onChange={(e) => {
+                    const inputValue = e.target.value;
+                    setSearchQuery(inputValue);
+                  }}
+                />
+              </div>
               <Button
                 className="flex items-center gap-3"
                 onClick={exportBloodBagsAsPDF}
@@ -392,39 +326,28 @@ export function TabStock() {
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
-              {TABLE_HEAD.map((head) => (
-                <th
-                  key={head.key}
-                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
-                  onClick={() => handleSort(head.key)}
-                >
-                  <div className="flex items-center">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal leading-none opacity-70"
-                    >
-                      {head.label}
-                    </Typography>
-                    {sortColumn === head.key && (
-                      <span className="ml-2">
-                        {sortOrder === "asc" ? "▲" : "▼"}
-                      </span>
-                    )}
-                  </div>
-                </th>
-              ))}
+            {TABLE_HEAD.map((head) => (
+                  <th
+                    key={head.key}
+                    className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
+                  >
+                    <div className="flex items-center">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal leading-none opacity-70"
+                      >
+                        {head.label}
+                      </Typography>
+                    </div>
+                  </th>
+                ))}
             </tr>
           </thead>
           <tbody>
-            {userDetails.map((user, index) => (
+          {filteredUserDetails.slice(0, visibleRows).map((user, index) => (
               <tr
                 key={user.blood_bags_id}
-                className={`${
-                  selectedRows.includes(user.blood_bags_id)
-                    ? selectedRowClass
-                    : ""
-                }`}
               >
                 <td className={classes}>
                   <div className="flex items-center gap-3">
@@ -502,35 +425,12 @@ export function TabStock() {
           </tbody>
         </table>
       </CardBody>
-      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Button
-          variant="outlined"
-          size="sm"
-          disabled={currentPage === 1}
-          onClick={() => handlePageChange(currentPage - 1)}
-        >
-          Previous
-        </Button>
-        <div className="flex items-center gap-2">
-          {Array.from({ length: totalPages }, (_, index) => (
-            <IconButton
-              key={index}
-              variant={currentPage === index + 1 ? "outlined" : "text"}
-              size="sm"
-              onClick={() => handlePageChange(index + 1)}
-            >
-              {index + 1}
-            </IconButton>
-          ))}
-        </div>
-        <Button
-          variant="outlined"
-          size="sm"
-          disabled={currentPage === totalPages}
-          onClick={() => handlePageChange(currentPage + 1)}
-        >
-          Next
-        </Button>
+      <CardFooter className="flex items-center justify-center border-t border-blue-gray-50 p-4">
+      {visibleRows < userDetails.length && (
+            <div className="flex justify-center mt-4">
+              <Button onClick={loadMoreRows}>Load More</Button>
+            </div>
+          )}
       </CardFooter>
     </Card>
   );
