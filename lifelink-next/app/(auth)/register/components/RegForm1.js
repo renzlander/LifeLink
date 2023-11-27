@@ -23,7 +23,7 @@ export function RegF1({ onNextStep }) {
   const [showConPass, setShowConPass] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [isMobileValid, setIsMobileValid] = useState(false);
-  const [MobileError, setMobileError] = useState(false);
+  const [MobileError, setMobileError] = useState("");
 
   const openCheckList = () => setOpen(true);
   const showPassword = () => setShowPass(!showPass);
@@ -68,12 +68,12 @@ export function RegF1({ onNextStep }) {
 
     try {
       setIsSubmitting(true);
-
+      const formattedMobile = `0${mobile}`;
       const response = await axios.post(
         `${laravelBaseUrl}/api/auth/register-step1`,
         {
           email,
-          mobile,
+          mobile: formattedMobile,
           password,
           password_confirmation,
         }
