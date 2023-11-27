@@ -288,7 +288,7 @@ export function TabExp() {
             <Typography variant="h6" className="text-lg mr-4">
               Selected Rows: {selectedRows.length}
             </Typography>
-            <MultipleDisposed variant="contained" color="red" size="sm" className="ml-4" selectedRows={selectedRows} refreshData={fetchData} />
+            {/* Include your component for multiple disposes here */}
           </div>
         )}
         <table className="w-full min-w-max table-auto text-left">
