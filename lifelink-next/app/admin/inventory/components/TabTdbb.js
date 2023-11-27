@@ -243,9 +243,12 @@ export function TabTemp() {
     setVisibleRows((prevVisibleRows) => prevVisibleRows + 4);
   };
 
-  const filteredUserDetails = userDetails.filter((user) => {
-    return user.serial_no.toLowerCase().includes(searchQuery.toLowerCase());
-  });
+  const filteredUserDetails = userDetails
+    ? userDetails.filter((user) =>
+        user.serial_no.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
+
   return (
     <Card className="w-full -mb-6">
       <CardBody>
@@ -524,7 +527,7 @@ export function TabTemp() {
         </table>
       </CardBody>
       <CardFooter className="flex items-center justify-center border-t border-blue-gray-50 p-4">
-        {visibleRows < userDetails.length && (
+        {userDetails && visibleRows < userDetails.length && (
           <div className="flex justify-center mt-4">
             <Button onClick={loadMoreRows}>Load More</Button>
           </div>

@@ -206,11 +206,14 @@ export function TemporaryTable() {
     setVisibleRows((prevVisibleRows) => prevVisibleRows + 4);
   };
 
-  const filteredUserDetails = userDetails.filter((user) => {
-    const fullName =
-      `${user.first_name} ${user.middle_name} ${user.last_name}`.toLowerCase();
-    return fullName.includes(searchQuery.toLowerCase());
-  });
+  const filteredUserDetails = userDetails
+  ? userDetails.filter((user) => {
+      const fullName =
+        `${user.first_name} ${user.middle_name} ${user.last_name}`.toLowerCase();
+      return fullName.includes(searchQuery.toLowerCase());
+    })
+  : [];
+
 
   if (loading) {
     return (
@@ -393,11 +396,12 @@ export function TemporaryTable() {
         </CardBody>
 
         <CardFooter className="flex items-center justify-center border-t border-blue-gray-50 p-4">
-          {visibleRows < userDetails.length && (
-            <div className="flex justify-center mt-4">
-              <Button onClick={loadMoreRows}>Load More</Button>
-            </div>
-          )}
+        {userDetails && visibleRows < userDetails.length && (
+  <div className="flex justify-center mt-4">
+    <Button onClick={loadMoreRows}>Load More</Button>
+  </div>
+)}
+
         </CardFooter>
       </Card>
     </>
