@@ -411,7 +411,7 @@ export function DispenseTable() {
           </thead>
           <tbody>
             {filteredUserDetails.slice(0, visibleRows).map((user, index) => (
-              <tr>
+              <tr key={user.patient_receivers_id}>
                 <td className={classes}>
                   <Typography
                     variant="small"
