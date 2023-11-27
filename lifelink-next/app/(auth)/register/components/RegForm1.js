@@ -22,7 +22,8 @@ export function RegF1({ onNextStep }) {
   const [showPass, setShowPass] = useState(false);
   const [showConPass, setShowConPass] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(false);
-  const [isPhoneValid, setIsPhoneValid] = useState(false);
+  const [isMobileValid, setIsMobileValid] = useState(false);
+  const [MobileError, setMobileError] = useState(false);
 
   const openCheckList = () => setOpen(true);
   const showPassword = () => setShowPass(!showPass);
@@ -38,14 +39,23 @@ export function RegF1({ onNextStep }) {
     setEmail(newEmail);
     setIsEmailValid(isValidEmail(newEmail));
   };
-  const handlePhoneChange = (e) => {
+
+  const handleMobileChange = (e) => {
     const newMobile = e.target.value;
     const standardMobile = newMobile.replace(/[^0-9]/g, "");
+    const isLengthValid = standardMobile.length === 10;
+    const isValidLeadingDigit = standardMobile.startsWith('9');
+
     setMobile(standardMobile);
-    if (newMobile.length === 11) {
-      setIsPhoneValid(true);
+    if (!isValidLeadingDigit) {
+      setIsMobileValid(false);
+      setMobileError("Mobile number must start with '9'");
+    } else if (!isLengthValid) {
+      setIsMobileValid(false);
+      setMobileError("Mobile number must be 10 digits long");
     } else {
-      setIsPhoneValid(false);
+      setIsMobileValid(true);
+      setMobileError("");
     }
   };
 
@@ -106,12 +116,8 @@ export function RegF1({ onNextStep }) {
         className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96"
         onSubmit={handleSubmit}
       >
-        <div className="mb-6 space-y-6">
-          <div
-            className={`relative ${
-              !isEmailValid && email.trim() !== "" ? "mb-1" : ""
-            }`}
-          >
+        <div className="mb-6 flex flex-col gap-6">
+          <div className="relative">
             <Input
               size="lg"
               label="Email"
@@ -122,41 +128,36 @@ export function RegF1({ onNextStep }) {
               success={isEmailValid}
               maxLength={100}
             />
-            <Typography
-              key="emailError"
-              variant="small"
-              color="red"
-              className="error-message"
-            >
+            <Typography variant="small" color="red">
               {!isEmailValid && email.trim() !== "" && "Invalid Email"}
             </Typography>
           </div>
-
-          <div
-            className={`relative ${
-              !isPhoneValid && mobile.trim() !== "" ? "mb-1" : ""
-            }`}
-          >
-            <Input
-              size="lg"
-              label="Phone Number"
-              value={mobile}
-              onChange={handlePhoneChange}
-              required
-              maxLength={11}
-              error={!isPhoneValid && mobile.trim() !== ""}
-              success={isPhoneValid}
-            />
+          <div className={`flex items-center gap-2 ${!isMobileValid && mobile.trim() !== "" ? "mb-4" : ""}`}>
             <Typography
-              key="emailError"
-              variant="small"
-              color="red"
-              className="error-message"
+              variant="paragraph"
+              color={!isMobileValid && mobile.trim() !== "" ? "red" : isMobileValid ? "green" : "gray"}
             >
-              {!isPhoneValid &&
-                mobile.trim() !== "" &&
-                "Mobile number must be 11 digits"}
+              +63
             </Typography>
+            <div className="w-full relative">
+              <Input
+                size="lg"
+                label="Mobile Number"
+                value={mobile}
+                onChange={handleMobileChange}
+                required
+                maxLength={10}
+                error={!isMobileValid && mobile.trim() !== ""}
+                success={isMobileValid}
+              />
+              <Typography
+                variant="small"
+                color="red"
+                className="absolute -bottom- left-0"
+              >
+                {!isMobileValid && mobile.trim() !== "" && MobileError}
+              </Typography>
+            </div>
           </div>
           <Input
             type={showPass === true ? "text" : "password"}
@@ -168,7 +169,6 @@ export function RegF1({ onNextStep }) {
             }}
             onFocus={openCheckList}
             required
-            className="mb-1"
             icon={
               showPass === true ? (
                 <EyeSlashIcon className="w-5 h-5" onClick={showPassword} />
@@ -199,7 +199,6 @@ export function RegF1({ onNextStep }) {
               : confirmPasswordStyle === "success"
               ? { success: true }
               : { error: true })}
-            className="mb-2"
             icon={
               showConPass === true ? (
                 <EyeSlashIcon
