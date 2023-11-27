@@ -203,9 +203,11 @@ export function TabStock() {
     setVisibleRows((prevVisibleRows) => prevVisibleRows + 4);
   };
 
-  const filteredUserDetails = userDetails.filter((user) => {
-    return user.serial_no.toLowerCase().includes(searchQuery.toLowerCase());
-  });
+  const filteredUserDetails = userDetails
+    ? userDetails.filter((user) =>
+        user.serial_no.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
 
   if (loading) {
     return (
@@ -218,7 +220,8 @@ export function TabStock() {
 
   return (
     <Card className="w-full -mb-6">
-      <CardBody>.
+      <CardBody>
+        .
         <div className="flex items-center justify-between px-4 mb-4">
           <div>
             <Typography
@@ -322,33 +325,30 @@ export function TabStock() {
             </div>
           </div>
         </div>
-
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
-            {TABLE_HEAD.map((head) => (
-                  <th
-                    key={head.key}
-                    className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
-                  >
-                    <div className="flex items-center">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal leading-none opacity-70"
-                      >
-                        {head.label}
-                      </Typography>
-                    </div>
-                  </th>
-                ))}
+              {TABLE_HEAD.map((head) => (
+                <th
+                  key={head.key}
+                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
+                >
+                  <div className="flex items-center">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal leading-none opacity-70"
+                    >
+                      {head.label}
+                    </Typography>
+                  </div>
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
-          {filteredUserDetails.slice(0, visibleRows).map((user, index) => (
-              <tr
-                key={user.blood_bags_id}
-              >
+            {filteredUserDetails.slice(0, visibleRows).map((user, index) => (
+              <tr key={user.blood_bags_id}>
                 <td className={classes}>
                   <div className="flex items-center gap-3">
                     <Typography
@@ -426,11 +426,11 @@ export function TabStock() {
         </table>
       </CardBody>
       <CardFooter className="flex items-center justify-center border-t border-blue-gray-50 p-4">
-      {visibleRows < userDetails.length && (
-            <div className="flex justify-center mt-4">
-              <Button onClick={loadMoreRows}>Load More</Button>
-            </div>
-          )}
+        {userDetails && visibleRows < userDetails.length && (
+          <div className="flex justify-center mt-4">
+            <Button onClick={loadMoreRows}>Load More</Button>
+          </div>
+        )}
       </CardFooter>
     </Card>
   );
