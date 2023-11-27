@@ -99,7 +99,7 @@ export default function UserLayout({ children }) {
         console.error("Error fetching user information:", error);
       }
     };
-
+    
     fetchUserInfo();
   }, []);
 

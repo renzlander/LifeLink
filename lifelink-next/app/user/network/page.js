@@ -10,12 +10,12 @@ import History from "./components/HistoryTab";
 
 const TABS = [
   {
-      label: "Created Posts",
+      label: "Create Request",
       value: "request",
       tableRender: <Request />,
   },
   {
-      label: "Blood Requests",
+      label: "Request History",
       value: "history",
       tableRender: <History />,
   }
@@ -41,9 +41,9 @@ export default function Home() {
               let tooltipText = "";
         
               if (value === "request") {
-                tooltipText = "Blood Donor Requests";
+                tooltipText = "Create Requests";
               } else if (value === "history") {
-                tooltipText = "Blood Request Made";
+                tooltipText = "Request History";
               }
         
               return (

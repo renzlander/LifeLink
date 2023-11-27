@@ -33,10 +33,9 @@ import { laravelBaseUrl } from "@/app/variables";
     return formattedDate;
 };
 
-  export function Interested({ requestId, onInterestedClick, updateInterestedBloodRequests, fetchMySchedule }) {
+  export function Interested({ requestId, bloodNeed, onInterestedClick, updateInterestedBloodRequests, fetchMySchedule }) {
     const [open, setOpen] = useState(false);
     const [generalErrorMessage, setGeneralErrorMessage] = useState("");
-
     const handleInterested = async () => {
       try {
           const token = getCookie("token");
@@ -48,6 +47,7 @@ import { laravelBaseUrl } from "@/app/variables";
           // Prepare data for the POST request
           const data = {
               blood_request_id:requestId,
+            //   blood_type_need:bloodNeed
           };
 
           const response = await axios
