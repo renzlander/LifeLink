@@ -1,20 +1,22 @@
 "use client";
 import React from "react";
 import { laravelBaseUrl } from "@/app/variables";
-import { Button, Card, Input, Typography, Spinner } from "@material-tailwind/react";
+import { Button, Card, Input, Typography } from "@material-tailwind/react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function LoginForm() {
   const router = useRouter();
   const [email_or_phone, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showPass, setShowPass] = useState(false);
+  const [isToastShown, setIsToastShown] = useState(false);
+  const [showPass,setShowPass] = useState(false);
 
   const showPassword = () => setShowPass(!showPass);
 
@@ -22,12 +24,15 @@ export default function LoginForm() {
     e.preventDefault();
 
     try {
-      setIsSubmitting(true);
-      const response = await axios.post(
-        `${laravelBaseUrl}/api/auth:sanctum/login`,
-        {
+      const response = await toast.promise(
+        axios.post(`${laravelBaseUrl}/api/auth:sanctum/login`, {
           email_or_phone,
           password,
+        }),
+        {
+          pending: "Logging in...",
+          success: "Login successful",
+          error: "Login failed",
         }
       );
       if (response.status === 200) {
@@ -35,17 +40,18 @@ export default function LoginForm() {
           document.cookie = `token=${response.data.token}; expires=${new Date(
             new Date().getTime() + 86400 * 1000
           ).toUTCString()}; path=/`;
-          setIsSubmitting(false);
+          // toast.success("Login successful!");
           router.push("/user/dashboard");
         } else {
           document.cookie = `token=${response.data.token}; expires=${new Date(
             new Date().getTime() + 86400 * 1000
           ).toUTCString()}; path=/`;
-          setIsSubmitting(false);
+          // toast.success("Login successful!");
           router.push("/admin/dashboard");
         }
       } else {
         setErrorMessage(response.data.response.data.msg);
+        toast.error(response.data.response.data.msg);
       }
     } catch (error) {
       if (error.response.data.user_id) {
@@ -55,6 +61,7 @@ export default function LoginForm() {
         }, 2000);
       }
       setErrorMessage(error.response.data.msg);
+      toast.error(error.response.data.msg);
     }
   };
 
@@ -114,14 +121,8 @@ export default function LoginForm() {
             }
           />
         </div>
-        <Button 
-          type="submit" 
-          className="w-full mt-6 flex items-center justify-center gap-5"
-          fullWidth
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
-          {isSubmitting ? "LOGGING IN" : "LOGIN"}
+        <Button type="submit" className="mt-6" fullWidth>
+          Login
         </Button>
         <Typography color="gray" className="mt-4 text-center font-normal">
           Don't have an account?{" "}
