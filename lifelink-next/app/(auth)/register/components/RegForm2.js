@@ -397,6 +397,7 @@ export function RegF2({ onNextStep }) {
             label="Zip Code"
             required
             value={postalcode}
+            maxLength={4}
             onChange={(e) => {
               const newValue = e.target.value;
               if (!/^[0-9]*$/.test(newValue)) {
