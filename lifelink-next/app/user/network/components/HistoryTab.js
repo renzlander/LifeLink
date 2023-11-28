@@ -13,9 +13,9 @@ import { RecentRequest, MakeRequest } from "./NetworkSidebar";
 
 export default function History() {
   const router = useRouter();
-  const [latestBloodRequest, setLatestBloodRequest] = useState([]);
+  const [bloodRequestHistory, seBlooRequestHistory] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  console.log("dasdas", bloodRequestHistory);
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -46,13 +46,14 @@ export default function History() {
           return;
         }
 
-        const response = await axios.get(`${laravelBaseUrl}/api/get-latest-blood-request`, {
+        const response = await axios.get(`${laravelBaseUrl}/api/get-requested-blood`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        setLatestBloodRequest(response.data.data);
+        console.log("Requested blood", response);
+        seBlooRequestHistory(response.data.data);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching user information:", error);
@@ -66,9 +67,9 @@ export default function History() {
   return (
     <div className="w-full p-4 flex flex-col items-start justify-center gap-4">
       <Typography variant="h4" color="blue-gray" className="ml-2 mb-3">
-        Previous Requests
+        All created requests
       </Typography>
-      <RecentRequest latestBloodRequest={latestBloodRequest} />
+      <RecentRequest bloodRequestHistory={bloodRequestHistory} />
     </div>
   );
 }
