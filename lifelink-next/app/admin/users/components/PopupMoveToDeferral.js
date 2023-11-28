@@ -38,7 +38,6 @@ export function MoveToDeferral({
   const [venue, setVenue] = useState("");
   const [dateDeferred, setDateDeferred] = useState("");
   const [donationType, setDonationType] = useState();
-
   const [errorMessage, setErrorMessage] = useState({
     category: "",
     specific_reason: "",
@@ -139,10 +138,12 @@ export function MoveToDeferral({
         setOpen(false);
         refreshData();
       } else if (response.data.status === "error") {
+        setGeneralErrorMessage(response.data.message);
         handleErrorResponse(response.data);
         toast.error("error");
       }
     } catch (error) {
+      setGeneralErrorMessage(error.response.data.message);
       console.error("Unknown error occurred:", error);
     }
   };

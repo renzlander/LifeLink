@@ -4,27 +4,31 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export function RegF3() {
+export function RegF3({ onNextStep }) {
   const router = useRouter();
-  const [countdown, setCountdown] = useState(90); // 1 30s
+  const [countdown, setCountdown] = useState(90);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [user_id, setUserId] = useState(null);
 
   useEffect(() => {
-    let timer;
-
+    // Fetch and set the user ID only once when the component mounts
     const storedUserId = document.cookie
       .split("; ")
       .find((row) => row.startsWith("user_id="))
       .split("=")[1];
+
     setUserId(storedUserId);
+  }, []); // Empty dependency array ensures it runs only once on mount
+
+  useEffect(() => {
+    let timer;
 
     const checkIfVerified = async () => {
       try {
         const response = await axios.post(
           `${laravelBaseUrl}/api/check-verify-reg`,
           {
-            user_id: storedUserId,
+            user_id: user_id,
           }
         );
 
@@ -33,6 +37,7 @@ export function RegF3() {
             "user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
           setIsButtonDisabled(false);
           setCountdown(0); // Stop the countdown if already verified
+          onNextStep();
         } else {
           if (countdown > 0) {
             timer = setTimeout(() => {
@@ -57,7 +62,7 @@ export function RegF3() {
       clearInterval(interval);
       clearTimeout(timer);
     };
-  }, [countdown]);
+  }, [countdown, user_id]);
 
   const handleResendClick = async () => {
     // Reset the countdown and disable the button
@@ -74,6 +79,7 @@ export function RegF3() {
       if (response.data.status === "success") {
         setIsButtonDisabled(false); // Enable the button on successful resend
       } else {
+        // Handle unsuccessful resend
       }
     } catch (error) {
       console.error("Error resending verification link:", error);
@@ -106,3 +112,4 @@ export function RegF3() {
     </div>
   );
 }
+

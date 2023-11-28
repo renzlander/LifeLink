@@ -11,6 +11,7 @@ import {
   Select,
   Spinner,
   Tooltip,
+  Typography,
 } from "@material-tailwind/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -36,6 +37,7 @@ export function AddUsers({ refreshData }) {
     mobile: [],
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [inputFocused, setInputFocused] = useState(false);
 
   const bloodTypes = ["AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
 
@@ -269,23 +271,42 @@ export function AddUsers({ refreshData }) {
                   </div>
                 )}
               </div>
-              <div
-                className={`relative ${
-                  errorMessage.mobile.length > 0 ? "mb-1" : ""
-                }`}
-              >
-                <div className="flex items-center">
-                  <span className="mr-2">+63</span>
+              <div>
+                <div className="w-full relative">
+                  {inputFocused && (
+                    <Typography
+                      variant="paragraph"
+                      style={{
+                        position: "absolute",
+                        left: "15px",
+                        top: "50%",
+                        transform: "translateY(-45%)",
+                        zIndex: "2",
+                        fontSize: "14px",
+                      }}
+                    >
+                      +63
+                    </Typography>
+                  )}
                   <Input
-                    type="tel"
-                    placeholder="Mobile Number"
+                    size="lg"
+                    label="Mobile Number"
                     value={mobile}
                     onChange={handleMobileNumberChange}
-                    className="w-full"
+                    onFocus={() => setInputFocused(true)}
+                    onBlur={() => setInputFocused(mobile.trim() !== "")}
+                    required
+                    maxLength={10}
+                    className={`w-full ${inputFocused ? "pl-12" : ""} ${
+                      errorMessage.mobile.length > 0 ? "border-red-500" : ""
+                    }`}
                   />
                 </div>
                 {errorMessage.mobile.length > 0 && (
-                  <div className="error-message text-red-600 text-sm">
+                  <div
+                    key="mobileError"
+                    className="error-message text-red-600 text-sm"
+                  >
                     {errorMessage.mobile[0]}
                   </div>
                 )}

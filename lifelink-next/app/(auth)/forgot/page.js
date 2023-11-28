@@ -22,10 +22,10 @@ export default function ForgotPassword() {
   }, []);
 
   const pages = [
-    <RequestEmail onNextPage={handleNextpage} />,
-    <OneTimePass onNextPage={handleNextpage} />,
-    <NewPass onNextPage={handleNextpage} />,
-    <LastPage />,
+    <RequestEmail key="requestEmail" onNextPage={handleNextpage} />,
+    <OneTimePass key="oneTimePass" onNextPage={handleNextpage} />,
+    <NewPass key="newPass" onNextPage={handleNextpage} />,
+    <LastPage key="lastPage" />,
   ];
 
   return (

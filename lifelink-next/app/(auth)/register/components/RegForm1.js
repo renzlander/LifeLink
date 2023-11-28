@@ -11,10 +11,8 @@ import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import { useState } from "react";
 import PasswordChecklist from "react-password-checklist";
-import { useRouter } from "next/navigation";
 
 export function RegF1({ onNextStep }) {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
@@ -26,7 +24,9 @@ export function RegF1({ onNextStep }) {
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [isMobileValid, setIsMobileValid] = useState(false);
   const [MobileError, setMobileError] = useState("");
-  const [isPassValid, setIsPassValid] = useState(false);
+  const [inputFocused, setInputFocused] = useState(false);
+
+  const [errorMessage, setErrorMessage] = useState({ email: [], mobile: [] });
 
   const openCheckList = () => setOpen(true);
   const showPassword = () => setShowPass(!showPass);
@@ -43,22 +43,22 @@ export function RegF1({ onNextStep }) {
     setIsEmailValid(isValidEmail(newEmail));
   };
 
-  const handleMobileChange = (e) => {
-    const newMobile = e.target.value;
-    const standardMobile = newMobile.replace(/[^0-9]/g, "");
-    const isLengthValid = standardMobile.length === 10;
-    const isValidLeadingDigit = standardMobile.startsWith('9');
+  const handleMobileNumberChange = (e) => {
+    let inputValue = e.target.value;
 
-    setMobile(standardMobile);
-    if (!isValidLeadingDigit) {
-      setIsMobileValid(false);
-      setMobileError("Mobile number must start with '9'");
-    } else if (!isLengthValid) {
-      setIsMobileValid(false);
-      setMobileError("Mobile number must be 10 digits long");
+    // Remove non-numeric characters
+    inputValue = inputValue.replace(/[^0-9]/g, "");
+
+    // Ensure the first digit is 9 and limit the length to 10 digits
+    const sanitizedValue = inputValue.startsWith("9")
+      ? inputValue.slice(0, 10)
+      : inputValue.slice(0, 9);
+
+    // If the first digit is not 9, reset the input to an empty string
+    if (inputValue.length > 0 && inputValue[0] !== "9") {
+      setMobile("");
     } else {
-      setIsMobileValid(true);
-      setMobileError("");
+      setMobile(sanitizedValue);
     }
   };
 
@@ -90,6 +90,14 @@ export function RegF1({ onNextStep }) {
         onNextStep();
       }
     } catch (error) {
+      if (error.response && error.response.data && error.response.data.errors) {
+        const { errors } = error.response.data;
+        const emailErrors = errors.email || [];
+        const mobileErrors = errors.mobile || [];
+        setErrorMessage({ email: emailErrors, mobile: mobileErrors });
+      } else {
+        setErrorMessage({ email: [error.message], mobile: [error.message] });
+      }
       console.error("Error:", error);
     } finally {
       setIsSubmitting(false);
@@ -130,37 +138,64 @@ export function RegF1({ onNextStep }) {
               error={!isEmailValid && email.trim() !== ""}
               success={isEmailValid}
               maxLength={100}
+              className={`w-full ${
+                errorMessage.email.length > 0 ? "border-red-500" : ""
+              }`}
             />
+            {errorMessage.email.length > 0 && (
+              <div
+                key="emailError"
+                className="error-message text-red-600 text-sm"
+              >
+                {errorMessage.email[0]}
+              </div>
+            )}
             <Typography variant="small" color="red">
               {!isEmailValid && email.trim() !== "" && "Invalid Email"}
             </Typography>
           </div>
-          <div className={`flex items-center gap-2 ${!isMobileValid && mobile.trim() !== "" ? "mb-4" : ""}`}>
-            <Typography
-              variant="paragraph"
-              color={!isMobileValid && mobile.trim() !== "" ? "red" : isMobileValid ? "green" : "gray"}
-            >
-              +63
-            </Typography>
+          <div
+           
+          >
             <div className="w-full relative">
+              {inputFocused && (
+                <Typography
+                  variant="paragraph"
+                  style={{
+                    position: "absolute",
+                    left: "15px",
+                    top: "50%",
+                    transform: "translateY(-45%)",
+                    zIndex: "2",
+                    fontSize: "14px",
+                  }}
+                >
+                  +63
+                </Typography>
+              )}
               <Input
                 size="lg"
                 label="Mobile Number"
                 value={mobile}
-                onChange={handleMobileChange}
+                onChange={handleMobileNumberChange}
+                onFocus={() => setInputFocused(true)}
+                onBlur={() => setInputFocused(mobile.trim() !== "")}
                 required
                 maxLength={10}
-                error={!isMobileValid && mobile.trim() !== ""}
                 success={isMobileValid}
+                className = "w-full pl-12"
+                
               />
-              <Typography
-                variant="small"
-                color="red"
-                className="absolute -bottom- left-0"
-              >
-                {!isMobileValid && mobile.trim() !== "" && MobileError}
-              </Typography>
+             
             </div>
+            {errorMessage.mobile.length > 0 && (
+                <div
+                  key="mobileError"
+                  className="error-message text-red-600 text-sm"
+                >
+                  {errorMessage.mobile[0]}
+                </div>
+              )}
           </div>
           <Input
             type={showPass === true ? "text" : "password"}
@@ -184,17 +219,9 @@ export function RegF1({ onNextStep }) {
           <Collapse open={open} className={open === false ? "hidden" : ""}>
             <Card shadow={false} className="bg-gray-300 w-full px-4 py-2">
               <PasswordChecklist
-                rules={["minLength", "specialChar", "number", "capital", "match"]}
+                rules={["minLength", "specialChar", "number", "capital"]}
                 minLength={8}
                 value={password}
-                valueAgain={password_confirmation}
-                onChange={(isValid) => {
-                  if (isValid === true) {
-                    setIsPassValid(true);
-                  } else {
-                    setIsPassValid(false);
-                  }
-                }}
               />
             </Card>
           </Collapse>
@@ -226,7 +253,7 @@ export function RegF1({ onNextStep }) {
           <Button
             type="submit"
             className="w-full flex items-center justify-center gap-5"
-            disabled={!isFormValid || isSubmitting || !isPassValid}
+            disabled={!isFormValid || isSubmitting}
           >
             {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
             NEXT STEP
@@ -234,9 +261,9 @@ export function RegF1({ onNextStep }) {
         </div>
         <Typography color="gray" className="mt-4 text-center font-normal">
           Already have an account?{" "}
-          <span href="/login" className="font-medium text-gray-900 cursor-pointer" onClick={() => router.push("/login")}>
+          <a href="/login" className="font-medium text-gray-900">
             Sign In
-          </span>
+          </a>
         </Typography>
       </form>
     </>

@@ -57,10 +57,12 @@ function formatDateTime(dateTimeString) {
 
 export function PostCard({ bloodRequests, fetchBloodRequest }) {
   const chipColor = [
+    { color: "green", value: "Granted", text: "Granted" },
+    { color: "orange", value: "Referred", text: "Referred" },
     { color: "gray", value: "Pending", text: "Pending" },
-    { color: "green", value: "Accommodated", text: "Accommodated" },
-    { color: "red", value: "Declined", text: "Reffered" },
+    { color: "red", value: "Cancelled", text: "Cancelled" },
   ];
+  
 
   const [openAccordions, setOpenAccordions] = useState({});
   const [interestedDonor, setInterestedDonor] = useState({});
