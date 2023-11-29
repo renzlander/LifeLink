@@ -147,7 +147,7 @@ export function CreatePost() {
       <Button onClick={handleOpen} variant="gradient" className="rounded-full">
         Create Post
       </Button>
-      <Dialog open={open} handler={handleOpen}>
+      <Dialog size="lg" open={open} handler={handleOpen}>
         <DialogHeader>Create Post</DialogHeader>
         {generalErrorMessage && (
           <div className="mt-2 text-center bg-red-100 p-2 rounded-lg">
@@ -156,7 +156,7 @@ export function CreatePost() {
             </Typography>
           </div>
         )}
-        <DialogBody className="grid gap-5">
+        <DialogBody className="flex flex-col gap-5">
           <InputSelect
             label="Blood Request ID"
             value={requestIdNumber}

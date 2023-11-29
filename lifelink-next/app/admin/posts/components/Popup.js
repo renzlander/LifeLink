@@ -7,6 +7,8 @@ import {
   DialogFooter,
   DialogHeader,
   IconButton,
+  Textarea,
+  Typography,
 } from "@material-tailwind/react";
 import axios from "axios";
 import React, { useState } from "react";
@@ -74,7 +76,7 @@ export function MarkAccomodated({ bloodRequestId, fetchBloodRequest }) {
         <DialogFooter>
           <Button
             variant="text"
-            color="red"
+            color="gray"
             onClick={handleOpen}
             className="mr-1"
           >
@@ -147,30 +149,20 @@ export function MarkDeclined({ bloodRequestId, fetchBloodRequest }) {
       <Dialog open={open} handler={handleOpen}>
         <DialogHeader>Marks as Referred</DialogHeader>
         <DialogBody className="flex flex-col gap-4 p-4">
-          <div className="flex flex-col gap-2">
-            <label
-              htmlFor="remarks"
-              className="text-md font-medium text-gray-700"
-            >
-              Remarks:
-            </label>
-            <textarea
-              id="remarks"
-              className="w-full border border-black rounded-md p-2 resize-none"
-              placeholder="Add remarks"
-              value={remarks}
-              onChange={(e) => setRemarks(e.target.value)}
-            />
-          </div>
-          <p className="text-sm text-gray-600">
+          <Textarea
+            label="Remarks"
+            className="w-full border border-black rounded-md p-2 resize-none"
+            value={remarks}
+            onChange={(e) => setRemarks(e.target.value)}
+          />
+          <Typography variant="small" color="blue-gray">
             Are you sure you want to mark this request as declined?
-          </p>
+          </Typography>
         </DialogBody>
-
         <DialogFooter>
           <Button
             variant="text"
-            color="red"
+            color="gray"
             onClick={handleOpen}
             className="mr-1"
           >

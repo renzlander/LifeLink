@@ -8,6 +8,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
+import Tooltip from '@mui/material/Tooltip';
 import { useTheme } from "@mui/material/styles";
 import * as React from "react";
 import { ToastContainer } from "react-toastify";
@@ -140,25 +141,27 @@ export default function AdminLayout({ children }) {
         <List>
           {links.map((link, index) => (
             <Link key={index} href={link.href}>
-              <ListItem
-                disablePadding
-                sx={{ display: "block" }}
-                className={pathName.replace('/admin', '.') === link.href ? "bg-gray-200" : ""}
-              >
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
-                  }}
+              <Tooltip title={link.text} placement="right" arrow>
+                <ListItem
+                  disablePadding
+                  sx={{ display: "block" }}
+                  className={pathName.replace('/admin', '.') === link.href ? "bg-gray-200" : ""}
                 >
-                  <ListItemIcon className="p-4">{link.icon}</ListItemIcon>
-                  <ListItemText
-                    primary={link.text}
-                    sx={{ opacity: open ? 1 : 0 }}
-                  />
-                </ListItemButton>
-              </ListItem>
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? "initial" : "center",
+                      px: 2.5,
+                    }}
+                  >
+                    <ListItemIcon className="p-4">{link.icon}</ListItemIcon>
+                    <ListItemText
+                      primary={link.text}
+                      sx={{ opacity: open ? 1 : 0 }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              </Tooltip>
             </Link>
           ))}
         </List>

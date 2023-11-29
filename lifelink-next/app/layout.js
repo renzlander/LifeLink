@@ -5,11 +5,13 @@ import "./globals.css";
 
 export default function RootLayout({ children }) {
   const pathName = usePathname();
+  const segments = pathName.split("/");
   const pageTitle =
-    pathName.split("/")[1]?.replace(/^\w/, (c) => c.toUpperCase()) || "";
+    segments[segments.length - 1]?.replace(/^\w/, (c) => c.toUpperCase()) || "";
 
   useEffect(() => {
-    document.title = pageTitle;
+    document.title =
+      pageTitle === "" ? "Home" : pageTitle;
   }, [pageTitle]);
 
   return (

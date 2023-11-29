@@ -226,7 +226,7 @@ export function PostCard({ bloodRequests, fetchBloodRequest }) {
         return (
           <div
             key={index}
-            className="flex items-start justify-center w-full relative px-16"
+            className="flex items-start justify-center w-full relative px-24"
           >
             <Card
               className={`p-4 w-full shadow-md ${
@@ -310,7 +310,7 @@ export function PostCard({ bloodRequests, fetchBloodRequest }) {
                 {renderAccordion(request.blood_request_id)}
               </CardFooter>
             </Card>
-            <div className="absolute top-0 right-6 flex flex-col items-start gap-5">
+            <div className="absolute top-0 right-14 flex flex-col items-start gap-5">
               {isAccommodated === 0 && (
                 <>
                   <MarkAccomodated

@@ -13,7 +13,7 @@ export function FilterCheckBox() {
   const [checkedStatus, setCheckedStatus] = useState(filters.map(() => true));
 
   return (
-    <Card className="w-full max-w-xl">
+    <Card className="sticky z-10 top-0 w-full max-w-xl ml-6">
       <List className="flex-row items-center">
         <Typography variant="h5" color="blue-gray" className="ml-4">
           Filters:

@@ -1,20 +1,10 @@
 "use client";
-import "../globals.css";
-import React, { useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { Button } from "@material-tailwind/react";
+import { useRouter } from "next/navigation";
 
 export default function LoginLayout({ children }) {
-  const pathName = usePathname();
-  const pageTitle =
-    pathName.split("/")[1]?.replace(/^\w/, (c) => c.toUpperCase()) || "";
   const router = useRouter();
-
-  useEffect(() => {
-    document.title = pageTitle;
-  }, [pageTitle]);
-
   return (
     <main className="bg-[#d9d9d9] gen_bg">
       <Button
