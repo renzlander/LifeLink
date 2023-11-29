@@ -427,11 +427,10 @@ export function RegF2({ onNextStep }) {
         <div className="flex justify-center w-full">
           <Button
             type="submit"
-            variant="contained"
             className="w-full flex items-center justify-center gap-5"
             disabled={!isChecked || !isFormValid || isSubmitting}
           >
-            {isSubmitting ? <Spinner size="sm" /> : ""}
+            {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
             NEXT STEP
           </Button>
         </div>

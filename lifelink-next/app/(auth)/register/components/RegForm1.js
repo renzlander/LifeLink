@@ -23,7 +23,7 @@ export function RegF1({ onNextStep }) {
   const [showConPass, setShowConPass] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [isMobileValid, setIsMobileValid] = useState(false);
-  const [MobileError, setMobileError] = useState("");
+  const [passMatch, setPassMatch] = useState("");
   const [inputFocused, setInputFocused] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState({ email: [], mobile: [] });
@@ -219,9 +219,17 @@ export function RegF1({ onNextStep }) {
           <Collapse open={open} className={open === false ? "hidden" : ""}>
             <Card shadow={false} className="bg-gray-300 w-full px-4 py-2">
               <PasswordChecklist
-                rules={["minLength", "specialChar", "number", "capital"]}
+                rules={["minLength", "specialChar", "number", "capital", "match"]}
                 minLength={8}
                 value={password}
+                valueAgain={password_confirmation}
+                onChange={(isValid) => {
+                  if (isValid) {
+                    setPassMatch(true);
+                  } else {
+                    setPassMatch(false);
+                  }
+                }}
               />
             </Card>
           </Collapse>
@@ -253,7 +261,7 @@ export function RegF1({ onNextStep }) {
           <Button
             type="submit"
             className="w-full flex items-center justify-center gap-5"
-            disabled={!isFormValid || isSubmitting}
+            disabled={!isFormValid || !passMatch || isSubmitting}
           >
             {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
             NEXT STEP

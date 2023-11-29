@@ -100,7 +100,7 @@ export default function NavbarIndex() {
             size="sm"
             className="hidden lg:inline-block"
           >
-            <span>Sign in</span>
+            <span>Sign Up</span>
           </Button>
         </div>
         <IconButton
@@ -164,7 +164,7 @@ export default function NavbarIndex() {
             size="sm"
             className=""
           >
-            <span>Sign in</span>
+            <span>Sign Up</span>
           </Button>
         </div>
       </Collapse>
