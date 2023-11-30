@@ -130,9 +130,10 @@ export function CreatePost() {
   };
 
   const dynamicRequestIdOptions = requestIdOptions.map((item) => ({
-    label: item.request_id_number.toString(),
+    label: `${item.request_id_number.toString()} - ${item.first_name} ${item.middle_name} ${item.last_name}`,
     value: item.blood_request_id.toString(),
   }));
+  
 
   const handleRequestIdChange = (selectedValue) => {
     setRequestIdNumber(selectedValue);

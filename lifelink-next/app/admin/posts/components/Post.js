@@ -62,7 +62,6 @@ export function PostCard({ bloodRequests, fetchBloodRequest }) {
     { color: "gray", value: "Pending", text: "Pending" },
     { color: "red", value: "Cancelled", text: "Cancelled" },
   ];
-  
 
   const [openAccordions, setOpenAccordions] = useState({});
   const [interestedDonor, setInterestedDonor] = useState({});
@@ -220,8 +219,6 @@ export function PostCard({ bloodRequests, fetchBloodRequest }) {
     <>
       {bloodRequests.map((request, index) => {
         const isAccommodated = request.isAccommodated || 0;
-        const interestedDonorsForRequest =
-          interestedDonor[request.blood_request_id] || [];
 
         return (
           <div
@@ -252,11 +249,43 @@ export function PostCard({ bloodRequests, fetchBloodRequest }) {
                   <div className="flex flex-col">
                     <Chip
                       variant="ghost"
-                      color={chipColor[isAccommodated].color}
-                      value={chipColor[isAccommodated].text}
+                      size="lg"
+                      color={
+                        isAccommodated === 0
+                          ? chipColor[2].color 
+                          : isAccommodated === 1
+                          ? chipColor[0].color 
+                          : isAccommodated === 2
+                          ? chipColor[1].color 
+                          : isAccommodated === 3
+                          ? chipColor[3].color 
+                          : chipColor[3].color
+                      }
+                      value={
+                        isAccommodated === 0
+                          ? chipColor[2].text
+                          : isAccommodated === 1
+                          ? chipColor[0].text 
+                          : isAccommodated === 2
+                          ? chipColor[1].text 
+                          : isAccommodated === 3
+                          ? chipColor[3].text 
+                          : chipColor[3].text
+                      }
                     >
-                      {chipColor[isAccommodated].text}
+                      {
+                        isAccommodated === 0
+                          ? chipColor[2].text 
+                          : isAccommodated === 1
+                          ? chipColor[0].text 
+                          : isAccommodated === 2
+                          ? chipColor[1].text 
+                          : isAccommodated === 3
+                          ? chipColor[3].text 
+                          : chipColor[3].text 
+                      }
                     </Chip>
+
                     <Typography color="blue-gray">{`Request ID: ${request.request_id_number}`}</Typography>
                   </div>
                 </div>
