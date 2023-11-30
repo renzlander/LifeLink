@@ -33,9 +33,17 @@ export function RegF1({ onNextStep }) {
   const showConfirmPassword = () => setShowConPass(!showConPass);
 
   const isValidEmail = (email) => {
-    const validDomains = ["@gmail.com", "@hotmail.com", "@yahoo.com"];
-    return validDomains.some((domain) => email.includes(domain));
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const validDomains = ["gmail.com", "hotmail.com", "yahoo.com"];
+  
+    if (!emailRegex.test(email)) {
+      return false; // Invalid email format
+    }
+  
+    const domain = email.split('@')[1];
+    return validDomains.includes(domain);
   };
+  
 
   const handleEmailChange = (e) => {
     const newEmail = e.target.value;
@@ -138,9 +146,6 @@ export function RegF1({ onNextStep }) {
               error={!isEmailValid && email.trim() !== ""}
               success={isEmailValid}
               maxLength={100}
-              className={`w-full ${
-                errorMessage.email.length > 0 ? "border-red-500" : ""
-              }`}
             />
             {errorMessage.email.length > 0 && (
               <div

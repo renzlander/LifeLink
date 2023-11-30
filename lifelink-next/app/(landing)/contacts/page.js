@@ -16,7 +16,7 @@ export default function ContactUs() {
           <div className="col-span-2 2xl:col-span-1 flex flex-col items-center gap-3">
             <HomeIcon className="h-10 w-10 text-orange-600" />
             <Typography variant="small" color="orange" className="font-light text-lg">
-              BY GOING TO OUR ADDRES
+              BY GOING TO OUR ADDRESS
             </Typography>
             <Typography variant="small" color="blue-gray" className="text-center">
               2/F Red Cross Building, ALERT Center Compound, Brgy. Malinta, Valenzuela, Philippines

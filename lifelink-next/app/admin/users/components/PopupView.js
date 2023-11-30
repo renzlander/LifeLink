@@ -22,12 +22,12 @@ export function ViewPopUp({ user }) {
           <EyeIcon className="h-4 w-4" />
         </IconButton>
       </Tooltip>
-      <Dialog open={open} handler={() => setOpen(false)}>
-        <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
+      <Dialog open={open} handler={() => setOpen(false)} size="lg">
+        <DialogHeader>
           User Details
         </DialogHeader>
         <DialogBody divider className="flex flex-col gap-4">
-          <Chip value="DEFERRED" color="blue-gray" />
+          <Chip value="FULL NAME" color="blue-gray" />
           <div className="flex gap-10 text-gray-900">
             <Typography>
               <strong>First Name:</strong>
@@ -75,8 +75,8 @@ export function ViewPopUp({ user }) {
               <strong>Blood Type:</strong> {user.blood_type}
             </Typography>
           </div>
-          <Chip value="Address" color="blue-gray" />
-          <Typography className="text-lg text-gray-900 font-medium">
+          <Chip value="Full Address" color="blue-gray" />
+          <Typography className="text-md text-gray-900 font-medium">
             {user.street}, {user.barangay}, {user.municipality}, {user.province}
             , {user.region}
           </Typography>

@@ -12,8 +12,8 @@ import {
   Option,
   Select,
   Tooltip,
+  Typography,
 } from "@material-tailwind/react";
-import { Typography } from "@mui/material";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -89,7 +89,7 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
   const dynamicBledByOptions = bledByOptions.map((item) => ({
     label: item.full_name,
     value: item.bled_by_id.toString(),
-}));
+  }));
 
   const dynamicVenueOptions = venueOptions.map((item) => ({
     label: item.venues_desc,
@@ -205,9 +205,7 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
         </IconButton>
       </Tooltip>
       <Dialog open={open} handler={() => setOpen(false)}>
-        <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
-          Add Blood Bag
-        </DialogHeader>
+        <DialogHeader>Add Blood Bag</DialogHeader>
         {generalErrorMessage && (
           <div className="mt-4 text-center bg-red-100 p-2 rounded-lg">
             <Typography color="red" className="text-sm font-semibold">
@@ -217,7 +215,10 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
         )}
         <DialogBody divider className="flex flex-col gap-6">
           <div>
-            <div className={`relative flex gap-3 items-center`}>
+            <Typography variant="h6" color="blue-gray" className="text-md mb-2">
+              Serial Number: {srNumber}
+            </Typography>
+            <div className="relative flex gap-3 items-center">
               <Input
                 label="XXXX"
                 maxLength={4}

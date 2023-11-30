@@ -38,8 +38,27 @@ export function AddUsers({ refreshData }) {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [inputFocused, setInputFocused] = useState(false);
+  const [isEmailValid, setIsEmailValid] = useState(false);
 
   const bloodTypes = ["AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
+
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const validDomains = ["gmail.com", "hotmail.com", "yahoo.com"];
+  
+    if (!emailRegex.test(email)) {
+      return false; // Invalid email format
+    }
+  
+    const domain = email.split('@')[1];
+    return validDomains.includes(domain);
+  };  
+
+  const handleEmailChange = (e) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+    setIsEmailValid(isValidEmail(newEmail));
+  };
 
   const [regionList, setRegionList] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState({
@@ -223,46 +242,24 @@ export function AddUsers({ refreshData }) {
           <span>Add Users</span>
         </Button>
       </Tooltip>
-      <Dialog open={open} handler={() => setOpen(false)}>
-        <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
-          Register User
-        </DialogHeader>
+      <Dialog open={open} handler={() => setOpen(false)} size="lg">
+        <DialogHeader>Register a User</DialogHeader>
         <DialogBody divider className="flex flex-col gap-6 overscroll-y-auto">
           <form
             onSubmit={handleSubmit}
-            className="mt-8 mb-2 max-w-screen-lg sm:w-full"
+            className="mt-2 mb-2 max-w-screen-lg sm:w-full"
           >
             <input type="hidden" value={dob} name="dob" />
             <div className="mb-4 flex grow gap-6">
-              <div
-                className={`relative w-full ${
-                  errorMessage.email.length > 0 ? "mb-1" : ""
-                }`}
-              >
+              <div className="relative w-full">
                 <Input
                   size="lg"
                   label="Email"
                   value={email}
-                  onChange={(e) => {
-                    const inputValue = e.target.value;
-                    setEmail(inputValue);
-
-                    // Email validation regex pattern
-                    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-                    // Validate email format
-                    if (!emailPattern.test(inputValue)) {
-                      setErrorMessage((prevErrors) => ({
-                        ...prevErrors,
-                        email: ["Invalid email format"],
-                      }));
-                    } else {
-                      setErrorMessage((prevErrors) => ({
-                        ...prevErrors,
-                        email: [],
-                      }));
-                    }
-                  }}
+                  onChange={handleEmailChange}
+                  maxLength={100}
+                  error={!isEmailValid && email.trim() !== ""}
+                  success={isEmailValid}
                   required
                 />
                 {errorMessage.email.length > 0 && (
@@ -270,6 +267,9 @@ export function AddUsers({ refreshData }) {
                     {errorMessage.email[0]}
                   </div>
                 )}
+                <Typography variant="small" color="red">
+                  {!isEmailValid && email.trim() !== "" && "Invalid Email"}
+                </Typography>
               </div>
               <div>
                 <div className="w-full relative">
@@ -524,27 +524,27 @@ export function AddUsers({ refreshData }) {
                 }}
               />
             </div>
-            <div className="flex justify-center">
-              <Button
-                type="submit"
-                variant="contained"
-                className="w-full flex items-center justify-center gap-5"
-                disabled={!isFormValid || isSubmitting}
-              >
-                {isSubmitting ? <Spinner size="sm" /> : ""}
-                Register
-              </Button>
-            </div>
           </form>
         </DialogBody>
         <DialogFooter>
-          <Button
-            variant="gradient"
-            onClick={() => setOpen(false)}
-            className="mr-1"
-          >
-            <span>Cancel</span>
-          </Button>
+          <div className="flex items-center">
+            <Button
+              variant="gradient"
+              onClick={() => setOpen(false)}
+              className="mr-1"
+            >
+              <span>Cancel</span>
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              className="flex items-center justify-center gap-5"
+              disabled={!isFormValid || isSubmitting || !isEmailValid}
+            >
+              {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
+              Register User
+            </Button>
+          </div>
         </DialogFooter>
       </Dialog>
     </>

@@ -175,7 +175,7 @@ export function MoveToDeferral({
         </IconButton>
       </Tooltip>
       <Dialog open={open} handler={() => setOpen(false)}>
-        <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
+        <DialogHeader>
           Move to Deferral
         </DialogHeader>
         {generalErrorMessage && (
@@ -306,7 +306,7 @@ export function MoveToDeferral({
               <IconButton onClick={handleDecrement} className="rounded-r-none">
                 <MinusIcon className="h-5 w-5" />
               </IconButton>
-              <Input
+              <input
                 type="text"
                 label="Days"
                 maxLength={3}
@@ -314,11 +314,10 @@ export function MoveToDeferral({
                 onChange={(e) => {
                   const inputVal = e.target.value;
                   if (/^[0-9]*$/.test(inputVal)) {
-                    setDuration(inputVal.padStart(3, "0"));
+                    setDuration(inputVal !== "" ? inputVal : "000");
                   }
                 }}
-                className="text-center rounded-none appearance-none"
-                containerProps={{ className: "max-w-[50px]" }}
+                className="w-20 h-10 text-center border-2 border-gray-900 appearance-none"
               />
               <IconButton onClick={handleIncrement} className="rounded-l-none">
                 <PlusIcon className="h-5 w-5" />

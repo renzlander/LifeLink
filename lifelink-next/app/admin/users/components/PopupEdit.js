@@ -190,8 +190,8 @@ export function EditPopUp({ user, refreshData }) {
           <PencilIcon className="h-4 w-4" />
         </IconButton>
       </Tooltip>
-      <Dialog open={open} handler={() => setOpen(false)}>
-        <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
+      <Dialog open={open} handler={() => setOpen(false)} size="lg">
+        <DialogHeader>
           Edit User
         </DialogHeader>
         <DialogBody divider className="flex flex-col gap-6 overscroll-y-auto">
