@@ -309,7 +309,6 @@ export function BagsTable() {
               required
               placeholder="Venue"
             />
-
             <div className="flex flex-col items-center justify-center gap-2">
               <Typography variant="small" color="blue-gray" className="font-medium">
                 Date Donated Filter:

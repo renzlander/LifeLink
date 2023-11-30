@@ -20,7 +20,8 @@ import {
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Disposed, MultipleDisposed } from "./PopUp";
+import { Disposed } from "./Disposed";
+import { MultipleDisposed } from "./MultiDisposed";
 
 const TABLE_HEAD = [
   { label: "Donor Number", key: "donor_no" },

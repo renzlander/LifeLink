@@ -20,7 +20,9 @@ import {
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Dispense, MultipleDispensed, Revert } from "./PopUp";
+import { Revert } from "./Revert";
+import { Dispense } from "./Dispense";
+import { MultipleDispensed } from "./MultiDispensed";
 
 const TABLE_HEAD = [
   { label: "Donor Number", key: "donor_no" },
@@ -49,10 +51,10 @@ export function TabStock() {
   const [visibleRows, setVisibleRows] = useState(8);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
-  const [blood_type, setBlood] = useState('All');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [bloodQty, setBloodQty] = useState('');
+  const [blood_type, setBlood] = useState("All");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [bloodQty, setBloodQty] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
   const [user, setUser] = useState([]);
   const [selectedData, setSelectedData] = useState([]);
@@ -243,11 +245,9 @@ export function TabStock() {
     setVisibleRows((prevVisibleRows) => prevVisibleRows + 8);
   };
 
-
   const filteredUserDetails = userDetails.filter((user) => {
     return user.serial_no.toLowerCase().includes(searchQuery.toLowerCase());
   });
-  
 
   if (loading) {
     return (
@@ -264,10 +264,11 @@ export function TabStock() {
         <div className="flex items-center justify-between px-4 mb-4">
           <div>
             <Typography
-              variant="subtitle1"
-              className="mb-2 flex justify-center font-bold text-red-800"
+              variant="h6"
+              color="blue-gray"
+              className="mb-2 flex justify-center"
             >
-              QTY:{bloodQty}
+              Quantity: {bloodQty}
             </Typography>
             <Select
               onChange={handleBloodChange}
@@ -283,13 +284,14 @@ export function TabStock() {
           </div>
           <div>
             <Typography
-              variant="subtitle1"
-              className="mb-2 flex justify-center font-bold text-red-800"
+              variant="small"
+              color="blue-gray"
+              className="mb-2 flex justify-center font-medium"
             >
-              Expiration Date Filter
+              Expiration Date Filter:
             </Typography>
             <div className="flex items-center gap-4">
-            <Input
+              <Input
                 type="date"
                 label="Start Date"
                 value={startDate}
@@ -318,19 +320,18 @@ export function TabStock() {
             <Typography
               variant="subtitle1"
               className="mb-2 flex justify-center font-bold text-red-800"
-            >
-            </Typography>
+            ></Typography>
             <div className="flex items-center gap-3 pt-6">
               <div className="flex items-center gap-3 w-full md:w-72">
-              <Input
-                label="Search"
-                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-                value={searchQuery}
-                onChange={(e) => {
-                  const inputValue = e.target.value;
-                  setSearchQuery(inputValue);
-                }}
-              />
+                <Input
+                  label="Search"
+                  icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+                  value={searchQuery}
+                  onChange={(e) => {
+                    const inputValue = e.target.value;
+                    setSearchQuery(inputValue);
+                  }}
+                />
               </div>
               <Button
                 className="flex items-center gap-3"
@@ -384,7 +385,7 @@ export function TabStock() {
               {TABLE_HEAD.map((head) => (
                 <th
                   key={head.key}
-                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
+                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
                 >
                   <div className="flex items-center">
                     <Typography
@@ -400,10 +401,10 @@ export function TabStock() {
             </tr>
           </thead>
           <tbody>
-          {filteredUserDetails.slice(0, visibleRows).map((user, index) => (
+            {filteredUserDetails.slice(0, visibleRows).map((user, index) => (
               <tr
                 key={user.blood_bags_id}
-                className={`${
+                className={`border-b ${
                   selectedRows.includes(user.blood_bags_id)
                     ? selectedRowClass
                     : ""
@@ -454,7 +455,7 @@ export function TabStock() {
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="font-normal"
+                    className="font-normal text-center"
                   >
                     {user.blood_type}
                   </Typography>
@@ -481,7 +482,7 @@ export function TabStock() {
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="font-normal"
+                    className="font-normal text-center"
                   >
                     {user.remaining_days}
                   </Typography>
@@ -522,14 +523,12 @@ export function TabStock() {
             ))}
           </tbody>
         </table>
-      </CardBody>
-      <CardFooter className="flex items-center justify-center border-t border-blue-gray-50 p-4">
         {userDetails.length > visibleRows && (
           <div className="flex justify-center mt-4">
             <Button onClick={handleLoadMore}>Load More</Button>
           </div>
         )}
-      </CardFooter>
+      </CardBody>
     </Card>
   );
 }

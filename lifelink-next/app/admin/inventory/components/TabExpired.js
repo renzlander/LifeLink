@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Disposed, MultipleDisposed } from "./PopUp";
+import { Disposed } from "./Disposed";
+import { MultipleDisposed } from "./MultiDisposed";
 import axios from "axios";
 import {
   Card,
