@@ -247,7 +247,7 @@ export function AddUsers({ refreshData }) {
         <DialogBody divider className="flex flex-col gap-6 overscroll-y-auto">
           <form
             onSubmit={handleSubmit}
-            className="mt-2 mb-2 max-w-screen-lg sm:w-full"
+            className="mt-2 mb-2 w-full"
           >
             <input type="hidden" value={dob} name="dob" />
             <div className="mb-4 flex grow gap-6">

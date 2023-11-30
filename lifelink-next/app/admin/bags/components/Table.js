@@ -8,7 +8,6 @@ import {
   CardFooter,
   CardHeader,
   Checkbox,
-  IconButton,
   Input,
   Option,
   Select,
@@ -88,35 +87,17 @@ export function BagsTable() {
 
   const handleBloodChange = (selectedBlood) => {
     setBlood(selectedBlood);
-    fetchData(
-      selectedBlood,
-      startDate,
-      endDate,
-      bledBy,
-      venue
-    );
+    fetchData(selectedBlood, startDate, endDate, bledBy, venue);
   };
 
   const handleBledByChange = (selectedBledBy) => {
     setBledBy(selectedBledBy);
-    fetchData(
-      blood_type,
-      startDate,
-      endDate,
-      selectedBledBy,
-      venue
-    );
+    fetchData(blood_type, startDate, endDate, selectedBledBy, venue);
   };
 
   const handleVenueChange = (selectedVenue) => {
     setVenue(selectedVenue);
-    fetchData(
-      blood_type,
-      startDate,
-      endDate,
-      bledBy,
-      selectedVenue
-    );
+    fetchData(blood_type, startDate, endDate, bledBy, selectedVenue);
   };
 
   const fetchBledByAndVenueLists = async () => {
@@ -175,9 +156,7 @@ export function BagsTable() {
     }
   };
 
-
-
-  const fetchData = async ( blood_type, startDate, endDate, bledBy, venue) => {
+  const fetchData = async (blood_type, startDate, endDate, bledBy, venue) => {
     try {
       const token = getCookie("token");
       if (!token) {
@@ -217,11 +196,7 @@ export function BagsTable() {
   };
 
   useEffect(() => {
-    fetchData(blood_type,
-      startDate,
-      endDate,
-      bledBy,
-      venue);
+    fetchData(blood_type, startDate, endDate, bledBy, venue);
     fetchBledByAndVenueLists();
     fetchUnsafeRemarks();
   }, [router, searchQuery, blood_type, startDate, endDate, bledBy, venue]);
@@ -235,7 +210,6 @@ export function BagsTable() {
       `${user.first_name} ${user.middle_name} ${user.last_name}`.toLowerCase();
     return fullName.includes(searchQuery.toLowerCase());
   });
-
 
   const exportBloodBagsAsPDF = async () => {
     try {
@@ -272,8 +246,6 @@ export function BagsTable() {
     }
   };
 
-
-
   if (loading) {
     return (
       <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
@@ -302,7 +274,7 @@ export function BagsTable() {
           Collected Blood Bags
         </Typography>
       </CardHeader>
-      <CardBody className="">
+      <CardBody className="px-0">
         <div className="flex items-end justify-between px-4 mb-4 my-5">
           <div className="flex flex-row items-end gap-6">
             <div>
@@ -339,8 +311,8 @@ export function BagsTable() {
             />
 
             <div className="flex flex-col items-center justify-center gap-2">
-              <Typography variant="h6" className="font-bold text-red-800">
-                Date Donated Filter
+              <Typography variant="small" color="blue-gray" className="font-medium">
+                Date Donated Filter:
               </Typography>
               <div className="flex items-center gap-4">
                 <Input
@@ -419,7 +391,7 @@ export function BagsTable() {
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
-              <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer">
+              <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
                 <Checkbox
                   onChange={() => {
                     if (selectedRows.length === userDetails.length) {
@@ -436,28 +408,24 @@ export function BagsTable() {
                   }
                 />
               </th>
-              {TABLE_HEAD.map((head) => (
+              {TABLE_HEAD.map((head, index) => (
                 <th
                   key={head.key}
-                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
+                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
                 >
-                  <div className="flex items-center">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal leading-none opacity-70"
-                    >
-                      {head.label}
-                    </Typography>
-                  </div>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal leading-none opacity-70"
+                  >
+                    {head.label}
+                  </Typography>
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-          {filteredUserDetails
-              .slice(0, visibleRows)
-              .map((user, index) => (
+            {filteredUserDetails.slice(0, visibleRows).map((user, index) => (
               <tr
                 key={user.blood_bags_id}
                 className={`${
@@ -551,7 +519,8 @@ export function BagsTable() {
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {user.bled_by_first_name} {user.bled_by_middle_name} {user.bled_by_last_name}
+                    {user.bled_by_first_name} {user.bled_by_middle_name}{" "}
+                    {user.bled_by_last_name}
                   </Typography>
                 </td>
                 <td
@@ -589,7 +558,7 @@ export function BagsTable() {
         </table>
       </CardBody>
       <CardFooter className="flex items-center justify-center border-t border-blue-gray-50 p-4">
-      {visibleRows < userDetails.length && (
+        {visibleRows < userDetails.length && (
           <div className="flex justify-center mt-4">
             <Button onClick={loadMoreRows}>Load More</Button>
           </div>

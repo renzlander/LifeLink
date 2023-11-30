@@ -1,6 +1,12 @@
 import InputSelect from "@/app/components/InputSelect";
 import { laravelBaseUrl } from "@/app/variables";
 import { PencilIcon } from "@heroicons/react/24/solid";
+import { 
+  ArrowUturnLeftIcon,
+  ArrowsRightLeftIcon,
+  ExclamationTriangleIcon,
+} from "@heroicons/react/24/outline";
+
 import {
   Button,
   Chip,
@@ -75,14 +81,11 @@ export function RemoveBlood({
 
   return (
     <>
-      <Button
-        size="sm"
-        onClick={() => setOpen(true)}
-        className="bg-red-600"
-        disabled={countdownEnd < new Date()}
-      >
-        Undo
-      </Button>
+      <Tooltip content="Undo">
+        <IconButton variant="red" color="red" size="sm" onClick={() => setOpen(true)}>
+          <ArrowUturnLeftIcon className="w-5 h-5 text-white" />
+        </IconButton>
+      </Tooltip>
       <Dialog open={open} handler={() => setOpen(false)}>
         <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
           Blood Bag Removal Confirmation
@@ -309,7 +312,7 @@ export function EditPopUp({
 
   return (
     <>
-      <Tooltip content="Edit Serial Number">
+      <Tooltip content="Edit Serial Number" className="w-max">
         <IconButton
           variant="text"
           onClick={() => setOpen(true)}
@@ -416,12 +419,6 @@ export function EditPopUp({
             )}
           </div>
           <div className={`relative ${errorMessage.venue ? "mb-1" : ""}`}>
-            {/* <Input
-              label="Venue"
-              value={venue}
-              disabled={countdown === 0}
-              onChange={(e) => setVenue(e.target.value)}
-            /> */}
             <InputSelect
               label="Venue"
               value={venue}
@@ -524,9 +521,11 @@ export function MoveToStock({ serial_no, handleOpen, refreshData }) {
 
   return (
     <>
-      <Button size="sm" onClick={() => setOpen(true)} className="bg-red-600">
-        Move to stock
-      </Button>
+      <Tooltip content="Move to Stock" className="w-max">
+        <IconButton variant="red" color="red" size="sm" onClick={() => setOpen(true)}>
+          <ArrowsRightLeftIcon className="w-5 h-5 text-white" />
+        </IconButton>
+      </Tooltip>
       <Dialog open={open} handler={() => setOpen(false)}>
         <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
           Move Blood Bag to Inventory
@@ -614,13 +613,7 @@ export function MultipleMoveToStock({ selectedRows, refreshData }) {
 
   return (
     <>
-      <Button
-        variant="contained"
-        color="red"
-        size="sm"
-        className="ml-4"
-        onClick={() => setOpen(true)}
-      >
+      <Button variant="red" color="red" size="sm" onClick={() => setOpen(true)}>
         Move to Stock
       </Button>
       <Dialog open={open} handler={() => setOpen(false)}>
@@ -723,9 +716,11 @@ export function Unsafe({
 
   return (
     <>
-      <Button size="sm" onClick={() => setOpen(true)} className="bg-red-600">
-        Mark as Unsafe
-      </Button>
+      <Tooltip content="Mark as Unsafe" className="w-max">
+        <IconButton variant="red" color="red" size="sm" onClick={() => setOpen(true)}>
+          <ExclamationTriangleIcon className="w-5 h-5 text-white" />
+        </IconButton>
+      </Tooltip>
       <Dialog open={open} handler={() => setOpen(false)}>
         <DialogHeader className="bg-gradient-to-r from-[#282828] to-[#A00C08] rounded-t-md text-white font-semibold">
           Mark as Unsafe

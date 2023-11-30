@@ -26,7 +26,7 @@ export function ViewPopUp({ user }) {
         <DialogHeader>
           User Details
         </DialogHeader>
-        <DialogBody divider className="flex flex-col gap-4">
+        <DialogBody divider className="h-96 flex flex-col gap-4 overflow-y-auto">
           <Chip value="FULL NAME" color="blue-gray" />
           <div className="flex gap-10 text-gray-900">
             <Typography>

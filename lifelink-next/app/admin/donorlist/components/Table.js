@@ -31,7 +31,6 @@ const TABLE_HEAD = [
   { label: "Badge", key: "badge" },
   { label: "Donor Type", key: "donor Type" },
   { label: "" },
-  { label: "" },
 ];
 
 const classes = "p-4";
@@ -280,7 +279,7 @@ export function DonorTable() {
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="font-normal"
+                    className="font-normal text-center"
                   >
                     {user.blood_type}
                   </Typography>
@@ -316,7 +315,7 @@ export function DonorTable() {
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="font-normal capitalize"
+                    className="font-normal text-center"
                   >
                     {user.donate_qty}
                   </Typography>
@@ -346,14 +345,12 @@ export function DonorTable() {
             ))}
           </tbody>
         </table>
-      </CardBody>
-      <CardFooter className="flex items-center justify-center border-t border-blue-gray-50 p-4">
       {visibleRows < userDetails.length && (
           <div className="flex justify-center mt-4">
             <Button onClick={loadMoreRows}>Load More</Button>
           </div>
         )}
-      </CardFooter>
+      </CardBody>
     </Card>
   );
 }

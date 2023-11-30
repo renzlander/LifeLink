@@ -35,11 +35,11 @@ export function ViewPopUp({ user }) {
           <EyeIcon className="h-4 w-4" />
         </IconButton>
       </Tooltip>
-      <Dialog open={open} handler={() => setOpen(false)}>
+      <Dialog open={open} handler={() => setOpen(false)} size="lg">
         <DialogHeader>
           {user.first_name} {user.middle_name} {user.last_name}
         </DialogHeader>
-        <DialogBody divider className="flex flex-col gap-4">
+        <DialogBody divider className="h-96 flex flex-col gap-4 overflow-y-auto">
           <Typography className="font-bold text-xs -mb-3 bg-red-400 rounded-md text-white px-2 py-1">
             Donor Info
           </Typography>
