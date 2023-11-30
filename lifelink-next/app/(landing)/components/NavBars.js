@@ -8,11 +8,36 @@ import {
   Button,
   IconButton,
 } from "@material-tailwind/react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 
 export default function NavbarIndex() {
   const router = useRouter();
+  const pathName = usePathname();
   const [openNav, setOpenNav] = useState(false);
+
+  const navList = [
+    {
+      name: "Home",
+      path: "/",
+    },
+    {
+      name: "News",
+      path: "/news",
+    },
+    {
+      name: "Blood Banks",
+      path: "/banks",
+    },
+    {
+      name: "About",
+      path: "/about",
+    },
+    {
+      name: "Contact Us",
+      path: "/contacts",
+    },
+  ];
 
   useEffect(() => {
     window.addEventListener(
@@ -20,67 +45,27 @@ export default function NavbarIndex() {
       () => window.innerWidth >= 960 && setOpenNav(false)
     );
   }, []);
-
-  const navList = (
-    <ul className="mb-4 mt-2 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="p-1 font-normal"
-      >
-        <a href="#" className="flex items-center">
-          Home
-        </a>
-      </Typography>
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="p-1 font-normal"
-      >
-        <a href="#" className="flex items-center">
-          News
-        </a>
-      </Typography>
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="p-1 font-normal"
-      >
-        <a href="#" className="flex items-center">
-          Blood Banks
-        </a>
-      </Typography>
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="p-1 font-normal"
-      >
-        <a href="#" className="flex items-center">
-          About
-        </a>
-      </Typography>
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="p-1 font-normal"
-      >
-        <a href="#" className="flex items-center">
-          Contact Us
-        </a>
-      </Typography>
-    </ul>
-  );
-
   return (
     <Navbar className="my-2 mx-auto min-w-full py-2 px-4 lg:px-8 lg:py-4">
       <div className="container mx-auto flex items-center justify-between text-blue-gray-900">
         <Image src="/logo_lifelink.png" alt="Logo" width={100} height={50} />
-        <div className="hidden lg:block">{navList}</div>
+        <div className="hidden lg:block">
+          <ul className="mb-4 mt-2 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
+            {navList.map((item, index) => (
+              <Typography
+                as="li"
+                key={index}
+                variant="small"
+                color={pathName === item.path ? "red" : "blue-gray"}
+                className="p-1 font-medium hover:text-red-800"
+              >
+                <Link href={item.path} className="flex items-center">
+                  {item.name}
+                </Link>
+              </Typography>
+            ))}
+          </ul>
+        </div>
         <div className="flex items-center gap-x-1">
           <Button
             onClick={() => {
@@ -142,7 +127,21 @@ export default function NavbarIndex() {
         </IconButton>
       </div>
       <Collapse open={openNav}>
-        {navList}
+        <ul className="mb-4 mt-2 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
+          {navList.map((item, index) => (
+            <Typography
+              as="li"
+              key={index}
+              variant="small"
+              color="blue-gray"
+              className="p-1 font-medium"
+            >
+              <Link href={item.path} className="flex items-center">
+                {item.name}
+              </Link>
+            </Typography>
+          ))}
+        </ul>
         <div className="flex items-center gap-x-1">
           <Button
             onClick={() => {

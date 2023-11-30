@@ -3,7 +3,7 @@ import NavbarIndex from "./components/NavBars";
 
 export default function RootLayout({ children }) {
   return (
-    <main className="">
+    <main>
       <nav className="px-2">
         <NavbarIndex />
       </nav>
