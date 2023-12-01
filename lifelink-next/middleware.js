@@ -1,13 +1,50 @@
-import { NextResponse } from 'next/server';
-import axios from 'axios';
- 
-export function middleware(request) {
+import { NextResponse } from "next/server";
+
+import { laravelBaseUrl } from "./app/variables";
+
+export async function middleware(request) {
   const path = request.nextUrl.pathname;
-  const token = request.cookies.get('token');
-  const isPublicPath = path === '/' || path.includes('/login') || path.includes('/register')
-  // return NextResponse.redirect(new URL('', request.url))
+
+  const isPublicPath = path === "/login" || path.includes("/signup") || path.includes("/news") || path.includes("/banks") || path.includes("/about") || path.includes("/contact");
+  const isAdminPath = path.includes("/admin");
+  const token = request.cookies.get("token");
+
+  const response = await fetch(`${laravelBaseUrl}/api/check-role`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token?.value || ""}`,
+    },
+  });
+  
+  let isAdmin;
+  if(response.status===200){
+    
+    isAdmin = await response.json();
+    
+  }
+  
+
+  if (isPublicPath && token) {
+    if (isAdmin?.isAdmin === 1) {
+      return NextResponse.redirect(new URL("/admin", request.url));
+    }
+    return NextResponse.redirect(new URL("/user/dashboard", request.url));
+  } else if (!isPublicPath && !token) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  if (isAdminPath && token) {
+    if (isAdmin?.isAdmin === 0) {
+      return NextResponse.redirect(new URL("/user/dashboard", request.url));
+    }
+  } else if (!isAdminPath && token) {
+    if (isAdmin?.isAdmin === 1)
+      return NextResponse.redirect(new URL("/admin", request.url));
+  }
+  //return NextResponse.redirect(new URL('/home', request.url))
 }
- 
+
+// See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/', '/login', '/register', '/admin/:path*', '/user/:path*'],
-}
+  matcher: ["/user/dashboard:path*", "/login", "/signup/:path*", "/admin/:path*"],
+};
