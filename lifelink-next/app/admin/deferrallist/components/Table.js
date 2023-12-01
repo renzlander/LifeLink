@@ -1,14 +1,7 @@
 import {
-  DocumentArrowDownIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/24/outline";
-import {
-  Button,
   Card,
   CardBody,
-  CardFooter,
   CardHeader,
-  Input,
   Tab,
   Tabs,
   TabsHeader,
@@ -62,7 +55,7 @@ export function DeferralTable() {
           </Tabs>
         </div>
       </CardHeader>
-      <CardBody className="overflow-scroll px-0">
+      <CardBody className="px-0">
         {TABS.find((tab) => tab.value === activeTab)?.tableRender}
       </CardBody>
     </Card>

@@ -27,7 +27,7 @@ export function DeferralTabs() {
   ];
 
   return (
-    <div className="w-full sm:w-1800">
+    <div className="w-full">
       {" "}
       {/* Adjust the width as needed */}
       <Tabs value="dashboard">

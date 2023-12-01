@@ -207,13 +207,12 @@ export function TemporaryTable() {
   };
 
   const filteredUserDetails = userDetails
-  ? userDetails.filter((user) => {
-      const fullName =
-        `${user.first_name} ${user.middle_name} ${user.last_name}`.toLowerCase();
-      return fullName.includes(searchQuery.toLowerCase());
-    })
-  : [];
-
+    ? userDetails.filter((user) => {
+        const fullName =
+          `${user.first_name} ${user.middle_name} ${user.last_name}`.toLowerCase();
+        return fullName.includes(searchQuery.toLowerCase());
+      })
+    : [];
 
   if (loading) {
     return (
@@ -227,61 +226,62 @@ export function TemporaryTable() {
   return (
     <>
       <Card className="w-full -mb-6">
-        <CardBody>
-          <div className="flex items-center gap-3 pt-6">
-            <div className="flex items-center gap-3 w-full md:w-72">
-              <Input
-                label="Search"
-                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-                value={searchQuery}
-                onChange={(e) => {
-                  const inputValue = e.target.value;
-                  setSearchQuery(inputValue);
-                }}
+        <CardBody className="px-0">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex flex-row px-4 gap-6">
+              <InputSelect
+                label="Category"
+                value={category}
+                onSelect={handleCategorySelect}
+                options={dynamicTemporaryCategories}
+                isSearchable
+                required
+                placeholder="Category"
+              />
+              <InputSelect
+                label="Remarks"
+                value={remarks}
+                onSelect={handleRemarksSelect}
+                options={dyanamicRemarksOptions}
+                isSearchable
+                required
+                placeholder="Remarks"
               />
             </div>
-            <Button
-              className="flex items-center gap-3"
-              onClick={exportUserDetailsAsPDF}
-            >
-              <DocumentArrowDownIcon className="h-4 w-4" /> Export to PDF
-            </Button>
+            <div className="flex items-center gap-3 px-4">
+              <div className="flex items-center gap-3 w-full md:w-72">
+                <Input
+                  label="Search"
+                  icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+                  value={searchQuery}
+                  onChange={(e) => {
+                    const inputValue = e.target.value;
+                    setSearchQuery(inputValue);
+                  }}
+                />
+              </div>
+              <Button
+                className="flex items-center gap-3"
+                onClick={exportUserDetailsAsPDF}
+              >
+                <DocumentArrowDownIcon className="h-4 w-4" /> Export to PDF
+              </Button>
+            </div>
           </div>
-          <div className="flex flex-row mx-4 px-4 gap-6">
-            <InputSelect
-              label="Category"
-              value={category}
-              onSelect={handleCategorySelect}
-              options={dynamicTemporaryCategories}
-              isSearchable
-              required
-              placeholder="Category"
-            />
-            <InputSelect
-              label="Remarks"
-              value={remarks}
-              onSelect={handleRemarksSelect}
-              options={dyanamicRemarksOptions}
-              isSearchable
-              required
-              placeholder="Remarks"
-            />
-          </div>
-          <div>
+          {/* <div>
             <Typography
               variant="subtitle1"
               className="mb-2 flex justify-center font-bold text-red-800"
             >
-              {/* Other Tools  */}
             </Typography>
-          </div>
+          </div> */}
           <table className="w-full min-w-max table-auto text-left">
             <thead>
               <tr>
                 {TABLE_HEAD.map((head) => (
                   <th
                     key={head.key}
-                    className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
+                    className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
                   >
                     <div className="flex items-center">
                       <Typography
@@ -396,12 +396,11 @@ export function TemporaryTable() {
         </CardBody>
 
         <CardFooter className="flex items-center justify-center border-t border-blue-gray-50 p-4">
-        {userDetails && visibleRows < userDetails.length && (
-  <div className="flex justify-center mt-4">
-    <Button onClick={loadMoreRows}>Load More</Button>
-  </div>
-)}
-
+          {userDetails && visibleRows < userDetails.length && (
+            <div className="flex justify-center mt-4">
+              <Button onClick={loadMoreRows}>Load More</Button>
+            </div>
+          )}
         </CardFooter>
       </Card>
     </>

@@ -190,14 +190,14 @@ export function TemporaryDeferralTable() {
   }
 
   return (
-    <Card className="h-full w-full mt-4">
+    <Card className="h-full w-full">
       <CardHeader color="red" className="relative h-16 flex items-center">
         <Typography variant="h4" color="white" className="ml-4">
           Temporary Defferal
         </Typography>
       </CardHeader>
-      <CardBody className="overflow-x-auto px-0">
-        <div className="mb-4 ml-4 mr-4 flex justify-end items-center">
+      <CardBody className="px-0">
+        <div className="flex justify-end items-center">
           <div className="flex w-full shrink-0 gap-2 md:w-max">
             <div className="w-full md:w-72">
               <Input

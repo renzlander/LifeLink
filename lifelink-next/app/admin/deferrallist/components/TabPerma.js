@@ -1,19 +1,12 @@
 import InputSelect from "@/app/components/InputSelect";
 import { laravelBaseUrl } from "@/app/variables";
-import {
-  MagnifyingGlassIcon,
-  DocumentArrowDownIcon,
-} from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import {
   Button,
   Card,
   CardBody,
   CardFooter,
-  Checkbox,
-  IconButton,
   Input,
-  Option,
-  Select,
   Spinner,
   Typography,
 } from "@material-tailwind/react";
@@ -202,28 +195,30 @@ export function PermanentTable() {
   return (
     <>
       <Card className="w-full -mb-6">
-        <CardBody>
-          <div className="flex items-center gap-3 w-full md:w-72">
-            <Input
-              label="Search"
-              icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-              value={searchQuery}
-              onChange={(e) => {
-                const inputValue = e.target.value;
-                setSearchQuery(inputValue);
-              }}
-            />
-          </div>
-          <div className="flex flex-row mx-4 px-4 gap-6">
-            <InputSelect
-              label="Category"
-              value={category}
-              onSelect={handleCategorySelect}
-              options={dynamicPermaCategories}
-              isSearchable
-              required
-              placeholder="Category"
-            />
+        <CardBody className="px-0">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-3 px-4 w-72">
+              <Input
+                label="Search"
+                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+                value={searchQuery}
+                onChange={(e) => {
+                  const inputValue = e.target.value;
+                  setSearchQuery(inputValue);
+                }}
+              />
+            </div>
+            <div className="flex flex-row px-4 gap-6">
+              <InputSelect
+                label="Category"
+                value={category}
+                onSelect={handleCategorySelect}
+                options={dynamicPermaCategories}
+                isSearchable
+                required
+                placeholder="Category"
+              />
+            </div>
           </div>
           <table className="w-full min-w-max table-auto text-left">
             <thead>
@@ -247,7 +242,7 @@ export function PermanentTable() {
               </tr>
             </thead>
             <tbody>
-            {filteredUserDetails.slice(0, visibleRows).map((user, index) => (
+              {filteredUserDetails.slice(0, visibleRows).map((user, index) => (
                 <tr key={user.donor_no}>
                   <td className={classes}>
                     <Typography

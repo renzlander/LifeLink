@@ -7,6 +7,7 @@ import {
   Input,
   Typography,
 } from "@material-tailwind/react";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -15,6 +16,11 @@ export function AuthCard({ onAuthenticate }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+  const [showPin, setShowPin] = useState(false);
+
+  const handleShowPin = () => {
+    setShowPin(!showPin);
+  };
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
@@ -70,9 +76,16 @@ export function AuthCard({ onAuthenticate }) {
           <Input
             label="Password"
             size="lg"
-            type="password"
+            type={showPin ? "text" : "password"}
             value={password}
             onChange={handlePasswordChange}
+            icon={
+              showPin ? (
+                <EyeSlashIcon className="w-5 h-5" onClick={handleShowPin} />
+              ) : (
+                <EyeIcon className="w-5 h-5" onClick={handleShowPin} />
+              )
+            }
           />
           {error && (
             <Typography variant="body" color="red">
