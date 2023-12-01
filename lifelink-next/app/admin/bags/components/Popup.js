@@ -18,6 +18,7 @@ import {
   Input,
   Tooltip,
   Typography,
+  Radio,
 } from "@material-tailwind/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -87,7 +88,7 @@ export function RemoveBlood({
         </IconButton>
       </Tooltip>
       <Dialog open={open} handler={() => setOpen(false)}>
-        <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
+        <DialogHeader>
           Blood Bag Removal Confirmation
         </DialogHeader>
         <DialogBody divider className="flex flex-col gap-4 items-center">
@@ -114,15 +115,17 @@ export function RemoveBlood({
         )}
         <DialogFooter className="flex justify-center mt-4">
           <Button
-            variant="red-cross"
+            variant="filled"
+            size="sm"
             onClick={() => setOpen(false)}
             className="mr-2"
           >
             Cancel
           </Button>
           <Button
-            variant="red-cross"
+            variant="gradient"
             color="red"
+            size="sm"
             onClick={handleRemoveBloodBag}
             disabled={countdownEnd < new Date()}
           >
@@ -527,16 +530,16 @@ export function MoveToStock({ serial_no, handleOpen, refreshData }) {
         </IconButton>
       </Tooltip>
       <Dialog open={open} handler={() => setOpen(false)}>
-        <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
+        <DialogHeader>
           Move Blood Bag to Inventory
         </DialogHeader>
         <DialogBody divider className="flex flex-col gap-4 items-center">
-          <Typography className="text-lg text-center py-4">
+          <Typography variant="paragraph" className="text-center">
             Move to Inventory: When the blood bag has completed testing and is
             ready for storage, it should be recorded in the inventory under the
             'Stocks' tab.
           </Typography>
-          <Typography className="font-bold text-xl text-red-600 text-center">
+          <Typography variant="h6" color="red" className="text-center">
             Are you sure you want to move this blood bag to inventory?
           </Typography>
         </DialogBody>
@@ -613,15 +616,15 @@ export function MultipleMoveToStock({ selectedRows, refreshData }) {
 
   return (
     <>
-      <Button variant="red" color="red" size="sm" onClick={() => setOpen(true)}>
+      <Button variant="gradient" color="red" size="sm" onClick={() => setOpen(true)}>
         Move to Stock
       </Button>
       <Dialog open={open} handler={() => setOpen(false)}>
-        <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] rounded-t-md text-white font-semibold">
+        <DialogHeader>
           Move to Stocks
         </DialogHeader>
         <DialogBody divider className="flex flex-col gap-4 items-center">
-          <Typography className="font-bold text-xl text-red-600 text-center">
+          <Typography variant="h5" color="red" className="text-center">
             Are you sure you want to move all of this blood bag to stocks?
           </Typography>
         </DialogBody>
@@ -722,39 +725,33 @@ export function Unsafe({
         </IconButton>
       </Tooltip>
       <Dialog open={open} handler={() => setOpen(false)}>
-        <DialogHeader className="bg-gradient-to-r from-[#282828] to-[#A00C08] rounded-t-md text-white font-semibold">
+        <DialogHeader className="border-b-2">
           Mark as Unsafe
         </DialogHeader>
         <DialogBody className="flex flex-col gap-4 items-center text-center">
-          <div className="text-lg text-gray-700 text-center">
+          <Typography variant="paragraph" color="gray" className="text-lg text-center">
             Select a reason:
-          </div>
-          <div className="flex flex-col gap-2">
-            <label>
-              <input
-                type="radio"
-                name="reason"
-                value="Spoiled"
-                checked={reason === "Reactive"}
-                onChange={() => setReason("Reactive")}
-              />{" "}
-              Reactive
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="reason"
-                value="Spoiled"
-                checked={reason === "Spoiled"}
-                onChange={() => setReason("Spoiled")}
-              />{" "}
-              Spoiled
-            </label>
+          </Typography>
+          <div className="flex flex-col items-start gap-2">
+            <Radio
+              name="reason"
+              label="Reactive"
+              value="Spoiled"
+              checked={reason === "Reactive"}
+              onChange={() => setReason("Reactive")}
+            />
+            <Radio
+              name="reason"
+              label="Spoiled"
+              value="Spoiled"
+              checked={reason === "Spoiled"}
+              onChange={() => setReason("Spoiled")}
+            />
           </div>
           {reason && (
-            <div className="text-lg text-gray-700 text-center">
+            <Typography variant="paragraph" color="gray" className="text-center">
               Select remarks for {reason}:
-            </div>
+            </Typography>
           )}
           {reason === "Reactive" && (
             <InputSelect

@@ -171,13 +171,13 @@ export function Dispense({
       </Tooltip>
       <Dialog open={open} handler={handleOpen} size="xl">
         <DialogHeader className="border-b-2">Dispense Blood</DialogHeader>
-        <DialogBody className="h-max flex flex-col gap-5 overscroll-auto">
+        <DialogBody className="h-96 3xl:h-fit flex flex-col gap-5 overflow-y-auto">
           <div className="flex items-start justify-between">
-            <Card className="w-1/3 p-3">
+            <Card className="w-1/3 border-2 p-3">
               <AccordionDispense user={user} />
             </Card>
             <PointRightBlood height={125} width={125} />
-            <Card className="w-1/2">
+            <Card className="w-1/2 border-2">
               <CardBody className="flex flex-col items-center justify-center gap-3">
                 <div className="flex items-center justify-between w-full">
                   <div className="flex flex-col items-center gap-3">
@@ -293,7 +293,7 @@ export function Dispense({
             <div className="flex gap-10">
               <Radio
                 name="type"
-                label="free"
+                label="Free"
                 checked={paymentType === "free"}
                 onChange={() => setPaymentType("free")}
               />

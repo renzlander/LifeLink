@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -8,18 +8,24 @@ import {
   Input,
   Button,
 } from "@material-tailwind/react";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 export function AuthCard({ onAuthenticate }) {
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const router = useRouter();
+  const [showPin, setShowPin] = useState(false);
+
+  const handleShowPin = () => {
+    setShowPin(!showPin);
+  };
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
-    setError(''); 
+    setError("");
   };
 
   const handleSubmit = async (e) => {
@@ -39,7 +45,7 @@ export function AuthCard({ onAuthenticate }) {
             Authorization: `Bearer ${token}`,
           },
           params: {
-            security_pin: password
+            security_pin: password,
           },
         }
       );
@@ -47,11 +53,11 @@ export function AuthCard({ onAuthenticate }) {
       if (response.data.status === "success") {
         onAuthenticate();
       } else {
-        setError('Invalid password. Please try again.');
+        setError("Invalid password. Please try again.");
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      setError('Invalid password. Please try again.');
+      setError("Invalid password. Please try again.");
     }
   };
 
@@ -71,12 +77,23 @@ export function AuthCard({ onAuthenticate }) {
           <Input
             label="Password"
             size="lg"
-            type="password"
+            type={showPin ? "text" : "password"}
             value={password}
             onChange={handlePasswordChange}
+            icon={
+              showPin ? (
+                <EyeSlashIcon className="w-5 h-5" onClick={handleShowPin} />
+              ) : (
+                <EyeIcon className="w-5 h-5" onClick={handleShowPin} />
+              )
+            }
           />
-          {error && <Typography variant="body" color="red">{error}</Typography>}
-          <Button variant="gradient" type='submit' fullWidth>
+          {error && (
+            <Typography variant="body" color="red">
+              {error}
+            </Typography>
+          )}
+          <Button variant="gradient" type="submit" fullWidth>
             Submit
           </Button>
         </form>

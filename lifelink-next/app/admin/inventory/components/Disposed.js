@@ -1,4 +1,5 @@
 import { laravelBaseUrl } from "@/app/variables";
+import { TrashIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import {
   Button,
   Dialog,
@@ -6,6 +7,7 @@ import {
   DialogFooter,
   DialogHeader,
   Typography,
+  IconButton,
 } from "@material-tailwind/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -63,19 +65,21 @@ export function Disposed({ blood_bags_id, refreshData }) {
 
   return (
     <>
-      <Button
+      <IconButton
+        variant="gradient"
+        color="red"
         size="sm"
         onClick={() => setOpen(true)}
-        className="bg-red-600 mr-4"
       >
-        Dispose
-      </Button>
+        <TrashIcon className="w-5 h-5 text-white" />
+      </IconButton>
       <Dialog open={open} handler={() => setOpen(false)}>
-        <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">
+        <DialogHeader>
           Dispose Blood Bag
         </DialogHeader>
         <DialogBody divider className="flex flex-col gap-4 items-center">
-          <Typography className="font-bold text-xl text-red-600 text-center">
+          <ExclamationTriangleIcon className="w-16 h-16 text-red-500" />
+          <Typography variant="h5" color="red" className="text-center">
             Are you sure you want to disposed this blood bag?
           </Typography>
         </DialogBody>

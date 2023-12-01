@@ -200,16 +200,26 @@ export function TabExp() {
     return user.serial_no.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
+  if (loading) {
+    return (
+      <div className="flex min-h-screen max-w-full flex-col py-2 justify-center items-center">
+        <Spinner color="red" className="h-16 w-16" />
+        <p className="mb-[180px] text-gray-600">Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <Card className="w-full -mb-6">
       <CardBody className="px-0">
         <div className="flex items-center justify-between px-4 mb-4">
           <div>
             <Typography
-              variant="subtitle1"
-              className="mb-2 flex justify-center font-bold text-red-800"
+              variant="h6"
+              color="blue-gray"
+              className="mb-2 flex justify-center"
             >
-              QTY:{bloodQty}
+              Quantity: {bloodQty}
             </Typography>
             <Select
               onChange={handleBloodChange}
@@ -225,10 +235,11 @@ export function TabExp() {
           </div>
           <div>
             <Typography
-              variant="subtitle1"
-              className="mb-2 flex justify-center font-bold text-red-800"
+              variant="small"
+              color="blue-gray"
+              className="mb-2 flex justify-center font-medium"
             >
-              Expiration Date Filter
+              Expiration Date Filter:
             </Typography>
             <div className="flex items-center gap-4">
               <Input
@@ -295,7 +306,7 @@ export function TabExp() {
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
-              <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer">
+              <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
                 <Checkbox
                   onChange={() => {
                     if (selectedRows.length === userDetails.length) {
@@ -315,13 +326,13 @@ export function TabExp() {
               {TABLE_HEAD.map((head) => (
                 <th
                   key={head.key}
-                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
+                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
                 >
                   <div className="flex items-center">
                     <Typography
                       variant="small"
                       color="blue-gray"
-                      className="font-normal text-md leading-none opacity-70"
+                      className="font-normal leading-none opacity-70"
                     >
                       {head.label}
                     </Typography>
@@ -334,13 +345,13 @@ export function TabExp() {
             {filteredUserDetails.slice(0, visibleRows).map((user, index) => (
               <tr
                 key={user.blood_bags_id}
-                className={`${
+                className={`border-b ${
                   selectedRows.includes(user.blood_bags_id)
                     ? selectedRowClass
                     : ""
                 }`}
               >
-                <td>
+                <td className={classes}>
                   <Checkbox
                     onChange={() => {
                       if (selectedRows.includes(user.blood_bags_id)) {
@@ -354,27 +365,25 @@ export function TabExp() {
                     checked={selectedRows.includes(user.blood_bags_id)}
                   />
                 </td>
-                <td>
-                  <div className="flex items-center gap-3">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-bold"
-                    >
-                      {user.donor_no}
-                    </Typography>
-                  </div>
-                </td>
-                <td>
+                <td className={classes}>
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="text-red-600 font-bold"
+                    className="font-bold"
+                  >
+                    {user.donor_no}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="red"
+                    className="font-bold"
                   >
                     {user.serial_no}
                   </Typography>
                 </td>
-                <td>
+                <td className={classes}>
                   <Typography
                     variant="small"
                     color="blue-gray"
@@ -383,7 +392,7 @@ export function TabExp() {
                     {user.blood_type}
                   </Typography>
                 </td>
-                <td>
+                <td className={classes}>
                   <Typography
                     variant="small"
                     color="blue-gray"
@@ -392,7 +401,7 @@ export function TabExp() {
                     {formatDate(user.date_donated)}
                   </Typography>
                 </td>
-                <td>
+                <td className={classes}>
                   <Typography
                     variant="small"
                     color="blue-gray"
@@ -401,7 +410,7 @@ export function TabExp() {
                     {formatDate(user.expiration_date)}
                   </Typography>
                 </td>
-                <td>
+                <td className={classes}>
                   <Disposed
                     blood_bags_id={user.blood_bags_id}
                     refreshData={fetchData}

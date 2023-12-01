@@ -160,16 +160,17 @@ export function MultipleDispensed({
       </Button>
       <Dialog open={open} handler={handleOpen} size="xl">
         <DialogHeader className="border-b-2">Dispense Blood</DialogHeader>
-
-        <DialogBody className="flex flex-col gap-5 overscroll-y-auto">
+        <DialogBody className="h-96 3xl:h-fit flex flex-col gap-5 overflow-y-auto">
           <div className="flex items-start justify-between">
-            <Card className="w-1/3 h-64 p-3 border-2  overflow-y-auto">
-              {user.map((userData, index) => (
-                <AccordionMultipleDispense key={index} user={userData} />
-              ))}
+            <Card className="w-1/3 h-72 p-2 border-2">
+              <CardBody className="p-2 overflow-y-auto">
+                {user.map((userData, index) => (
+                  <AccordionMultipleDispense key={index} user={userData} />
+                ))}
+              </CardBody>
             </Card>
             <PointRightBlood height={150} width={150} />
-            <Card className="border-2 w-1/2">
+            <Card className="w-1/2 border-2">
               <CardBody className="flex flex-col items-center justify-center gap-3">
                 <div className="flex items-center justify-between w-full">
                   <div className="flex flex-col items-center gap-3">
@@ -194,7 +195,6 @@ export function MultipleDispensed({
                     </Button>
                   </div>
                 </div>
-
                 <Chip value="Manual" size="sm" className="w-full mt-4 pl-4" />
                 <div className="flex items-center justify-between w-full">
                   <div className="flex flex-col items-center gap-3">
@@ -272,46 +272,41 @@ export function MultipleDispensed({
               </CardBody>
             </Card>
           </div>
-          <div>
-            <Card shadow={false}>
-              <CardBody className="flex flex-col items-center justify-center gap-4">
-                <Input
-                  label="Diagnosis for transfusion"
-                  containerProps={{ className: "w-[50%]" }}
-                  value={diagnosis}
-                  onChange={(e) => setDiagnosis(e.target.value)}
-                />
-                <InputSelect
-                  label="Hospital"
-                  containerProps={{ className: "w-[50%]" }}
-                  value={hospital} // The selected value will be stored in the 'hospital' variable
-                  onSelect={handleHospital}
-                  options={dynamicHospitalOptions}
-                  isSearchable
-                  required
-                  placeholder="Hospital"
-                />
-                <div className="flex gap-10">
-                  <Radio
-                    name="type"
-                    label="free"
-                    color="red"
-                    checked={paymentType === "free"}
-                    onChange={() => setPaymentType("free")}
-                  />
-                  <Radio
-                    name="type"
-                    label="Discounted"
-                    color="red"
-                    checked={paymentType === "discounted"}
-                    onChange={() => setPaymentType("discounted")}
-                  />
-                </div>
-              </CardBody>
-            </Card>
+          <div className="w-1/2 flex flex-col items-center gap-5 place-self-center">
+            <Input
+              label="Diagnosis for transfusion"
+              containerProps={{ className: "w-[50%]" }}
+              value={diagnosis}
+              onChange={(e) => setDiagnosis(e.target.value)}
+            />
+            <InputSelect
+              label="Hospital"
+              containerProps={{ className: "w-[50%]" }}
+              value={hospital} // The selected value will be stored in the 'hospital' variable
+              onSelect={handleHospital}
+              options={dynamicHospitalOptions}
+              isSearchable
+              required
+              placeholder="Hospital"
+            />
+            <div className="flex gap-10">
+              <Radio
+                name="type"
+                label="Free"
+                color="red"
+                checked={paymentType === "free"}
+                onChange={() => setPaymentType("free")}
+              />
+              <Radio
+                name="type"
+                label="Discounted"
+                color="red"
+                checked={paymentType === "discounted"}
+                onChange={() => setPaymentType("discounted")}
+              />
+            </div>
           </div>
         </DialogBody>
-
         <DialogFooter className="border-t-2">
           <Button
             variant="text"

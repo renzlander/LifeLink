@@ -252,14 +252,15 @@ export function TabTemp() {
 
   return (
     <Card className="w-full -mb-6">
-      <CardBody>
-        <div className="flex items-center justify-between px-4 mb-4">
+      <CardBody className="px-0">
+        <div className="flex items-center justify-between gap-3 px-4 mb-4">
           <div>
             <Typography
-              variant="subtitle1"
-              className="mb-2 justify-center font-bold text-red-800"
+              variant="h6"
+              color="blue-gray"
+              className="mb-2 flex justify-center"
             >
-              QTY:{bloodQty}
+              Quantity: {bloodQty}
             </Typography>
             <div className="flex items-center justify-between gap-4">
               <Select
@@ -287,10 +288,11 @@ export function TabTemp() {
           </div>
           <div>
             <Typography
-              variant="subtitle1"
-              className="mb-2 flex justify-center font-bold text-red-800"
+              variant="small"
+              color="blue-gray"
+              className="mb-2 flex justify-center font-medium"
             >
-              Date Donated Filter
+              Date Donated Filter:
             </Typography>
             <div className="flex items-center gap-4">
               <Input
@@ -348,10 +350,11 @@ export function TabTemp() {
                 />
               </div>
               <Button
-                className="flex items-center gap-3"
+                size="sm"
+                className="flex items-center gap-3wrap"
                 onClick={exportBloodBagsAsPDF}
               >
-                <DocumentArrowDownIcon className="h-4 w-4" /> Export to PDF
+                <DocumentArrowDownIcon className="h-5 w-5" /> Export PDF
               </Button>
             </div>
           </div>
@@ -374,7 +377,7 @@ export function TabTemp() {
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
-              <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer">
+              <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
                 <Checkbox
                   onChange={() => {
                     if (selectedRows.length === userDetails.length) {
@@ -394,13 +397,13 @@ export function TabTemp() {
               {TABLE_HEAD.map((head) => (
                 <th
                   key={head.key}
-                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
+                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
                 >
                   <div className="flex items-center">
                     <Typography
                       variant="small"
                       color="blue-gray"
-                      className="font-normal text-md leading-none opacity-70"
+                      className="font-normal leading-none opacity-70"
                     >
                       {head.label}
                     </Typography>
@@ -419,7 +422,7 @@ export function TabTemp() {
                     : ""
                 }`}
               >
-                <td>
+                <td className={classes}>
                   <Checkbox
                     onChange={() => {
                       if (selectedRows.includes(user.blood_bags_id)) {
@@ -433,22 +436,20 @@ export function TabTemp() {
                     checked={selectedRows.includes(user.blood_bags_id)}
                   />
                 </td>
-                <td>
-                  <div className="flex items-center gap-3">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-bold"
-                    >
-                      {user.donor_no}
-                    </Typography>
-                  </div>
-                </td>
                 <td className={classes}>
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="text-red-600 font-bold"
+                    className="font-bold"
+                  >
+                    {user.donor_no}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="red"
+                    className="font-bold"
                   >
                     {user.serial_no}
                   </Typography>
