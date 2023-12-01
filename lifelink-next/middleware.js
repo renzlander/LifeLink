@@ -26,7 +26,7 @@ export async function middleware(request) {
 
   if (isPublicPath && token) {
     if (isAdmin?.isAdmin === 1) {
-      return NextResponse.redirect(new URL("/admin", request.url));
+      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
     }
     return NextResponse.redirect(new URL("/user/dashboard", request.url));
   } else if (!isPublicPath && !token) {
@@ -39,7 +39,7 @@ export async function middleware(request) {
     }
   } else if (!isAdminPath && token) {
     if (isAdmin?.isAdmin === 1)
-      return NextResponse.redirect(new URL("/admin", request.url));
+      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
   }
   //return NextResponse.redirect(new URL('/home', request.url))
 }
