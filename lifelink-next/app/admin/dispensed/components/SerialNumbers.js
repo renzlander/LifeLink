@@ -74,24 +74,34 @@ export function SerialNumbers({ dispensedSerialNumbers, onSearch }) {
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
-              <th className="border-y border-r border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer">
-                Serial Number
+              <th className="border-y border-r border-blue-gray-100 bg-blue-gray-50/50 p-4">
+                <Typography variant="small" color="blue-gray" className="font-normal leading-none opacity-70">
+                  Serial Number
+                </Typography>
               </th>
-              <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer">
-                Dispensed Date
+              <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
+                <Typography variant="small" color="blue-gray" className="font-normal leading-none opacity-70">
+                  Dispensed Date
+                </Typography>
               </th>
             </tr>
           </thead>
           <tbody>
             {filteredSerialNumbers.map((serial) => (
               <tr
-                className="cursor-pointer"
+                className="hover:bg-gray-100 cursor-pointer"
                 key={serial.id}
                 onClick={() => onRowClick(serial.serial_no)}
               >
-                <td className="border px-4 py-2">{serial.serial_no}</td>
                 <td className="border px-4 py-2">
-                  {formatDate(serial.created_at)}
+                    <Typography variant="small" color="blue-gray" className="font-semibold">
+                      {serial.serial_no}
+                    </Typography>
+                </td>
+                <td className="border px-4 py-2">
+                    <Typography variant="small" color="blue-gray">
+                      {formatDate(serial.created_at)}
+                    </Typography>
                 </td>
               </tr>
             ))}
