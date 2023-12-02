@@ -133,7 +133,7 @@ export function EditPopUp({ user, refreshData }) {
           }
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+
       }
     };
 
@@ -164,7 +164,6 @@ export function EditPopUp({ user, refreshData }) {
           setProvinceOption(provinces);
         })
         .catch((error) => {
-          console.error("Error fetching provinces:", error);
         });
     }
   }, [selectedRegionCode]);
@@ -185,7 +184,6 @@ export function EditPopUp({ user, refreshData }) {
           setMunicipalityOption(municipalities);
         })
         .catch((error) => {
-          console.error("Error fetching municipalities:", error);
         });
     }
   }, [selectedProvinceCode]);
@@ -206,7 +204,6 @@ export function EditPopUp({ user, refreshData }) {
           setBarangayOption(barangays);
         })
         .catch((error) => {
-          console.error("Error fetching barangays:", error);
         });
     }
   }, [selectedMunicipalityCode]);
@@ -280,7 +277,6 @@ export function EditPopUp({ user, refreshData }) {
         setOpen(false);
         router.refresh();
       } else {
-        console.error("Error updating user data:", response.data.message);
         toast.error("Error updating user details");
       }
     } catch (error) {
@@ -305,9 +301,7 @@ export function EditPopUp({ user, refreshData }) {
       } else {
         setErrorMessage({ email: [error.message], mobile: [error.message] });
       }
-      console.error("Error updating user data:", error);
       toast.error(error);
-      console.error("Unknown error occurred:", error);
     }
   };
   return (

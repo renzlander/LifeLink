@@ -159,6 +159,8 @@ export function BarCard() {
   const [time, setTime] = useState("");
   const [timeAgoo, setTimeAgo] = useState("");
   const [filterQuarter, setFilterQuarter] = useState("All");
+  const [allBarangays, setAllBarangays] = useState([]);
+  const [barangayLabels, setBarangayLabels] = useState({});
   const router = useRouter();
 
   const quarters = [
@@ -174,6 +176,19 @@ export function BarCard() {
   };
 
   useEffect(() => {
+
+    const getValenzuelaBarangays = async () => {
+      try {
+        const response = await axios.get(`${laravelBaseUrl}/api/get-valenzuela-barangay`);
+        if (response.data.status === "success") {
+          return response.data.barangays;
+        }
+      } catch (error) {
+        console.error("Error fetching barangays:", error);
+        return [];
+      }
+    };
+
     const fetchDonorCountPerBarangay = async () => {
       try {
         const token = getCookie("token");
@@ -205,47 +220,84 @@ export function BarCard() {
           setTime(time);
           // Create an object with all barangays and default to zero donors
           const allBarangays = [
-            "Arkong Bato",
-            "Bagbaguin",
-            "Balangkas",
-            "Bignay",
-            "Bisig",
-            "Canumay East (Canumay)",
-            "Canumay West (Canumay)",
-            "Coloong",
-            "Dalandanan",
-            "Hen. T. de Leon",
-            "Isla",
-            "Karuhatan",
-            "Lawang Bato",
-            "Lingunan",
-            "Mabolo",
-            "Malanday",
-            "Malinta",
-            "Mapulang Lupa",
-            "Marulas",
-            "Maysan",
-            "Palasan",
-            "Parada",
-            "Pariancillo Villa",
-            "Paso de Blas",
-            "Pasolo",
-            "Poblacion",
-            "Pulo",
-            "Punturin",
-            "Rincon",
-            "Tagalag",
-            "Ugong",
-            "Veinte Reales",
-            "Wawang Pulo",
+            "137504001", 
+            "137504002",
+            "137504003",
+            "137504004",
+            "137504005",
+            "137504006",
+            "137504007",
+            "137504008",
+            "137504009",
+            "137504010",
+            "137504011",
+            "137504012",
+            "137504013",
+            "137504014",
+            "137504015",
+            "137504016",
+            "137504017",
+            "137504018",
+            "137504019",
+            "137504020",
+            "137504021",
+            "137504022",
+            "137504023",
+            "137504024",
+            "137504025",
+            "137504026",
+            "137504027",
+            "137504028",
+            "137504029",
+            "137504030",
+            "137504031",
+            "137504032",
+            "137504033",
           ];
+          
+          const barangayLabels = {
+            "137504001": "Arkong Bato",
+            "137504002": "Bagbaguin",
+            "137504003": "Balangkas",
+            "137504004": "Parada",
+            "137504005": "Bignay",
+            "137504006": "Bisig",
+            "137504007": "Canumay West (Canumay)",
+            "137504008": "Karuhatan",
+            "137504009": "Coloong",
+            "137504010": "Dalandanan",
+            "137504011": "Hen. T. De Leon",
+            "137504012": "Isla",
+            "137504013": "Lawang Bato",
+            "137504014": "Lingunan",
+            "137504015": "Mabolo",
+            "137504016": "Malanday",
+            "137504017": "Malinta",
+            "137504018": "Mapulang Lupa",
+            "137504019": "Marulas",
+            "137504020": "Maysan",
+            "137504021": "Palasan",
+            "137504022": "Pariancillo Villa",
+            "137504023": "Paso De Blas",
+            "137504024": "Pasolo",
+            "137504025": "Poblacion",
+            "137504026": "Pulo",
+            "137504027": "Punturin",
+            "137504028": "Rincon",
+            "137504029": "Tagalag",
+            "137504030": "Ugong",
+            "137504031": "Viente Reales",
+            "137504032": "Wawang Pulo",
+            "137504033": "Canumay East (Canumay)",
 
+          };
+          
           const updatedDonorCount = allBarangays.map((barangay) => {
-            const found = donorCounts.find(
-              (item) => item.barangay === barangay
-            );
-            return found ? found : { barangay, donor_count: 0 };
+            const found = donorCounts.find((item) => item.barangay === barangay);
+            const label = barangayLabels[barangay] || barangay;
+            return found ? { ...found, label } : { barangay, donor_count: 0, label };
           });
+          
 
           setBarangayDonorCount(updatedDonorCount);
           setLastUpdate(lastUpdate);

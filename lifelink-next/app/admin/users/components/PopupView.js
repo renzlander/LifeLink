@@ -14,7 +14,6 @@ import { useState } from "react";
 
 export function ViewPopUp({ user }) {
   const [open, setOpen] = useState(false);
-
   return (
     <>
       <Tooltip content="View User">
@@ -23,10 +22,11 @@ export function ViewPopUp({ user }) {
         </IconButton>
       </Tooltip>
       <Dialog open={open} handler={() => setOpen(false)} size="lg">
-        <DialogHeader>
-          User Details
-        </DialogHeader>
-        <DialogBody divider className="h-96 flex flex-col gap-4 overflow-y-auto">
+        <DialogHeader>User Details</DialogHeader>
+        <DialogBody
+          divider
+          className="h-96 flex flex-col gap-4 overflow-y-auto"
+        >
           <Chip value="FULL NAME" color="blue-gray" />
           <div className="flex gap-10 text-gray-900">
             <Typography>
@@ -77,8 +77,8 @@ export function ViewPopUp({ user }) {
           </div>
           <Chip value="Full Address" color="blue-gray" />
           <Typography className="text-md text-gray-900 font-medium">
-            {user.street}, {user.barangay}, {user.municipality}, {user.province}
-            , {user.region}
+            {user.street}, {user.brgyDesc}, {user.citymunDesc}, {user.provDesc},{" "}
+            {user.regDesc}
           </Typography>
         </DialogBody>
         <DialogFooter>

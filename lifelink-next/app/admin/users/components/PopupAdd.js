@@ -130,7 +130,6 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
           },
         })
         .catch((error) => {
-          console.error("Unknown error occurred:", error);
           if (
             error.response &&
             error.response.data &&
@@ -169,14 +168,12 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
           setGeneralErrorMessage(response.data.message);
           toast.error("Opps! Something went wrong.");
         } else {
-          console.error("Unknown error occurred:", response.data);
         }
       }
       // Close the dialog
       setOpen(false);
     } catch (error) {
       toast.error(error);
-      console.error("Unknown error occurred:", error);
     }
   };
 

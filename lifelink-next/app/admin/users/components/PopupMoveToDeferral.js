@@ -144,7 +144,6 @@ export function MoveToDeferral({
       }
     } catch (error) {
       setGeneralErrorMessage(error.response.data.message);
-      console.error("Unknown error occurred:", error);
     }
   };
 
