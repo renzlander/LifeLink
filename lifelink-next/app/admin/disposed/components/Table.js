@@ -11,7 +11,7 @@ export function InventoryTable() {
     <Card className="h-full w-full">
       <CardHeader color="red" className="relative h-16 flex items-center">
         <Typography variant="h4" color="white" className="ml-4">
-          Diposed Blood Bags
+          Disposed Blood Bags
         </Typography>
       </CardHeader>
       <CardBody className="px-0">

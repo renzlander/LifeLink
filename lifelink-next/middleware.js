@@ -5,7 +5,13 @@ import { laravelBaseUrl } from "./app/variables";
 export async function middleware(request) {
   const path = request.nextUrl.pathname;
 
-  const isPublicPath = path === "/login" || path.includes("/signup") || path.includes("/news") || path.includes("/banks") || path.includes("/about") || path.includes("/contact");
+  const isPublicPath =
+    path === "/login" ||
+    path.includes("/register") ||
+    path.includes("/news") ||
+    path.includes("/banks") ||
+    path.includes("/about") ||
+    path.includes("/contact");
   const isAdminPath = path.includes("/admin");
   const token = request.cookies.get("token");
 
@@ -15,14 +21,11 @@ export async function middleware(request) {
       Authorization: `Bearer ${token?.value || ""}`,
     },
   });
-  
+
   let isAdmin;
-  if(response.status===200){
-    
+  if (response.status === 200) {
     isAdmin = await response.json();
-    
   }
-  
 
   if (isPublicPath && token) {
     if (isAdmin?.isAdmin === 1) {
@@ -46,5 +49,10 @@ export async function middleware(request) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ["/user/dashboard:path*", "/login", "/signup/:path*", "/admin/:path*"],
+  matcher: [
+    "/user/:path*",
+    "/login",
+    "/signup/:path*",
+    "/admin/:path*",
+  ],
 };

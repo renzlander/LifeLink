@@ -220,15 +220,15 @@ export function TabStock() {
 
   return (
     <Card className="w-full -mb-6">
-      <CardBody>
-        .
-        <div className="flex items-center justify-between px-4 mb-4">
+      <CardBody className="px-0">
+        <div className="flex items-center justify-between gap-4 px-4 mb-2">
           <div>
             <Typography
-              variant="subtitle1"
-              className="mb-2 justify-center font-bold text-red-800"
+              variant="h6"
+              color="blue-gray"
+              className="mb-2 text-center"
             >
-              QTY:{bloodQty}
+              Quantity: {bloodQty}
             </Typography>
             <div className="flex items-center justify-between gap-4">
               <Select
@@ -256,10 +256,11 @@ export function TabStock() {
           </div>
           <div>
             <Typography
-              variant="subtitle1"
-              className="mb-2 flex justify-center font-bold text-red-800"
+              variant="small"
+              color="blue-gray"
+              className="mb-3 text-center"
             >
-              Disposed Date Filter
+              Disposed Date Filter:
             </Typography>
             <div className="flex items-center gap-4">
               <Input
@@ -276,7 +277,6 @@ export function TabStock() {
                     endDate
                   );
                 }}
-                className=""
               />
               <Typography> to </Typography>
               <Input
@@ -293,36 +293,27 @@ export function TabStock() {
                     newEndDate
                   );
                 }}
-                className=""
               />
             </div>
           </div>
-          <div>
-            <Typography
-              variant="subtitle1"
-              className="mb-2 flex justify-center font-bold text-red-800"
-            >
-              {/* Other Tools  */}
-            </Typography>
-            <div className="flex items-center gap-3 pt-6">
-              <div className="flex items-center gap-3 w-full md:w-72">
-                <Input
-                  label="Search"
-                  icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-                  value={searchQuery}
-                  onChange={(e) => {
-                    const inputValue = e.target.value;
-                    setSearchQuery(inputValue);
-                  }}
-                />
-              </div>
-              <Button
-                className="flex items-center gap-3"
-                onClick={exportBloodBagsAsPDF}
-              >
-                <DocumentArrowDownIcon className="h-4 w-4" /> Export to PDF
-              </Button>
+          <div className="flex items-center gap-3 pt-6">
+            <div className="flex items-center gap-3 w-full md:w-72">
+              <Input
+                label="Search"
+                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+                value={searchQuery}
+                onChange={(e) => {
+                  const inputValue = e.target.value;
+                  setSearchQuery(inputValue);
+                }}
+              />
             </div>
+            <Button
+              className="flex items-center gap-3"
+              onClick={exportBloodBagsAsPDF}
+            >
+              <DocumentArrowDownIcon className="h-4 w-4" /> Export to PDF
+            </Button>
           </div>
         </div>
         <table className="w-full min-w-max table-auto text-left">
@@ -331,7 +322,7 @@ export function TabStock() {
               {TABLE_HEAD.map((head) => (
                 <th
                   key={head.key}
-                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
+                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
                 >
                   <div className="flex items-center">
                     <Typography
@@ -362,9 +353,8 @@ export function TabStock() {
                 </td>
                 <td className={classes}>
                   <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="text-red-600 font-bold"
+                    variant="h6"
+                    color="red"
                   >
                     {user.serial_no}
                   </Typography>
