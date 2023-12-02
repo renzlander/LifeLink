@@ -10,13 +10,14 @@ import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
 import Tooltip from '@mui/material/Tooltip';
 import { useTheme } from "@mui/material/styles";
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 
 import {
   ArrowUpOnSquareIcon,
   Bars3BottomLeftIcon,
   Bars3Icon,
+  ChevronUpIcon,
   ClipboardDocumentIcon,
   ClipboardDocumentListIcon,
   DocumentPlusIcon,
@@ -27,7 +28,10 @@ import {
   Squares2X2Icon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import { IconButton } from "@material-tailwind/react";
+import { 
+  IconButton,
+  Tooltip as Guide,
+} from "@material-tailwind/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -40,6 +44,21 @@ export default function AdminLayout({ children }) {
   const router = useRouter();
   const pathName = usePathname();
   const [open, setOpen] = React.useState(false);
+  const [showScrollButton, setShowScrollButton] = React.useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollButton(window.scrollY >= 400);
+    };
+
+    // Attach the scroll event listener when the component mounts
+    window.addEventListener('scroll', handleScroll);
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []); // Empty dependency array ensures the effect runs only once,
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -48,6 +67,7 @@ export default function AdminLayout({ children }) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
   const links = [
     { href: "./dashboard", text: "Dashboard", icon: <Squares2X2Icon /> },
     { href: "./users", text: "Users", icon: <UserIcon /> },
@@ -170,7 +190,15 @@ export default function AdminLayout({ children }) {
       <Box component="main" sx={{ flexGrow: 1, backgroundColor: "#e5e7eb" }}>
         <DrawerHeader />
         {children}
-
+        {showScrollButton  && (
+          <div className="fixed bottom-10 right-10 z-50">
+            <Guide content="Scroll to top">
+            <IconButton onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+              <ChevronUpIcon className="w-7 h-7 text-white" />
+            </IconButton>
+            </Guide>
+          </div>
+        )}
         {pathName.replace('/admin', '.') === "./posts" ? (
           <div className="fixed bottom-10 right-10 z-50">
             <CreatePost />
