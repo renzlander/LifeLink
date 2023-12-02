@@ -1,6 +1,8 @@
 "use client";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { DocumentArrowDownIcon } from "@heroicons/react/24/outline";
+import { Button, Spinner } from "@material-tailwind/react";
 import { useEffect, useRef, useState } from "react";
 import { MBDCard } from "./components/Card";
 
@@ -40,12 +42,10 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // Prevent right-click
     // document.addEventListener("contextmenu", (e) => {
     //   e.preventDefault();
     // });
 
-    // Prevent key combinations
     document.addEventListener("keydown", (e) => {
       if (
         e.key === "PrintScreen" ||
@@ -78,16 +78,26 @@ export default function Home() {
 
   return (
     <div className="bg-gray-200 w-full min-h-screen flex flex-col items-center justify-between p-12">
-      <button
+      <Button
+        variant="gradient"
+        color="gray"
         onClick={captureScreenshot}
-        className="bg-red-500 hover-bg-red-700 text-white font-bold py-2 px-4 rounded-full shadow-md mb-8"
+        className="rounded-full flex items-center gap-3 mb-2"
         disabled={isGenerating} // Disable the button while generating
       >
-        {isGenerating ? "Generating PDF..." : "Export to PDF"}
-      </button>
-      {isGenerating && <p>Generating PDF, please wait...</p>}
-      <div ref={contentRef} className="mb-8">
-        {/* Your website content here, including the MBDCard */}
+        {isGenerating ? (
+          <>
+            <Spinner className="w-4 h-4" />
+            Generating PDF...
+          </>
+        ) : (
+          <>
+            <DocumentArrowDownIcon className="h-4 w-4" />
+            Export to PDF
+          </>
+        )}
+      </Button>
+      <div ref={contentRef} className="py-8">
         <MBDCard />
       </div>
     </div>
