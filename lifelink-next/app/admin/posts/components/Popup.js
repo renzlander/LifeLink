@@ -5,6 +5,7 @@ import {
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/solid";
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import {
   Button,
   Dialog,
@@ -422,11 +423,14 @@ export function DeletePost({ bloodRequestId, refreshData }) {
         <TrashIcon className="h-5 w-5" />
       </IconButton>
       <Dialog open={open} handler={handleOpen}>
-        <DialogHeader>Delete Post</DialogHeader>
-        <DialogBody>
-          Are you sure you want to delete this post?
+        <DialogHeader className="border-b">Delete Post</DialogHeader>
+        <DialogBody className="flex flex-col items-center gap-4">
+          <ExclamationTriangleIcon className="h-16 w-16 text-red-500" />
+          <Typography variant="h5" color="red">
+            Are you sure you want to delete this post?
+          </Typography>
         </DialogBody>
-        <DialogFooter>
+        <DialogFooter className="border-t">
           <Button
             variant="text"
             color="gray"
@@ -435,7 +439,7 @@ export function DeletePost({ bloodRequestId, refreshData }) {
           >
             <span>Cancel</span>
           </Button>
-          <Button variant="gradient" color="green" onClick={handleDelete}>
+          <Button variant="gradient" color="red" onClick={handleDelete}>
             <span>Confirm</span>
           </Button>
         </DialogFooter>

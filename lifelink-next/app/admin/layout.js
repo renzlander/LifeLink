@@ -172,7 +172,7 @@ export default function AdminLayout({ children }) {
         {children}
 
         {pathName.replace('/admin', '.') === "./posts" ? (
-          <div className="fixed bottom-10 right-10">
+          <div className="fixed bottom-10 right-10 z-50">
             <CreatePost />
           </div>
         ) : (

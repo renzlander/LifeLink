@@ -75,7 +75,7 @@ export function PostCreated() {
         }
       );
 
-      console.log("dasdsad",response);
+      console.log("dasdsad", response);
       setCreatedPosts(response.data.data);
       setLoading(false);
     } catch (error) {
@@ -90,8 +90,11 @@ export function PostCreated() {
   return (
     <div>
       {createdPosts.map((post) => (
-        <div key={post.blood_request_id} className="flex items-start justify-center w-full relative px-24 my-4">
-          <Card shadow={false} className="p-4 w-full shadow-md">
+        <div
+          key={post.blood_request_id}
+          className="flex items-start justify-center w-full relative px-24 my-4"
+        >
+          <Card shadow={false} className="p-4 w-full shadow-md rounded-tr-none">
             <CardHeader
               color="transparent"
               floated={false}
@@ -258,8 +261,15 @@ export function PostCreated() {
             </CardBody>
           </Card>
           <div className="absolute top-0 right-14 flex flex-col items-start gap-5">
-            <EditPost bloodRequestId={post.blood_request_id} post={post} refreshData={fetchCreatedPosts} />
-            <DeletePost bloodRequestId={post.blood_request_id} refreshData={fetchCreatedPosts}/>
+            <EditPost
+              bloodRequestId={post.blood_request_id}
+              post={post}
+              refreshData={fetchCreatedPosts}
+            />
+            <DeletePost
+              bloodRequestId={post.blood_request_id}
+              refreshData={fetchCreatedPosts}
+            />
           </div>
         </div>
       ))}
