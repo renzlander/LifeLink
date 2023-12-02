@@ -1,7 +1,5 @@
 import { laravelBaseUrl } from "@/app/variables";
-import {
-  MagnifyingGlassIcon
-} from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import {
   Button,
   Card,
@@ -10,7 +8,7 @@ import {
   Chip,
   Input,
   Spinner,
-  Typography
+  Typography,
 } from "@material-tailwind/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -198,11 +196,20 @@ export function UsersTable() {
   };
 
   const filteredUserDetails = userDetails.filter((user) => {
-    const fullName =
-      `${user.first_name} ${user.middle_name} ${user.last_name}`.toLowerCase();
-    return fullName.includes(searchQuery.toLowerCase());
+    const fullName = `${user.first_name} ${user.middle_name} ${user.last_name}`.toLowerCase();
+    const email = user.email.toLowerCase();
+    const mobile = user.mobile.toLowerCase();
+    const donorNumber = String(user.donor_no).toLowerCase(); // Convert to string
+    
+    return (
+      fullName.includes(searchQuery.toLowerCase()) ||
+      email.includes(searchQuery.toLowerCase()) ||
+      mobile.includes(searchQuery.toLowerCase()) ||
+      donorNumber.includes(searchQuery.toLowerCase())
+    );
   });
-
+  
+  
   const handleClear = () => {
     onChange("");
   };
@@ -267,107 +274,110 @@ export function UsersTable() {
               </tr>
             </thead>
             <tbody>
-            {filteredUserDetails.slice(0, visibleRows).map((user, index) => (
-              <tr key={user.donor_no} className="border-b border-blue-gray-100">
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-bold"
-                  >
-                    {user.donor_no}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {user.first_name} {user.middle_name} {user.last_name}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {user.blood_type}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {user.email}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {user.mobile}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal capitalize"
-                  >
-                    {formatDate(user.dob)}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal capitalize"
-                  >
-                    {user.latest_date_donated
-                      ? formatDate(user.latest_date_donated)
-                      : "Not yet donated"}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <ViewPopUp user={user} />
-                  <EditPopUp user={user} refreshData={fetchData} />
-                </td>
-                <td
-                  className={`${classes} mt-1 flex items-center justify-center gap-2`}
+              {filteredUserDetails.slice(0, visibleRows).map((user, index) => (
+                <tr
+                  key={user.donor_no}
+                  className="border-b border-blue-gray-100"
                 >
-                  {user.remarks !== 0 ? (
-                    <Chip size="lg" value="DEFERRED" color="blue-gray">
-                      DEFERRED
-                    </Chip>
-                  ) : (
-                    <div className="space-x-2">
-                      <AddBloodBagPopup
-                        user_id={user.user_id}
-                        bledByOptions={bledByOptions}
-                        venueOptions={venueOptions}
-                      />
-                      <MoveToDeferral
-                        user_id={user.user_id}
-                        refreshData={fetchData}
-                        temporaryDeferralCategories={
-                          temporaryDeferralCategories
-                        }
-                        permanentDeferralCategories={
-                          permanentDeferralCategories
-                        }
-                        venueOptions={venueOptions}
-                      />
-                    </div>
-                  )}
-                </td>
-              </tr>
-            ))}
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-bold"
+                    >
+                      {user.donor_no}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {user.first_name} {user.middle_name} {user.last_name}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {user.blood_type}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {user.email}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {user.mobile}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal capitalize"
+                    >
+                      {formatDate(user.dob)}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal capitalize"
+                    >
+                      {user.latest_date_donated
+                        ? formatDate(user.latest_date_donated)
+                        : "Not yet donated"}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <ViewPopUp user={user} />
+                    <EditPopUp user={user} refreshData={fetchData} />
+                  </td>
+                  <td
+                    className={`${classes} mt-1 flex items-center justify-center gap-2`}
+                  >
+                    {user.remarks !== 0 ? (
+                      <Chip size="lg" value="DEFERRED" color="blue-gray">
+                        DEFERRED
+                      </Chip>
+                    ) : (
+                      <div className="space-x-2">
+                        <AddBloodBagPopup
+                          user_id={user.user_id}
+                          bledByOptions={bledByOptions}
+                          venueOptions={venueOptions}
+                        />
+                        <MoveToDeferral
+                          user_id={user.user_id}
+                          refreshData={fetchData}
+                          temporaryDeferralCategories={
+                            temporaryDeferralCategories
+                          }
+                          permanentDeferralCategories={
+                            permanentDeferralCategories
+                          }
+                          venueOptions={venueOptions}
+                        />
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         )}

@@ -7,7 +7,7 @@ export default function BarChart({ data }) {
   const BarGraph = {
     type: "bar",
     data: {
-      labels: data.map((item) => item.barangay),
+      labels: data.map((item) => item.label), // Use 'label' instead of 'barangay'
       datasets: [
         {
           label: "Donors",
