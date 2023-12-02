@@ -40,7 +40,7 @@ export default function Home() {
     });
 
     // Add image to the PDF using data URL
-    doc.addImage(screenshot, "JPEG", 0, 0, 210, 297);
+    doc.addImage(screenshot, "JPEG", 10, 5, 190, 287);
 
     // Save the PDF
     doc.save("mbd_report.pdf");

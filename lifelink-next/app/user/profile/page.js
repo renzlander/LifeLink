@@ -210,7 +210,7 @@ export default function Home() {
                   </Typography>
                 </div>
               </div>
-              <div className="w-full 2xl:w-[70%]">
+              <div className="w-full 3xl:w-[70%]">
                 <Tabs value="pofile">
                   <TabsHeader>
                     {TABS.map(({ label, value, icon }) => (
