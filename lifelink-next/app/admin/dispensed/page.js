@@ -115,7 +115,7 @@ export default function Home() {
   }, [searchQuery, fetchDispenseRecords]);
 
   return (
-    <div className="bg-gray-200 flex min-h-screen flex-col items-center gap-10 py-4 px-12">
+    <div className="bg-gray-200 flex min-h-screen flex-col items-center gap-10 py-4 px-6">
       <Card className="w-full">
         <Tabs value={activeTab} className="w-full">
           <TabsHeader>

@@ -262,7 +262,7 @@ export function LogsTable() {
           </thead>
           <tbody>
             {activityLogs.map((log, index) => (
-              <tr key={log.audit_trails_id}>
+              <tr key={log.audit_trails_id} className="border-b">
                 <td className={classes}>
                   <Typography
                     variant="small"
@@ -349,7 +349,7 @@ export function LogsTable() {
           </tbody>
         </table>
       </CardBody>
-      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+      <CardFooter className="flex items-center justify-between border-blue-gray-50 px4">
         <Button
           variant="outlined"
           size="sm"

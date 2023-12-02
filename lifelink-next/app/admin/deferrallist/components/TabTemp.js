@@ -1,19 +1,15 @@
 import InputSelect from "@/app/components/InputSelect";
 import { laravelBaseUrl } from "@/app/variables";
 import {
-  MagnifyingGlassIcon,
   DocumentArrowDownIcon,
+  MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import {
   Button,
   Card,
   CardBody,
   CardFooter,
-  Checkbox,
-  IconButton,
   Input,
-  Option,
-  Select,
   Spinner,
   Typography,
 } from "@material-tailwind/react";

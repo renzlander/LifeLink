@@ -9,7 +9,7 @@ import {
   Card,
   CardBody,
   CardFooter,
-  IconButton,
+  CardHeader,
   Input,
   Option,
   Select,
@@ -271,12 +271,18 @@ export function DispenseTable() {
 
   return (
     <Card className="w-full">
-      <CardBody>
-        <div className="flex items-center justify-between px-4 mb-4">
+    <CardHeader color="red" className="relative h-16 flex items-center">
+      <Typography variant="h4" color="white" className="mx-4">
+        Dispensed Blood List
+      </Typography>
+    </CardHeader>
+      <CardBody className="px-0">
+        <div className="flex items-center gap-4 px-4 mb-2">
           <div className="">
             <Typography
-              variant="subtitle1"
-              className="mb-2 flex justify-center font-bold text-red-800"
+              variant="h6"
+              color="blue-gray"
+              className="text-center"
             >
               No. of Patients:{bloodQty}
             </Typography>
@@ -317,10 +323,11 @@ export function DispenseTable() {
           </div>
           <div>
             <Typography
-              variant="subtitle1"
-              className="mb-2 flex justify-center font-bold text-red-800"
+              variant="small"
+              color="blue-gray"
+              className="text-center mb-1"
             >
-              Dispensed Date Filter
+              Dispensed Date Filter:
             </Typography>
             <div className="flex items-center gap-4">
               <Input
@@ -361,32 +368,25 @@ export function DispenseTable() {
               />
             </div>
           </div>
-          <div>
-            <Typography
-              variant="subtitle1"
-              className="mb-2 flex justify-center font-bold text-red-800"
-            >
-              {/* Other Tools  */}
-            </Typography>
-            <div className="flex items-center gap-3 pt-6">
-              <div className="flex items-center gap-3 w-full md:w-72">
-                <Input
-                  label="Search"
-                  icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-                  value={searchQuery}
-                  onChange={(e) => {
-                    const inputValue = e.target.value;
-                    setSearchQuery(inputValue);
-                  }}
-                />
-              </div>
-              <Button
-                className="flex items-center gap-3"
-                onClick={exportBloodBagsAsPDF}
-              >
-                <DocumentArrowDownIcon className="h-4 w-4" /> Export to PDF
-              </Button>
+          <div className="flex items-center gap-3 pt-6">
+            <div className="flex items-center gap-3 w-full md:w-72">
+              <Input
+                label="Search"
+                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+                value={searchQuery}
+                onChange={(e) => {
+                  const inputValue = e.target.value;
+                  setSearchQuery(inputValue);
+                }}
+              />
             </div>
+            <Button
+              size="sm"
+              className="flex items-center gap-3"
+              onClick={exportBloodBagsAsPDF}
+            >
+              <DocumentArrowDownIcon className="h-4 w-4" /> Export PDF
+            </Button>
           </div>
         </div>
 
@@ -395,7 +395,7 @@ export function DispenseTable() {
             {TABLE_HEAD.map((head) => (
               <th
                 key={head.key}
-                className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 cursor-pointer"
+                className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
               >
                 <div className="flex items-center">
                   <Typography
@@ -411,7 +411,7 @@ export function DispenseTable() {
           </thead>
           <tbody>
             {filteredUserDetails.slice(0, visibleRows).map((user, index) => (
-              <tr key={user.patient_receivers_id}>
+              <tr key={user.patient_receivers_id} className="border-b">
                 <td className={classes}>
                   <Typography
                     variant="small"
@@ -446,7 +446,6 @@ export function DispenseTable() {
                     className="font-normal"
                   >
                     {calculateAge(user.dob)}{" "}
-                    {/* Calculate age based on date of birth */}
                   </Typography>
                 </td>
                 <td className={classes}>
@@ -493,7 +492,7 @@ export function DispenseTable() {
           </tbody>
         </table>
       </CardBody>
-      <CardFooter className="flex items-center justify-center border-t border-blue-gray-50 p-4">
+      <CardFooter className="flex items-center justify-center border-blue-gray-50 p-2">
         {userDetails && visibleRows < userDetails.length && (
           <div className="flex justify-center mt-4">
             <Button onClick={loadMoreRows}>Load More</Button>

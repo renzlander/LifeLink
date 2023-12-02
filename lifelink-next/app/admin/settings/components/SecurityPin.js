@@ -3,49 +3,30 @@ import {
   Card,
   CardBody,
   CardHeader,
+  Collapse,
   Input,
   Typography,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
+import PasswordChecklist from "react-password-checklist";
 
 export function SecurityPin() {
   const [oldSecurityPin, setOldSecurityPin] = useState("");
   const [newSecurityPin, setNewSecurityPin] = useState("");
   const [confirmNewSecurityPin, setConfirmNewSecurityPin] = useState("");
   const [validationError, setValidationError] = useState("");
-  const [isLengthValid, setIsLengthValid] = useState(false);
-  const [hasSpecialChar, setHasSpecialChar] = useState(false);
-  const [hasNumber, setHasNumber] = useState(false);
-  const [hasCapitalLetter, setHasCapitalLetter] = useState(false);
+  const [pinMatch, setPinMatch] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    // Update validation checkmarks
-    setIsLengthValid(newSecurityPin.length >= 8);
-    setHasSpecialChar(/[!@#$%^&*(),.?":{}|<>]/.test(newSecurityPin));
-    setHasNumber(/\d/.test(newSecurityPin));
-    setHasCapitalLetter(/[A-Z]/.test(newSecurityPin));
-  }, [newSecurityPin]);
-
-  const isChangeButtonDisabled = () => {
-    return (
-      !isLengthValid ||
-      !hasSpecialChar ||
-      !hasNumber ||
-      !hasCapitalLetter ||
-      newSecurityPin !== confirmNewSecurityPin
-    );
-  };
-
-  const handleChangeSecurityPin = async () => {
+  const handleChangeSecurityPin = async (e) => {
+    e.preventDefault();
     const token = getCookie("token");
 
-    // Front-end validation
-    if (isChangeButtonDisabled()) {
-      setValidationError(
-        "Please make sure the security pin meets all requirements and matches the confirmation."
-      );
+    if (pinMatch === false) {
+      setValidationError("New security pin does not match");
+      console.log("lol");
       return;
     }
 
@@ -97,55 +78,25 @@ export function SecurityPin() {
           type="password"
           value={newSecurityPin}
           onChange={(e) => setNewSecurityPin(e.target.value)}
+          onFocus={() => setOpen(true)}
         />
-        <div className="flex flex-col  gap-2">
-          <div className="flex items-center gap-2">
-            <span className={isLengthValid ? "text-green-500" : "text-red-500"}>
-              {isLengthValid ? "✔" : "✘"}
-            </span>
-            <Typography
-              className={isLengthValid ? "text-green-500" : "text-red-500"}
-              variant="caption"
-            >
-              Security pin has at least 8 characters.
-            </Typography>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className={hasSpecialChar ? "text-green-500" : "text-red-500"}>
-              {hasSpecialChar ? "✔" : "✘"}
-            </span>
-            <Typography
-              className={hasSpecialChar ? "text-green-500" : "text-red-500"}
-              variant="caption"
-            >
-              Security pin has special characters.
-            </Typography>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className={hasNumber ? "text-green-500" : "text-red-500"}>
-              {hasNumber ? "✔" : "✘"}
-            </span>
-            <Typography
-              className={hasNumber ? "text-green-500" : "text-red-500"}
-              variant="caption"
-            >
-              Security pin has a number.
-            </Typography>
-          </div>
-          <div className="flex items-center gap-2">
-            <span
-              className={hasCapitalLetter ? "text-green-500" : "text-red-500"}
-            >
-              {hasCapitalLetter ? "✔" : "✘"}
-            </span>
-            <Typography
-              className={hasCapitalLetter ? "text-green-500" : "text-red-500"}
-              variant="caption"
-            >
-              Security pin has a capital letter.
-            </Typography>
-          </div>
-        </div>
+        <Collapse open={open} className={open ? "" : "hidden"}>
+          <Card shadow={false} className="bg-gray-300 w-full px-4 py-2">
+            <PasswordChecklist
+              rules={["minLength", "specialChar", "number", "capital", "match"]}
+              minLength={8}
+              value={newSecurityPin}
+              valueAgain={confirmNewSecurityPin}
+              onChange={(isValid) => {
+                if (isValid) {
+                  setPinMatch(true);
+                } else {
+                  setPinMatch(false);
+                }
+              }}
+            />
+          </Card>
+        </Collapse>
         <Input
           label="Confirm new security pin"
           type="password"
@@ -154,12 +105,12 @@ export function SecurityPin() {
         />
 
         {validationError && (
-          <Typography color="red" className="mt-1 font-normal">
+          <Typography variant="small" color="red">
             {validationError}
           </Typography>
         )}
 
-        <Button onClick={handleChangeSecurityPin} disabled={isChangeButtonDisabled()}>
+        <Button size="sm" onClick={handleChangeSecurityPin} disabled={!pinMatch}>
           Change
         </Button>
       </CardBody>

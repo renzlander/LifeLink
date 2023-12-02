@@ -244,8 +244,8 @@ export function AddUsers({ refreshData }) {
         </Button>
       </Tooltip>
       <Dialog open={open} handler={() => setOpen(false)} size="lg">
-        <DialogHeader>Register a User</DialogHeader>
-        <DialogBody divider className="flex flex-col gap-6 overscroll-y-auto">
+        <DialogHeader className="border-b">Register a User</DialogHeader>
+        <DialogBody className="flex flex-col gap-6 overscroll-y-auto">
           <form onSubmit={handleSubmit} className="mt-2 mb-2 w-full">
             <input type="hidden" value={dob} name="dob" />
             <div className="mb-4 flex grow gap-6">
@@ -295,9 +295,8 @@ export function AddUsers({ refreshData }) {
                     onBlur={() => setInputFocused(mobile.trim() !== "")}
                     required
                     maxLength={10}
-                    className={`w-full ${inputFocused ? "pl-12" : ""} ${
-                      errorMessage.mobile.length > 0 ? "border-red-500" : ""
-                    }`}
+                    error={errorMessage.mobile.length > 0 }
+                    className={`w-full ${inputFocused ? "pl-12" : ""}`}
                   />
                 </div>
                 {errorMessage.mobile.length > 0 && (
@@ -377,9 +376,8 @@ export function AddUsers({ refreshData }) {
                   required
                   value={dob}
                   onChange={(e) => setDob(e.target.value)}
-                  className={`w-full ${
-                    errorMessage.dob.length > 0 ? "border-red-500" : ""
-                  }`}
+                  error={errorMessage.mobile.length > 0 }
+                  className="w-full"
                 />
                 {errorMessage.dob.length > 0 && (
                   <div className="error-message text-red-600 text-sm">
@@ -526,26 +524,24 @@ export function AddUsers({ refreshData }) {
                 }}
               />
             </div>
-            <DialogFooter>
-              <div className="flex items-center">
-                <Button
-                  variant="gradient"
-                  onClick={() => setOpen(false)}
-                  className="mr-1"
-                >
-                  <span>Cancel</span>
-                </Button>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  className="flex items-center justify-center gap-5"
-                  disabled={!isFormValid || isSubmitting || !isEmailValid}
-                >
-                  {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
-                  Register User
-                </Button>
-              </div>
-            </DialogFooter>
+            <div className="flex items-center justify-end">
+              <Button
+                variant="gradient"
+                onClick={() => setOpen(false)}
+                className="mr-1"
+              >
+                <span>Cancel</span>
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                className="flex items-center justify-center gap-5"
+                disabled={!isFormValid || isSubmitting || !isEmailValid}
+              >
+                {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
+                Register User
+              </Button>
+            </div>
           </form>
         </DialogBody>
       </Dialog>
