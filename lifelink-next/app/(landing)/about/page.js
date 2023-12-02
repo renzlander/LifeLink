@@ -54,8 +54,19 @@ export default function About() {
           <Typography variant="h6" color="blue-gray">
             Team
           </Typography>
-          <div className="flex items-center justify-evenly">
-
+          <div className="w-full grid grid-cols-4 place-items-center gap-4">
+            <Typography className="col-span-4 2xl:col-span-1">
+              Ryan Antonio
+            </Typography>
+            <Typography className="col-span-4 2xl:col-span-1">
+              Renz De Ocampo
+            </Typography>
+            <Typography className="col-span-4 2xl:col-span-1">
+              Ray Reyes
+            </Typography>
+            <Typography className="col-span-4 2xl:col-span-1">
+              James Robles
+            </Typography>
           </div>
         </div>
       </Card>
