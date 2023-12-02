@@ -8,7 +8,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from "@mui/material/Tooltip";
 import { useTheme } from "@mui/material/styles";
 import React, { useState, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
@@ -26,12 +26,10 @@ import {
   ListBulletIcon,
   ShoppingBagIcon,
   Squares2X2Icon,
+  TrashIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import { 
-  IconButton,
-  Tooltip as Guide,
-} from "@material-tailwind/react";
+import { IconButton, Tooltip as Guide } from "@material-tailwind/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -52,11 +50,11 @@ export default function AdminLayout({ children }) {
     };
 
     // Attach the scroll event listener when the component mounts
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
 
     // Cleanup the event listener when the component unmounts
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []); // Empty dependency array ensures the effect runs only once,
 
@@ -91,7 +89,7 @@ export default function AdminLayout({ children }) {
     {
       href: "./disposed",
       text: "Disposed Blood Bags",
-      icon: <ArrowUpOnSquareIcon />,
+      icon: <TrashIcon />,
     },
     { href: "./posts", text: "Donor Posts", icon: <DocumentPlusIcon /> },
     {
@@ -165,7 +163,11 @@ export default function AdminLayout({ children }) {
                 <ListItem
                   disablePadding
                   sx={{ display: "block" }}
-                  className={pathName.replace('/admin', '.') === link.href ? "bg-gray-200" : ""}
+                  className={
+                    pathName.replace("/admin", ".") === link.href
+                      ? "bg-gray-200"
+                      : ""
+                  }
                 >
                   <ListItemButton
                     sx={{
@@ -190,16 +192,18 @@ export default function AdminLayout({ children }) {
       <Box component="main" sx={{ flexGrow: 1, backgroundColor: "#e5e7eb" }}>
         <DrawerHeader />
         {children}
-        {showScrollButton  && (
+        {showScrollButton && (
           <div className="fixed bottom-10 right-10 z-50">
-            <Guide content="Scroll to top">
-            <IconButton onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
-              <ChevronUpIcon className="w-7 h-7 text-white" />
-            </IconButton>
+            <Guide content="Scroll to top" className="w-max">
+              <IconButton
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              >
+                <ChevronUpIcon className="w-7 h-7 text-white" />
+              </IconButton>
             </Guide>
           </div>
         )}
-        {pathName.replace('/admin', '.') === "./posts" ? (
+        {pathName.replace("/admin", ".") === "./posts" ? (
           <div className="fixed bottom-10 right-10 z-50">
             <CreatePost />
           </div>

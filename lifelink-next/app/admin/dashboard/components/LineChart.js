@@ -15,7 +15,7 @@ export default function LineChart({ data }) {
           data: Object.values(data),
           fill: true,
           lineTension: 0.4,
-          backgroundColor: "rgba(206, 17, 38, 0.2)",
+          // backgroundColor: "rgba(206, 17, 38, 0.2)",
           borderColor: redCrossRed,
           borderWidth: 2,
           pointRadius: 6,
@@ -24,6 +24,13 @@ export default function LineChart({ data }) {
           pointHoverRadius: 8,
           pointHoverBackgroundColor: hoverRed,
           pointHoverBorderColor: "#fff",
+          backgroundColor: (context) => {
+            const gradient = context.chart.ctx.createLinearGradient(0, 0, 0, context.chart.height);
+            gradient.addColorStop(0, "rgba(206, 17, 38, 0.7)");
+            gradient.addColorStop(0.5, "rgba(206, 17, 38, 0.3)");
+            gradient.addColorStop(1, "rgba(255, 255, 2555, 0)");
+            return gradient;
+          },
         },
       ],
     },

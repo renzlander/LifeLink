@@ -8,6 +8,7 @@ import {
   Select,
   Typography,
 } from "@material-tailwind/react";
+import { PresentationChartLineIcon, ChartBarIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -113,14 +114,27 @@ export function LineCard() {
 
   return (
     <Card className="mt-6 w-1/2">
-      <CardHeader
-        color="white"
-        variant="gradient"
-        className="flex items-center justify-center relative p-4 h-full"
-      >
-        <LineChart data={monthCounts} />
-      </CardHeader>
-      <CardBody className="flex flex-col gap-4">
+      <div className="flex">
+        <CardHeader
+          color="gray"
+          variant="gradient"
+          className="flex items-center justify-center relative p-4 h-16 w-16"
+        >
+          <PresentationChartLineIcon className="w-8 h-8 text-white" />
+        </CardHeader>
+        <div className="mt-1 flex flex-col">
+          <Typography variant="h6" className="text-blue-gray-700">
+            Line Chart
+          </Typography>
+          <Typography variant="small" className="text-blue-gray-400">
+            Blood bag data insights
+          </Typography>
+        </div>
+      </div>
+      <CardBody className="h-96">
+          <LineChart data={monthCounts} />
+      </CardBody>
+      <CardFooter className="border-t flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <Typography variant="h5" color="blue-gray" className="w-full">
             Blood Stocks
@@ -142,8 +156,6 @@ export function LineCard() {
           Blood bags that have undergone thorough testing and are securely
           stored in the inventory.
         </Typography>
-      </CardBody>
-      <CardFooter className="border-t">
         <Typography>
           Updated {formatDate(lastUpdate)} {time} ({timeAgoo})
         </Typography>
@@ -345,14 +357,27 @@ export function BarCard() {
 
   return (
     <Card className="mt-6 w-1/2">
-      <CardHeader
-        color="white"
-        variant="gradient"
-        className="flex items-center justify-center relative p-4 h-full"
-      >
-        <BarChart data={barangayDonorCount} />
-      </CardHeader>
+      <div className="flex">
+        <CardHeader
+          color="gray"
+          variant="gradient"
+          className="flex items-center justify-center relative p-4 h-16 w-16"
+        >
+          <ChartBarIcon className="w-8 h-8 text-white" />
+        </CardHeader>
+        <div className="mt-1 flex flex-col">
+          <Typography variant="h6" className="text-blue-gray-700">
+            Bar Chart
+          </Typography>
+          <Typography variant="small" className="text-blue-gray-400">
+            Donors by Barangay insights
+          </Typography>
+        </div>
+      </div>
       <CardBody className="flex flex-col gap-4">
+        <BarChart data={barangayDonorCount} />
+      </CardBody>
+      <CardFooter className="border-t flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <Typography variant="h5" color="blue-gray" className="w-full">
             Donors per Barangay
@@ -373,8 +398,6 @@ export function BarCard() {
         <Typography>
           The number of donors within different barangays in Valenzuela City.
         </Typography>
-      </CardBody>
-      <CardFooter className="border-t">
         <Typography>
           Last updated: {formatDate(lastUpdate)} {time} ({timeAgoo})
         </Typography>
