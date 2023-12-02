@@ -219,14 +219,13 @@ export default function Request() {
 
   return (
     <>
-      <div className="w-full p-4 flex flex-col lg:flex-row md:flex-col sm:flex-col gap-4">
-        <div className="mb-4 p-4 bg-gray-300  text-black rounded-lg w-full">
+      <div className="w-full px-4 flex flex-col lg:flex-row md:flex-col sm:flex-col gap-4">
+        <Card color="white" className="w-full mb-4 p-4">
           {/* START of ongoing request of the user */}
           <div className="flex justify-between items-center">
             <Typography
-              className="text-xl font-bold"
-              variant="h6"
-              color="black"
+              variant="h5"
+              color="blue-gray"
             >
               My Recent Blood Request
             </Typography>
@@ -261,7 +260,7 @@ export default function Request() {
             )}
           </div>
 
-          <hr className="my-2 p-[1.0px] m-2 bg-black"></hr>
+          <hr className="my-2 fading_divider_gray"></hr>
 
           {latestBloodRequest ? (
             <div className="flex flex-col items-center w-full">
@@ -315,25 +314,25 @@ export default function Request() {
             </div>
           ) : (
             <Typography
-              color="textSecondary"
+              color="gray"
               variant="h6"
               className="p-4 text-center w-full"
             >
               No Ongoing Requests
             </Typography>
           )}
-        </div>
+        </Card>
         {/* END of ongoing request of the user */}
 
         {/* START of the schedule of the donor */}
-        <div className="w-full mb-4 p-4 bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white rounded-lg">
+        <Card color="red" className="w-full mb-4 p-4">
           {mySchedule ? (
             <>
-              <Typography variant="h6" color="white">
+              <Typography variant="h5" color="white">
                 Donation Schedule Reminder
               </Typography>
               <div className="flex flex-col mt-2">
-                <Typography color="white">
+                <Typography variant="paragraph" color="white">
                   You have a scheduled donation on
                 </Typography>
                 <Typography variant="h6" color="white">
@@ -358,11 +357,11 @@ export default function Request() {
               </div>
             </>
           )}
-        </div>
+        </Card>
         {/* END of the schedule of the donor */}
       </div>
 
-      <hr className="my-2 p-[2.0px] m-2 bg-black"></hr>
+      <hr className="my-2 fading_divider_gray"></hr>
 
       {/* START of the Admin Posts */}
       <div className="m-4">

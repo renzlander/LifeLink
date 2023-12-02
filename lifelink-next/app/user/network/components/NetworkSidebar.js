@@ -129,7 +129,7 @@ export function RecentRequest({ bloodRequestHistory }) {
           </Card>
         ))
       ) : (
-        <Typography className="text-gray-700 text-xl font-semibold text-center">
+        <Typography variant="h5" color="gray" className="text-center">
           No Ongoing Requests
         </Typography>
       )}
