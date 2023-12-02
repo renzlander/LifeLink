@@ -24,48 +24,66 @@ export default function Home() {
   const menu = [
     {
       title: "Maintenance Mode",
-      url: "#mainte",
       icon: <ExclamationTriangleIcon className="h-5 w-5 text-black" />,
+      scroll: () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
     },
     {
       title: "Venues",
-      url: "#venue",
       icon: <HomeModernIcon className="h-5 w-5 text-black" />,
+      scroll: () => {
+        window.scrollTo({ top: 215, behavior: "smooth" });
+      }
     },
     {
       title: "Hospitals",
-      url: "#hospital",
       icon: <HospitalIcon className="h-5 w-5" />,
+      scroll: () => {
+        window.scrollTo({ top: 737, behavior: "smooth" });
+      }
     },
     {
       title: "Bled By",
-      url: "#bled",
       icon: <UserIcon className="h-5 w-5 text-black" />,
+      scroll: () => {
+        window.scrollTo({ top: 1260, behavior: "smooth" });
+      }
     },
     {
       title: "Temporary Deferral Category",
-      url: "#tdcat",
       icon: <QueueListIcon className="h-5 w-5 text-black" />,
+      scroll: () => {
+        window.scrollTo({ top: 1790, behavior: "smooth" });
+      }
     },
     {
       title: "Permanent Deferral Category",
-      url: "#pdcat",
       icon: <QueueListIcon className="h-5 w-5 text-black" />,
+      scroll: () => {
+        window.scrollTo({ top: 2313, behavior: "smooth" });
+      }
     },
     {
       title: "Reactive Blood Bags Remarks",
-      url: "#reactive-remarks",
       icon: <QueueListIcon className="h-5 w-5 text-black" />,
+      scroll: () => {
+        window.scrollTo({ top: 2836, behavior: "smooth" });
+      }
     },
     {
       title: "Spoiled Blood Bags Remarks",
-      url: "#spoiled-remarks",
       icon: <QueueListIcon className="h-5 w-5 text-black" />,
+      scroll: () => {
+        window.scrollTo({ top: 3366, behavior: "smooth" });
+      }
     },
     {
       title: "Security Pin",
-      url: "#security",
       icon: <KeyIcon className="h-5 w-5 text-black" />,
+      scroll: () => {
+        window.scrollTo({ top: 3853, behavior: "smooth" });
+      }
     },
   ];
 
@@ -77,8 +95,7 @@ export default function Home() {
             {menu.map((item, index) => (
               <Typography
                 key={index}
-                as="a"
-                href={item.url}
+                onClick={item.scroll}
                 className="scroll-smooth"
               >
                 <ListItem className="flex items-center gap-3">

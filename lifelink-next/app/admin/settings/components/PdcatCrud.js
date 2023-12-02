@@ -69,7 +69,7 @@ export function PDCatCrud() {
   return (
     <Card id="pdcat" className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
-        <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
+        <div className="flex flex-col justify-between gap-8 md:flex-row md:items-center">
           <div>
             <Typography variant="h5" color="blue-gray">
               Permanent Deferral Category
@@ -88,13 +88,13 @@ export function PDCatCrud() {
             </div>
           </div>
         </div>
-        <div className="flex justify-end w-full">
-          <AddPermanentCategoryModal refreshData={fetchPermanentCategory} />
-        </div>
       </CardHeader>
-      <CardBody className="px-0">
+      <div className="flex justify-end w-full pr-4">
+        <AddPermanentCategoryModal refreshData={fetchPermanentCategory} />
+      </div>
+      <CardBody className="mt-4 p-0 h-96 overflow-y-auto">
         <table className="w-full min-w-max table-auto text-left">
-          <thead>
+          <thead className="sticky top-0 z-10">
             <tr>
               {TABLE_HEAD.map((head) => (
                 <th
@@ -104,7 +104,7 @@ export function PDCatCrud() {
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="font-normal leading-none opacity-70"
+                    className="font-normal leading-none opacity-70 text-center"
                   >
                     {head}
                   </Typography>
@@ -114,7 +114,7 @@ export function PDCatCrud() {
                 <Typography
                   variant="small"
                   color="blue-gray"
-                  className="font-normal leading-none opacity-70"
+                  className="font-normal leading-none opacity-70 text-center"
                 >
                   Actions
                 </Typography>
@@ -126,13 +126,13 @@ export function PDCatCrud() {
               ({ categories_id, category_desc }, index) => (
                 <tr
                   key={categories_id}
-                  className={index % 2 === 0 ? "even:bg-blue-gray-50/50" : ""}
+                  className={index % 2 === 0 ? "bg-blue-gray-50/50" : ""}
                 >
                   <td className="p-4">
                     <Typography
                       variant="small"
                       color="blue-gray"
-                      className="font-bold"
+                      className="font-bold text-center"
                     >
                       {categories_id}
                     </Typography>
@@ -141,13 +141,12 @@ export function PDCatCrud() {
                     <Typography
                       variant="small"
                       color="blue-gray"
-                      className="font-normal"
+                      className="font-normal text-center"
                     >
                       {category_desc}
                     </Typography>
                   </td>
-                  <td className="p-4 flex gap-3">
-                    {/* Pass category details to EditModal */}
+                  <td className="p-4 flex justify-center gap-3">
                     <EditModal
                       categoryId={categories_id}
                       categoryDesc={category_desc}
@@ -219,10 +218,11 @@ export function AddPermanentCategoryModal({ refreshData }) {
     <>
       <Tooltip content="Add Category">
         <Button
+          variant="gradient"
+          color="blue"
           size="sm"
           onClick={handleOpen}
-          variant="text"
-          className="flex items-center gap-2 bg-green-400"
+          className="flex items-center gap-3"
         >
           <PlusIcon className="h-5 w-5" />
           <span>Add Category</span>

@@ -10,6 +10,7 @@ import {
   Switch,
   Typography,
 } from "@material-tailwind/react";
+import { ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
 
 export function MaintenanceSwitch() {
@@ -83,17 +84,21 @@ export function Confirmation({ isOpen, handleConfirmation }) {
 
   return (
     <Dialog open={isOpen} handler={handleClose}>
-      <DialogHeader>Confirmation</DialogHeader>
-      <DialogBody>
-        Are you sure you want to change the maintenance mode?
+      <DialogHeader className="border-b">Confirmation</DialogHeader>
+      <DialogBody className="flex flex-col items-center gap-4">
+        <ExclamationTriangleIcon className="h-16 w-16 text-yellow-500" />
+        <Typography variant="h5" color="amber" className="font-medium text-center">
+          Are you sure you want to change the maintenance mode?
+        </Typography>
       </DialogBody>
-      <DialogFooter>
-        <Button variant="text" color="red" onClick={() => handleClose(false)}>
+      <DialogFooter className="border-t">
+        <Button variant="text" color="gray" onClick={() => handleClose(false)}>
           <span>Cancel</span>
         </Button>
         <Button
           variant="gradient"
-          color="green"
+          color="amber"
+          className="text-white"
           onClick={() => handleClose(true)}
         >
           <span>Confirm</span>
