@@ -8,10 +8,11 @@ export async function middleware(request) {
   const isPublicPath =
     path === "/login" ||
     path.includes("/register") ||
+    path.includes("/forgot") ||
     path.includes("/news") ||
     path.includes("/banks") ||
     path.includes("/about") ||
-    path.includes("/contact");
+    path.includes("/contacts");
   const isAdminPath = path.includes("/admin");
   const token = request.cookies.get("token");
 
@@ -44,15 +45,19 @@ export async function middleware(request) {
     if (isAdmin?.isAdmin === 1)
       return NextResponse.redirect(new URL("/admin/dashboard", request.url));
   }
-  //return NextResponse.redirect(new URL('/home', request.url))
 }
 
 // See "Matching Paths" below to learn more
 export const config = {
   matcher: [
-    "/user/:path*",
+    "/news",
+    "/banks",
+    "/about",
+    "/contacts",
     "/login",
-    "/signup/:path*",
+    "/register",
+    "/forgot",
+    "/user/:path*",
     "/admin/:path*",
   ],
 };
