@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Card,
@@ -11,11 +12,30 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/solid";
-import { useState } from "react";
+import { laravelBaseUrl } from "@/app/variables";
+import axios from "axios";
 
 export function MaintenanceSwitch() {
   const [isSwitchOn, setIsSwitchOn] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
+
+  console.log("d", isSwitchOn);
+  const fetchMaintenanceStatus = async () => {
+    try {
+      const response = await axios.get(
+        `${laravelBaseUrl}/api/maintenance-status`
+      );
+      const maintenanceStatus = response.data.maintenance === "1";
+      setIsSwitchOn(maintenanceStatus);
+    } catch (error) {
+      console.error("Error fetching maintenance status:", error);
+    }
+  };
+  useEffect(() => {
+    
+
+    fetchMaintenanceStatus();
+  }, []);
 
   const handleTypographyClick = () => {
     setConfirmationOpen(true);
@@ -24,12 +44,28 @@ export function MaintenanceSwitch() {
   const handleConfirmation = (confirmed) => {
     setConfirmationOpen(false);
     if (confirmed) {
+      const newMaintenanceStatus = isSwitchOn ? "0" : "1";
+      updateMaintenanceStatus(newMaintenanceStatus);
       setIsSwitchOn(!isSwitchOn);
     }
   };
 
   const handleSwitchChange = () => {
-    setConfirmationOpen(true); // Show confirmation when the switch is changed
+    setConfirmationOpen(true);
+  };
+
+  const updateMaintenanceStatus = async (newStatus) => {
+    try {
+      const response = await axios.get(
+        `${laravelBaseUrl}/api/maintenance-status`,
+        { maintenance: newStatus },
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      console.log("Maintenance status updated:", response.data);
+    } catch (error) {
+      console.error("Error updating maintenance status:", error);
+    }
   };
 
   return (
@@ -50,6 +86,8 @@ export function MaintenanceSwitch() {
         <Confirmation
           isOpen={confirmationOpen}
           handleConfirmation={handleConfirmation}
+          isSwitchOn={isSwitchOn}
+          refreshData={fetchMaintenanceStatus}
         />
         <Typography
           variant="h6"
@@ -77,9 +115,45 @@ export function MaintenanceSwitch() {
   );
 }
 
-export function Confirmation({ isOpen, handleConfirmation }) {
+export function Confirmation({ isOpen, handleConfirmation, isSwitchOn, refreshData }) {
+  console.log("isSwitchOn", isSwitchOn);
   const handleClose = (confirmed) => {
     handleConfirmation(confirmed);
+  };
+
+  const handleMaintenance = async (confirmed) => {
+    try {
+      // Check if the user is authenticated
+      const token = getCookie("token");
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+
+      // Construct the URL with the appropriate toggle value as a query parameter
+      const toggleValue = confirmed ? "1" : "0";
+      const apiUrl = `${laravelBaseUrl}/api/maintenance-mode?toggle=${toggleValue}`;
+
+      // Send a POST request to the constructed URL
+      const response = await axios.post(
+        apiUrl,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log(response);
+      if (response.data.status === "success") {
+        refreshData();
+        handleClose(true);
+      }
+    } catch (error) {
+      console.error("Error changing maintenance mode:", error);
+      // Handle errors appropriately
+    }
   };
 
   return (
@@ -87,7 +161,11 @@ export function Confirmation({ isOpen, handleConfirmation }) {
       <DialogHeader className="border-b">Confirmation</DialogHeader>
       <DialogBody className="flex flex-col items-center gap-4">
         <ExclamationTriangleIcon className="h-16 w-16 text-yellow-500" />
-        <Typography variant="h5" color="amber" className="font-medium text-center">
+        <Typography
+          variant="h5"
+          color="amber"
+          className="font-medium text-center"
+        >
           Are you sure you want to change the maintenance mode?
         </Typography>
       </DialogBody>
@@ -99,11 +177,17 @@ export function Confirmation({ isOpen, handleConfirmation }) {
           variant="gradient"
           color="amber"
           className="text-white"
-          onClick={() => handleClose(true)}
+          onClick={() => handleMaintenance(!isSwitchOn)} // Pass the opposite of the current switch state
         >
           <span>Confirm</span>
         </Button>
       </DialogFooter>
     </Dialog>
   );
+}
+
+function getCookie(name) {
+  const cookies = document.cookie.split("; ");
+  const cookie = cookies.find((cookie) => cookie.startsWith(`${name}=`));
+  return cookie ? cookie.split("=")[1] : null;
 }

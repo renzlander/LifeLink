@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { laravelBaseUrl } from "@/app/variables";
 import {
   Button,
@@ -30,6 +30,26 @@ export default function LoginForm() {
 
   const showPassword = () => setShowPass(!showPass);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+
+        const response = await axios.get(`${laravelBaseUrl}/api/maintenance-status`);
+  
+        // Access the data from the response
+        const { maintenance } = response.data;
+
+        console.log(maintenance);
+        setIsMaintenance(maintenance);
+      } catch (error) {
+        console.error("Error fetching maintenance status:", error);
+      }
+    };
+
+    fetchData();
+  }, []); 
+  
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -44,7 +64,7 @@ export default function LoginForm() {
       );
       if (response.status === 200) {
         if (response.data.user.isAdmin === 0) {
-          if (isMaintenance) {
+          if (isMaintenance == 1) {
             setOpen(true);
           } else {
             document.cookie = `token=${response.data.token}; expires=${new Date(
