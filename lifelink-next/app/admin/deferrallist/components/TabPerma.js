@@ -1,6 +1,9 @@
 import InputSelect from "@/app/components/InputSelect";
 import { laravelBaseUrl } from "@/app/variables";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import {
+  MagnifyingGlassIcon,
+  DocumentArrowDownIcon,
+} from "@heroicons/react/24/outline";
 import {
   Button,
   Card,
@@ -148,25 +151,33 @@ export function PermanentTable() {
 
       // Send a request to the PDF export endpoint
       const response = await axios.get(
-        `${laravelBaseUrl}/api/export-pdf-user-details`,
+        `${laravelBaseUrl}/api/export-permanent-defferal`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          responseType: "blob", // Set the response type to blob for binary data
+          responseType: "blob",
+          params: {
+            category: category,
+          },
         }
       );
 
-      // Create a Blob object from the response data
       const pdfBlob = new Blob([response.data], { type: "application/pdf" });
 
-      // Create a URL for the Blob object
+      const fileName = `exported_document_${Date.now()}.pdf`;
+
       const pdfUrl = window.URL.createObjectURL(pdfBlob);
 
-      // Open the PDF in a new window or tab
-      window.open(pdfUrl);
+      const downloadLink = document.createElement("a");
+      downloadLink.href = pdfUrl;
+      downloadLink.download = fileName;
 
-      // Clean up by revoking the URL when it's no longer needed
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+
+      document.body.removeChild(downloadLink);
+
       window.URL.revokeObjectURL(pdfUrl);
     } catch (error) {
       console.error("Error exporting PDF:", error);
@@ -197,17 +208,6 @@ export function PermanentTable() {
       <Card className="w-full -mb-6">
         <CardBody className="px-0">
           <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-3 px-4 w-72">
-              <Input
-                label="Search"
-                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-                value={searchQuery}
-                onChange={(e) => {
-                  const inputValue = e.target.value;
-                  setSearchQuery(inputValue);
-                }}
-              />
-            </div>
             <div className="flex flex-row px-4 gap-6">
               <InputSelect
                 label="Category"
@@ -218,6 +218,25 @@ export function PermanentTable() {
                 required
                 placeholder="Category"
               />
+            </div>
+            <div className="flex items-center gap-3 px-4">
+              <div className="flex items-center gap-3 w-full md:w-72">
+                <Input
+                  label="Search"
+                  icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+                  value={searchQuery}
+                  onChange={(e) => {
+                    const inputValue = e.target.value;
+                    setSearchQuery(inputValue);
+                  }}
+                />
+              </div>
+              <Button
+                className="flex items-center gap-3"
+                onClick={exportUserDetailsAsPDF}
+              >
+                <DocumentArrowDownIcon className="h-4 w-4" /> Export to PDF
+              </Button>
             </div>
           </div>
           <table className="w-full min-w-max table-auto text-left">
