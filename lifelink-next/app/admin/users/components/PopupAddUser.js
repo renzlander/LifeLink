@@ -45,14 +45,14 @@ export function AddUsers({ refreshData }) {
   const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const validDomains = ["gmail.com", "hotmail.com", "yahoo.com"];
-  
+
     if (!emailRegex.test(email)) {
       return false; // Invalid email format
     }
-  
-    const domain = email.split('@')[1];
+
+    const domain = email.split("@")[1];
     return validDomains.includes(domain);
-  };  
+  };
 
   const handleEmailChange = (e) => {
     const newEmail = e.target.value;
@@ -154,10 +154,10 @@ export function AddUsers({ refreshData }) {
           occupation,
           blood_type,
           street,
-          region: selectedRegion?.regionName,
-          province: selectedProvince?.provinceName,
-          municipality: selectedMunicipality?.municipalityName,
-          barangay: selectedBarangay?.barangayName,
+          region: selectedRegion?.regCode,
+          province: selectedProvince?.provCode,
+          municipality: selectedMunicipality?.citymunCode,
+          barangay: selectedBarangay?.brgyCode,
           postalcode,
         },
         {
@@ -166,6 +166,8 @@ export function AddUsers({ refreshData }) {
           },
         }
       );
+
+      console.log(response);
       if (response.data.status === "success") {
         toast.success(response.data.message);
         setOpen(false);
@@ -245,10 +247,7 @@ export function AddUsers({ refreshData }) {
       <Dialog open={open} handler={() => setOpen(false)} size="lg">
         <DialogHeader>Register a User</DialogHeader>
         <DialogBody divider className="flex flex-col gap-6 overscroll-y-auto">
-          <form
-            onSubmit={handleSubmit}
-            className="mt-2 mb-2 w-full"
-          >
+          <form onSubmit={handleSubmit} className="mt-2 mb-2 w-full">
             <input type="hidden" value={dob} name="dob" />
             <div className="mb-4 flex grow gap-6">
               <div className="relative w-full">
@@ -423,6 +422,7 @@ export function AddUsers({ refreshData }) {
                       setSelectedRegion({
                         regionName: region?.regDesc,
                         regCode: region?.regCode,
+                        id: region?.id,
                       });
                     }}
                   >
@@ -467,6 +467,7 @@ export function AddUsers({ refreshData }) {
                       setSelectedMunicipality({
                         municipalityName: municipality?.citymunDesc,
                         citymunCode: municipality?.citymunCode,
+                        id: municipality?.id,
                       });
                     }}
                   >
@@ -488,6 +489,8 @@ export function AddUsers({ refreshData }) {
                       onClick={() => {
                         setSelectedBarangay({
                           barangayName: barangay?.brgyDesc,
+                          brgyCode: barangay?.brgyCode,
+                          id: barangay.id,
                         });
                       }}
                     >
@@ -524,28 +527,28 @@ export function AddUsers({ refreshData }) {
                 }}
               />
             </div>
+            <DialogFooter>
+              <div className="flex items-center">
+                <Button
+                  variant="gradient"
+                  onClick={() => setOpen(false)}
+                  className="mr-1"
+                >
+                  <span>Cancel</span>
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  className="flex items-center justify-center gap-5"
+                  disabled={!isFormValid || isSubmitting || !isEmailValid}
+                >
+                  {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
+                  Register User
+                </Button>
+              </div>
+            </DialogFooter>
           </form>
         </DialogBody>
-        <DialogFooter>
-          <div className="flex items-center">
-            <Button
-              variant="gradient"
-              onClick={() => setOpen(false)}
-              className="mr-1"
-            >
-              <span>Cancel</span>
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              className="flex items-center justify-center gap-5"
-              disabled={!isFormValid || isSubmitting || !isEmailValid}
-            >
-              {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
-              Register User
-            </Button>
-          </div>
-        </DialogFooter>
       </Dialog>
     </>
   );
