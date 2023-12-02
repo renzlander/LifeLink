@@ -220,7 +220,6 @@ export function EditPopUp({
     return valid;
   };
 
-  console.log("venue", venue);
   const dynamicBledByOptions = bledByOptions.map((item) => ({
     label: item.full_name,
     value: item.bled_by_id.toString(),
