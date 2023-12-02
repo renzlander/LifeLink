@@ -170,33 +170,52 @@ export function TemporaryTable() {
         router.push("/login");
         return;
       }
-
+  
       // Send a request to the PDF export endpoint
       const response = await axios.get(
-        `${laravelBaseUrl}/api/export-pdf-user-details`,
+        `${laravelBaseUrl}/api/export-temporary-defferal`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          responseType: "blob", // Set the response type to blob for binary data
+          responseType: "blob",
+          params: {
+            category: category,
+            remarks: remarks,
+          },
         }
       );
-
+  
       // Create a Blob object from the response data
       const pdfBlob = new Blob([response.data], { type: "application/pdf" });
-
+  
+      // Generate a unique filename (you can customize this logic)
+      const fileName = `exported_document_${Date.now()}.pdf`;
+  
       // Create a URL for the Blob object
       const pdfUrl = window.URL.createObjectURL(pdfBlob);
-
-      // Open the PDF in a new window or tab
-      window.open(pdfUrl);
-
+  
+      // Create a link element to trigger the download
+      const downloadLink = document.createElement("a");
+      downloadLink.href = pdfUrl;
+      downloadLink.download = fileName;
+  
+      // Append the link to the body and trigger the click event
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+  
+      // Remove the link from the DOM
+      document.body.removeChild(downloadLink);
+  
       // Clean up by revoking the URL when it's no longer needed
       window.URL.revokeObjectURL(pdfUrl);
     } catch (error) {
       console.error("Error exporting PDF:", error);
+  
+      // Provide user feedback or handle the error appropriately
     }
   };
+  
 
   const loadMoreRows = () => {
     setVisibleRows((prevVisibleRows) => prevVisibleRows + 4);
