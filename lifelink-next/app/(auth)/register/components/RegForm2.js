@@ -124,10 +124,10 @@ export function RegF2({ onNextStep }) {
           occupation,
           blood_type,
           street,
-          region: selectedRegion?.regionName,
-          province: selectedProvince?.provinceName,
-          municipality: selectedMunicipality?.municipalityName,
-          barangay: selectedBarangay?.barangayName,
+          region: selectedRegion?.regCode,
+          province: selectedProvince?.provCode,
+          municipality: selectedMunicipality?.citymunCode,
+          barangay: selectedBarangay?.brgyCode,
           postalcode,
         }
       );
@@ -305,6 +305,7 @@ export function RegF2({ onNextStep }) {
                   setSelectedRegion({
                     regionName: region?.regDesc,
                     regCode: region?.regCode,
+                    id: region?.id
                   });
                 }}
               >
@@ -349,6 +350,7 @@ export function RegF2({ onNextStep }) {
                   setSelectedMunicipality({
                     municipalityName: municipality?.citymunDesc,
                     citymunCode: municipality?.citymunCode,
+                    id: municipality?.id,
                   });
                 }}
               >
@@ -370,6 +372,8 @@ export function RegF2({ onNextStep }) {
                   onClick={() => {
                     setSelectedBarangay({
                       barangayName: barangay?.brgyDesc,
+                      brgyCode:barangay?.brgyCode,
+                      id: barangay.id
                     });
                   }}
                 >

@@ -110,8 +110,6 @@ export function UsersTable() {
         }
       );
 
-      console.log("Response:", response);
-
       if (response.data.status === "success") {
         setBledByOptions(response.data.bledBy);
         setVenueOptions(response.data.venue);
@@ -139,8 +137,6 @@ export function UsersTable() {
           },
         }
       );
-
-      console.log("Response:", response);
 
       if (response.data.status === "success") {
         setUserDetails(response.data.data);

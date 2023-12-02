@@ -14,10 +14,9 @@ import {
   Tooltip,
 } from "@material-tailwind/react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/navigation";
 
 export function EditPopUp({ user, refreshData }) {
   const [open, setOpen] = useState(false);
@@ -32,85 +31,225 @@ export function EditPopUp({ user, refreshData }) {
     blood_type: [],
     dob: [],
   });
-
-  const [regionList, setRegionList] = useState([]);
-  const [selectedRegion, setSelectedRegion] = useState("");
-  const [provinceList, setProvinceList] = useState([]);
-  const [selectedProvince, setSelectedProvince] = useState("");
-  const [municipalityList, setMunicipalityList] = useState([]);
-  const [selectedMunicipality, setSelectedMunicipality] = useState("");
-  const [barangayList, setBarangayList] = useState([]);
-  const [selectedBarangay, setSelectedBarangay] = useState("");
-
   const router = useRouter();
+  // Region
+  const [selectedRegionCode, setSelectedRegionCode] = useState(user.region);
+  const [regionOption, setRegionOption] = useState([]);
+
+  // Province
+  const [selectedProvinceCode, setSelectedProvinceCode] = useState(
+    user.province
+  );
+  const [provinceOption, setProvinceOption] = useState([]);
+
+  // Municipality
+  const [selectedMunicipalityCode, setSelectedMunicipalityCode] = useState(
+    user.municipality
+  );
+  const [municipalityOption, setMunicipalityOption] = useState([]);
+
+  // Barangay
+  const [selectedBarangayCode, setSelectedBarangayCode] = useState(
+    user.barangay
+  );
+  const [barangayOption, setBarangayOption] = useState([]);
 
   useEffect(() => {
-    axios.get(`${laravelBaseUrl}/api/address/get-regions`).then((data) => {
-      setRegionList(data.data);
-    });
-  }, []);
+    const fetchData = async () => {
+      try {
+        const regionsResponse = await axios.get(
+          `${laravelBaseUrl}/api/address/get-regions`
+        );
+        const regions = regionsResponse.data;
+        setRegionOption(regions);
+
+        // Find the default selected region
+        const defaultSelectedRegion = regions.find(
+          (item) => item.regDesc === user.region
+        );
+
+        if (defaultSelectedRegion) {
+          setSelectedRegionCode(defaultSelectedRegion.regCode.toString());
+
+          const provincesResponse = await axios.post(
+            `${laravelBaseUrl}/api/address/get-provinces`,
+            {
+              regCode: defaultSelectedRegion.regCode.toString(),
+            }
+          );
+          const provinces = provincesResponse.data;
+          setProvinceOption(provinces);
+
+          // Find the default selected province
+          const defaultSelectedProvince = provinces.find(
+            (province) => province.provDesc === user.province
+          );
+
+          if (defaultSelectedProvince) {
+            setSelectedProvinceCode(
+              defaultSelectedProvince.provCode.toString()
+            );
+
+            const municipalitiesResponse = await axios.post(
+              `${laravelBaseUrl}/api/address/get-municipalities`,
+              {
+                provCode: defaultSelectedProvince.provCode.toString(),
+              }
+            );
+            const municipalities = municipalitiesResponse.data;
+            setMunicipalityOption(municipalities);
+
+            // Find the default selected municipality
+            const defaultSelectedMunicipality = municipalities.find(
+              (municipality) => municipality.citymunDesc === user.municipality
+            );
+
+            if (defaultSelectedMunicipality) {
+              setSelectedMunicipalityCode(
+                defaultSelectedMunicipality.citymunCode.toString()
+              );
+
+              const barangaysResponse = await axios.post(
+                `${laravelBaseUrl}/api/address/get-barangays`,
+                {
+                  citymunCode:
+                    defaultSelectedMunicipality.citymunCode.toString(),
+                }
+              );
+              const barangays = barangaysResponse.data;
+              setBarangayOption(barangays);
+
+              // Find the default selected barangay
+              const defaultSelectedBarangay = barangays.find(
+                (barangay) => barangay.brgyDesc === user.barangay
+              );
+
+              if (defaultSelectedBarangay) {
+                setSelectedBarangayCode(
+                  defaultSelectedBarangay.brgyCode.toString()
+                );
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [user.region, user.province, user.municipality, user.barangay]);
+
+  const dynamicRegionOptions = regionOption.map((item) => ({
+    label: item.regDesc,
+    value: item.regCode.toString(),
+  }));
+
+  const handleRegionSelect = (selectedValue) => {
+    setSelectedRegionCode(selectedValue);
+    // Reset the selected province, municipality, and barangay when region changes
+    setSelectedProvinceCode(null);
+    setSelectedMunicipalityCode(null);
+    setSelectedBarangayCode(null);
+  };
 
   useEffect(() => {
-    if (selectedRegion?.regCode) {
+    if (selectedRegionCode) {
       axios
-        .post(
-          `${laravelBaseUrl}/api/address/get-provinces?regCode=${selectedRegion?.regCode}`
-        )
-        .then((data) => {
-          setProvinceList(data.data);
+        .post(`${laravelBaseUrl}/api/address/get-provinces`, {
+          regCode: selectedRegionCode,
+        })
+        .then((response) => {
+          const provinces = response.data;
+          setProvinceOption(provinces);
+        })
+        .catch((error) => {
+          console.error("Error fetching provinces:", error);
         });
     }
-  }, [selectedRegion]);
+  }, [selectedRegionCode]);
+
+  const dynamicProvinceOptions = provinceOption.map((item) => ({
+    label: item.provDesc,
+    value: item.provCode.toString(),
+  }));
 
   useEffect(() => {
-    if (selectedProvince?.provCode) {
+    if (selectedProvinceCode) {
       axios
-        .post(
-          `${laravelBaseUrl}/api/address/get-municipalities?provCode=${selectedProvince?.provCode}`
-        )
-        .then((data) => {
-          setMunicipalityList(data.data);
+        .post(`${laravelBaseUrl}/api/address/get-municipalities`, {
+          provCode: selectedProvinceCode,
+        })
+        .then((response) => {
+          const municipalities = response.data;
+          setMunicipalityOption(municipalities);
+        })
+        .catch((error) => {
+          console.error("Error fetching municipalities:", error);
         });
     }
-  }, [selectedProvince]);
+  }, [selectedProvinceCode]);
+
+  const dynamicMunicipalityOptions = municipalityOption.map((item) => ({
+    label: item.citymunDesc,
+    value: item.citymunCode.toString(),
+  }));
 
   useEffect(() => {
-    if (selectedMunicipality?.citymunCode) {
+    if (selectedMunicipalityCode) {
       axios
-        .post(
-          `${laravelBaseUrl}/api/address/get-barangays?citymunCode=${selectedMunicipality?.citymunCode}`
-        )
-        .then((data) => {
-          setBarangayList(data.data);
+        .post(`${laravelBaseUrl}/api/address/get-barangays`, {
+          citymunCode: selectedMunicipalityCode,
+        })
+        .then((response) => {
+          const barangays = response.data;
+          setBarangayOption(barangays);
+        })
+        .catch((error) => {
+          console.error("Error fetching barangays:", error);
         });
     }
-  }, [selectedMunicipality]);
+  }, [selectedMunicipalityCode]);
 
-  useEffect(() => {
-    // Initialize the selected values with user data when the component mounts
-    setSelectedRegion(editedUser.region);
-    setSelectedProvince(editedUser.province);
-    setSelectedMunicipality(editedUser.municipality);
-    setSelectedBarangay(editedUser.barangay);
-  }, [editedUser]);
+  const dynamicBarangayOptions = barangayOption.map((item) => ({
+    label: item.brgyDesc,
+    value: item.brgyCode.toString(),
+  }));
+
+  const handleProvinceSelect = (selectedValue) => {
+    setSelectedProvinceCode(selectedValue);
+    // Reset the selected municipality and barangay when province changes
+    setSelectedMunicipalityCode(null);
+    setSelectedBarangayCode(null);
+  };
+
+  const handleMunicipalitySelect = (selectedValue) => {
+    setSelectedMunicipalityCode(selectedValue);
+    // Reset the selected barangay when municipality changes
+    setSelectedBarangayCode(null);
+  };
+
+  const handleBarangaySelect = (selectedValue) => {
+    setSelectedBarangayCode(selectedValue);
+  };
 
   const validateEmail = (email) => {
     // Simple email validation using a regular expression
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
-  };
+  }
+
   const handleEditUser = async () => {
     try {
       // Prepare data for the PUT request
       const data = {
         ...editedUser,
         user_id: user.user_id,
-        region: selectedRegion,
-        province: selectedProvince,
-        municipality: selectedMunicipality,
-        barangay: selectedBarangay,
+        region: selectedRegionCode,
+        province: selectedProvinceCode,
+        municipality: selectedMunicipalityCode,
+        barangay: selectedBarangayCode,
       };
-
       const token = getCookie("token");
       if (!token) {
         router.push("/login");
@@ -118,7 +257,6 @@ export function EditPopUp({ user, refreshData }) {
       }
 
       const isEmailValid = validateEmail(editedUser.email);
-
       if (!isEmailValid) {
         setErrorMessage({ ...errorMessage, email: ["Invalid email address."] });
         return; // Stop execution if email is not valid
@@ -133,13 +271,11 @@ export function EditPopUp({ user, refreshData }) {
           },
         }
       );
-
       if (response.data.status === "success") {
         // User data updated successfully
         refreshData();
         toast.success("User data updated successfully");
         // Notify the parent component about the update
-
         // Close the dialog
         setOpen(false);
         router.refresh();
@@ -157,7 +293,6 @@ export function EditPopUp({ user, refreshData }) {
         const sexErrors = errors.sex || [];
         const blood_typeErrors = errors.blood_type || [];
         const dobErrors = errors.dob || [];
-
         setErrorMessage({
           email: emailErrors,
           mobile: mobileErrors,
@@ -172,17 +307,9 @@ export function EditPopUp({ user, refreshData }) {
       }
       console.error("Error updating user data:", error);
       toast.error(error);
+      console.error("Unknown error occurred:", error);
     }
   };
-
-  const options = (userRegion) => [
-    { label: userRegion, value: userRegion.toLowerCase() },
-  ];
-
-  const handleRegionSelect = (selected) => {
-    selectedRegion(selected);
-  };
-
   return (
     <>
       <Tooltip content="Edit User">
@@ -191,9 +318,7 @@ export function EditPopUp({ user, refreshData }) {
         </IconButton>
       </Tooltip>
       <Dialog open={open} handler={() => setOpen(false)} size="lg">
-        <DialogHeader>
-          Edit User
-        </DialogHeader>
+        <DialogHeader>Edit User</DialogHeader>
         <DialogBody divider className="flex flex-col gap-6 overscroll-y-auto">
           <div className="flex items-center gap-2">
             <Input
@@ -307,6 +432,7 @@ export function EditPopUp({ user, refreshData }) {
             </Select>
             {errorMessage.blood_type?.length > 0 && (
               <div className="error-message text-red-600 text-sm">
+                {/*  */}
                 {errorMessage.blood_type[0]}
               </div>
             )}
@@ -319,52 +445,52 @@ export function EditPopUp({ user, refreshData }) {
               setEditedUser({ ...editedUser, street: e.target.value })
             }
           />
-
           <div className="flex items-center gap-2">
             <InputSelect
               label="Region"
-              options={options(user.region)}
-              onSelect={(selected) => setSelectedRegion(selected)}
+              value={selectedRegionCode || user.region}
+              options={dynamicRegionOptions}
+              onSelect={handleRegionSelect}
+              isSearchable
+              required
+              placeholder="Region"
             />
-            <Select
-              label="Province"
-              value={selectedProvince}
-              onChange={(value) => setSelectedProvince(value)}
-            >
-              {provinceList.map((province) => (
-                <Option key={province.provCode} value={province.provCode}>
-                  {province.provDesc}
-                </Option>
-              ))}
-            </Select>
           </div>
 
           <div className="flex items-center gap-2">
-            <Select
+            <InputSelect
+              label="Province"
+              value={selectedProvinceCode || user.province}
+              options={dynamicProvinceOptions}
+              onSelect={handleProvinceSelect}
+              isSearchable
+              required
+              placeholder="Province"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <InputSelect
               label="Municipality"
-              value={selectedMunicipality}
-              onChange={(value) => setSelectedMunicipality(value)}
-            >
-              {municipalityList.map((municipality) => (
-                <Option
-                  key={municipality.citymunCode}
-                  value={municipality.citymunCode}
-                >
-                  {municipality.citymunDesc}
-                </Option>
-              ))}
-            </Select>
-            <Select
+              value={selectedMunicipalityCode || user.municipality}
+              options={dynamicMunicipalityOptions}
+              onSelect={handleMunicipalitySelect}
+              isSearchable
+              required
+              placeholder="Municipality"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <InputSelect
               label="Barangay"
-              value={selectedBarangay}
-              onChange={(value) => setSelectedBarangay(value)}
-            >
-              {barangayList.map((barangay) => (
-                <Option key={barangay.brgyCode} value={barangay.brgyCode}>
-                  {barangay.brgyDesc}
-                </Option>
-              ))}
-            </Select>
+              value={selectedBarangayCode || user.barangay}
+              options={dynamicBarangayOptions}
+              onSelect={handleBarangaySelect}
+              isSearchable
+              required
+              placeholder="Barangay"
+            />
           </div>
         </DialogBody>
         <DialogFooter>
@@ -375,7 +501,7 @@ export function EditPopUp({ user, refreshData }) {
           >
             <span>Cancel</span>
           </Button>
-          <Button variant="gradient" color="red" onClick={handleEditUser}>
+          <Button variant="gradient" color="red"  onClick={handleEditUser}>
             <span>Done</span>
           </Button>
         </DialogFooter>
