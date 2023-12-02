@@ -17,13 +17,12 @@ import {
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  EditPopUp,
-  MoveToStock,
-  MultipleMoveToStock,
-  RemoveBlood,
-  Unsafe,
-} from "./Popup";
+import { EditPopUp } from "./Edit";
+import { MoveToStock } from "./MoveToStock";
+import { MultipleMoveToStock } from "./MultiStock";
+import { RemoveBlood } from "./RemoveBlood";
+import { Unsafe } from "./Unsafe";
+import { ReferToLab } from "./ReferToLab";
 
 const TABLE_HEAD = [
   { label: "Donor Number", key: "donor_no" },
@@ -539,6 +538,8 @@ export function BagsTable() {
                     countdown={user.countdown}
                     countdownEndDate={user.countdown_end_date}
                     refreshData={fetchData}
+                  />
+                  <ReferToLab
                   />
                   <MoveToStock
                     serial_no={user.serial_no}
