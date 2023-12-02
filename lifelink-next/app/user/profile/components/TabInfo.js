@@ -45,7 +45,6 @@ function formatDate(dateString) {
 
 export function TabInfo({ userDetails, donationSummary, lastDonation }) {
   const formattedMiddleName = formatMiddleName(userDetails.middle_name);
-
   return (
     <Card>
       <CardBody>
@@ -107,7 +106,7 @@ export function TabInfo({ userDetails, donationSummary, lastDonation }) {
                 Birthdate: <span className="font-normal ml-3">{formatDate(userDetails.dob)}</span>
               </Typography>
               <Typography variant="small" className="font-semibold text-base text-blue-gray-700">
-                Address: <span className="font-normal ml-3">{userDetails.street}, {userDetails.barangay} {userDetails.municipality}, {userDetails.province}</span>
+                Address: <span className="font-normal ml-3">{userDetails.street}, {userDetails.brgyDesc} {userDetails.citymunDesc}, {userDetails.provDesc}</span>
               </Typography>
               <Typography variant="small" className="font-semibold text-base text-blue-gray-700">
                 Occupation: <span className="font-normal ml-3">{userDetails.occupation}</span>

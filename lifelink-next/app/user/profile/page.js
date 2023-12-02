@@ -165,7 +165,7 @@ export default function Home() {
       label: "Profile Settings",
       value: "settings",
       icon: Cog6ToothIcon,
-      content: <TabSettings userDetails={userDetails} donationSummary={donationSummary} />,
+      content: <TabSettings userDetails={userDetails} refreshData={fetchData} />,
     },
   ];
   const [activeTab, setActiveTab] = useState(TABS[0].value);
