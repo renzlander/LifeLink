@@ -334,7 +334,7 @@ export function TabSettings({ userDetails, refreshData }) {
                 variant="h6"
                 className="font-sans text-lg text-blue-gray-700 mb-2"
               >
-                Request Change Info
+                Change Info
               </Typography>
               <Input
                 type="text"
@@ -372,7 +372,7 @@ export function TabSettings({ userDetails, refreshData }) {
               />
 
               <Input label="Street" value={street} />
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col items-center gap-6 w-full">
                 <InputSelect
                   label="Region"
                   value={selectedRegionCode || userDetails.region}
@@ -382,8 +382,6 @@ export function TabSettings({ userDetails, refreshData }) {
                   required
                   placeholder="Region"
                 />
-              </div>
-              <div className="flex items-center gap-2">
                 <InputSelect
                   label="Province"
                   value={selectedProvinceCode || userDetails.province}
@@ -393,8 +391,6 @@ export function TabSettings({ userDetails, refreshData }) {
                   required
                   placeholder="Province"
                 />
-              </div>
-              <div className="flex items-center gap-2">
                 <InputSelect
                   label="Municipality"
                   value={selectedMunicipalityCode || userDetails.municipality}
@@ -404,8 +400,6 @@ export function TabSettings({ userDetails, refreshData }) {
                   required
                   placeholder="Municipality"
                 />
-              </div>
-              <div className="flex items-center gap-2">
                 <InputSelect
                   label="Barangay"
                   value={selectedBarangayCode || userDetails.barangay}
@@ -420,8 +414,8 @@ export function TabSettings({ userDetails, refreshData }) {
           </div>
         </div>
       </CardBody>
-      <CardFooter>
-        <Button variant="gradient" color="red" onClick={handleEditUser}>
+      <CardFooter className="flex justify-end">
+        <Button variant="gradient" color="blue" onClick={handleEditUser}>
           <span>Update</span>
         </Button>
       </CardFooter>

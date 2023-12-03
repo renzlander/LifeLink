@@ -33,17 +33,16 @@ export function DonationCard({ donationSummary }) {
                 />
             </CardBody>
             <CardFooter className="bg-white rounded-lg m-4 shadow-md flex flex-col justify-center items-center">
-                <Typography variant="paragraph" color="blue-gray" className="mt-4 text-center flex items-center">
-                    Need <span className="font-bold mx-1">{donationSummary.donationsNeeded}</span> more Donation/s to unlock
+                <Typography variant="paragraph" color="blue-gray" className="text-base text-center flex flex-col 3xl:flex-row 2xl:flex-col items-center">
+                    <span className="font-bold mx-2">{donationSummary.donationsNeeded}</span> more {donationSummary.donationsNeeded === 1 ? "Donation" : "Donations"} to unlock
                     <Chip
                         value={`${donationSummary.nextBadge} Badge`}
                         color={donationSummary.nextBadge === "bronze" ? "brown" : donationSummary.nextBadge === "silver" ? "blue-gray" : "yellow"}
                         variant="gradient"
                         className="text-white mx-2"
-                    />{" "}
+                    />
                     badge
                 </Typography>
-
                 <Typography variant="paragraph" color="blue-gray" className="text-center mt-4">
                     Total Donations: {donationSummary.totalDonation}
                 </Typography>

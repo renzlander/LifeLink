@@ -38,7 +38,12 @@ export default function Home() {
             >
               Get Started
             </Button>
-            <Button className="bg-transparent w-full 2xl:w-1/4 text-[#d1071b] border border-[#d1071b] rounded-full hover:bg-[#d1071b] hover:text-white">
+            <Button
+              onClick={() => {
+                router.push("/news");
+              }}
+              className="bg-transparent w-full 2xl:w-1/4 text-[#d1071b] border border-[#d1071b] rounded-full hover:bg-[#d1071b] hover:text-white"
+            >
               Read More
             </Button>
           </div>
