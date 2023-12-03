@@ -39,10 +39,10 @@ export function MoveToDeferral({
   const [dateDeferred, setDateDeferred] = useState("");
   const [donationType, setDonationType] = useState();
   const [errorMessage, setErrorMessage] = useState({
-    category: "",
-    specific_reason: "",
-    remarks: "",
-    duration: "",
+    category: [],
+    specific_reason: [],
+    remarks: [],
+    duration: [],
   });
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
   const [selectedCategoryRemarks, setSelectedCategoryRemarks] = useState(null); // State to store selected category's remarks
@@ -132,6 +132,7 @@ export function MoveToDeferral({
         }
       );
 
+      console.log("dsada", response);
       if (response.data.status === "success") {
         // Handle success
         toast.success("Successfully moved to deferral");
@@ -144,6 +145,29 @@ export function MoveToDeferral({
       }
     } catch (error) {
       setGeneralErrorMessage(error.response.data.message);
+
+      if (error.response && error.response.data && error.response.data.errors) {
+        const { errors } = error.response.data;
+        const categoryErrors = errors.categories_id || [];
+        const deferralTypeErrors = errors.deferral_type_id || [];
+        const remarksErrors = errors.remarks || [];
+        const durationErrors = errors.duration || [];
+        const venueErrors = errors.venue || [];
+        const dateErrors = errors.date_deferred || [];
+        const donationTypeErrors = errors.donation_type || [];
+        setErrorMessage({
+          deferral_type_id: deferralTypeErrors,
+          categories_id: categoryErrors,
+          remarks: remarksErrors,
+          duration: durationErrors,
+          venue: venueErrors,
+          date_deferred: dateErrors,
+          donation_type: donationTypeErrors,
+        });
+      } else {
+        setErrorMessage({ email: [error.message], mobile: [error.message] });
+      }
+      toast.error(error);
     }
   };
 
@@ -174,9 +198,7 @@ export function MoveToDeferral({
         </IconButton>
       </Tooltip>
       <Dialog open={open} handler={() => setOpen(false)}>
-        <DialogHeader>
-          Move to Deferral
-        </DialogHeader>
+        <DialogHeader>Move to Deferral</DialogHeader>
         {generalErrorMessage && (
           <div className="mt-4 text-center bg-red-100 p-2 rounded-lg">
             <Typography color="red" className="text-sm font-semibold">
@@ -185,31 +207,40 @@ export function MoveToDeferral({
           </div>
         )}
         <DialogBody divider className="flex flex-col gap-4">
-          <div
-            className={`relative flex items-center justify-between gap-5 w-full`}
-          >
-            <InputSelect
-              label="Venue"
-              value={venue}
-              onSelect={handleVenueSelect}
-              options={dynamicVenueOptions}
-              isSearchable
-              required
-              placeholder="Venue"
-            />
-            <Input
-              type="date"
-              label="Date"
-              value={dateDeferred}
-              onChange={(e) => setDateDeferred(e.target.value)}
-              max={new Date().toISOString().split("T")[0]}
-            />
-            {errorMessage.remarks && (
-              <div className="error-message text-red-600 text-sm absolute mt-2">
-                {errorMessage.remarks}
-              </div>
-            )}
+          <div className="relative flex flex-col gap-4">
+            <div className="relative flex items-center justify-between gap-5 w-full mb-5">
+              <InputSelect
+                label="Venue"
+                value={venue}
+                onSelect={handleVenueSelect}
+                options={dynamicVenueOptions}
+                isSearchable
+                required
+                placeholder="Venue"
+              />
+              {errorMessage.venue && (
+                <div className="error-message text-red-600 text-sm absolute pt-8 mt-7">
+                  {errorMessage.venue}
+                </div>
+              )}
+            </div>
+
+            <div className="relative flex items-center justify-between gap-5 w-full mb-5">
+              <Input
+                type="date"
+                label="Date"
+                value={dateDeferred}
+                onChange={(e) => setDateDeferred(e.target.value)}
+                max={new Date().toISOString().split("T")[0]}
+              />
+              {errorMessage.date_deferred && (
+                <div className="error-message text-red-600 text-sm absolute pt-8 mt-7">
+                  {errorMessage.date_deferred}
+                </div>
+              )}
+            </div>
           </div>
+
           <div className={`relative`}>
             <Select
               label="Type of Deferral"
@@ -220,13 +251,13 @@ export function MoveToDeferral({
               <Option value="1">Temporary Deferral</Option>
               <Option value="2">Permanent Deferral</Option>
             </Select>
-            {errorMessage.remarks && (
+            {errorMessage.deferral_type_id && (
               <div className="error-message text-red-600 text-sm absolute mt-2">
-                {errorMessage.remarks}
+                {errorMessage.deferral_type_id}
               </div>
             )}
           </div>
-          <div className={`relative ${errorMessage.category ? "mb-4" : ""}`}>
+          <div className="relative flex items-center justify-between gap-5 w-full mb-5">
             <Select
               label="Category"
               value={category}
@@ -254,9 +285,9 @@ export function MoveToDeferral({
                 : null}
             </Select>
 
-            {errorMessage.category && (
-              <div className="error-message text-red-600 text-sm mt-1">
-                {errorMessage.category}
+            {errorMessage.categories_id && (
+              <div className="error-message text-red-600 text-sm absolute pt-8 mt-7">
+                {errorMessage.categories_id}
               </div>
             )}
           </div>
@@ -293,9 +324,9 @@ export function MoveToDeferral({
                 </Option>
               ))}
             </Select>
-            {errorMessage.specific_reason && (
+            {errorMessage.donation_type && (
               <div className="error-message text-red-600 text-sm absolute mt-2">
-                {errorMessage.specific_reason}
+                {errorMessage.donation_type}
               </div>
             )}
           </div>
@@ -321,11 +352,13 @@ export function MoveToDeferral({
               <IconButton onClick={handleIncrement} className="rounded-l-none">
                 <PlusIcon className="h-5 w-5" />
               </IconButton>
-              {errorMessage.duration && (
-                <div className="error-message text-red-600 text-sm absolute mt-2">
-                  {errorMessage.duration}
-                </div>
-              )}
+              <div className="mb-5">
+                {errorMessage.duration && (
+                  <div className="error-message text-red-600 text-sm absolute mt-7">
+                    {errorMessage.duration}
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </DialogBody>
