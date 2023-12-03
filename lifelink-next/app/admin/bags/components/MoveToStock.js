@@ -44,8 +44,10 @@ export function MoveToStock({ serial_no, handleOpen, refreshData }) {
         });
 
       if (response.data.status === "success") {
-        refreshData();
+        
         toast.success("Blood bag added to inventory successfully");
+        window.location.reload();
+        refreshData();
       } else if (response.data.status === "error") {
         if (response.data.message) {
           setGeneralErrorMessage(response.data.message);

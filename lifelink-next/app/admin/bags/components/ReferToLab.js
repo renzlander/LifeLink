@@ -15,11 +15,11 @@ import axios from "axios";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-export function ReferToLab({ serial_no, handleOpen, refreshData }) {
+export function ReferToLab({ bloodBagId, user, refreshData }) {
   const [open, setOpen] = useState(false);
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
 
-  const handleMovetoStock = async () => {
+  const handleReferToLab = async () => {
     try {
       const token = getCookie("token");
       if (!token) {
@@ -29,9 +29,9 @@ export function ReferToLab({ serial_no, handleOpen, refreshData }) {
 
       const response = await axios
         .post(
-          `${laravelBaseUrl}/api/add-to-inventory`,
+          `${laravelBaseUrl}/api/refer-to-laboratory`,
           {
-            serial_no,
+            blood_bags_id: bloodBagId,
           },
           {
             headers: {
@@ -45,7 +45,7 @@ export function ReferToLab({ serial_no, handleOpen, refreshData }) {
 
       if (response.data.status === "success") {
         refreshData();
-        toast.success("Blood bag added to inventory successfully");
+        toast.success("Blood bag refered to laboratory successfully");
       } else if (response.data.status === "error") {
         if (response.data.message) {
           setGeneralErrorMessage(response.data.message);
@@ -68,6 +68,8 @@ export function ReferToLab({ serial_no, handleOpen, refreshData }) {
           color="red"
           size="sm"
           onClick={() => setOpen(true)}
+          disabled={user.isTested === 1}
+
         >
           <BeakerIcon className="w-5 h-5 text-white" />
         </IconButton>
@@ -96,7 +98,7 @@ export function ReferToLab({ serial_no, handleOpen, refreshData }) {
           >
             No
           </Button>
-          <Button variant="red-cross" color="red" onClick={handleMovetoStock}>
+          <Button variant="red-cross" color="red" onClick={handleReferToLab}>
             Yes
           </Button>
         </DialogFooter>

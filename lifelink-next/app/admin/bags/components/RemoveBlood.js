@@ -62,6 +62,8 @@ export function RemoveBlood({
       if (response.data.status === "success") {
         refreshData();
         toast.success("Removed blood bag successfully");
+        window.location.reload();
+
         setOpen(false);
       } else {
         console.error("Error removing blood bag:", response.data.message);
