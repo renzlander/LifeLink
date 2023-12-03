@@ -197,8 +197,21 @@ export function TabExp() {
   };
 
   const filteredUserDetails = userDetails.filter((user) => {
-    return user.serial_no.toLowerCase().includes(searchQuery.toLowerCase());
+    const searchFields = [
+      user.donor_no.toString(),
+      user.serial_no.toString(),
+      user.blood_type,
+      formatDate(user.date_donated),
+      formatDate(user.expiration_date),
+    ];
+  
+    const searchString = searchQuery.toLowerCase();
+  
+    return searchFields.some((field) =>
+      String(field).toLowerCase().includes(searchString)
+    );
   });
+  
 
   if (loading) {
     return (

@@ -111,6 +111,8 @@ export function TabStock() {
         }
       );
 
+      console.log("dasdas", response);
+
       if (response.data.status === "success") {
         setUserDetails(response.data.data.data);
         setBloodQty(response.data.total_count);
@@ -142,8 +144,6 @@ export function TabStock() {
         }
       );
 
-      console.log(response);
-
       if (response.data.status === "success") {
         setRegisteredUser(response.data.userDetails);
       } else {
@@ -168,6 +168,7 @@ export function TabStock() {
         },
       });
 
+      console.log("sadasd",response);
       if (response.data.status === "success") {
         setUserDetails(response.data.data);
         setBloodQty(response.data.total_count);
@@ -246,7 +247,22 @@ export function TabStock() {
   };
 
   const filteredUserDetails = userDetails.filter((user) => {
-    return user.serial_no.toLowerCase().includes(searchQuery.toLowerCase());
+    const searchFields = [
+      user.donor_no.toString(),
+      user.serial_no.toString(),
+      user.blood_type,
+      formatDate(user.date_donated),
+      formatDate(user.expiration_date),
+      user.remaining_days.toString(),
+      user.priority,
+      // Add other fields as needed
+    ];
+
+    const searchString = searchQuery.toLowerCase();
+
+    return searchFields.some((field) =>
+      String(field).toLowerCase().includes(searchString)
+    );
   });
 
   if (loading) {
@@ -510,7 +526,8 @@ export function TabStock() {
                   </div>
                 </td>
                 <td className={`${classes} flex items-center gap-3`}>
-                  <Revert serial_no={user.serial_no} refreshData={fetchData} />
+                  <Revert serial_no={user.serial_no} refreshData={fetchData} countdown={user.countdown}
+                    countdownEndDate={user.countdown_end_date}/>
                   <Dispense
                     user={user}
                     blood_bags_id={user.blood_bags_id}

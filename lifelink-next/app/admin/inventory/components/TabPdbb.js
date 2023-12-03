@@ -235,9 +235,25 @@ export function TabPerma() {
   };
 
   const filteredUserDetails = userDetails
-    ? userDetails.filter((user) =>
-        user.serial_no.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+    ? userDetails.filter((user) => {
+        const searchFields = [
+          user.donor_no.toString(),
+          user.serial_no.toString(),
+          user.first_name,
+          user.middle_name,
+          user.last_name,
+          user.blood_type,
+          formatDate(user.date_donated),
+          formatDate(user.expiration_date),
+          user.spoiled_remarks_desc,
+        ];
+
+        const searchString = searchQuery.toLowerCase();
+
+        return searchFields.some((field) =>
+          String(field).toLowerCase().includes(searchString)
+        );
+      })
     : [];
 
   return (
@@ -250,7 +266,7 @@ export function TabPerma() {
               color="blue-gray"
               className="mb-2 flex justify-center"
             >
-              QTY:{bloodQty}
+              Quantity:{bloodQty}
             </Typography>
             <div className="flex items-center justify-between gap-4">
               <Select
@@ -425,11 +441,7 @@ export function TabPerma() {
                   </Typography>
                 </td>
                 <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="red"
-                    className="font-bold"
-                  >
+                  <Typography variant="small" color="red" className="font-bold">
                     {user.serial_no}
                   </Typography>
                 </td>

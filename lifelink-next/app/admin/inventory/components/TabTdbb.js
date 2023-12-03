@@ -245,9 +245,26 @@ export function TabTemp() {
   };
 
   const filteredUserDetails = userDetails
-    ? userDetails.filter((user) =>
-        user.serial_no.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+    ? userDetails.filter((user) => {
+        const searchFields = [
+          user.donor_no.toString(),
+          user.serial_no.toString(),
+          user.first_name,
+          user.middle_name,
+          user.last_name,
+          user.blood_type,
+          formatDate(user.date_donated),
+          formatDate(user.expiration_date),
+          user.reactive_remarks_desc,
+          // Add other fields as needed
+        ];
+
+        const searchString = searchQuery.toLowerCase();
+
+        return searchFields.some((field) =>
+          String(field).toLowerCase().includes(searchString)
+        );
+      })
     : [];
 
   return (
@@ -446,11 +463,7 @@ export function TabTemp() {
                   </Typography>
                 </td>
                 <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="red"
-                    className="font-bold"
-                  >
+                  <Typography variant="small" color="red" className="font-bold">
                     {user.serial_no}
                   </Typography>
                 </td>

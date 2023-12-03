@@ -15,10 +15,22 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-export function Revert({ serial_no, refreshData }) {
+function formatDate(dateString) {
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  const formattedDate = new Date(dateString).toLocaleDateString(
+    undefined,
+    options
+  );
+  return formattedDate;
+}
+
+export function Revert({ serial_no, refreshData, countdownEndDate }) {
   const [open, setOpen] = useState(false);
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
   const router = useRouter();
+
+  const formattedEndDate = countdownEndDate; // Replace with your actual date string
+  const countdownEnd = new Date(formattedEndDate);
 
   const handleRemoveBloodBag = async () => {
     try {
@@ -64,6 +76,7 @@ export function Revert({ serial_no, refreshData }) {
           variant="gradient"
           color="red"
           size="sm"
+          disabled={countdownEnd < new Date()}
           onClick={() => setOpen(true)}
         >
           <ArrowUturnLeftIcon className="w-5 h-5 text-white" />
@@ -77,6 +90,10 @@ export function Revert({ serial_no, refreshData }) {
           <ExclamationTriangleIcon className="w-16 h-16 text-red-500" />
           <Typography variant="h5" color="red" className="text-center">
             Are you sure you want to return it to collected?
+          </Typography>
+          <Typography className="text-sm text-gray-700 text-center">
+            The removal of this blood bag is allowed until{" "}
+            <span className="font-bold">{formatDate(countdownEndDate)}</span>.
           </Typography>
         </DialogBody>
         {generalErrorMessage && (
@@ -98,6 +115,7 @@ export function Revert({ serial_no, refreshData }) {
             variant="red-cross"
             color="red"
             onClick={handleRemoveBloodBag}
+            disabled={countdownEnd < new Date()}
           >
             Yes
           </Button>
