@@ -107,7 +107,7 @@ export function Interested({
         <span>I'm Interested</span>
       </Button>
       <Dialog open={open} handler={() => setOpen(false)}>
-        <DialogHeader className="bg-gradient-to-r from-[rgba(40,40,40,1)] to-[rgba(160,12,8,1)] text-white font-semibold">
+        <DialogHeader>
           Confirmation of Interest
         </DialogHeader>
         {generalErrorMessage && (

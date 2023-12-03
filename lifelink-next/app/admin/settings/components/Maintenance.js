@@ -19,7 +19,6 @@ export function MaintenanceSwitch() {
   const [isSwitchOn, setIsSwitchOn] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
 
-  console.log("d", isSwitchOn);
   const fetchMaintenanceStatus = async () => {
     try {
       const response = await axios.get(
@@ -116,7 +115,6 @@ export function MaintenanceSwitch() {
 }
 
 export function Confirmation({ isOpen, handleConfirmation, isSwitchOn, refreshData }) {
-  console.log("isSwitchOn", isSwitchOn);
   const handleClose = (confirmed) => {
     handleConfirmation(confirmed);
   };

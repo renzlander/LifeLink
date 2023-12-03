@@ -26,7 +26,6 @@ export function SecurityPin() {
 
     if (pinMatch === false) {
       setValidationError("New security pin does not match");
-      console.log("lol");
       return;
     }
 
