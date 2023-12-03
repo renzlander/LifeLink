@@ -178,6 +178,7 @@ export function EditPopUp({
       if (response.data.status === "success") {
         toast.success("Blood bag updated successfully");
         setOpen(false);
+        window.location.reload();
         refreshData();
       } else if (response.data.status === "error") {
         if (response.data.message) {

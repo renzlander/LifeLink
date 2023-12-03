@@ -49,6 +49,7 @@ export function MultipleMoveToStock({ selectedRows, refreshData }) {
       if (response.data.status === "success") {
         refreshData();
         toast.success("Blood bag added to inventory successfully");
+        window.location.reload();
         setOpen(false);
       } else {
         console.error("Error removing blood bag:", response.data.message);

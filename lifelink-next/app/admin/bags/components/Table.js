@@ -33,6 +33,7 @@ const TABLE_HEAD = [
   { label: "Expiration Date", key: "expiration_date" },
   { label: "Venue", key: "venue" },
   { label: "Bled By", key: "bled_by" },
+  { label: "On-going Testing", key: "laboratory" },
   { label: "" },
 ];
 
@@ -309,7 +310,11 @@ export function BagsTable() {
               placeholder="Venue"
             />
             <div className="flex flex-col items-center justify-center gap-2">
-              <Typography variant="small" color="blue-gray" className="font-medium">
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="font-medium"
+              >
                 Date Donated Filter:
               </Typography>
               <div className="flex items-center gap-4">
@@ -521,6 +526,16 @@ export function BagsTable() {
                     {user.bled_by_last_name}
                   </Typography>
                 </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {user.isTested === 1 ? "Yes" : "No"}
+                  </Typography>
+                </td>
+
                 <td
                   className={`${classes} flex items-center justify-around gap-3`}
                 >
@@ -540,6 +555,9 @@ export function BagsTable() {
                     refreshData={fetchData}
                   />
                   <ReferToLab
+                    bloodBagId={user.blood_bags_id}
+                    user={user}
+                    refreshData={fetchData}
                   />
                   <MoveToStock
                     serial_no={user.serial_no}

@@ -69,6 +69,7 @@ export function Unsafe({
         console.log("yehey successss");
         refreshData();
         toast.success("Marked as unsafe successfully");
+        window.location.reload();
       } else {
         console.error("Oops! Something went wrong.");
       }
