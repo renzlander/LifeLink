@@ -45,6 +45,7 @@ export function ReferToLab({ bloodBagId, user, refreshData }) {
 
       if (response.data.status === "success") {
         refreshData();
+        window.location.reload();
         toast.success("Blood bag refered to laboratory successfully");
       } else if (response.data.status === "error") {
         if (response.data.message) {
