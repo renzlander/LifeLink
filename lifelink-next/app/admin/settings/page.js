@@ -70,15 +70,15 @@ export default function Home() {
       },
     },
     {
-      title: "Security Pin",
-      icon: <KeyIcon className="h-5 w-5 text-black" />,
+      title: "Maintenance Mode",
+      icon: <ExclamationTriangleIcon className="h-5 w-5 text-black" />,
       scroll: () => {
         window.scrollTo({ top: 3679, behavior: "smooth" });
       },
     },
     {
-      title: "Maintenance Mode",
-      icon: <ExclamationTriangleIcon className="h-5 w-5 text-black" />,
+      title: "Security Pin",
+      icon: <KeyIcon className="h-5 w-5 text-black" />,
       scroll: () => {
         window.scrollTo({ top: 3679, behavior: "smooth" });
       },
@@ -110,8 +110,8 @@ export default function Home() {
           <PDCatCrud />
           <ReactiveRemarksCrud />
           <SpoiledRemarksCrud />
-          <SecurityPin />
           <MaintenanceSwitch />
+          <SecurityPin />
         </div>
       </div>
     </div>
