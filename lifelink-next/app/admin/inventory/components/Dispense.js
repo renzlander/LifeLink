@@ -48,6 +48,17 @@ export function Dispense({
     label: item.hospital_desc,
     value: item.hospitals_id.toString(),
   }));
+  const [errorMessage, setErrorMessage] = useState({
+    first_name: [],
+    middle_name: [],
+    last_name: [],
+    dob: [],
+    blood_type: [],
+    sex: [],
+    diagnosis: [],
+    hospital: [],
+    payment: [],
+  });
 
   const handleOpen = () => setOpen(!open);
 
@@ -141,7 +152,41 @@ export function Dispense({
       setOpen(false);
     } catch (error) {
       toast.error("An error occurred while making the request.");
-      console.error("Unknown error occurred:", error);
+      if (error.response && error.response.data && error.response.data.errors) {
+        const { errors } = error.response.data;
+        const firstNameErrors = errors.first_name || [];
+        const middleNameErrors = errors.middle_name || [];
+        const lastNameErrors = errors.last_name || [];
+        const dobErrors = errors.dob || [];
+        const bloodTypeErrors = errors.blood_type || [];
+        const sexErrors = errors.sex || [];
+        const diagnosisErrors = errors.diagnosis || [];
+        const hospitalErrors = errors.hospital || [];
+        const paymentErrors = errors.payment || [];
+        setErrorMessage({
+          first_name: firstNameErrors,
+          middle_name: middleNameErrors,
+          last_name: lastNameErrors,
+          dob: dobErrors,
+          blood_type: bloodTypeErrors,
+          sex: sexErrors,
+          diagnosis: diagnosisErrors,
+          hospital: hospitalErrors,
+          payment: paymentErrors,
+        });
+      } else {
+        setErrorMessage({
+          first_name: error.first_name || [],
+          middle_name: error.middle_name || [],
+          last_name: error.last_name || [],
+          dob: error.dob || [],
+          blood_type: error.blood_type || [],
+          sex: error.sex || [],
+          diagnosis: error.diagnosis || [],
+          hospital: error.hospital || [],
+          payment: error.payment || [],
+        });
+      }
     }
   };
 
@@ -212,6 +257,14 @@ export function Dispense({
                       disabled={selectedValue !== null}
                       onChange={(e) => setFirstName(e.target.value)}
                     />
+                    {errorMessage.first_name.length > 0 && (
+                      <div
+                        key="mobileError"
+                        className="error-message text-red-600 text-sm"
+                      >
+                        {errorMessage.first_name[0]}
+                      </div>
+                    )}
                     <Input
                       label="Middle Name"
                       value={
@@ -222,6 +275,14 @@ export function Dispense({
                       disabled={selectedValue !== null}
                       onChange={(e) => setMiddleName(e.target.value)}
                     />
+                    {errorMessage.middle_name.length > 0 && (
+                      <div
+                        key="mobileError"
+                        className="error-message text-red-600 text-sm"
+                      >
+                        {errorMessage.middle_name[0]}
+                      </div>
+                    )}
                     <Input
                       label="Last Name"
                       value={
@@ -232,6 +293,14 @@ export function Dispense({
                       disabled={selectedValue !== null}
                       onChange={(e) => setLastName(e.target.value)}
                     />
+                    {errorMessage.last_name.length > 0 && (
+                      <div
+                        key="mobileError"
+                        className="error-message text-red-600 text-sm"
+                      >
+                        {errorMessage.last_name[0]}
+                      </div>
+                    )}
                   </div>
                   <div className="flex flex-col items-center gap-3">
                     <Input
@@ -243,6 +312,14 @@ export function Dispense({
                       disabled={selectedValue !== null}
                       onChange={(e) => setDob(e.target.value)}
                     />
+                    {errorMessage.dob.length > 0 && (
+                      <div
+                        key="mobileError"
+                        className="error-message text-red-600 text-sm"
+                      >
+                        {errorMessage.dob[0]}
+                      </div>
+                    )}
                     <Select
                       label="Blood Type"
                       value={patientBloodType}
@@ -257,6 +334,14 @@ export function Dispense({
                         </Option>
                       ))}
                     </Select>
+                    {errorMessage.blood_type.length > 0 && (
+                      <div
+                        key="mobileError"
+                        className="error-message text-red-600 text-sm"
+                      >
+                        {errorMessage.blood_type[0]}
+                      </div>
+                    )}
                     <Select
                       label="Sex"
                       value={
@@ -268,6 +353,14 @@ export function Dispense({
                       <Option value="Male">Male</Option>
                       <Option value="Female">Female</Option>
                     </Select>
+                    {errorMessage.sex.length > 0 && (
+                      <div
+                        key="mobileError"
+                        className="error-message text-red-600 text-sm"
+                      >
+                        {errorMessage.sex[0]}
+                      </div>
+                    )}
                   </div>
                 </div>
               </CardBody>
@@ -280,6 +373,14 @@ export function Dispense({
               value={diagnosis}
               onChange={(e) => setDiagnosis(e.target.value)}
             />
+            {errorMessage.diagnosis.length > 0 && (
+              <div
+                key="mobileError"
+                className="error-message text-red-600 text-sm"
+              >
+                {errorMessage.diagnosis[0]}
+              </div>
+            )}
             <InputSelect
               label="Hospital"
               containerProps={{ className: "w-[50%]" }}
@@ -290,6 +391,14 @@ export function Dispense({
               required
               placeholder="Hospital"
             />
+            {errorMessage.hospital.length > 0 && (
+              <div
+                key="mobileError"
+                className="error-message text-red-600 text-sm"
+              >
+                {errorMessage.hospital[0]}
+              </div>
+            )}
             <div className="flex gap-10">
               <Radio
                 name="type"
@@ -304,6 +413,14 @@ export function Dispense({
                 onChange={() => setPaymentType("discounted")}
               />
             </div>
+            {errorMessage.payment.length > 0 && (
+              <div
+                key="mobileError"
+                className="error-message text-red-600 text-sm"
+              >
+                {errorMessage.payment[0]}
+              </div>
+            )}
           </div>
         </DialogBody>
         <DialogFooter className="border-t-2">

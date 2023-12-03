@@ -7,6 +7,7 @@ export async function middleware(request) {
 
   const isPublicPath =
     path === "/login" ||
+    path === ("/") ||
     path.includes("/register") ||
     path.includes("/forgot") ||
     path.includes("/news") ||
@@ -50,6 +51,7 @@ export async function middleware(request) {
 // See "Matching Paths" below to learn more
 export const config = {
   matcher: [
+    "/",
     "/news",
     "/banks",
     "/about",
