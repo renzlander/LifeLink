@@ -197,6 +197,15 @@ export function PostCreated() {
                               Mobile
                             </Typography>
                           </th>
+                          <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal leading-none opacity-70"
+                            >
+                              isDeferred
+                            </Typography>
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -241,6 +250,15 @@ export function PostCreated() {
                                 className="font-normal"
                               >
                                 {donor.mobile}
+                              </Typography>
+                            </td>
+                            <td className="p-4">
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-normal"
+                              >
+                                {donor.remarks !== 0 ? "Yes" : "No"}
                               </Typography>
                             </td>
                           </tr>
