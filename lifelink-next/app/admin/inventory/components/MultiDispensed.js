@@ -37,7 +37,7 @@ export function MultipleDispensed({
   const [patientBloodType, setPatientBloodType] = useState("");
   const [sex, setSex] = useState("");
   const [diagnosis, setDiagnosis] = useState("");
-  const [hospital, setHospital] = useState("ValGen");
+  const [hospital, setHospital] = useState("");
   const [paymentType, setPaymentType] = useState("");
   const bloodType = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
   const dynamicHospitalOptions = hospitalOptions.map((item) => ({
@@ -45,7 +45,17 @@ export function MultipleDispensed({
     value: item.hospitals_id.toString(),
   }));
   const handleOpen = () => setOpen(!open);
-
+  const [errorMessage, setErrorMessage] = useState({
+    first_name: [],
+    middle_name: [],
+    last_name: [],
+    dob: [],
+    blood_type: [],
+    sex: [],
+    diagnosis: [],
+    hospital: [],
+    payment: [],
+  });
   const blood_bags_ids = [];
 
   user.forEach((userData) => {
@@ -147,7 +157,41 @@ export function MultipleDispensed({
       setOpen(false);
     } catch (error) {
       toast.error("An error occurred while making the request.");
-      console.error("Unknown error occurred:", error);
+      if (error.response && error.response.data && error.response.data.errors) {
+        const { errors } = error.response.data;
+        const firstNameErrors = errors.first_name || [];
+        const middleNameErrors = errors.middle_name || [];
+        const lastNameErrors = errors.last_name || [];
+        const dobErrors = errors.dob || [];
+        const bloodTypeErrors = errors.blood_type || [];
+        const sexErrors = errors.sex || [];
+        const diagnosisErrors = errors.diagnosis || [];
+        const hospitalErrors = errors.hospital || [];
+        const paymentErrors = errors.payment || [];
+        setErrorMessage({
+          first_name: firstNameErrors,
+          middle_name: middleNameErrors,
+          last_name: lastNameErrors,
+          dob: dobErrors,
+          blood_type: bloodTypeErrors,
+          sex: sexErrors,
+          diagnosis: diagnosisErrors,
+          hospital: hospitalErrors,
+          payment: paymentErrors,
+        });
+      } else {
+        setErrorMessage({
+          first_name: error.first_name || [],
+          middle_name: error.middle_name || [],
+          last_name: error.last_name || [],
+          dob: error.dob || [],
+          blood_type: error.blood_type || [],
+          sex: error.sex || [],
+          diagnosis: error.diagnosis || [],
+          hospital: error.hospital || [],
+          payment: error.payment || [],
+        });
+      }
     }
   };
 
@@ -208,6 +252,14 @@ export function MultipleDispensed({
                       disabled={selectedValue !== null}
                       onChange={(e) => setFirstName(e.target.value)}
                     />
+                    {errorMessage.first_name.length > 0 && (
+                      <div
+                        key="mobileError"
+                        className="error-message text-red-600 text-sm"
+                      >
+                        {errorMessage.first_name[0]}
+                      </div>
+                    )}
                     <Input
                       label="Middle Name"
                       value={
@@ -218,6 +270,14 @@ export function MultipleDispensed({
                       disabled={selectedValue !== null}
                       onChange={(e) => setMiddleName(e.target.value)}
                     />
+                    {errorMessage.middle_name.length > 0 && (
+                      <div
+                        key="mobileError"
+                        className="error-message text-red-600 text-sm"
+                      >
+                        {errorMessage.middle_name[0]}
+                      </div>
+                    )}
                     <Input
                       label="Last Name"
                       value={
@@ -228,6 +288,14 @@ export function MultipleDispensed({
                       disabled={selectedValue !== null}
                       onChange={(e) => setLastName(e.target.value)}
                     />
+                    {errorMessage.last_name.length > 0 && (
+                      <div
+                        key="mobileError"
+                        className="error-message text-red-600 text-sm"
+                      >
+                        {errorMessage.last_name[0]}
+                      </div>
+                    )}
                   </div>
                   <div className="flex flex-col items-center gap-3">
                     <Input
@@ -239,6 +307,14 @@ export function MultipleDispensed({
                       disabled={selectedValue !== null}
                       onChange={(e) => setDob(e.target.value)}
                     />
+                    {errorMessage.dob.length > 0 && (
+                      <div
+                        key="mobileError"
+                        className="error-message text-red-600 text-sm"
+                      >
+                        {errorMessage.dob[0]}
+                      </div>
+                    )}
                     <Select
                       label="Blood Type"
                       value={
@@ -254,8 +330,20 @@ export function MultipleDispensed({
                           {bloodTypes}
                         </Option>
                       ))}
+                      {bloodType.map((bloodTypes) => (
+                        <Option key={bloodTypes} value={bloodTypes}>
+                          {bloodTypes}
+                        </Option>
+                      ))}
                     </Select>
-
+                    {errorMessage.blood_type.length > 0 && (
+                      <div
+                        key="mobileError"
+                        className="error-message text-red-600 text-sm"
+                      >
+                        {errorMessage.blood_type[0]}
+                      </div>
+                    )}
                     <Select
                       label="Sex"
                       value={
@@ -267,6 +355,14 @@ export function MultipleDispensed({
                       <Option value="Male">Male</Option>
                       <Option value="Female">Female</Option>
                     </Select>
+                    {errorMessage.sex.length > 0 && (
+                      <div
+                        key="mobileError"
+                        className="error-message text-red-600 text-sm"
+                      >
+                        {errorMessage.sex[0]}
+                      </div>
+                    )}
                   </div>
                 </div>
               </CardBody>
@@ -279,6 +375,14 @@ export function MultipleDispensed({
               value={diagnosis}
               onChange={(e) => setDiagnosis(e.target.value)}
             />
+            {errorMessage.diagnosis.length > 0 && (
+              <div
+                key="mobileError"
+                className="error-message text-red-600 text-sm"
+              >
+                {errorMessage.diagnosis[0]}
+              </div>
+            )}
             <InputSelect
               label="Hospital"
               containerProps={{ className: "w-[50%]" }}
@@ -289,6 +393,14 @@ export function MultipleDispensed({
               required
               placeholder="Hospital"
             />
+            {errorMessage.hospital.length > 0 && (
+              <div
+                key="mobileError"
+                className="error-message text-red-600 text-sm"
+              >
+                {errorMessage.hospital[0]}
+              </div>
+            )}
             <div className="flex gap-10">
               <Radio
                 name="type"
@@ -305,6 +417,14 @@ export function MultipleDispensed({
                 onChange={() => setPaymentType("discounted")}
               />
             </div>
+            {errorMessage.payment.length > 0 && (
+              <div
+                key="mobileError"
+                className="error-message text-red-600 text-sm"
+              >
+                {errorMessage.payment[0]}
+              </div>
+            )}
           </div>
         </DialogBody>
         <DialogFooter className="border-t-2">
