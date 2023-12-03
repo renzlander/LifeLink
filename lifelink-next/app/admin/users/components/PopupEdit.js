@@ -271,7 +271,7 @@ export function EditPopUp({ user, refreshData }) {
       if (response.data.status === "success") {
         // User data updated successfully
         refreshData();
-        toast.success("User data updated successfully");
+        toast.success("User details updated successfully");
         // Notify the parent component about the update
         // Close the dialog
         setOpen(false);

@@ -137,9 +137,25 @@ export function DonorTable() {
   };
 
   const filteredUserDetails = userDetails.filter((user) => {
-    const fullName =
-      `${user.first_name} ${user.middle_name} ${user.last_name}`.toLowerCase();
-    return fullName.includes(searchQuery.toLowerCase());
+    const searchFields = [
+      user.donor_no.toString(), // Convert donor_no to string
+      user.first_name,
+      user.middle_name,
+      user.last_name,
+      user.blood_type,
+      user.email,
+      user.mobile.toString(), // Convert mobile to string
+      formatDate(user.last_donated),
+      user.donate_qty.toString(),
+      user.badge,
+      user.donor_type_desc,
+    ];
+
+    const searchString = searchQuery.toLowerCase();
+
+    return searchFields.some((field) =>
+      field.toLowerCase().includes(searchString)
+    );
   });
 
   const loadMoreRows = () => {
@@ -345,7 +361,7 @@ export function DonorTable() {
             ))}
           </tbody>
         </table>
-      {visibleRows < userDetails.length && (
+        {visibleRows < userDetails.length && (
           <div className="flex justify-center mt-4">
             <Button onClick={loadMoreRows}>Load More</Button>
           </div>

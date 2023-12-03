@@ -42,8 +42,6 @@ export function EditPopUp({
     venue: [],
   });
 
-  console.log("Segi", user);
-
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [bledBy, setBledBy] = useState(user.bled_by);
@@ -66,7 +64,6 @@ export function EditPopUp({
     secondPart = serialFormat[2];
     thirdPart = serialFormat[3];
   }
-  // console.log("serialFormat[1]", firstPart);
   useEffect(() => {
     if (user.serial_no) {
       const serialFormat = serialNoWithoutHyphens.match(

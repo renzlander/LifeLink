@@ -361,6 +361,7 @@ export function UsersTable() {
                           user_id={user.user_id}
                           bledByOptions={bledByOptions}
                           venueOptions={venueOptions}
+                          refreshData={fetchData}
                         />
                         <MoveToDeferral
                           user_id={user.user_id}

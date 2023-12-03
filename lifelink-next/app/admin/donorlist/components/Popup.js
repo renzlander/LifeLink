@@ -80,8 +80,8 @@ export function ViewPopUp({ user }) {
             ADDRESS
           </Typography>
           <Typography className="text-lg text-gray-900 font-medium">
-            {user.street}, {user.barangay}, {user.municipality}, {user.province}
-            , {user.region}
+            {user.street}, {user.brgyDesc}, {user.citymunDesc}, {user.provDesc}
+            , {user.regDesc}
           </Typography>
           <div className="mt-6 flex justify-between w-full gap-10">
             <Card className="border-2 w-1/2">

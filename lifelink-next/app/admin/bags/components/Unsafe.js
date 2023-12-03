@@ -66,7 +66,6 @@ export function Unsafe({
       );
 
       if (response.data.status === "success") {
-        console.log("yehey successss");
         refreshData();
         toast.success("Marked as unsafe successfully");
         window.location.reload();

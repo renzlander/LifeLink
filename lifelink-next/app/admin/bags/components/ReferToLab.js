@@ -70,7 +70,6 @@ export function ReferToLab({ bloodBagId, user, refreshData }) {
           size="sm"
           onClick={() => setOpen(true)}
           disabled={user.isTested === 1}
-
         >
           <BeakerIcon className="w-5 h-5 text-white" />
         </IconButton>
@@ -78,8 +77,14 @@ export function ReferToLab({ bloodBagId, user, refreshData }) {
       <Dialog open={open} handler={() => setOpen(false)}>
         <DialogHeader>Mark as Referred to Lab</DialogHeader>
         <DialogBody divider className="flex flex-col gap-4 items-center">
-          <Typography variant="h5" color="blue-gray" className="text-center">
-            Are you sure you want to mark this a referred blood bag to laboratory?
+          <Typography className="text-base text-gray-700 text-center">
+            The 'Refer to Laboratory' option indicates that this blood bag has
+            been sent to the laboratory for the testing phase. Please be aware
+            that this action is irreversible.
+          </Typography>
+          <Typography className="text-base text-gray-700 text-center">
+            Are you sure you want to mark this as a referred blood bag to the
+            laboratory?
           </Typography>
         </DialogBody>
 

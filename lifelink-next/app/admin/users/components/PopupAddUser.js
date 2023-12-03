@@ -170,6 +170,26 @@ export function AddUsers({ refreshData }) {
       if (response.data.status === "success") {
         toast.success(response.data.message);
         setOpen(false);
+        setEmail("");
+        setMobile("");
+        setFirstName("");
+        setMiddleName("");
+        setLastName("");
+        setSex("");
+        setDob("");
+        setOccupation("");
+        setBlood("");
+        setStreet("");
+        setPostalCode("");
+        setSelectedRegion({ regionName: "Region" });
+        setSelectedProvince({ provinceName: "Province" });
+        setSelectedMunicipality({ municipalityName: "Municipality" });
+        setSelectedBarangay({ barangayName: "Barangay" });
+        setErrorMessage({
+          dob: [],
+          email: [],
+          mobile: [],
+        });
         refreshData();
       }
     } catch (error) {

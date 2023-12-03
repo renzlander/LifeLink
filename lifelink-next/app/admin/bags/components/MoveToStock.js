@@ -15,7 +15,7 @@ import axios from "axios";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-export function MoveToStock({ serial_no, handleOpen, refreshData }) {
+export function MoveToStock({ serial_no, handleOpen, refreshData, user }) {
   const [open, setOpen] = useState(false);
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
 
@@ -44,7 +44,6 @@ export function MoveToStock({ serial_no, handleOpen, refreshData }) {
         });
 
       if (response.data.status === "success") {
-        
         toast.success("Blood bag added to inventory successfully");
         window.location.reload();
         refreshData();
@@ -65,25 +64,40 @@ export function MoveToStock({ serial_no, handleOpen, refreshData }) {
   return (
     <>
       <Tooltip content="Move to Stock" className="w-max">
-        <IconButton
-          variant="red"
-          color="red"
-          size="sm"
-          onClick={() => setOpen(true)}
-        >
-          <ArrowsRightLeftIcon className="w-5 h-5 text-white" />
-        </IconButton>
+        {user.isTested === 1 ? (
+          <IconButton
+            variant="red"
+            color="red"
+            size="sm"
+            onClick={() => setOpen(true)}
+          >
+            <ArrowsRightLeftIcon className="w-5 h-5 text-white" />
+          </IconButton>
+        ) : (
+          <IconButton
+            variant="red"
+            color="red"
+            size="sm"
+            disabled
+            // Optionally provide a tooltip for disabled state
+            tooltipContent="Cannot move to stock as the blood bag is not tested."
+          >
+            <ArrowsRightLeftIcon className="w-5 h-5 text-white" />
+          </IconButton>
+        )}
       </Tooltip>
+
       <Dialog open={open} handler={() => setOpen(false)}>
-        <DialogHeader>Move Blood Bag to Inventory</DialogHeader>
+        <DialogHeader>Move to Stock</DialogHeader>
         <DialogBody divider className="flex flex-col gap-4 items-center">
-          <Typography variant="paragraph" className="text-center">
-            Move to Inventory: When the blood bag has completed testing and is
-            ready for storage, it should be recorded in the inventory under the
-            'Stocks' tab.
+          <Typography className="text-base text-gray-700 text-center">
+            The 'Move to Stock' option signifies that the blood bag, having
+            successfully completed the testing phase, is ready for storage. When
+            this action is done, the blood bag will be transferred to the
+            inventory module, specifically under the 'Stocks' tab.
           </Typography>
-          <Typography variant="h6" color="red" className="text-center">
-            Are you sure you want to move this blood bag to inventory?
+          <Typography className="text-base text-gray-700 text-center">
+            Are you sure you want to move this blood bag to stock?
           </Typography>
         </DialogBody>
 

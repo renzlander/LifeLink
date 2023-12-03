@@ -20,7 +20,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
+export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions, refreshData }) {
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
@@ -163,6 +163,8 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions }) {
 
       if (response.data.status === "success") {
         toast.success("Blood bag added successfully");
+        refreshData();
+        setOpen(false);
       } else if (response.data.status === "error") {
         if (response.data.message) {
           setGeneralErrorMessage(response.data.message);

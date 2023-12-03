@@ -206,10 +206,25 @@ export function BagsTable() {
   };
 
   const filteredUserDetails = userDetails.filter((user) => {
-    const fullName =
-      `${user.first_name} ${user.middle_name} ${user.last_name}`.toLowerCase();
-    return fullName.includes(searchQuery.toLowerCase());
+    const searchFields = [
+      user.donor_no.toString(),
+      user.serial_no.toString(),
+      `${user.first_name} ${user.last_name}`,
+      user.blood_type,
+      formatDate(user.date_donated),
+      formatDate(user.expiration_date),
+      user.venues_desc,
+      `${user.bled_by_first_name} ${user.bled_by_middle_name} ${user.bled_by_last_name}`,
+      user.isTested === 1 ? "Yes" : "No",
+    ];
+  
+    const searchString = searchQuery.toLowerCase();
+  
+    return searchFields.some((field) =>
+      String(field).toLowerCase().includes(searchString)
+    );
   });
+  
 
   const exportBloodBagsAsPDF = async () => {
     try {
@@ -218,7 +233,6 @@ export function BagsTable() {
         router.push("/login");
         return;
       }
-      console.log(blood_type, startDate, endDate, bledBy, venue);
       // Send a request to the PDF export endpoint
       const response = await axios.get(
         `${laravelBaseUrl}/api/export-pdf-collected-bloodbags`,
@@ -325,7 +339,7 @@ export function BagsTable() {
                   onChange={(e) => {
                     const newStartDate = e.target.value;
                     setStartDate(newStartDate);
-                    fetchBloodTypeFilteredData(
+                    fetchData(
                       blood_type,
                       newStartDate,
                       endDate,
@@ -343,7 +357,7 @@ export function BagsTable() {
                   onChange={(e) => {
                     const newEndDate = e.target.value;
                     setEndDate(newEndDate);
-                    fetchBloodTypeFilteredData(
+                    fetchData(
                       blood_type,
                       startDate,
                       newEndDate,
@@ -561,6 +575,7 @@ export function BagsTable() {
                   />
                   <MoveToStock
                     serial_no={user.serial_no}
+                    user={user}
                     refreshData={fetchData}
                   />
                   <Unsafe
