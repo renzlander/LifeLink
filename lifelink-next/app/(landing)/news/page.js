@@ -26,7 +26,7 @@ export default function News() {
             width="500"
             height="750"
             style={{ border: "none", overflow: "hidden" }}
-            allowFullScreen="true"
+            allowFullScreen={true}
             allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
           ></iframe>
           <iframe
@@ -34,7 +34,7 @@ export default function News() {
             width="500"
             height="750"
             style={{ border: "none", overflow: "hidden" }}
-            allowFullScreen="true"
+            allowFullScreen={true}
             allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
           ></iframe>
         </CardBody>
