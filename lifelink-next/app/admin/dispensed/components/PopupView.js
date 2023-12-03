@@ -7,8 +7,8 @@ import {
   DialogHeader,
   IconButton,
   Tooltip,
+  Typography,
 } from "@material-tailwind/react";
-import { Typography } from "@mui/material";
 import { useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -47,48 +47,54 @@ export function ViewPopUp({ user }) {
           <EyeIcon className="h-4 w-4" />
         </IconButton>
       </Tooltip>
-      <Dialog open={open} handler={() => setOpen(false)}>
+      <Dialog open={open} handler={() => setOpen(false)} size="lg">
         <DialogHeader>
           Patient Details
         </DialogHeader>
-        <DialogBody className="flex flex-col gap-4">
-          <Typography variant="h6" className="font-bold">
+        <DialogBody divider className="flex flex-col gap-4">
+          <Typography variant="h5" color="blue-gray">
             Dispensed Blood Record
           </Typography>
-          <div className="flex flex-row justify-around gap-3">
-            <div>
-              <div className="flex flex-col gap-2">
-                <div className="flex">
-                  <span className="font-bold mr-4">Patient Name:</span>
-                  {`${user?.first_name} ${user?.middle_name} ${user?.last_name}`}
-                </div>
-                <div className="flex ">
-                  <span className="font-bold mr-4">Blood Type:</span>
-                  {user?.blood_type}
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <div className="flex">
-                  <span className="font-bold mr-4">Date of Birth:</span>
-                  {formatDate(user?.dob)}
-                </div>
-                <div className="flex">
-                  <span className="font-bold mr-4">Age:</span>
-                  {age}
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <div className="flex">
-                  <span className="font-bold mr-4">Sex:</span>
-                  {user?.sex}
-                </div>
-              </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="col-span-1">
+              <Typography variant="h6" color="blue-gray" className="flex gap-2">
+                Patient Name:
+                <span className="font-light">
+                {`${user?.first_name} ${user?.middle_name} ${user?.last_name}`}
+                </span>
+              </Typography>
+              <Typography variant="h6" color="blue-gray" className="flex gap-2">
+                Blood Type:
+                <span className="font-light">
+                {user?.blood_type}
+                </span>
+              </Typography>
+              <Typography variant="h6" color="blue-gray" className="flex gap-2">
+                Birthday:
+                <span className="font-light">
+                {formatDate(user?.dob)}
+                </span>
+              </Typography>
+              <Typography variant="h6" color="blue-gray" className="flex gap-2">
+                Age:
+                <span className="font-light">
+                {age}
+                </span>
+              </Typography>
+              <Typography variant="h6" color="blue-gray" className="flex gap-2">
+                Sex:
+                <span className="font-light">
+                {user?.sex}
+                </span>
+              </Typography>
             </div>
-            <div className="flex flex-col gap-2 w-1/3 overflow-y-auto h-[150px]">
-              <span className="font-bold">Serial Numbers Received:</span>
+            <div className="col-span-1">
+              <Typography variant="h6" color="blue-gray">
+                Serial Numbers Received:
+              </Typography>
               <ul className="list-disc ml-4">
                 {user.blood_bags.map((serial, index) => (
-                  <li key={index} className="mb-2">
+                  <li key={index} className="font-medium text-blue-gray-700 mb-2">
                     {serial.serial_no}
                   </li>
                 ))}
@@ -96,20 +102,32 @@ export function ViewPopUp({ user }) {
             </div>
           </div>
 
-          <hr className="border-b border-gray-300 mt-4 mb-6" />
+          <hr className="fading_divider_gray my-4" />
 
-          <div className="flex justify-between">
-            <div className="flex flex-col gap-2">
-              <span className="font-bold">Hospital:</span>
-              <p>{user?.hospital_desc}</p>
+          <div className="grid grid-cols-3">
+            <div className="col-span-1">
+              <Typography variant="h6" color="blue-gray">
+                Hospital:
+              </Typography>
+              <Typography variant="small" color="blue-gray" className="text-md">
+                {user?.hospital_desc}
+              </Typography>
             </div>
-            <div className="flex flex-col gap-2">
-              <span className="font-bold">Date Received:</span>
-              <p>{formatDate(user?.created_at)}</p>
+            <div className="col-span-1 place-self-center">
+              <Typography variant="h6" color="blue-gray">
+                Date Received:
+              </Typography>
+              <Typography variant="small" color="blue-gray" className="text-md">
+                {formatDate(user?.created_at)}
+              </Typography>
             </div>
-            <div className="flex flex-col gap-2">
-              <span className="font-bold">Payment:</span>
-              <p>{user?.payment}</p>
+            <div className="col-span-1 place-self-end">
+              <Typography variant="h6" color="blue-gray">
+                Payment:
+              </Typography>
+              <Typography variant="small" color="blue-gray" className="text-md">
+                {user?.payment}
+              </Typography>
             </div>
           </div>
         </DialogBody>

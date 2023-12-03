@@ -10,32 +10,33 @@ import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import { useTheme } from "@mui/material/styles";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 import {
-  ArrowUpOnSquareIcon,
   Bars3BottomLeftIcon,
   Bars3Icon,
   ChevronUpIcon,
   ClipboardDocumentIcon,
-  ClipboardDocumentListIcon,
-  DocumentPlusIcon,
   DocumentTextIcon,
+  ExclamationTriangleIcon,
+  GlobeAltIcon,
   InboxStackIcon,
   ListBulletIcon,
   ShoppingBagIcon,
   Squares2X2Icon,
   TrashIcon,
+  TruckIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import { IconButton, Tooltip as Guide } from "@material-tailwind/react";
+import { Tooltip as Guide, IconButton } from "@material-tailwind/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { CreatePost } from "./posts/components/CreatePost";
 import { AppBar, Drawer, DrawerHeader } from "./components/Constants";
 import UserPopover from "./components/PopOver";
+import { CreatePost } from "./posts/components/CreatePost";
 
 export default function AdminLayout({ children }) {
   const theme = useTheme();
@@ -46,7 +47,7 @@ export default function AdminLayout({ children }) {
 
   useEffect(() => {
     const handleScroll = () => {
-      setShowScrollButton(window.scrollY >= 400);
+      setShowScrollButton(window.scrollY >= 430);
     };
 
     // Attach the scroll event listener when the component mounts
@@ -74,24 +75,24 @@ export default function AdminLayout({ children }) {
     {
       href: "./inventory",
       text: "Blood Inventory",
-      icon: <ClipboardDocumentListIcon />,
+      icon: <InboxStackIcon />,
     },
     {
       href: "./deferrallist",
       text: "Deferral List",
-      icon: <InboxStackIcon />,
+      icon: <ExclamationTriangleIcon />,
     },
     {
       href: "./dispensed",
       text: "Dispensed Blood",
-      icon: <ArrowUpOnSquareIcon />,
+      icon: <TruckIcon />,
     },
     {
       href: "./disposed",
       text: "Disposed Blood Bags",
       icon: <TrashIcon />,
     },
-    { href: "./posts", text: "Donor Posts", icon: <DocumentPlusIcon /> },
+    { href: "./posts", text: "Blood Network", icon: <GlobeAltIcon /> },
     {
       href: "./logs",
       text: "Activity Logs",
@@ -103,18 +104,6 @@ export default function AdminLayout({ children }) {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <ToastContainer
-        position="bottom-left"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
       <AppBar position="fixed" open={open} sx={{ backgroundColor: "#dc2626" }}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <div>
@@ -191,6 +180,18 @@ export default function AdminLayout({ children }) {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, backgroundColor: "#e5e7eb" }}>
         <DrawerHeader />
+        <ToastContainer
+          position="top-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick={false}
+          rtl={false}
+          pauseOnFocusLoss
+          draggable={false}
+          pauseOnHover={false}
+          theme="light"
+        />
         {children}
         {showScrollButton && (
           <div className="fixed bottom-10 right-10 z-50">
