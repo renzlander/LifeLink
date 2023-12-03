@@ -46,7 +46,7 @@ function formatDate(dateString) {
 export function TabStock() {
   const [userDetails, setUserDetails] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [visibleRows, setVisibleRows] = useState(1);
+  const [visibleRows, setVisibleRows] = useState(8);
   const [searchQuery, setSearchQuery] = useState("");
   const [blood_type, setBlood] = useState("All");
   const [startDate, setStartDate] = useState("");
@@ -117,6 +117,7 @@ export function TabStock() {
 
       if (response.data.status === "success") {
         setUserDetails(response.data.data);
+        setBloodQty(response.data.total_count)
         setLoading(false);
       } else {
         console.error("Error fetching data:", response.data.message);
@@ -145,8 +146,6 @@ export function TabStock() {
           params: params,
         }
       );
-
-      console.log("Response:", response);
 
       if (response.data.status === "success") {
         setUserDetails(response.data.data);
@@ -204,10 +203,31 @@ export function TabStock() {
   };
 
   const filteredUserDetails = userDetails
-    ? userDetails.filter((user) =>
-        user.serial_no.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : [];
+  ? userDetails.filter((user) => {
+      const searchFields = [
+        user.donor_no.toString(),
+        user.serial_no.toString(),
+        user.blood_type,
+        formatDate(user.date_donated),
+        formatDate(user.expiration_date),
+        formatDate(user.disposed_date),
+        user.unsafe === 0
+          ? "Expired"
+          : user.unsafe === 1
+          ? "Reactive"
+          : user.unsafe === 2
+          ? "Spoiled"
+          : "",
+      ];
+
+      const searchString = searchQuery.toLowerCase();
+
+      return searchFields.some((field) =>
+        String(field).toLowerCase().includes(searchString)
+      );
+    })
+  : [];
+
 
   if (loading) {
     return (

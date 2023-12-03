@@ -55,7 +55,7 @@ export default function Home() {
       value: "req",
       content: 
       <>
-        <FilterCheckBox />
+        {/* <FilterCheckBox /> */}
         <PostCard bloodRequests={bloodRequests} fetchBloodRequest={fetchBloodRequest} />
       </>,
     },

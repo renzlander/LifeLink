@@ -10,13 +10,23 @@ import {
   CardHeader,
   Chip,
   Typography,
+  Checkbox,
+  List,
+  ListItem,
+  ListItemPrefix,
 } from "@material-tailwind/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MarkAccomodated, MarkDeclined } from "./Popup";
 
-const TABLE_HEAD = ["Name", "Blood Type", "Email", "Mobile Number"];
+const TABLE_HEAD = [
+  "Name",
+  "Blood Type",
+  "Email",
+  "Mobile Number",
+  "isDeferred",
+];
 
 function Icon({ id, open }) {
   return (
@@ -56,6 +66,8 @@ function formatDateTime(dateTimeString) {
 }
 
 export function PostCard({ bloodRequests, fetchBloodRequest }) {
+  const filters = ["Pending", "Granted", "Referred", "Cancelled"];
+  const [checkedStatus, setCheckedStatus] = useState(filters.map(() => true));
   const chipColor = [
     { color: "green", value: "Granted", text: "Granted" },
     { color: "orange", value: "Referred", text: "Referred" },
@@ -159,6 +171,7 @@ export function PostCard({ bloodRequests, fetchBloodRequest }) {
                       blood_type,
                       email,
                       mobile,
+                      remarks,
                     },
                     rowIndex
                   ) => (
@@ -204,6 +217,15 @@ export function PostCard({ bloodRequests, fetchBloodRequest }) {
                           {mobile}
                         </Typography>
                       </td>
+                      <td className="p-4">
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {remarks !== 0 ? "Yes" : "No"}
+                        </Typography>
+                      </td>
                     </tr>
                   )
                 )}
@@ -215,9 +237,73 @@ export function PostCard({ bloodRequests, fetchBloodRequest }) {
     );
   };
 
+  const filterBloodRequests = () => {
+    const selectedFilters = filters.filter((_, index) => checkedStatus[index]);
+    if (selectedFilters.length === 0) {
+      // If no filter is selected, return all blood requests
+      return bloodRequests;
+    }
+
+    // Filter blood requests based on the selected filters
+    return bloodRequests.filter((request) => {
+      const status = getStatusFromAccommodated(request.isAccommodated);
+      return selectedFilters.includes(status);
+    });
+  };
+
+  const getStatusFromAccommodated = (accommodated) => {
+    switch (accommodated) {
+      case 0:
+        return "Pending";
+      case 1:
+        return "Granted";
+      case 2:
+        return "Referred";
+      case 3:
+        return "Cancelled";
+      default:
+        return "";
+    }
+  };
+
+  const filteredBloodRequests = filterBloodRequests();
+
   return (
     <>
-      {bloodRequests.map((request, index) => {
+      <List className="flex-row items-center w-1/3">
+        <Typography variant="h5" color="blue-gray" className="ml-4">
+          Filters:
+        </Typography>
+        {filters.map((filter, index) => (
+          <ListItem className="p-0" key={filter}>
+            <label
+              htmlFor={`horizontal-list-${filter.toLowerCase()}`}
+              className="flex w-full cursor-pointer items-center px-3 py-2"
+            >
+              <ListItemPrefix className="mr-3">
+                <Checkbox
+                  id={`horizontal-list-${filter.toLowerCase()}`}
+                  ripple={false}
+                  className="hover:before:opacity-0"
+                  containerProps={{
+                    className: "p-0",
+                  }}
+                  checked={checkedStatus[index]}
+                  onChange={(event) => {
+                    const updatedCheckedStatus = [...checkedStatus];
+                    updatedCheckedStatus[index] = event.target.checked;
+                    setCheckedStatus(updatedCheckedStatus);
+                  }}
+                />
+              </ListItemPrefix>
+              <Typography color="blue-gray" className="font-medium">
+                {filter}
+              </Typography>
+            </label>
+          </ListItem>
+        ))}
+      </List>
+      {filteredBloodRequests.map((request, index) => {
         const isAccommodated = request.isAccommodated || 0;
 
         return (
@@ -252,38 +338,36 @@ export function PostCard({ bloodRequests, fetchBloodRequest }) {
                       size="lg"
                       color={
                         isAccommodated === 0
-                          ? chipColor[2].color 
+                          ? chipColor[2].color
                           : isAccommodated === 1
-                          ? chipColor[0].color 
+                          ? chipColor[0].color
                           : isAccommodated === 2
-                          ? chipColor[1].color 
+                          ? chipColor[1].color
                           : isAccommodated === 3
-                          ? chipColor[3].color 
+                          ? chipColor[3].color
                           : chipColor[3].color
                       }
                       value={
                         isAccommodated === 0
                           ? chipColor[2].text
                           : isAccommodated === 1
-                          ? chipColor[0].text 
+                          ? chipColor[0].text
                           : isAccommodated === 2
-                          ? chipColor[1].text 
+                          ? chipColor[1].text
                           : isAccommodated === 3
-                          ? chipColor[3].text 
+                          ? chipColor[3].text
                           : chipColor[3].text
                       }
                     >
-                      {
-                        isAccommodated === 0
-                          ? chipColor[2].text 
-                          : isAccommodated === 1
-                          ? chipColor[0].text 
-                          : isAccommodated === 2
-                          ? chipColor[1].text 
-                          : isAccommodated === 3
-                          ? chipColor[3].text 
-                          : chipColor[3].text 
-                      }
+                      {isAccommodated === 0
+                        ? chipColor[2].text
+                        : isAccommodated === 1
+                        ? chipColor[0].text
+                        : isAccommodated === 2
+                        ? chipColor[1].text
+                        : isAccommodated === 3
+                        ? chipColor[3].text
+                        : chipColor[3].text}
                     </Chip>
 
                     <Typography color="blue-gray">{`Request ID: ${request.request_id_number}`}</Typography>
@@ -333,6 +417,18 @@ export function PostCard({ bloodRequests, fetchBloodRequest }) {
                   >{`Schedule: ${formatDateTime(
                     request.schedule
                   )}`}</Typography>
+                </div>
+                <div className="col-span-1">
+                  {request.cancel_reason && (
+                    <Typography variant="h5" color="blue-gray" className="my-4">
+                      Reason of Cancellation: {request.cancel_reason}
+                    </Typography>
+                  )}
+                  {request.remarks && (
+                    <Typography variant="h5" color="blue-gray" className="my-4">
+                      Remarks: {request.remarks}
+                    </Typography>
+                  )}
                 </div>
               </CardBody>
               <CardFooter className="px-0">
