@@ -13,32 +13,53 @@ import {
 } from "@material-tailwind/react";
 import { ArchiveBoxArrowDownIcon, BeakerIcon, ArchiveBoxIcon } from "@heroicons/react/24/solid";
 
-const timelineData = [
-  {
-    icon: ArchiveBoxArrowDownIcon,
-    label: "COLLECTED",
-    desc: "Blood bag has been collected and is ready for Laboratory Testing.",
-    date: "11/23/2023 20:00 PM",
-    gif: "/blood_transfuse.gif",
-  },
-  {
-    icon: BeakerIcon,
-    label: "LABORATORY",
-    desc: "The blood is under testing in the laboratory.",
-    date: "11/23/2023 20:00 PM",
-    gif: "/blood_test.gif",
-  },
-  {
-    icon: ArchiveBoxIcon,
-    label: "STORED",
-    desc: "Blood bag has been stored in the Blood Bank.",
-    date: "11/23/2023 20:00 PM",
-    gif: "/blood_transfuse.gif",
-  },
-];
+function formatDateTime(dateTimeString) {
+  if (!dateTimeString || isNaN(new Date(dateTimeString))) {
+    return ""; // Return an empty string for null, undefined, or invalid dates
+  }
 
-export function JourneyTimeline({ activeSteps }) {
+  const options = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  };
+  const formattedDateTime = new Date(dateTimeString).toLocaleDateString(
+    undefined,
+    options
+  );
+  return formattedDateTime;
+}
+
+
+export function JourneyTimeline({ activeSteps, bloodJourney, selectedRowIndex }) {
   const [activeStep, setActiveStep] = useState(0);
+  const selectedJourney = bloodJourney[selectedRowIndex] || {};
+  const timelineData = [
+    {
+      icon: ArchiveBoxArrowDownIcon,
+      label: "COLLECTED",
+      desc: "Blood bag has been collected and is ready for Laboratory Testing.",
+      date: formatDateTime(selectedJourney.dateCollected || ""),
+      gif: "/blood_transfuse.gif",
+    },
+    {
+      icon: BeakerIcon,
+      label: "LABORATORY",
+      desc: "The blood is under testing in the laboratory.",
+      date: formatDateTime(selectedJourney.dateTested || ""), 
+      gif: "/blood_test.gif",
+    },
+    {
+      icon: ArchiveBoxIcon,
+      label: "STORED",
+      desc: "Blood bag has been stored in the Blood Bank.",
+      date: formatDateTime(selectedJourney.dateStored || ""), 
+      gif: "/blood_transfuse.gif",
+    },
+  ];
 
   useEffect(() => {
     if (activeSteps.length > 0) {

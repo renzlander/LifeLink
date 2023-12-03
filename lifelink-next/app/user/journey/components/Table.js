@@ -7,7 +7,7 @@ import {
   CardFooter,
 } from "@material-tailwind/react";
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 import { JourneyTimeline } from "./Timeline";
 
 const TABLE_HEAD = [
@@ -39,7 +39,8 @@ export function BloodBagTable({ bloodJourney }) {
   }, [bloodJourney]);
 
   function getStatusText(journey) {
-    const { collected, tested, stored } = journey;
+    const { collected, tested, stored, dateCollected, dateTested, dateStored } =
+      journey;
 
     if (collected === 1 && tested === 1 && stored === 1) {
       return "Stored";
@@ -55,7 +56,7 @@ export function BloodBagTable({ bloodJourney }) {
   // Handle row click event
   function handleRowClick(journey, index) {
     const status = getStatusText(journey);
-  
+
     let activeStepsArray = [];
     if (status === "Collected") {
       activeStepsArray = [0];
@@ -64,7 +65,7 @@ export function BloodBagTable({ bloodJourney }) {
     } else if (status === "Stored") {
       activeStepsArray = [2];
     }
-  
+
     setActiveSteps(activeStepsArray);
     setSelectedRowIndex(index);
   }
@@ -101,16 +102,20 @@ export function BloodBagTable({ bloodJourney }) {
               {bloodJourney.map((journey, index) => (
                 <tr
                   key={journey.serial_number}
-                  onClick={() => handleRowClick(journey, index)} 
+                  onClick={() => handleRowClick(journey, index)}
                   className={`cursor-pointer ${
-                    selectedRowIndex === index ? 'bg-gray-800 text-white' : 'hover:bg-gray-300 transition-colors'
+                    selectedRowIndex === index
+                      ? "bg-gray-800 text-white"
+                      : "hover:bg-gray-300 transition-colors"
                   }`}
                 >
                   <td className="p-4">
                     <div className="flex items-center gap-3">
                       <Typography
                         variant="small"
-                        color={selectedRowIndex === index ? 'white' : 'blue-gray'}
+                        color={
+                          selectedRowIndex === index ? "white" : "blue-gray"
+                        }
                         className="font-bold"
                       >
                         {journey.serial_number}
@@ -120,7 +125,7 @@ export function BloodBagTable({ bloodJourney }) {
                   <td className="p-4">
                     <Typography
                       variant="small"
-                      color={selectedRowIndex === index ? 'white' : 'blue-gray'}
+                      color={selectedRowIndex === index ? "white" : "blue-gray"}
                       className="font-normal"
                     >
                       {formatDate(journey.date)}
@@ -129,7 +134,7 @@ export function BloodBagTable({ bloodJourney }) {
                   <td className="p-4">
                     <Typography
                       variant="small"
-                      color={selectedRowIndex === index ? 'white' : 'blue-gray'}
+                      color={selectedRowIndex === index ? "white" : "blue-gray"}
                       className="font-normal"
                     >
                       {getStatusText(journey)}
@@ -140,10 +145,13 @@ export function BloodBagTable({ bloodJourney }) {
             </tbody>
           </table>
         </CardBody>
-        <CardFooter>
-        </CardFooter>
+        <CardFooter></CardFooter>
       </Card>
-      <JourneyTimeline activeSteps={activeSteps} />
+      <JourneyTimeline
+        activeSteps={activeSteps}
+        bloodJourney={bloodJourney}
+        selectedRowIndex={selectedRowIndex}
+      />
     </div>
   );
 }
