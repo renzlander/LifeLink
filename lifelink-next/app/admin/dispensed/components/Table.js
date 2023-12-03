@@ -156,7 +156,6 @@ export function DispenseTable() {
         }
       );
 
-      console.log(response);
       if (response.data.status === "success") {
         setUserDetails(response.data.data);
         setLoading(false);
@@ -170,35 +169,35 @@ export function DispenseTable() {
     }
   };
 
-  const fetchData = async (page = "") => {
-    try {
-      const token = getCookie("token");
-      if (!token) {
-        router.push("/login");
-        return;
-      }
+  // const fetchData = async (page = "") => {
+  //   try {
+  //     const token = getCookie("token");
+  //     if (!token) {
+  //       router.push("/login");
+  //       return;
+  //     }
 
-      const response = await axios.get(
-        `${laravelBaseUrl}/api/get-dispensed-list`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+  //     const response = await axios.get(
+  //       `${laravelBaseUrl}/api/get-dispensed-list`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
 
-      if (response.data.status === "success") {
-        setUserDetails(response.data.data);
-        setLoading(false);
-      } else {
-        console.error("Error fetching data:", response.data.message);
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setLoading(false);
-    }
-  };
+  //     if (response.data.status === "success") {
+  //       setUserDetails(response.data.data);
+  //       setLoading(false);
+  //     } else {
+  //       console.error("Error fetching data:", response.data.message);
+  //       setLoading(false);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //     setLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
     getHospitalList(); // Fetch hospital options
@@ -254,9 +253,23 @@ export function DispenseTable() {
 
   const filteredUserDetails = userDetails
     ? userDetails.filter((user) => {
-        const fullName =
-          `${user.first_name} ${user.middle_name} ${user.last_name}`.toLowerCase();
-        return fullName.includes(searchQuery.toLowerCase());
+        const searchFields = [
+          formatDate(user.created_at),
+          `${user.first_name} ${user.middle_name} ${user.last_name}`,
+          user.blood_type,
+          calculateAge(user.dob).toString(),
+          user.sex,
+          user.diagnosis,
+          user.hospital_desc,
+          user.payment,
+          // Add other fields as needed
+        ];
+
+        const searchString = searchQuery.toLowerCase();
+
+        return searchFields.some((field) =>
+          String(field).toLowerCase().includes(searchString)
+        );
       })
     : [];
 
@@ -271,19 +284,15 @@ export function DispenseTable() {
 
   return (
     <Card className="w-full">
-    <CardHeader color="red" className="relative h-16 flex items-center">
-      <Typography variant="h4" color="white" className="mx-4">
-        Dispensed Blood List
-      </Typography>
-    </CardHeader>
+      <CardHeader color="red" className="relative h-16 flex items-center">
+        <Typography variant="h4" color="white" className="mx-4">
+          Dispensed Blood List
+        </Typography>
+      </CardHeader>
       <CardBody className="px-0">
         <div className="flex items-center gap-4 px-4 mb-2">
           <div className="">
-            <Typography
-              variant="h6"
-              color="blue-gray"
-              className="text-center"
-            >
+            <Typography variant="h6" color="blue-gray" className="text-center">
               No. of Patients:{bloodQty}
             </Typography>
             <div className="flex items-center gap-4">
@@ -337,7 +346,6 @@ export function DispenseTable() {
                 onChange={(e) => {
                   const newStartDate = e.target.value;
                   setStartDate(newStartDate);
-                  console.log("newStartDate", newStartDate);
                   fetchBloodTypeFilteredData(
                     blood_type,
                     hospital,

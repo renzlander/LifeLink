@@ -27,20 +27,20 @@ export function CreatePost() {
   const [donationDate, setDonationDate] = useState("");
   const [donationTime, setDonationTime] = useState("");
   const [body, setBody] = useState("");
-  const [bloodType, setBloodType] = useState("");
+  // const [bloodType, setBloodType] = useState("");
   const [requestIdOptions, setRequestIdOptions] = useState([]);
 
-  const bloodTypesOptions = [
-    "All",
-    "AB+",
-    "AB-",
-    "A+",
-    "A-",
-    "B+",
-    "B-",
-    "O+",
-    "O-",
-  ];
+  // const bloodTypesOptions = [
+  //   "All",
+  //   "AB+",
+  //   "AB-",
+  //   "A+",
+  //   "A-",
+  //   "B+",
+  //   "B-",
+  //   "O+",
+  //   "O-",
+  // ];
 
   const handleBodyChange = (e) => {
     setBody(e.target.value);
@@ -108,7 +108,7 @@ export function CreatePost() {
             venue: venue,
             donation_date: formattedDonationDateTime,
             body: body,
-            blood_needs: bloodType,
+            // blood_needs: bloodType,
           },
         }
       );
@@ -186,7 +186,7 @@ export function CreatePost() {
               value={donationTime}
             />
 
-            <Select
+            {/* <Select
               onChange={handleBloodChange}
               label="Blood Type"
               value={bloodType}
@@ -196,7 +196,7 @@ export function CreatePost() {
                   {blood}
                 </Option>
               ))}
-            </Select>
+            </Select> */}
           </div>
 
           <Textarea

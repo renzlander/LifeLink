@@ -82,7 +82,6 @@ export default function Home() {
         }
       );
 
-      console.log("|", response);
       if (response.data.status === "success") {
         setDispensedRecords(response.data.dipensedList);
         setDonors(response.data.donors);

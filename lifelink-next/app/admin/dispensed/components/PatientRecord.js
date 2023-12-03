@@ -6,6 +6,10 @@ import {
 } from "@material-tailwind/react";
 
 function formatDate(dateString) {
+  if (!dateString) {
+    return ""; 
+  }
+
   const options = { year: "numeric", month: "long", day: "numeric" };
   const formattedDate = new Date(dateString).toLocaleDateString(
     undefined,
@@ -15,6 +19,11 @@ function formatDate(dateString) {
 }
 
 function calculateAge(dob) {
+  if (!dob) {
+    return ""; 
+  }
+
+
   const birthDate = new Date(dob);
   const today = new Date();
   let age = today.getFullYear() - birthDate.getFullYear();
@@ -69,8 +78,11 @@ export function PatientRecord({ dispensedRecords, donors }) {
                   <strong>Patient Name:</strong>
                 </td>
                 <td className="p-2 border-b border-blue-gray-50 bg-gray-50">
-                  {`${firstRecord?.first_name} ${firstRecord?.middle_name} ${firstRecord?.last_name}`}
+                  {`${firstRecord?.first_name ?? ""} ${
+                    firstRecord?.middle_name ?? ""
+                  } ${firstRecord?.last_name ?? ""}`}
                 </td>
+
                 <td className="border-r border-b border-blue-gray-100 bg-blue-gray-50 p-2">
                   <strong>Blood Type:</strong>
                 </td>
@@ -88,7 +100,9 @@ export function PatientRecord({ dispensedRecords, donors }) {
                 <td className="border-r border-b border-blue-gray-100 bg-blue-gray-50 p-2">
                   <strong>Age:</strong>
                 </td>
-                <td className="p-2 border-b border-blue-gray-50 bg-gray-50">{age}</td>
+                <td className="p-2 border-b border-blue-gray-50 bg-gray-50">
+                  {age}
+                </td>
               </tr>
               <tr>
                 <td className="p-2 rounded-bl-lg border-r border-blue-gray-100 bg-blue-gray-50 ">
@@ -97,10 +111,8 @@ export function PatientRecord({ dispensedRecords, donors }) {
                 <td className="p-2 border-b rounded-br-lg border-blue-gray-50 bg-gray-50">
                   {formatDate(firstRecord?.dob)}
                 </td>
-                <td className="p-2 border-b rounded-br-lg border-blue-gray-50 bg-gray-50">
-                </td>
-                <td className="p-2 rounded-br-lg border-blue-gray-50 bg-gray-50">
-                </td>
+                <td className="p-2 border-b rounded-br-lg border-blue-gray-50 bg-gray-50"></td>
+                <td className="p-2 rounded-br-lg border-blue-gray-50 bg-gray-50"></td>
               </tr>
             </tbody>
           </table>
