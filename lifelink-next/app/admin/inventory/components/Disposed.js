@@ -19,7 +19,6 @@ export function Disposed({ blood_bags_id, refreshData }) {
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
   const router = useRouter();
 
-  console.log("blood_bags_id:", blood_bags_id);
 
   const handleDisposeBloodBag = async () => {
     try {
@@ -28,7 +27,6 @@ export function Disposed({ blood_bags_id, refreshData }) {
         router.push("/login");
         return;
       }
-      console.log("Token:", token);
 
       if (!Array.isArray(blood_bags_id)) {
         blood_bags_id = [blood_bags_id]; // Convert to array
@@ -53,7 +51,6 @@ export function Disposed({ blood_bags_id, refreshData }) {
       if (response.data.status === "success") {
         refreshData();
         toast.success("Removed blood bag successfully");
-        console.log("Blood bag disposed successfully");
         setOpen(false);
       } else {
         console.error("Error removing blood bag:", response.data.message);

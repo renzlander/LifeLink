@@ -29,7 +29,6 @@ export default function Home() {
         }
       );
 
-      console.log(response);
       if (response.data.status === "success") {
         setBloodJourney(response.data.bloodJourney); // Set the fetched data in state
         setLoading(false);

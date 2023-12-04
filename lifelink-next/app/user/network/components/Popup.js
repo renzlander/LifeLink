@@ -77,7 +77,6 @@ export function Interested({
           }
         });
 
-        console.log("Dasdasdsa", response);
       if (response.data.status === "success") {
         toast.success("Thank you for your interest!");
         updateInterestedBloodRequests(requestId);

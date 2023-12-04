@@ -53,7 +53,6 @@ export default function Home() {
         }
       );
 
-      console.log(response);
       if (response.data.status === "success") {
         setachievement(response.data); // Set the fetched data in state
         setLoading(false);
@@ -84,7 +83,6 @@ export default function Home() {
         }
       );
 
-      console.log(response);
       if (response.data.status === "success") {
         setUserDetails(response.data.data); // Set the fetched data in state
         setLoading(false);
