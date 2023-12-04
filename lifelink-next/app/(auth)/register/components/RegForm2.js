@@ -11,6 +11,7 @@ import {
 } from "@material-tailwind/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { TermsAndCondition } from "./Terms";
 
 export function RegF2({ onNextStep }) {
   const [first_name, setFirstName] = useState("");
@@ -25,6 +26,10 @@ export function RegF2({ onNextStep }) {
   const [isChecked, setIsChecked] = useState(false);
   const [errorMessage, setErrorMessage] = useState({ dob: [] });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleAcceptTerms = (accepted) => {
+    setIsChecked(accepted);
+  };
 
   const bloodTypes = ["AB+", "AB-", "A+", "A-", "B+", "B-", "O+", "O-"];
 
@@ -192,14 +197,17 @@ export function RegF2({ onNextStep }) {
 
   return (
     <div className="p-4 flex flex-col justify-center items-center gap-2">
-      <Typography variant="h4"color="blue-gray">
+      <Typography variant="h4" color="blue-gray">
         Enter your personal details
       </Typography>
       <Typography variant="paragraph" color="blue-gray">
         Some details will not be displayed in your profile.
       </Typography>
 
-      <form onSubmit={handleSubmit} className="w-full mt-8 mb-2 gap-4 flex flex-col justify-center items-center">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full mt-8 mb-2 gap-4 flex flex-col justify-center items-center"
+      >
         <input type="hidden" value={dob} name="dob" />
         <div className="flex gap-6 2xl:flex-nowrap flex-wrap">
           <Input
@@ -305,7 +313,7 @@ export function RegF2({ onNextStep }) {
                   setSelectedRegion({
                     regionName: region?.regDesc,
                     regCode: region?.regCode,
-                    id: region?.id
+                    id: region?.id,
                   });
                 }}
               >
@@ -372,8 +380,8 @@ export function RegF2({ onNextStep }) {
                   onClick={() => {
                     setSelectedBarangay({
                       barangayName: barangay?.brgyDesc,
-                      brgyCode:barangay?.brgyCode,
-                      id: barangay.id
+                      brgyCode: barangay?.brgyCode,
+                      id: barangay.id,
                     });
                   }}
                 >
@@ -411,22 +419,15 @@ export function RegF2({ onNextStep }) {
             }}
           />
         </div>
-        <div className="w-full flex justify-center grow gap-6">
+        <div className="w-full flex items-center justify-center gap-1">
           <Checkbox
-            label={
-              <Typography variant="body2" color="textSecondary">
-                I agree to the{" "}
-                <a
-                  href="#"
-                  className="font-medium text-red-600 hover:text-red-800"
-                >
-                  Terms and Conditions
-                </a>
-              </Typography>
-            }
             checked={isChecked}
             onChange={(event) => setIsChecked(event.target.checked)}
           />
+          <Typography variant="paragraph" color="blue-gray">
+            I agree to the
+          </Typography>
+          <TermsAndCondition onAccept={handleAcceptTerms} />
         </div>
         <div className="flex justify-center w-full">
           <Button

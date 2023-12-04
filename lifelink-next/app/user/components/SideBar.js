@@ -60,12 +60,12 @@ import { usePathname, useRouter } from 'next/navigation';
             >
             <div className="w-full">
               <div className='flex justify-between px-6 items-center'>
-                <Image src="/prc_logo.png" width={40} height={40} />
-                <Image src="/logo_lifelink.png" width={100} height={40} />
+                <Image src="/prc_logo.png" alt="PRC Logo" width={40} height={40} />
+                <Image src="/logo_lifelink.png" alt="LifeLink Logo" width={100} height={40} />
               </div>
               <div className='flex justify-between px-6 items-center py-4'>
                 <Link href='./profile'>
-                  <Image src="/patient_icon.png" width={40} height={40} />
+                  <Image src="/patient_icon.png" alt="Profile Picture" width={40} height={40} />
                 </Link>
                 <div className='flex flex-col truncate'>
                   <Tooltip placement="right-end" content={`${userData ? userData.first_name : ""} ${userData ? userData.last_name : ""}`}>

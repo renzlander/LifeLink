@@ -3,6 +3,7 @@ import { Button, Card, Typography } from "@material-tailwind/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export function RegF3({ onNextStep }) {
   const router = useRouter();
@@ -93,7 +94,7 @@ export function RegF3({ onNextStep }) {
           <Typography variant="h4" className="mb-6" color="blue-gray">
             A verification link has been sent to your email.
           </Typography>
-          <img src="/phone.svg" alt="Shake Hands" className="w-80 h-80" />
+          <Image src="/phone.svg" alt="Shake Hands" width={320} height={320} />
           <Button
             type="button"
             variant="contained"
@@ -112,4 +113,3 @@ export function RegF3({ onNextStep }) {
     </div>
   );
 }
-

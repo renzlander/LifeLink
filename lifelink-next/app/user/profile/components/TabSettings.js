@@ -328,7 +328,7 @@ export function TabSettings({ userDetails, refreshData }) {
               </Button>
             </div>
           </div> */}
-          <div className="col-span-3 pb-4">
+          <div className="col-start-2 col-end-4 pb-4">
             <div className="flex flex-col items-start justify-between w-full gap-6">
               <Typography
                 variant="h6"

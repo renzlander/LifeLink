@@ -55,18 +55,38 @@ export default function About() {
             Team
           </Typography>
           <div className="w-full grid grid-cols-4 place-items-center gap-4">
-            <Typography className="col-span-4 2xl:col-span-1">
-              Ryan Antonio
-            </Typography>
-            <Typography className="col-span-4 2xl:col-span-1">
-              Renz De Ocampo
-            </Typography>
-            <Typography className="col-span-4 2xl:col-span-1">
-              Ray Reyes
-            </Typography>
-            <Typography className="col-span-4 2xl:col-span-1">
-              James Robles
-            </Typography>
+            <div className="col-span-4 2xl:col-span-1 text-center">
+              <Typography variant="h6" color="blue-gray">
+                Ryan Jay Antonio
+              </Typography>
+              <Typography variant="small" color="gray">
+                Back-end Developer
+              </Typography>
+            </div>
+            <div className="col-span-4 2xl:col-span-1 text-center">
+              <Typography variant="h6" color="blue-gray">
+                Renz Lander De Ocampo
+              </Typography>
+              <Typography variant="small" color="gray">
+                Front-end Developer
+              </Typography>
+            </div>
+            <div className="col-span-4 2xl:col-span-1 text-center">
+              <Typography variant="h6" color="blue-gray">
+                Ray Matthew Reyes
+              </Typography>
+              <Typography variant="small" color="gray">
+                Leader
+              </Typography>
+            </div>
+            <div className="col-span-4 2xl:col-span-1 text-center">
+              <Typography variant="h6" color="blue-gray">
+                James Ryan Robles
+              </Typography>
+              <Typography variant="small" color="gray">
+                Artist
+              </Typography>
+            </div>
           </div>
         </div>
       </Card>

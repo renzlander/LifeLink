@@ -12,7 +12,7 @@ export default function BloodBanks() {
           className="h-16 flex items-center mb-4"
         >
           <Typography variant="h4" color="white" className="ml-4">
-            Blood Banks List
+            Blood Banks List (NCR)
           </Typography>
         </CardHeader>
         <CardBody>
