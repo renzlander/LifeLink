@@ -79,6 +79,7 @@ export function Interested({
 
       if (response.data.status === "success") {
         toast.success("Thank you for your interest!");
+        window.location.reload();
         updateInterestedBloodRequests(requestId);
         fetchMySchedule();
         setOpen(false);

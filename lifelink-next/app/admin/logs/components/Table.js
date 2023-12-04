@@ -73,8 +73,10 @@ export function LogsTable() {
     "Deferral List",
     "Disposed Blood Bags",
     "Dispensed Blood",
-    "Donor Post",
     "MBD Report",
+    "Settings",
+    "Authentication",
+    "Network",
   ];
 
   const router = useRouter();
