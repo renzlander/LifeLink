@@ -186,9 +186,23 @@ export function PermanentTable() {
   };
 
   const filteredUserDetails = userDetails.filter((user) => {
-    const fullName =
-      `${user.first_name} ${user.middle_name} ${user.last_name}`.toLowerCase();
-    return fullName.includes(searchQuery.toLowerCase());
+    const searchFields = [
+      user.donor_no.toString(),
+      `${user.first_name} ${user.last_name}`,
+      user.blood_type,
+      user.email,
+      user.mobile.toString(),
+      formatDate(user.dob),
+      user.category_desc,
+      user.specific_reason,
+      // Add other fields as needed
+    ];
+  
+    const searchString = searchQuery.toLowerCase();
+  
+    return searchFields.some((field) =>
+      String(field).toLowerCase().includes(searchString)
+    );
   });
 
   if (loading) {

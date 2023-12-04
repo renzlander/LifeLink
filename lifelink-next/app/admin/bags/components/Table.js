@@ -500,7 +500,7 @@ export function BagsTable() {
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="font-normal"
+                    className="font-normal text-center"
                   >
                     {user.blood_type}
                   </Typography>
@@ -546,7 +546,7 @@ export function BagsTable() {
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="font-normal"
+                    className="font-normal text-center"
                   >
                     {user.isTested === 1 ? "Yes" : "No"}
                   </Typography>

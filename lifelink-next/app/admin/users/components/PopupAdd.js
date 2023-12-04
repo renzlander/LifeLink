@@ -11,6 +11,7 @@ import {
   Input,
   Option,
   Select,
+  Spinner,
   Tooltip,
   Typography,
 } from "@material-tailwind/react";
@@ -20,7 +21,12 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions, refreshData }) {
+export function AddBloodBagPopup({
+  user_id,
+  bledByOptions,
+  venueOptions,
+  refreshData,
+}) {
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
@@ -43,6 +49,7 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions, refresh
   const inputRef2 = useRef(null);
   const inputRef3 = useRef(null);
   const srNumber = `${part1}-${part2}-${part3}`;
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateSerialNumber = () => {
     let valid = true;
@@ -103,6 +110,7 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions, refresh
 
   const handleAddBloodBag = async () => {
     try {
+      setIsSubmitting(true);
       const token = getCookie("token");
       if (!token) {
         router.push("/login");
@@ -176,6 +184,8 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions, refresh
       setOpen(false);
     } catch (error) {
       toast.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -361,8 +371,15 @@ export function AddBloodBagPopup({ user_id, bledByOptions, venueOptions, refresh
           >
             <span>Cancel</span>
           </Button>
-          <Button variant="gradient" color="red" onClick={handleAddBloodBag}>
-            <span>Add</span>
+          <Button
+            variant="gradient"
+            color="red"
+            className="flex items-center justify-center gap-5"
+            onClick={handleAddBloodBag}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
+            Add
           </Button>
         </DialogFooter>
       </Dialog>

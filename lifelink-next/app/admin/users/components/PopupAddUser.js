@@ -533,6 +533,7 @@ export function AddUsers({ refreshData }) {
               <Input
                 size="lg"
                 label="Zip Code"
+                maxLength={4}
                 required
                 value={postalcode}
                 onChange={(e) => {
@@ -554,7 +555,8 @@ export function AddUsers({ refreshData }) {
               </Button>
               <Button
                 type="submit"
-                variant="contained"
+                variant="gradient"
+                color="green"
                 className="flex items-center justify-center gap-5"
                 disabled={!isFormValid || isSubmitting || !isEmailValid}
               >

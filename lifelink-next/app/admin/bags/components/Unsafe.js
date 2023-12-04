@@ -1,7 +1,6 @@
 import InputSelect from "@/app/components/InputSelect";
 import { laravelBaseUrl } from "@/app/variables";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-
 import {
   Button,
   Dialog,
@@ -11,6 +10,7 @@ import {
   IconButton,
   Radio,
   Tooltip,
+  Spinner,
   Typography,
 } from "@material-tailwind/react";
 import axios from "axios";
@@ -28,6 +28,7 @@ export function Unsafe({
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
   const [reason, setReason] = useState(null); // To store the selected reason (Reactive or Spoiled)
   const [remarks, setRemarks] = useState(""); // To store the selected remarks
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const reactiveDynamicOptions = reactiveOptions.map((item) => ({
     label: item.reactive_remarks_desc,
@@ -45,6 +46,7 @@ export function Unsafe({
 
   const handUnsafeBags = async () => {
     try {
+      setIsSubmitting(true);
       const token = getCookie("token");
       if (!token) {
         router.push("/login");
@@ -75,6 +77,8 @@ export function Unsafe({
       setOpen(false);
     } catch (error) {
       console.error("Error fetching bled_by and venues lists:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -159,18 +163,20 @@ export function Unsafe({
         )}
         <DialogFooter className="flex justify-center mt-4">
           <Button
-            variant="red-cross"
-            onClick={() => setOpen(false)}
+            variant="gradient"
             className="mr-2"
+            onClick={() => setOpen(false)}
           >
             No
           </Button>
           <Button
-            variant="red-cross"
+            variant="gradient"
             color="red"
-            disabled={!reason || !remarks}
+            className="flex items-center justify-center gap-5"
+            disabled={!reason || !remarks || isSubmitting}
             onClick={handUnsafeBags}
           >
+            {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
             Yes
           </Button>
         </DialogFooter>

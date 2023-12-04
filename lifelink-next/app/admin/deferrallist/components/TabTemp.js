@@ -165,7 +165,7 @@ export function TemporaryTable() {
         router.push("/login");
         return;
       }
-  
+
       // Send a request to the PDF export endpoint
       const response = await axios.get(
         `${laravelBaseUrl}/api/export-temporary-defferal`,
@@ -180,37 +180,36 @@ export function TemporaryTable() {
           },
         }
       );
-  
+
       // Create a Blob object from the response data
       const pdfBlob = new Blob([response.data], { type: "application/pdf" });
-  
+
       // Generate a unique filename (you can customize this logic)
       const fileName = `exported_document_${Date.now()}.pdf`;
-  
+
       // Create a URL for the Blob object
       const pdfUrl = window.URL.createObjectURL(pdfBlob);
-  
+
       // Create a link element to trigger the download
       const downloadLink = document.createElement("a");
       downloadLink.href = pdfUrl;
       downloadLink.download = fileName;
-  
+
       // Append the link to the body and trigger the click event
       document.body.appendChild(downloadLink);
       downloadLink.click();
-  
+
       // Remove the link from the DOM
       document.body.removeChild(downloadLink);
-  
+
       // Clean up by revoking the URL when it's no longer needed
       window.URL.revokeObjectURL(pdfUrl);
     } catch (error) {
       console.error("Error exporting PDF:", error);
-  
+
       // Provide user feedback or handle the error appropriately
     }
   };
-  
 
   const loadMoreRows = () => {
     setVisibleRows((prevVisibleRows) => prevVisibleRows + 4);
@@ -218,9 +217,25 @@ export function TemporaryTable() {
 
   const filteredUserDetails = userDetails
     ? userDetails.filter((user) => {
-        const fullName =
-          `${user.first_name} ${user.middle_name} ${user.last_name}`.toLowerCase();
-        return fullName.includes(searchQuery.toLowerCase());
+        const searchFields = [
+          user.donor_no.toString(),
+          `${user.first_name} ${user.middle_name} ${user.last_name}`,
+          user.blood_type,
+          user.email,
+          user.mobile.toString(),
+          formatDate(user.dob),
+          user.deferred_duration,
+          user.category_desc,
+          user.remarks,
+          formatDate(user.end_date),
+          // Add other fields as needed
+        ];
+
+        const searchString = searchQuery.toLowerCase();
+
+        return searchFields.some((field) =>
+          String(field).toLowerCase().includes(searchString)
+        );
       })
     : [];
 
