@@ -29,6 +29,10 @@ const TABLE_HEAD = [
 const classes = "p-4";
 
 function formatDate(dateString) {
+  if (!dateString) {
+    return "___________"; // Replace with the default value you want to return
+  }
+
   const options = { year: "numeric", month: "long", day: "numeric" };
   const formattedDate = new Date(dateString).toLocaleDateString(
     undefined,
@@ -36,6 +40,7 @@ function formatDate(dateString) {
   );
   return formattedDate;
 }
+
  
 export function HistoryTable() {
   const [userDetails, setUserDetails] = useState([]);
@@ -64,7 +69,6 @@ export function HistoryTable() {
           },
         }
       );
-      console.log("dsadsa",response);
 
       if (response.data.status === "success") {
         setUserDetails(response.data.data.data);
@@ -204,7 +208,7 @@ export function HistoryTable() {
               </Typography>
             </div>
           </div>
-          <Tooltip 
+          {/* <Tooltip 
             placement="left"
             content={
               <div className="flex flex-col items-center">
@@ -227,7 +231,7 @@ export function HistoryTable() {
             >
               Export as PDF
             </Button>
-          </Tooltip>
+          </Tooltip> */}
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-max md:w-full table-auto text-left">

@@ -22,7 +22,7 @@ export default function Home() {
       .then((dataUrl) => {
         setScreenshotUrl(dataUrl);
         generatePDF(dataUrl);
-        console.log("Screenshot captured:", dataUrl);
+
       })
       .catch((error) => {
         console.error("Error capturing screenshot:", error);

@@ -40,7 +40,6 @@ export function HospitalCrud() {
       });
       setHospitals(response.data.data);
       setLoading(false);
-      console.log(response);
     } catch (error) {
       console.error("Error fetching hospitals:", error);
       setLoading(false);

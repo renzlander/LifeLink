@@ -43,7 +43,6 @@ export function PDCatCrud() {
       );
       setPermanentCategory(response.data.data);
       setLoading(false);
-      console.log(response);
     } catch (error) {
       console.error("Error fetching permanent categories:", error);
       setLoading(false);
