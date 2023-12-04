@@ -51,6 +51,29 @@ export default function UserLayout({ children }) {
       () => window.innerWidth >= 1200 && setOpenNav(false)
     );
   }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${laravelBaseUrl}/api/maintenance-status`
+        );
+
+        // Access the data from the response
+        const { maintenance } = response.data;
+
+        if (maintenance === '1') {
+          document.cookie =
+            "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; Secure; SameSite=None";
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error("Error fetching maintenance status:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
   
   const handleLogout = async () => {
     const token = getCookie("token");
