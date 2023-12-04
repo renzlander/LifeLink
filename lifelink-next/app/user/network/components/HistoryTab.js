@@ -15,7 +15,6 @@ export default function History() {
   const router = useRouter();
   const [bloodRequestHistory, seBlooRequestHistory] = useState([]);
   const [loading, setLoading] = useState(true);
-  console.log("dasdas", bloodRequestHistory);
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -52,7 +51,6 @@ export default function History() {
           },
         });
 
-        console.log("Requested blood", response);
         seBlooRequestHistory(response.data.data);
         setLoading(false);
       } catch (error) {

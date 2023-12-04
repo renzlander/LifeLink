@@ -111,7 +111,6 @@ export function TabStock() {
         }
       );
 
-      console.log("dasdas", response);
 
       if (response.data.status === "success") {
         setUserDetails(response.data.data.data);
@@ -168,7 +167,6 @@ export function TabStock() {
         },
       });
 
-      console.log("sadasd",response);
       if (response.data.status === "success") {
         setUserDetails(response.data.data);
         setBloodQty(response.data.total_count);

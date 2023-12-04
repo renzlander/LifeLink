@@ -96,12 +96,10 @@ export function MultipleDispensed({
   };
 
   const handleBloodType = (selectedBloodType) => {
-    console.log("Blood Type selected:", selectedBloodType);
     setPatientBloodType(selectedBloodType);
   };
 
   const handleSex = (selectedSex) => {
-    console.log("Sex selected:", selectedSex);
     setSex(selectedSex);
   };
 
@@ -143,7 +141,6 @@ export function MultipleDispensed({
         }
       );
 
-      console.log(response);
 
       if (response.data.status === "success") {
         toast.success("Blood dispensed successfully");

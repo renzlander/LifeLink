@@ -39,7 +39,6 @@ import { usePathname, useRouter } from 'next/navigation';
         });
         document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
         router.push("../login");
-        console.log(response.data);
       } catch (error) {
         console.log(error);
       }

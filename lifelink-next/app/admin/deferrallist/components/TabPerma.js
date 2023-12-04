@@ -60,7 +60,6 @@ export function PermanentTable() {
   ];
 
   const handleCategorySelect = (selectedValue) => {
-    console.log("handleCategorySelect:", selectedValue);
     setCategory(selectedValue);
   };
 
@@ -84,7 +83,6 @@ export function PermanentTable() {
           }
         );
 
-        console.log(response);
         if (response.data.status === "success") {
           const permaCategories = response.data.permaCategories;
           setPermanentDeferralCategories(permaCategories);
@@ -122,7 +120,6 @@ export function PermanentTable() {
         }
       );
 
-      console.log("Response:", response);
 
       if (response && response.data && response.data.status === "success") {
         setUserDetails(response.data.data);

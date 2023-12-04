@@ -143,7 +143,6 @@ export function TabPerma() {
         }
       );
 
-      console.log(response);
       if (response.data.status === "success") {
         setSpoiledOptions(response.data.spoiledRemarks);
       } else {

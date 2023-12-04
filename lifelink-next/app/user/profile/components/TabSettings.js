@@ -300,7 +300,7 @@ export function TabSettings({ userDetails, refreshData }) {
     <Card className="px-2">
       <CardBody>
         <div className="grid md:grid-cols-4 grid-cols-1 gap-4 gap-y-4">
-          <div className="col-span-1 md:border-r md:border-b-0 border-b pb-4">
+          {/* <div className="col-span-1 md:border-r md:border-b-0 border-b pb-4">
             <div className="flex flex-col items-start justify-between w-full gap-6">
               <Typography
                 variant="h6"
@@ -327,7 +327,7 @@ export function TabSettings({ userDetails, refreshData }) {
                 Upload Photo
               </Button>
             </div>
-          </div>
+          </div> */}
           <div className="col-span-3 pb-4">
             <div className="flex flex-col items-start justify-between w-full gap-6">
               <Typography

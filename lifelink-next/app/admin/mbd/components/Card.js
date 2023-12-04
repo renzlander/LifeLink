@@ -155,7 +155,6 @@ export function MBDCard() {
     }
   };
 
-  console.log("mbd:", expiry);
 
   return (
     <Card className="w-full">

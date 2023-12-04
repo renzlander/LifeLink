@@ -29,6 +29,8 @@ import {
 } from "@material-tailwind/react";
 import { CreateRequest } from './network/components/CreateRequest';
 import { MobileUserSidebar } from './components/SideBar';
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function UserLayout({ children }) {
   const [userData, setUserData] = useState(null); 
@@ -64,7 +66,6 @@ export default function UserLayout({ children }) {
       });
       document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
       router.push("../login");
-      console.log(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -204,6 +205,18 @@ export default function UserLayout({ children }) {
               </IconButton>
             </div>
           </div>
+          <ToastContainer
+          position="top-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick={false}
+          rtl={false}
+          pauseOnFocusLoss
+          draggable={false}
+          pauseOnHover={false}
+          theme="light"
+        />
         </Navbar>
         {/* NAVBAR END */}
         {children}

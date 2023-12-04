@@ -54,7 +54,6 @@ export function TemporaryTable() {
     useState([]);
 
   const router = useRouter();
-  console.log("temporaryDeferralCategories:", temporaryDeferralCategories);
 
   const dynamicTemporaryCategories = [
     {
@@ -114,12 +113,10 @@ export function TemporaryTable() {
   }, []);
 
   const handleCategorySelect = (selectedValue) => {
-    console.log("handleCategorySelect:", selectedValue);
     setCategory(selectedValue);
   };
 
   const handleRemarksSelect = (selectedValue) => {
-    console.log("handleRemarksSelect:", selectedValue);
     setRemarks(selectedValue);
   };
 
@@ -143,8 +140,6 @@ export function TemporaryTable() {
           },
         }
       );
-
-      console.log("Response:", response);
 
       if (response && response.data && response.data.status === "success") {
         setUserDetails(response.data.data);

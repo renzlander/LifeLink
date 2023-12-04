@@ -88,10 +88,6 @@ export function LogsTable() {
       }
 
       let response;
-      console.log("module:", module);
-      console.log("startDate:", startDate);
-      console.log("endDate:", endDate);
-
       response = await axios.get(
         `${laravelBaseUrl}/api/get-audit-trail?page=${page}&sort=${sortColumn}&order=${sortOrder}`,
         {

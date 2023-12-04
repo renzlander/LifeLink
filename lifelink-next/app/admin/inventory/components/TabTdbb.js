@@ -175,7 +175,6 @@ export function TabTemp() {
         }
       );
 
-      console.log(response);
       if (response.data.status === "success") {
         setReactiveOptions(response.data.reactiveRemarks);
       } else {

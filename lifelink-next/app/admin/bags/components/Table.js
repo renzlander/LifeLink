@@ -217,14 +217,13 @@ export function BagsTable() {
       `${user.bled_by_first_name} ${user.bled_by_middle_name} ${user.bled_by_last_name}`,
       user.isTested === 1 ? "Yes" : "No",
     ];
-  
+
     const searchString = searchQuery.toLowerCase();
-  
+
     return searchFields.some((field) =>
       String(field).toLowerCase().includes(searchString)
     );
   });
-  
 
   const exportBloodBagsAsPDF = async () => {
     try {
@@ -339,13 +338,7 @@ export function BagsTable() {
                   onChange={(e) => {
                     const newStartDate = e.target.value;
                     setStartDate(newStartDate);
-                    fetchData(
-                      blood_type,
-                      newStartDate,
-                      endDate,
-                      bledBy,
-                      venue
-                    );
+                    fetchData(blood_type, newStartDate, endDate, bledBy, venue);
                   }}
                   className=""
                 />
@@ -357,13 +350,7 @@ export function BagsTable() {
                   onChange={(e) => {
                     const newEndDate = e.target.value;
                     setEndDate(newEndDate);
-                    fetchData(
-                      blood_type,
-                      startDate,
-                      newEndDate,
-                      bledBy,
-                      venue
-                    );
+                    fetchData(blood_type, startDate, newEndDate, bledBy, venue);
                   }}
                   className=""
                 />
@@ -415,7 +402,9 @@ export function BagsTable() {
                       setSelectedRows([]);
                     } else {
                       setSelectedRows(
-                        userDetails.map((user) => user.blood_bags_id)
+                        userDetails
+                          .filter((user) => user.isTested === 1)
+                          .map((user) => user.blood_bags_id)
                       );
                     }
                   }}
@@ -452,19 +441,32 @@ export function BagsTable() {
                 }`}
               >
                 <td className={classes}>
-                  <Checkbox
-                    onChange={() => {
-                      if (selectedRows.includes(user.blood_bags_id)) {
-                        setSelectedRows(
-                          selectedRows.filter((id) => id !== user.blood_bags_id)
-                        );
-                      } else {
-                        setSelectedRows([...selectedRows, user.blood_bags_id]);
-                      }
-                    }}
-                    checked={selectedRows.includes(user.blood_bags_id)}
-                  />
+                  {user.isTested === 1 ? (
+                    <Checkbox
+                      onChange={() => {
+                        if (selectedRows.includes(user.blood_bags_id)) {
+                          setSelectedRows(
+                            selectedRows.filter(
+                              (id) => id !== user.blood_bags_id
+                            )
+                          );
+                        } else {
+                          setSelectedRows([
+                            ...selectedRows,
+                            user.blood_bags_id,
+                          ]);
+                        }
+                      }}
+                      checked={selectedRows.includes(user.blood_bags_id)}
+                    />
+                  ) : (
+                    <Checkbox
+                      disabled // disable the checkbox
+                      checked={false} // ensure it's unchecked when disabled
+                    />
+                  )}
                 </td>
+
                 <td className={classes}>
                   <div className="flex items-center gap-3">
                     <Typography

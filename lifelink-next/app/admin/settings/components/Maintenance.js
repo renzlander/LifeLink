@@ -61,7 +61,6 @@ export function MaintenanceSwitch() {
         { headers: { "Content-Type": "application/json" } }
       );
 
-      console.log("Maintenance status updated:", response.data);
     } catch (error) {
       console.error("Error updating maintenance status:", error);
     }
@@ -143,7 +142,6 @@ export function Confirmation({ isOpen, handleConfirmation, isSwitchOn, refreshDa
         }
       );
 
-      console.log(response);
       if (response.data.status === "success") {
         refreshData();
         handleClose(true);

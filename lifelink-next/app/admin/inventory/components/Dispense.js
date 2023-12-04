@@ -45,7 +45,6 @@ export function Dispense({
   const [paymentType, setPaymentType] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const bloodType = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
-  console.log("hospitalOptions", hospitalOptions);
   const dynamicHospitalOptions = hospitalOptions.map((item) => ({
     label: item.hospital_desc,
     value: item.hospitals_id.toString(),
@@ -138,7 +137,6 @@ export function Dispense({
         }
       );
 
-      console.log(response);
 
       if (response.data.status === "success") {
         toast.success("Blood dispensed successfully");
@@ -197,11 +195,9 @@ export function Dispense({
 
   useEffect(() => {
     if (selectedValue !== null) {
-      console.log("User selected. Setting patientBloodType.");
       setPatientBloodType(selectedUserDetails?.blood_type);
       setSex(selectedUserDetails?.sex);
     } else {
-      console.log("No user selected. Setting default patientBloodType.");
       setPatientBloodType(""); // or any other default value
       setSex(""); // or any other default value
     }
