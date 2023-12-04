@@ -1,6 +1,5 @@
 import { laravelBaseUrl } from "@/app/variables";
 import { BeakerIcon } from "@heroicons/react/24/outline";
-
 import {
   Button,
   Dialog,
@@ -9,6 +8,7 @@ import {
   DialogHeader,
   IconButton,
   Tooltip,
+  Spinner,
   Typography,
 } from "@material-tailwind/react";
 import axios from "axios";
@@ -18,9 +18,11 @@ import { toast } from "react-toastify";
 export function ReferToLab({ bloodBagId, user, refreshData }) {
   const [open, setOpen] = useState(false);
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleReferToLab = async () => {
     try {
+      setIsSubmitting(true);
       const token = getCookie("token");
       if (!token) {
         router.push("/login");
@@ -58,6 +60,8 @@ export function ReferToLab({ bloodBagId, user, refreshData }) {
       setOpen(false);
     } catch (error) {
       console.error("Unknown error occurred:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -98,13 +102,20 @@ export function ReferToLab({ bloodBagId, user, refreshData }) {
 
         <DialogFooter className="flex justify-center mt-4">
           <Button
-            variant="red-cross"
-            onClick={() => setOpen(false)}
+            variant="filled"
             className="mr-2"
+            onClick={() => setOpen(false)}
           >
             No
           </Button>
-          <Button variant="red-cross" color="red" onClick={handleReferToLab}>
+          <Button 
+            variant="gradient" 
+            color="red" 
+            className="flex items-center justify-center gap-5"
+            onClick={handleReferToLab}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
             Yes
           </Button>
         </DialogFooter>

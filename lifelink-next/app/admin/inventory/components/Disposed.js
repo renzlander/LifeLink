@@ -8,6 +8,7 @@ import {
   DialogHeader,
   Typography,
   IconButton,
+  Spinner,
 } from "@material-tailwind/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -17,12 +18,14 @@ import { toast } from "react-toastify";
 export function Disposed({ blood_bags_id, refreshData }) {
   const [open, setOpen] = useState(false);
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
   console.log("blood_bags_id:", blood_bags_id);
 
   const handleDisposeBloodBag = async () => {
     try {
+      setIsSubmitting(true);
       const token = getCookie("token");
       if (!token) {
         router.push("/login");
@@ -60,6 +63,8 @@ export function Disposed({ blood_bags_id, refreshData }) {
       }
     } catch (error) {
       console.error("Error removing blood bag:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -92,17 +97,20 @@ export function Disposed({ blood_bags_id, refreshData }) {
         )}
         <DialogFooter className="flex justify-center mt-4">
           <Button
-            variant="red-cross"
-            onClick={() => setOpen(false)}
+            variant="filled"
             className="mr-2"
+            onClick={() => setOpen(false)}
           >
             No
           </Button>
           <Button
-            variant="red-cross"
+            variant="gradient"
             color="red"
+            className="flex items-center justify-center gap-5"
             onClick={handleDisposeBloodBag}
+            disabled={isSubmitting}
           >
+            {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
             Yes
           </Button>
         </DialogFooter>

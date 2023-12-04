@@ -9,6 +9,7 @@ import {
   DialogHeader,
   IconButton,
   Tooltip,
+  Spinner,
   Typography,
 } from "@material-tailwind/react";
 import axios from "axios";
@@ -18,9 +19,11 @@ import { toast } from "react-toastify";
 export function MoveToStock({ serial_no, handleOpen, refreshData, user }) {
   const [open, setOpen] = useState(false);
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleMovetoStock = async () => {
     try {
+      setIsSubmitting(true);
       const token = getCookie("token");
       if (!token) {
         router.push("/login");
@@ -58,6 +61,8 @@ export function MoveToStock({ serial_no, handleOpen, refreshData, user }) {
       setOpen(false);
     } catch (error) {
       console.error("Unknown error occurred:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -111,13 +116,20 @@ export function MoveToStock({ serial_no, handleOpen, refreshData, user }) {
 
         <DialogFooter className="flex justify-center mt-4">
           <Button
-            variant="red-cross"
-            onClick={() => setOpen(false)}
+            variant="filled"
             className="mr-2"
+            onClick={() => setOpen(false)}
           >
             No
           </Button>
-          <Button variant="red-cross" color="red" onClick={handleMovetoStock}>
+          <Button 
+            variant="gradient" 
+            color="red" 
+            className="flex items-center justify-center gap-5"
+            onClick={handleMovetoStock}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
             Yes
           </Button>
         </DialogFooter>

@@ -1,5 +1,4 @@
 import { laravelBaseUrl } from "@/app/variables";
-
 import {
   Button,
   Dialog,
@@ -7,6 +6,7 @@ import {
   DialogFooter,
   DialogHeader,
   Typography,
+  Spinner,
 } from "@material-tailwind/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -17,8 +17,11 @@ export function MultipleMoveToStock({ selectedRows, refreshData }) {
   const [open, setOpen] = useState(false);
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleDisposeBloodBag = async () => {
     try {
+      setIsSubmitting(true);
       const token = getCookie("token");
       if (!token) {
         router.push("/login");
@@ -55,6 +58,8 @@ export function MultipleMoveToStock({ selectedRows, refreshData }) {
       }
     } catch (error) {
       console.error("Error removing blood bag:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -84,17 +89,20 @@ export function MultipleMoveToStock({ selectedRows, refreshData }) {
         )}
         <DialogFooter className="flex justify-center mt-4">
           <Button
-            variant="red-cross"
+            variant="filled"
             onClick={() => setOpen(false)}
             className="mr-2"
           >
             No
           </Button>
           <Button
-            variant="red-cross"
+            variant="gradient"
             color="red"
+            className="flex items-center justify-center gap-5"
             onClick={handleDisposeBloodBag}
+            disabled={isSubmitting}
           >
+            {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
             Yes
           </Button>
         </DialogFooter>

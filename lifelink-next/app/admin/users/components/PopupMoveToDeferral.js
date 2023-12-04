@@ -15,6 +15,7 @@ import {
   Input,
   Option,
   Select,
+  Spinner,
   Tooltip,
 } from "@material-tailwind/react";
 import { Typography } from "@mui/material";
@@ -45,7 +46,8 @@ export function MoveToDeferral({
     duration: [],
   });
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
-  const [selectedCategoryRemarks, setSelectedCategoryRemarks] = useState(null); // State to store selected category's remarks
+  const [selectedCategoryRemarks, setSelectedCategoryRemarks] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleVenueSelect = (selectedValue) => {
     setVenue(selectedValue);
@@ -106,6 +108,7 @@ export function MoveToDeferral({
     e.preventDefault();
 
     try {
+      setIsSubmitting(true);
       const token = getCookie("token");
       if (!token) {
         router.push("/login");
@@ -168,6 +171,8 @@ export function MoveToDeferral({
         setErrorMessage({ email: [error.message], mobile: [error.message] });
       }
       toast.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -371,8 +376,15 @@ export function MoveToDeferral({
           >
             <span>Cancel</span>
           </Button>
-          <Button variant="gradient" color="red" onClick={handleMoveToDeferral}>
-            <span>Move</span>
+          <Button 
+            variant="gradient" 
+            color="red" 
+            className="flex items-center justify-center gap-5"
+            onClick={handleMoveToDeferral}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
+            Move
           </Button>
         </DialogFooter>
       </Dialog>

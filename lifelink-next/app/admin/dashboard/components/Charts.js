@@ -374,7 +374,7 @@ export function BarCard() {
           </Typography>
         </div>
       </div>
-      <CardBody className="flex flex-col gap-4">
+      <CardBody className="h-96">
         <BarChart data={barangayDonorCount} />
       </CardBody>
       <CardFooter className="border-t flex flex-col gap-4">

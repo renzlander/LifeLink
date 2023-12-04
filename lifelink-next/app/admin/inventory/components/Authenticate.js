@@ -1,23 +1,24 @@
-import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Typography,
-  Input,
-  Button,
-} from "@material-tailwind/react";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import axios from "axios";
 import { laravelBaseUrl } from "@/app/variables";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Input,
+  Spinner,
+  Typography,
+} from "@material-tailwind/react";
+import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export function AuthCard({ onAuthenticate }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
   const [showPin, setShowPin] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleShowPin = () => {
     setShowPin(!showPin);
@@ -31,6 +32,7 @@ export function AuthCard({ onAuthenticate }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setIsSubmitting(true);
       const token = getCookie("token");
       if (!token) {
         router.push("/login");
@@ -58,6 +60,8 @@ export function AuthCard({ onAuthenticate }) {
     } catch (error) {
       console.error("Error fetching data:", error);
       setError("Invalid password. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -93,7 +97,13 @@ export function AuthCard({ onAuthenticate }) {
               {error}
             </Typography>
           )}
-          <Button variant="gradient" type="submit" fullWidth>
+          <Button
+            variant="gradient"
+            type="submit"
+            className="flex items-center justify-center gap-5"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
             Submit
           </Button>
         </form>

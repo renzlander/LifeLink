@@ -11,6 +11,7 @@ import {
   Select,
   Textarea,
   Typography,
+  Spinner,
 } from "@material-tailwind/react";
 import axios from "axios";
 import { format } from "date-fns";
@@ -29,6 +30,7 @@ export function CreatePost() {
   const [body, setBody] = useState("");
   // const [bloodType, setBloodType] = useState("");
   const [requestIdOptions, setRequestIdOptions] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // const bloodTypesOptions = [
   //   "All",
@@ -84,6 +86,7 @@ export function CreatePost() {
 
   const createPost = async () => {
     try {
+      setIsSubmitting(true);
       const token = getCookie("token");
       if (!token) {
         router.push("./login");
@@ -126,14 +129,17 @@ export function CreatePost() {
       toast.error("Opps! Something went wrong.");
       setGeneralErrorMessage(error.response.data.message);
       console.error("Error fetching user information:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const dynamicRequestIdOptions = requestIdOptions.map((item) => ({
-    label: `${item.request_id_number.toString()} - ${item.first_name} ${item.middle_name} ${item.last_name}`,
+    label: `${item.request_id_number.toString()} - ${item.first_name} ${
+      item.middle_name
+    } ${item.last_name}`,
     value: item.blood_request_id.toString(),
   }));
-  
 
   const handleRequestIdChange = (selectedValue) => {
     setRequestIdNumber(selectedValue);
@@ -199,11 +205,7 @@ export function CreatePost() {
             </Select> */}
           </div>
 
-          <Textarea
-            size="lg"
-            label="Description"
-            onChange={handleBodyChange}
-          />
+          <Textarea size="lg" label="Description" onChange={handleBodyChange} />
         </DialogBody>
         <DialogFooter>
           <Button
@@ -214,8 +216,15 @@ export function CreatePost() {
           >
             <span>Cancel</span>
           </Button>
-          <Button variant="gradient" color="blue" onClick={createPost}>
-            <span>Publish Post</span>
+          <Button
+            variant="gradient"
+            color="blue"
+            className="flex items-center justify-center gap-5"
+            onClick={createPost}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
+            Publish Post
           </Button>
         </DialogFooter>
       </Dialog>

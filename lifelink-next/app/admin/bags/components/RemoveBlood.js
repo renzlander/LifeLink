@@ -1,6 +1,5 @@
 import { laravelBaseUrl } from "@/app/variables";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
-
 import {
   Button,
   Dialog,
@@ -9,6 +8,7 @@ import {
   DialogHeader,
   IconButton,
   Tooltip,
+  Spinner,
   Typography,
 } from "@material-tailwind/react";
 import axios from "axios";
@@ -35,6 +35,7 @@ export function RemoveBlood({
   const [open, setOpen] = useState(false);
   const [generalErrorMessage, setGeneralErrorMessage] = useState("");
   const [timeLeft, setTimeLeft] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const formattedEndDate = countdownEndDate; // Replace with your actual date string
   const countdownEnd = new Date(formattedEndDate);
@@ -43,6 +44,7 @@ export function RemoveBlood({
 
   const handleRemoveBloodBag = async () => {
     try {
+      setIsSubmitting(true);
       const token = getCookie("token");
       if (!token) {
         router.push("/login");
@@ -70,6 +72,8 @@ export function RemoveBlood({
       }
     } catch (error) {
       console.error("Error removing blood bag:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -109,10 +113,9 @@ export function RemoveBlood({
             </Typography>
           </div>
         )}
-        <DialogFooter className="flex justify-center mt-4">
+        <DialogFooter className="flex justify-center">
           <Button
             variant="filled"
-            size="sm"
             onClick={() => setOpen(false)}
             className="mr-2"
           >
@@ -121,10 +124,11 @@ export function RemoveBlood({
           <Button
             variant="gradient"
             color="red"
-            size="sm"
+            className="flex items-center justify-center gap-5"
             onClick={handleRemoveBloodBag}
-            disabled={countdownEnd < new Date()}
+            disabled={countdownEnd < new Date() || isSubmitting}
           >
+            {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
             Confirm Removal
           </Button>
         </DialogFooter>

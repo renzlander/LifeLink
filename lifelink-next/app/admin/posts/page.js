@@ -75,7 +75,6 @@ export default function Home() {
             Blood Network
           </Typography>
         </CardHeader>
-        <CardBody className="px-0 pt-0">
           <Tabs value="req">
             <TabsHeader className="sticky top-0 mx-10 bg-gray-300">
               {data.map(({ label, value }) => (
@@ -84,15 +83,16 @@ export default function Home() {
                 </Tab>
               ))}
             </TabsHeader>
-            <TabsBody className="overflow-y-auto max-h-[120vh]">
-              {data.map(({ value, content }) => (
-                <TabPanel key={value} value={value} className="grid gap-6">
-                  {content}
-                </TabPanel>
-              ))}
-            </TabsBody>
+            <CardBody className="px-0 pt-0 h-[110vh] overflow-y-auto">
+              <TabsBody>
+                {data.map(({ value, content }) => (
+                  <TabPanel key={value} value={value} className="grid gap-6">
+                    {content}
+                  </TabPanel>
+                ))}
+              </TabsBody>
+            </CardBody>
           </Tabs>
-        </CardBody>
       </Card>
     </div>
   );

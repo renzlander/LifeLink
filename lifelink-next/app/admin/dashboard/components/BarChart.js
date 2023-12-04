@@ -21,6 +21,7 @@ export default function BarChart({ data }) {
       ],
     },
     options: {
+      maintainAspectRatio: false,
       responsive: true,
       plugins: {
         title: {

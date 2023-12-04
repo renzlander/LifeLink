@@ -1,7 +1,6 @@
 import InputSelect from "@/app/components/InputSelect";
 import { laravelBaseUrl } from "@/app/variables";
 import { PencilIcon } from "@heroicons/react/24/solid";
-
 import {
   Button,
   Chip,
@@ -11,6 +10,7 @@ import {
   DialogHeader,
   IconButton,
   Input,
+  Spinner,
   Tooltip,
   Typography,
 } from "@material-tailwind/react";
@@ -56,6 +56,7 @@ export function EditPopUp({
   const serialFormat = serialNoWithoutHyphens.match(/^(\d{4})(\d{6})(\d{1})$/);
   const formattedEndDate = countdownEndDate; // Replace with your actual date string
   const countdownEnd = new Date(formattedEndDate);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   let firstPart = "";
   let secondPart = "";
   let thirdPart = "";
@@ -119,6 +120,7 @@ export function EditPopUp({
 
   const handleEditSerialNumber = async () => {
     try {
+      setIsSubmitting(true);
       const token = getCookie("token");
       if (!token) {
         router.push("/login");
@@ -189,6 +191,8 @@ export function EditPopUp({
       setOpen(false);
     } catch (error) {
       console.error("Unknown error occurred:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -284,12 +288,6 @@ export function EditPopUp({
             )}
           </div>
           <div className={`relative ${errorMessage.bled_by ? "mb-1" : ""}`}>
-            {/* <Input
-              label="Bled by"
-              value={bledBy}
-              disabled={countdown === 0}
-              onChange={(e) => setBledBy(e.target.value)}
-            /> */}
             <InputSelect
               label="Bled by"
               value={bledBy}
@@ -342,18 +340,20 @@ export function EditPopUp({
         <DialogFooter>
           <Button
             variant="gradient"
-            onClick={() => setOpen(false)}
             className="mr-1"
+            onClick={() => setOpen(false)}
           >
             <span>Cancel</span>
           </Button>
           <Button
             variant="gradient"
             color="red"
+            className="flex items-center justify-center gap-5"
             onClick={handleEditSerialNumber}
-            disabled={countdownEnd < new Date()}
+            disabled={countdownEnd < new Date() || isSubmitting}
           >
-            <span>Done</span>
+            {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
+            Done
           </Button>
         </DialogFooter>
       </Dialog>

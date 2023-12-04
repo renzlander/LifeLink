@@ -270,39 +270,41 @@ export function PostCard({ bloodRequests, fetchBloodRequest }) {
 
   return (
     <>
-      <List className="flex-row items-center w-1/3">
-        <Typography variant="h5" color="blue-gray" className="ml-4">
-          Filters:
-        </Typography>
-        {filters.map((filter, index) => (
-          <ListItem className="p-0" key={filter}>
-            <label
-              htmlFor={`horizontal-list-${filter.toLowerCase()}`}
-              className="flex w-full cursor-pointer items-center px-3 py-2"
-            >
-              <ListItemPrefix className="mr-3">
-                <Checkbox
-                  id={`horizontal-list-${filter.toLowerCase()}`}
-                  ripple={false}
-                  className="hover:before:opacity-0"
-                  containerProps={{
-                    className: "p-0",
-                  }}
-                  checked={checkedStatus[index]}
-                  onChange={(event) => {
-                    const updatedCheckedStatus = [...checkedStatus];
-                    updatedCheckedStatus[index] = event.target.checked;
-                    setCheckedStatus(updatedCheckedStatus);
-                  }}
-                />
-              </ListItemPrefix>
-              <Typography color="blue-gray" className="font-medium">
-                {filter}
-              </Typography>
-            </label>
-          </ListItem>
-        ))}
-      </List>
+      <Card className="w-full">
+        <List className="flex-row items-center w-full">
+          <Typography variant="h5" color="blue-gray" className="ml-4">
+            Filters:
+          </Typography>
+          {filters.map((filter, index) => (
+            <ListItem className="p-0" key={filter}>
+              <label
+                htmlFor={`horizontal-list-${filter.toLowerCase()}`}
+                className="flex w-full cursor-pointer items-center px-3 py-2"
+              >
+                <ListItemPrefix className="mr-3">
+                  <Checkbox
+                    id={`horizontal-list-${filter.toLowerCase()}`}
+                    ripple={false}
+                    className="hover:before:opacity-0"
+                    containerProps={{
+                      className: "p-0",
+                    }}
+                    checked={checkedStatus[index]}
+                    onChange={(event) => {
+                      const updatedCheckedStatus = [...checkedStatus];
+                      updatedCheckedStatus[index] = event.target.checked;
+                      setCheckedStatus(updatedCheckedStatus);
+                    }}
+                  />
+                </ListItemPrefix>
+                <Typography color="blue-gray" className="font-medium">
+                  {filter}
+                </Typography>
+              </label>
+            </ListItem>
+          ))}
+        </List>
+      </Card>
       {filteredBloodRequests.map((request, index) => {
         const isAccommodated = request.isAccommodated || 0;
 

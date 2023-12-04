@@ -11,6 +11,7 @@ import {
   Input,
   Option,
   Select,
+  Spinner,
   Tooltip,
 } from "@material-tailwind/react";
 import axios from "axios";
@@ -35,6 +36,7 @@ export function EditPopUp({ user, refreshData }) {
   // Region
   const [selectedRegionCode, setSelectedRegionCode] = useState(user.region);
   const [regionOption, setRegionOption] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Province
   const [selectedProvinceCode, setSelectedProvinceCode] = useState(
@@ -133,7 +135,6 @@ export function EditPopUp({ user, refreshData }) {
           }
         }
       } catch (error) {
-
       }
     };
 
@@ -163,8 +164,7 @@ export function EditPopUp({ user, refreshData }) {
           const provinces = response.data;
           setProvinceOption(provinces);
         })
-        .catch((error) => {
-        });
+        .catch((error) => {});
     }
   }, [selectedRegionCode]);
 
@@ -183,8 +183,7 @@ export function EditPopUp({ user, refreshData }) {
           const municipalities = response.data;
           setMunicipalityOption(municipalities);
         })
-        .catch((error) => {
-        });
+        .catch((error) => {});
     }
   }, [selectedProvinceCode]);
 
@@ -203,8 +202,7 @@ export function EditPopUp({ user, refreshData }) {
           const barangays = response.data;
           setBarangayOption(barangays);
         })
-        .catch((error) => {
-        });
+        .catch((error) => {});
     }
   }, [selectedMunicipalityCode]);
 
@@ -234,10 +232,11 @@ export function EditPopUp({ user, refreshData }) {
     // Simple email validation using a regular expression
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
-  }
+  };
 
   const handleEditUser = async () => {
     try {
+      setIsSubmitting(true);
       // Prepare data for the PUT request
       const data = {
         ...editedUser,
@@ -302,6 +301,8 @@ export function EditPopUp({ user, refreshData }) {
         setErrorMessage({ email: [error.message], mobile: [error.message] });
       }
       toast.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
   return (
@@ -313,7 +314,10 @@ export function EditPopUp({ user, refreshData }) {
       </Tooltip>
       <Dialog open={open} handler={() => setOpen(false)} size="lg">
         <DialogHeader>Edit User</DialogHeader>
-        <DialogBody divider className="flex flex-col gap-6 overscroll-y-auto">
+        <DialogBody
+          divider
+          className="flex flex-col gap-6 h-96 3xl:h-full overflow-y-auto"
+        >
           <div className="flex items-center gap-2">
             <Input
               type="text"
@@ -495,8 +499,16 @@ export function EditPopUp({ user, refreshData }) {
           >
             <span>Cancel</span>
           </Button>
-          <Button variant="gradient" color="red"  onClick={handleEditUser}>
-            <span>Done</span>
+          <Button
+            type="submit"
+            variant="gradient"
+            color="green"
+            className="flex items-center justify-center gap-5"
+            onClick={handleEditUser}
+            disabled={isSubmitting}
+          >
+          {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
+            Submit
           </Button>
         </DialogFooter>
       </Dialog>

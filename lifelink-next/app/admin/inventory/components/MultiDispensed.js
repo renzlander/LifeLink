@@ -14,6 +14,7 @@ import {
   Option,
   Radio,
   Select,
+  Spinner,
 } from "@material-tailwind/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -39,6 +40,7 @@ export function MultipleDispensed({
   const [diagnosis, setDiagnosis] = useState("");
   const [hospital, setHospital] = useState("");
   const [paymentType, setPaymentType] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const bloodType = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
   const dynamicHospitalOptions = hospitalOptions.map((item) => ({
     label: item.hospital_desc,
@@ -129,6 +131,7 @@ export function MultipleDispensed({
     };
 
     try {
+      setIsSubmitting(true);
       const response = await axios.post(
         `${laravelBaseUrl}/api/dispensed-blood`,
         data,
@@ -192,6 +195,8 @@ export function MultipleDispensed({
           payment: error.payment || [],
         });
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -436,8 +441,15 @@ export function MultipleDispensed({
           >
             <span>Cancel</span>
           </Button>
-          <Button variant="gradient" color="red" onClick={handleDispensedBlood}>
-            <span>Confirm</span>
+          <Button
+           variant="gradient"
+            color="red"
+            className="flex items-center justify-center gap-5"
+           onClick={handleDispensedBlood}
+           disabled={isSubmitting}
+          >
+            {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
+            Confirm
           </Button>
         </DialogFooter>
       </Dialog>
