@@ -223,9 +223,9 @@ export default function UserLayout({ children }) {
             <div>
             </div>
             <div className="flex items-center gap-4">
-              <IconButton variant="text" color='white'>
+              {/* <IconButton variant="text" color='white'>
                   <BellIcon className="h-6 w-6" />
-              </IconButton>
+              </IconButton> */}
             </div>
           </div>
           <ToastContainer
