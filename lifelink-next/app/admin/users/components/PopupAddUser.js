@@ -219,7 +219,6 @@ export function AddUsers({ refreshData }) {
     first_name !== "" &&
     middle_name !== "" &&
     last_name !== "" &&
-    occupation !== "" &&
     street !== "" &&
     postalcode !== "" &&
     sex !== "" &&
