@@ -202,10 +202,14 @@ export function HistoryTable() {
               </Typography>
             </div>
             <div className="flex place-items-center justify-between gap-2">
-              <ArrowRightIcon className="ml-6 h-5 w-5" />
-              <Typography className="font-medium text-blue-gray-500">
-                Next donation is {formatDate(lastDonation.nextDonationDate)}
-              </Typography>
+            {lastDonation && lastDonation.nextDonationDate && (
+              <>
+                <ArrowRightIcon className="ml-6 h-5 w-5" />
+                <Typography className="font-medium text-blue-gray-500">
+                  Next donation is {formatDate(lastDonation.nextDonationDate)}
+                </Typography>
+              </>
+            )}
             </div>
           </div>
           {/* <Tooltip 
