@@ -154,7 +154,6 @@ export function RegF2({ onNextStep }) {
     first_name !== "" &&
     middle_name !== "" &&
     last_name !== "" &&
-    occupation !== "" &&
     street !== "" &&
     postalcode !== "" &&
     sex !== "" &&
@@ -191,7 +190,7 @@ export function RegF2({ onNextStep }) {
   }, []);
 
   return (
-    <div className="p-4 flex flex-col justify-center items-center gap-2">
+    <div className="flex flex-col items-center justify-center gap-2 p-4">
       <Typography variant="h4"color="blue-gray">
         Enter your personal details
       </Typography>
@@ -199,9 +198,9 @@ export function RegF2({ onNextStep }) {
         Some details will not be displayed in your profile.
       </Typography>
 
-      <form onSubmit={handleSubmit} className="w-full mt-8 mb-2 gap-4 flex flex-col justify-center items-center">
+      <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center w-full gap-4 mt-8 mb-2">
         <input type="hidden" value={dob} name="dob" />
-        <div className="flex gap-6 2xl:flex-nowrap flex-wrap">
+        <div className="flex flex-wrap gap-6 2xl:flex-nowrap">
           <Input
             size="lg"
             label="First Name"
@@ -242,11 +241,10 @@ export function RegF2({ onNextStep }) {
             }}
           />
         </div>
-        <div className="w-full flex flex-wrap 2xl:flex-nowrap justify-center gap-6">
+        <div className="flex flex-wrap justify-center w-full gap-6 2xl:flex-nowrap">
           <Input
             size="lg"
             label="Occupation"
-            required
             value={occupation}
             onChange={(e) => {
               const newValue = e.target.value;
@@ -271,13 +269,13 @@ export function RegF2({ onNextStep }) {
               }`}
             />
             {errorMessage.dob.length > 0 && (
-              <div className="error-message text-red-600 text-sm">
+              <div className="text-sm text-red-600 error-message">
                 {errorMessage.dob[0]}
               </div>
             )}
           </div>
         </div>
-        <div className="w-full flex flex-wrap 2xl:flex-nowrap justify-center gap-6">
+        <div className="flex flex-wrap justify-center w-full gap-6 2xl:flex-nowrap">
           <Select onChange={handleSexChange} label="Sex" value={sex} required>
             <Option value="Male">Male</Option>
             <Option value="Female">Female</Option>
@@ -296,7 +294,7 @@ export function RegF2({ onNextStep }) {
             ))}
           </Select>
         </div>
-        <div className="w-full flex flex-wrap 2xl:flex-nowrap justify-center gap-6">
+        <div className="flex flex-wrap justify-center w-full gap-6 2xl:flex-nowrap">
           <Select label="Region" required name={selectedRegion?.regionName}>
             {regionList?.map((region) => (
               <Option
@@ -336,7 +334,7 @@ export function RegF2({ onNextStep }) {
             ))}
           </Select>
         </div>
-        <div className="w-full flex flex-wrap 2xl:flex-nowrap justify-center gap-6">
+        <div className="flex flex-wrap justify-center w-full gap-6 2xl:flex-nowrap">
           <Select
             label="Municipality"
             required
@@ -382,7 +380,7 @@ export function RegF2({ onNextStep }) {
               ))}
           </Select>
         </div>
-        <div className="w-full flex flex-wrap 2xl:flex-nowrap justify-center gap-6">
+        <div className="flex flex-wrap justify-center w-full gap-6 2xl:flex-nowrap">
           <Input
             size="lg"
             label="Street"
@@ -411,7 +409,7 @@ export function RegF2({ onNextStep }) {
             }}
           />
         </div>
-        <div className="w-full flex justify-center grow gap-6">
+        <div className="flex justify-center w-full gap-6 grow">
           <Checkbox
             label={
               <Typography variant="body2" color="textSecondary">
@@ -431,10 +429,10 @@ export function RegF2({ onNextStep }) {
         <div className="flex justify-center w-full">
           <Button
             type="submit"
-            className="w-full flex items-center justify-center gap-5"
+            className="flex items-center justify-center w-full gap-5"
             disabled={!isChecked || !isFormValid || isSubmitting}
           >
-            {isSubmitting ? <Spinner className="h-4 w-4" /> : ""}
+            {isSubmitting ? <Spinner className="w-4 h-4" /> : ""}
             NEXT STEP
           </Button>
         </div>
