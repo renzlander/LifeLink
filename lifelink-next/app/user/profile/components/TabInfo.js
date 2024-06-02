@@ -120,9 +120,11 @@ export function TabInfo({ userDetails, donationSummary, lastDonation }) {
             <Typography variant="small" color="blue-gray" className="font-sans text-base text-blue-gray-700 mb-6">
               {lastDonation.days_since_last_donation}
             </Typography>
-            <Typography variant="small" color="blue-gray" className="font-sans text-base text-blue-gray-700 mb-6">
-              Next donation date is {formatDate(lastDonation.nextDonationDate)}
-            </Typography>
+            {lastDonation && lastDonation.nextDonationDate && (
+              <Typography variant="small" color="blue-gray" className="font-sans text-base text-blue-gray-700 mb-6">
+                Next donation date is {formatDate(lastDonation.nextDonationDate)}
+              </Typography>
+            )}
             <div className="flex flex-col items-start gap-2">
               <Typography variant="small" className="font-semibold text-base text-blue-gray-700">
                 Total Donations: <span className="font-normal ml-3">{donationSummary.totalDonation}</span>
