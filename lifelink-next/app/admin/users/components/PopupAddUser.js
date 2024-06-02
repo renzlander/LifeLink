@@ -373,7 +373,6 @@ export function AddUsers({ refreshData }) {
               <Input
                 size="lg"
                 label="Occupation"
-                required
                 value={occupation}
                 onChange={(e) => {
                   const newValue = e.target.value;
